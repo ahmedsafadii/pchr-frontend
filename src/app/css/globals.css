@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+:root {
+  /* Primary Color Scale */
+  --primary-900: #000000;
+  --primary-500: #2e2f32;
+  --primary-200: #d2d4e2;
+  --primary-50: #f1f2fd;
+
+  /* Secondary Color Scale */
+  --secondary-900: #b07434;
+  --secondary-500: #4662e1;
+  --secondary-200: #e1e586;
+  --secondary-50: #fafcee;
+
+  /* Info Color Scale */
+  --info-900: #0545da;
+  --info-500: #4662e1;
+  --info-200: #c3c7f4;
+  --info-50: #e7e9fb;
+
+  /* Warning Color Scale */
+  --warning-900: #da9305;
+  --warning-500: #ffb219;
+  --warning-200: #ffdd99;
+  --warning-50: #f6f4e5;
+
+  /* Danger Color Scale */
+  --danger-900: #c30013;
+  --danger-500: #ff2f2f;
+  --danger-200: #f69698;
+  --danger-50: #ffeaee;
+
+  /* Neutral Color Scale */
+  --neutral-900: #2e2f32;
+  --neutral-800: #5c5d64;
+  --neutral-600: #8b8c97;
+  --neutral-400: #a9aab1;
+  --neutral-300: #d2d4e2;
+  --neutral-100: #f1f2fd;
+  --neutral-50: #f5f6fd;
+}
+
+body {
+  color: var(--primary-900);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.py-8 {
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
