@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "Disappearance Report Platform | Palestinian Centre for Human Rights",
+  description:
+    "A digital platform dedicated to helping families in Gaza report missing or detained persons, check case status, and communicate securely with legal professionals.",
+};
 
 export default function Home() {
   return (
@@ -6,7 +13,6 @@ export default function Home() {
       {/* Header */}
       <div className="flex justify-between items-center container py-8">
         <div className="flex items-center gap-4">
-          {/* Logo - replace src with actual logo path if available */}
           <Image
             src="/img/logo_en.svg"
             alt="PCHR Logo"
@@ -42,7 +48,7 @@ export default function Home() {
         {/* Cards */}
         <div className="flex flex-col md:flex-row gap-8 justify-center items-stretch mt-8">
           {/* Report Card */}
-          <div className="flex-1 bg-black bg-opacity-90 rounded-2xl p-8 flex flex-col justify-between min-w-[320px] max-w-xl shadow-lg relative overflow-hidden">
+          <div className="w-full md:w-1/2 bg-black bg-opacity-90 rounded-2xl p-8 flex flex-col justify-between max-w-xl shadow-lg relative overflow-hidden">
             <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-4">
               REPORT A MISSING OR DETAINED PERSON
             </h2>
@@ -57,7 +63,7 @@ export default function Home() {
             </button>
           </div>
           {/* Track Card */}
-          <div className="flex-1 bg-black bg-opacity-90 rounded-2xl p-8 flex flex-col justify-between min-w-[320px] max-w-xl shadow-lg relative overflow-hidden">
+          <div className="w-full md:w-1/2 bg-black bg-opacity-90 rounded-2xl p-8 flex flex-col justify-between max-w-xl shadow-lg relative overflow-hidden">
             <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-4">
               CHECK CASE STATUS
             </h2>

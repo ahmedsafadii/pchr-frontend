@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Head from "@/components/shared/head";
 import { IBM_Plex_Sans_Arabic } from "next/font/google";
 import "./css/globals.css";
 
@@ -21,6 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Head />
       <body
         className={`${ibmPlexSansArabic.variable} antialiased`}
       >
