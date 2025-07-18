@@ -1,9 +1,5 @@
-import React from "react";
+import OriginLayout from "../_app/layout";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  );
-}
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  return <OriginLayout>{children}</OriginLayout>;
+} 
