@@ -5,6 +5,7 @@
   --container-padding: 16px;
 
   /* Primary Color Scale */
+  --white: #ffffff;
   --primary-900: #000000;
   --primary-500: #2e2f32;
   --primary-200: #d2d4e2;

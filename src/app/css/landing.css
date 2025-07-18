@@ -131,7 +131,7 @@
 .landing__card-title {
   font-size: 2rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--white);
   margin-bottom: 1rem;
   max-width: 380px;
 }
@@ -142,24 +142,23 @@
 }
 
 .landing__card-desc {
-  color: #fff;
+  color: var(--white);
   font-size: 1.1rem;
   margin-bottom: 2.5rem;
 }
 
 .landing__card-btn {
   width: 100%;
-  background: #fff;
+  background: var(--white);
   color: #000;
   font-weight: 700;
-  padding: 0.75rem 0;
+  padding: 1rem 0;
   border-radius: 0.5rem;
-  font-size: 1rem;
-  letter-spacing: 0.05em;
+  font-size: 1.1rem;
   border: none;
   cursor: pointer;
   transition: background 0.2s;
 }
 .landing__card-btn:hover {
-  background: #f3f4f6;
+  background: var(--neutral-100);
 } 
