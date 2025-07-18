@@ -1,6 +1,6 @@
 .landing {
   min-height: 100vh;
-  background: url("/img/home-background.svg") no-repeat 50% 80%;
+  background: url("/img/home-background.svg") no-repeat 50% 60%;
   background-size: 100% auto;
   padding-bottom: 2rem;
 }

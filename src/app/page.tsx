@@ -50,10 +50,7 @@ export default function Home() {
               REPORT A MISSING OR DETAINED PERSON
             </h2>
             <p className="landing__card-desc">
-              A digital platform dedicated to helping families in Gaza report
-              missing persons during crises, wars, or disasters. It allows
-              people to submit details, photos, and contact information
-              securely.
+              Tell us about a missing or detained person. Fill out a simple form and send us details and photos safely. Our team and lawyers will follow up with you, support you, and keep you informed every step of the way.
             </p>
             <button className="landing__card-btn">
               REPORT NEW CASE
@@ -63,10 +60,7 @@ export default function Home() {
           <article className="landing__card">
             <h2 className="landing__card-title">CHECK CASE STATUS</h2>
             <p className="landing__card-desc">
-              A digital platform dedicated to helping families in Gaza report
-              missing persons during crises, wars, or disasters. It allows
-              people to submit details, photos, and contact information
-              securely.
+              Check the status of your case at any time. You can see updates and messages from our team and lawyers, so you always know what is happening. We are here to support you and answer your questions.
             </p>
             <button className="landing__card-btn">TRACK NOW</button>
           </article>
