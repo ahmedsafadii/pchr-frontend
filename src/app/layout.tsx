@@ -5,7 +5,7 @@ import "./css/globals.css";
 
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   weight: ["100", "200", "300", "400", "500", "600", "700"],
-  subsets: ["latin", "arabic"],
+  subsets: ["latin", "arabic", "cyrillic-ext", "latin-ext"],
   variable: "--font-ibm-plex-sans-arabic",
   display: "swap",
 });
@@ -23,9 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Head />
-      <body
-        className={`${ibmPlexSansArabic.variable} antialiased`}
-      >
+      <body className={`${ibmPlexSansArabic.variable} antialiased`}>
+        {/* <div className="overlay">
+          <img src="/img/screenshot.png" alt="PCHR" />
+        </div> */}
         {children}
       </body>
     </html>

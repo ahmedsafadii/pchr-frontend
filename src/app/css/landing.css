@@ -1,0 +1,162 @@
+.landing {
+  min-height: 100vh;
+  background: url("/img/home-background.svg") no-repeat 50% 80%;
+  background-size: 100% auto;
+  padding-bottom: 2rem;
+}
+
+.landing__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 2.8rem var(--container-padding);
+  flex-wrap: wrap;
+}
+.landing__logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+
+@media (min-width: 768px) {
+  .landing__header {
+   flex-wrap: nowrap;
+  }
+  .landing__logo {
+    margin-bottom: 0;
+  }
+}
+
+
+.landing__actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.landing__action-btn {
+  background: var(--neutral-50);
+  border-radius: 9999px;
+  padding: 0.7rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.landing__action-btn:first-child {
+  padding: 0.7rem 2rem;
+}
+.landing__action-btn:hover {
+  background: var(--neutral-100);
+}
+
+.landing__main {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+.landing__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+@media (min-width: 768px) {
+  .landing__intro {
+    flex-direction: row;
+    align-items: flex-start;
+    margin-top: 1rem;
+  }
+}
+
+.landing__title {
+  flex: 1;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+@media (min-width: 768px) {
+  .landing__title {
+    font-size: 2rem;
+  }
+}
+
+.landing__desc {
+  flex: 1;
+  color: #374151;
+  font-size: 1rem;
+}
+@media (min-width: 768px) {
+  .landing__desc {
+    font-size: 1.125rem;
+    text-align: left;
+  }
+}
+
+.landing__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+  justify-content: center;
+  align-items: stretch;
+}
+@media (min-width: 768px) {
+  .landing__cards {
+    flex-direction: row;
+  }
+}
+
+.landing__card {
+  width: 100%;
+  background: url("/img/action-box.jpg") center center;
+  background-size: 100% auto;
+  border-radius: 1.5rem;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.landing__card-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 1rem;
+  max-width: 380px;
+}
+@media (min-width: 768px) {
+  .landing__card-title {
+    font-size: 2rem;
+  }
+}
+
+.landing__card-desc {
+  color: #fff;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+}
+
+.landing__card-btn {
+  width: 100%;
+  background: #fff;
+  color: #000;
+  font-weight: 700;
+  padding: 0.75rem 0;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.landing__card-btn:hover {
+  background: #f3f4f6;
+} 

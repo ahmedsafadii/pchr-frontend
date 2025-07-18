@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import "@/app/css/landing.css";
 
 export const metadata: Metadata = {
   title: "Disappearance Report Platform | Palestinian Centre for Human Rights",
@@ -9,10 +10,10 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="landing">
       {/* Header */}
-      <div className="flex justify-between items-center container py-8">
-        <div className="flex items-center gap-4">
+      <header className="landing__header">
+        <div className="landing__logo">
           <Image
             src="/img/logo_en.svg"
             alt="PCHR Logo"
@@ -20,64 +21,56 @@ export default function Home() {
             height={93}
           />
         </div>
-        <div className="flex gap-4">
-          <button className="bg-gray-100 rounded-full px-6 py-2 font-semibold text-sm">
-            Lawyer Login
-          </button>
-          <button className="bg-gray-100 rounded-full px-6 py-2 font-semibold text-sm">
-            عربي
-          </button>
-        </div>
-      </div>
+        <nav className="landing__actions" aria-label="Main actions">
+          <button className="landing__action-btn">Lawyer Login</button>
+          <button className="landing__action-btn">عربي</button>
+        </nav>
+      </header>
 
       {/* Main Content */}
-      <main className="container">
-        <div className="flex flex-col md:flex-row gap-8 justify-center items-stretch mt-8">
-          <h1 className="flex-1 text-3xl md:text-4xl font-extrabold mb-2">
+      <main className="landing__main">
+        <section className="landing__intro">
+          <h1 className="landing__title">
             Disappearance Report
             <br />
             Platform
           </h1>
-          <p className="flex-1 text-gray-700 text-base md:text-lg text-right md:text-left">
+          <p className="landing__desc">
             A digital platform dedicated to helping families in Gaza report
             missing persons during crises, wars, or disasters. It allows people
             to submit details, photos, and contact information securely.
           </p>
-        </div>
+        </section>
 
         {/* Cards */}
-        <div className="flex flex-col md:flex-row gap-8 justify-center items-stretch mt-8">
+        <section className="landing__cards">
           {/* Report Card */}
-          <div className="w-full md:w-1/2 bg-black bg-opacity-90 rounded-2xl p-8 flex flex-col justify-between max-w-xl shadow-lg relative overflow-hidden">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-4">
+          <article className="landing__card">
+            <h2 className="landing__card-title">
               REPORT A MISSING OR DETAINED PERSON
             </h2>
-            <p className="text-white text-base mb-8">
+            <p className="landing__card-desc">
               A digital platform dedicated to helping families in Gaza report
               missing persons during crises, wars, or disasters. It allows
               people to submit details, photos, and contact information
               securely.
             </p>
-            <button className="w-full bg-white text-black font-bold py-3 rounded-md text-base tracking-wider transition hover:bg-gray-200">
+            <button className="landing__card-btn">
               REPORT NEW CASE
             </button>
-          </div>
+          </article>
           {/* Track Card */}
-          <div className="w-full md:w-1/2 bg-black bg-opacity-90 rounded-2xl p-8 flex flex-col justify-between max-w-xl shadow-lg relative overflow-hidden">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-4">
-              CHECK CASE STATUS
-            </h2>
-            <p className="text-white text-base mb-8">
+          <article className="landing__card">
+            <h2 className="landing__card-title">CHECK CASE STATUS</h2>
+            <p className="landing__card-desc">
               A digital platform dedicated to helping families in Gaza report
               missing persons during crises, wars, or disasters. It allows
               people to submit details, photos, and contact information
               securely.
             </p>
-            <button className="w-full bg-white text-black font-bold py-3 rounded-md text-base tracking-wider transition hover:bg-gray-200">
-              TRACK NOW
-            </button>
-          </div>
-        </div>
+            <button className="landing__card-btn">TRACK NOW</button>
+          </article>
+        </section>
       </main>
     </div>
   );

@@ -53,6 +53,43 @@ The PCHR Missing Person Report Platform is designed to help families and individ
 - **Font**: Geist (Sans & Mono)
 - **Development**: Turbopack for fast development
 
+## HTML & CSS Standards: Semantic HTML and BEM
+
+To ensure our codebase is clean, maintainable, and accessible, we follow these standards for writing HTML and CSS:
+
+### 1. Semantic HTML
+- **Use semantic tags**: Always use the most appropriate HTML5 elements (`<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<aside>`, `<footer>`, etc.) instead of generic `<div>` or `<span>` where possible.
+- **Accessibility**: Use ARIA roles and attributes only when necessary. Prefer native HTML semantics for accessibility.
+- **Minimal nesting**: Avoid unnecessary wrapper elements. Keep the DOM tree as flat and meaningful as possible.
+- **Descriptive structure**: Organize content logically, reflecting the information hierarchy.
+
+### 2. BEM (Block Element Modifier) Methodology
+- **Class naming**: Use the BEM convention for all CSS class names:
+  - `block` — The standalone entity (e.g., `case-summary`)
+  - `block__element` — A part of the block that has no standalone meaning (e.g., `case-summary__title`)
+  - `block--modifier` — A different state or variation of the block (e.g., `case-summary--highlighted`)
+- **No camelCase or snake_case**: Use only lowercase and hyphens (`-`) to separate words.
+- **No tag or id selectors**: Style only via classes, not by tag or id selectors.
+- **Example:**
+  ```html
+  <section class="case-summary case-summary--highlighted">
+    <h2 class="case-summary__title">Case Title</h2>
+    <p class="case-summary__description">Description here...</p>
+  </section>
+  ```
+- **Utility classes**: For one-off utilities (e.g., margin, padding), prefer Tailwind CSS utility classes. Use BEM for custom components and layouts.
+
+### 3. Clean & Minimal Markup
+- **Remove unused classes and elements**
+- **Avoid inline styles**: Use Tailwind or BEM classes instead
+- **Keep HTML readable**: Indent properly and use meaningful class names
+
+**Reference:**
+- [HTML5 Element Reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Element)
+- [BEM Methodology](http://getbem.com/introduction/)
+
+---
+
 ## Getting Started
 
 ### Prerequisites
