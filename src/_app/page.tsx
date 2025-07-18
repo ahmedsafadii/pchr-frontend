@@ -34,11 +34,12 @@ export default function Home() {
       {/* Main Content */}
       <main className="landing__main">
         <section className="landing__intro">
-          <h1 className="landing__title">
-            {t("landing.title")}
-          </h1>
+          <h1
+            className="landing__title"
+            dangerouslySetInnerHTML={{ __html: t("landing.header.title") }}
+          />
           <p className="landing__desc">
-            {t("landing.header.description")}
+            {t("landing.header.description")} 
           </p>
         </section>
 

@@ -71,7 +71,7 @@
 @media (min-width: 768px) {
   .landing__intro {
     flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
     margin-top: 1rem;
   }
 }
