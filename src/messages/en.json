@@ -1,0 +1,22 @@
+{
+  "landing": {
+    "title": "Disappearance Report Platform | Palestinian Centre for Human Rights",
+    "description": "A digital platform dedicated to helping families in Gaza report missing persons during crises, wars, or disasters. It allows people to submit details, photos, and contact information securely.",
+    "header": {
+      "title": "Disappearance Report Platform",
+      "description": "A digital platform dedicated to helping families in Gaza report missing persons during crises, wars, or disasters. It allows people to submit details, photos, and contact information securely.",
+      "lawyerLogin": "Lawyer Login",
+      "language": "عربي"
+    },
+    "newcase": {
+      "title": "REPORT A MISSING OR DETAINED PERSON",
+      "description": "Tell us about a missing or detained person. Fill out a simple form and send us details and photos safely. Our team and lawyers will follow up with you, support you, and keep you informed every step of the way.",
+      "action": "REPORT NEW CASE"
+    },
+    "status": {
+      "title": "CHECK THE STATUS OF YOUR CASE",
+      "description": "Check the status of your case at any time. You can see updates and messages from our team and lawyers, so you always know what is happening. We are here to support you and answer your questions.",
+      "action": "TRACK NOW"
+    }
+  }
+}

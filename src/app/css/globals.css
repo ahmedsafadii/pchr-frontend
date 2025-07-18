@@ -43,7 +43,9 @@
   --neutral-100: #f1f2fd;
   --neutral-50: #f5f6fd;
 }
-
+html[lang="ar"] body {
+  direction: rtl;
+}
 body {
   color: var(--primary-900);
   font-family: "IBM Plex Sans Arabic", "IBM Plex Sans Arabic Fallback";

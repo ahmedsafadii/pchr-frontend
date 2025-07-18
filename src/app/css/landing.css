@@ -34,9 +34,11 @@
 
 .landing__actions {
   display: flex;
+  align-items: center;
   gap: 1rem;
 }
 
+.landing__actions a,
 .landing__action-btn {
   background: var(--neutral-50);
   border-radius: 9999px;
@@ -50,6 +52,7 @@
 .landing__action-btn:first-child {
   padding: 0.7rem 2rem;
 }
+.landing__actions a:hover,
 .landing__action-btn:hover {
   background: var(--neutral-100);
 }
