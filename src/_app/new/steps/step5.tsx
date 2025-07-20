@@ -26,13 +26,13 @@ export default function Step5({
   };
 
   return (
-    <div className="step5">
-      <header className="step5__header">
-        <span className="step5__step-number">STEP 5</span>
-        <h2 className="step5__title">Delegation & Communication</h2>
+    <div className="steps">
+      <header className="steps__header">
+        <span className="steps__step-number">STEP 5</span>
+        <h2 className="steps__title">Delegation & Communication</h2>
       </header>
 
-      <div className="step5__content">
+      <div className="steps__content">
         <p>Step 5: Understand Any Prior Efforts Made And Contact Preferences.</p>
         <p>This step will contain form fields for:</p>
         <ul>
@@ -44,17 +44,17 @@ export default function Step5({
         </ul>
       </div>
 
-      <div className="step5__navigation">
+      <div className="steps__navigation">
         <button
           type="button"
-          className="step5__button step5__button--previous"
+          className="steps__button step5__button--previous"
           onClick={onPrevious}
         >
           Previous
         </button>
         <button
           type="button"
-          className="step5__button step5__button--next"
+          className="steps__button step5__button--next"
           onClick={handleNext}
         >
           Next

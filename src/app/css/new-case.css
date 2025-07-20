@@ -371,7 +371,7 @@
 }
 
 .steps__input--with-icon {
-  padding-right: 50px;
+  padding-left: 50px;
 }
 
 .steps__input-wrapper {
@@ -380,7 +380,7 @@
 
 .steps__input-icon {
   position: absolute;
-  right: 16px;
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
   color: #666;
@@ -696,7 +696,7 @@
 }
 
 .step6__button--submit:hover {
-  background: #218838;
+  background: var(--primary-500);
 }
 
 /* Responsive Design */

@@ -64,13 +64,12 @@ export interface CaseData {
     otherDocuments: File[];
   };
 
-  // Step 5: Delegation & Communication
+  // Step 4: Delegation & Communication
   delegationInfo: {
-    priorEfforts: string;
-    contactPreferences: string;
-    preferredLanguage: string;
-    emergencyContact: string;
-    additionalNotes: string;
+    authorizedAnotherParty: string;
+    previousDelegation: string;
+    organisationName: string;
+    date: string;
   };
 
   // Step 6: Consent and Submission
@@ -117,11 +116,10 @@ const initialCaseData: CaseData = {
     otherDocuments: [],
   },
   delegationInfo: {
-    priorEfforts: "",
-    contactPreferences: "",
-    preferredLanguage: "",
-    emergencyContact: "",
-    additionalNotes: "",
+    authorizedAnotherParty: "",
+    previousDelegation: "",
+    organisationName: "",
+    date: "",
   },
   consent: {
     termsAccepted: false,
@@ -232,14 +230,14 @@ export default function NewCasePage({ locale = "en" }) {
     if (stepNumber === 1) {
       const detaineeInfo = caseData.detaineeInfo;
       const isValid = (
-        detaineeInfo.fullName.trim() !== '' &&
-        detaineeInfo.idNumber.trim() !== '' &&
-        detaineeInfo.dateOfBirth.trim() !== '' &&
-        detaineeInfo.healthStatus.trim() !== '' &&
-        detaineeInfo.maritalStatus.trim() !== '' &&
-        detaineeInfo.city.trim() !== '' &&
-        detaineeInfo.governorate.trim() !== '' &&
-        detaineeInfo.district.trim() !== ''
+        detaineeInfo?.fullName?.trim() !== '' &&
+        detaineeInfo?.idNumber?.trim() !== '' &&
+        detaineeInfo?.dateOfBirth?.trim() !== '' &&
+        detaineeInfo?.healthStatus?.trim() !== '' &&
+        detaineeInfo?.maritalStatus?.trim() !== '' &&
+        detaineeInfo?.city?.trim() !== '' &&
+        detaineeInfo?.governorate?.trim() !== '' &&
+        detaineeInfo?.district?.trim() !== ''
       );
       console.log('Step 1 validation:', { detaineeInfo, isValid });
       return isValid;
@@ -249,12 +247,36 @@ export default function NewCasePage({ locale = "en" }) {
     if (stepNumber === 2) {
       const detentionInfo = caseData.detentionInfo;
       const isValid = (
-        detentionInfo.disappearanceDate.trim() !== '' &&
-        detentionInfo.city.trim() !== '' &&
-        detentionInfo.governorate.trim() !== '' &&
-        detentionInfo.district.trim() !== ''
+        detentionInfo?.disappearanceDate?.trim() !== '' &&
+        detentionInfo?.city?.trim() !== '' &&
+        detentionInfo?.governorate?.trim() !== '' &&
+        detentionInfo?.district?.trim() !== ''
       );
       console.log('Step 2 validation:', { detentionInfo, isValid });
+      return isValid;
+    }
+    
+    // For step 3, check if all required fields are filled
+    if (stepNumber === 3) {
+      const clientInfo = caseData.clientInfo;
+      const isValid = (
+        clientInfo?.fullName?.trim() !== '' &&
+        clientInfo?.idNumber?.trim() !== '' &&
+        clientInfo?.phoneNumber?.trim() !== '' &&
+        clientInfo?.relationship?.trim() !== ''
+      );
+      console.log('Step 3 validation:', { clientInfo, isValid });
+      return isValid;
+    }
+    
+    // For step 4, check if all required fields are filled
+    if (stepNumber === 4) {
+      const delegationInfo = caseData.delegationInfo;
+      const isValid = (
+        delegationInfo?.authorizedAnotherParty?.trim() !== '' &&
+        delegationInfo?.previousDelegation?.trim() !== ''
+      );
+      console.log('Step 4 validation:', { delegationInfo, isValid });
       return isValid;
     }
     

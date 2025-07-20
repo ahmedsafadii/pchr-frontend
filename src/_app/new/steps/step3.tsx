@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { IconArrowRight, IconArrowLeft } from '@tabler/icons-react';
-import { CaseData } from '../page';
+import { useState, useEffect } from "react";
+import { CaseData } from "../page";
 
 interface Step3Props {
   data: CaseData;
@@ -17,57 +17,211 @@ interface Step3Props {
 }
 
 export default function Step3({
+  data,
+  updateData,
   onComplete,
   onNext,
   onPrevious,
   currentStep,
-  locale = 'en',
+  canGoNext,
+  locale = "en",
 }: Step3Props) {
-  const handleNext = () => {
-    onComplete(currentStep);
-    onNext();
+  const [formData, setFormData] = useState(data.clientInfo);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    setFormData(data.clientInfo);
+  }, [data.clientInfo]);
+
+  const handleInputChange = (field: string, value: string) => {
+    const updatedFormData = {
+      ...formData,
+      [field]: value,
+    };
+    
+    setFormData(updatedFormData);
+    
+    // Update parent component data immediately
+    updateData("clientInfo", updatedFormData);
+
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: "",
+      }));
+    }
   };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.fullName.trim()) {
+      newErrors.fullName =
+        locale === "ar" ? "الاسم الكامل مطلوب" : "Full name is required";
+    }
+
+    if (!formData.idNumber.trim()) {
+      newErrors.idNumber =
+        locale === "ar" ? "رقم الهوية مطلوب" : "ID number is required";
+    }
+
+    if (!formData.phoneNumber.trim()) {
+      newErrors.phoneNumber =
+        locale === "ar" ? "رقم الهاتف مطلوب" : "Phone number is required";
+    }
+
+    if (!formData.relationship.trim()) {
+      newErrors.relationship =
+        locale === "ar" ? "العلاقة مطلوبة" : "Relationship is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validateForm()) {
+      updateData("clientInfo", formData);
+      onComplete(currentStep);
+      onNext();
+    }
+  };
+
+  const relationshipOptions = [
+    { value: "", label: locale === "ar" ? "اختر" : "Choose" },
+    { value: "spouse", label: locale === "ar" ? "زوج/زوجة" : "Spouse" },
+    { value: "parent", label: locale === "ar" ? "أب/أم" : "Parent" },
+    { value: "child", label: locale === "ar" ? "ابن/ابنة" : "Child" },
+    { value: "sibling", label: locale === "ar" ? "أخ/أخت" : "Sibling" },
+    { value: "relative", label: locale === "ar" ? "قريب" : "Relative" },
+    { value: "friend", label: locale === "ar" ? "صديق" : "Friend" },
+    { value: "other", label: locale === "ar" ? "أخرى" : "Other" },
+  ];
 
   return (
     <div className="steps">
       <header className="steps__header">
         <span className="steps__step-number">STEP 3</span>
         <h2 className="steps__title">
-          {locale === 'ar' ? 'معلومات العميل' : 'Client Info'}
+          {locale === "ar" ? "معلومات العميل" : "Client Informations"}
         </h2>
       </header>
 
-      <div className="steps__content">
-        <p>{locale === 'ar' ? 'الخطوة 3: التقاط من يبلغ عن القضية.' : 'Step 3: Capture Who Is Reporting The Case.'}</p>
-        <p>{locale === 'ar' ? 'ستحتوي هذه الخطوة على حقول النموذج لـ:' : 'This step will contain form fields for:'}</p>
-        <ul>
-          <li>{locale === 'ar' ? 'الاسم الكامل للعميل' : 'Client Full Name'}</li>
-          <li>{locale === 'ar' ? 'العلاقة بالشخص المفقود' : 'Relationship to Missing Person'}</li>
-          <li>{locale === 'ar' ? 'رقم الهاتف' : 'Phone Number'}</li>
-          <li>{locale === 'ar' ? 'البريد الإلكتروني' : 'Email'}</li>
-          <li>{locale === 'ar' ? 'العنوان' : 'Address'}</li>
-          <li>{locale === 'ar' ? 'رقم الهوية' : 'ID Number'}</li>
-        </ul>
-      </div>
+      <form className="steps__form" onSubmit={(e) => e.preventDefault()}>
+        {/* Client Details Section */}
+        <section className="steps__section">
+          <div className="steps__form-groups">
+            <div className="steps__form-group">
+              <label className="steps__label">
+                {locale === "ar" ? "الاسم الكامل" : "Full Name"}{" "}
+                <span className="steps__required">*</span>
+              </label>
+              <input
+                type="text"
+                className={`steps__input ${
+                  errors.fullName ? "steps__input--error" : ""
+                }`}
+                placeholder={
+                  locale === "ar" ? "مثال: محمد علي" : "Ex: Mohammed Ali"
+                }
+                value={formData.fullName}
+                onChange={(e) => handleInputChange("fullName", e.target.value)}
+              />
+              {errors.fullName && (
+                <span className="steps__error">{errors.fullName}</span>
+              )}
+            </div>
 
-      <div className="steps__navigation">
-        <button
-          type="button"
-          className="steps__button steps__button--previous"
-          onClick={onPrevious}
-        >
-          <IconArrowLeft size={16} />
-          <span>{locale === 'ar' ? 'السابق' : 'Previous'}</span>
-        </button>
-        <button
-          type="button"
-          className="steps__button steps__button--next"
-          onClick={handleNext}
-        >
-          <span>{locale === 'ar' ? 'التالي' : 'Next'}</span>
-          <IconArrowRight size={16} />
-        </button>
-      </div>
+            <div className="steps__form-group">
+              <label className="steps__label">
+                {locale === "ar" ? "رقم الهوية" : "ID Number"}{" "}
+                <span className="steps__required">*</span>
+              </label>
+              <input
+                type="text"
+                className={`steps__input ${
+                  errors.idNumber ? "steps__input--error" : ""
+                }`}
+                placeholder="0000000000"
+                value={formData.idNumber}
+                onChange={(e) => handleInputChange("idNumber", e.target.value)}
+              />
+              {errors.idNumber && (
+                <span className="steps__error">{errors.idNumber}</span>
+              )}
+            </div>
+
+            <div className="steps__form-group">
+              <label className="steps__label">
+                {locale === "ar" ? "رقم الهاتف" : "Phone Number"}{" "}
+                <span className="steps__required">*</span>
+              </label>
+              <div className="steps__input-wrapper">
+                <input
+                  type="tel"
+                  className={`steps__input steps__input--with-icon ${
+                    errors.phoneNumber ? "steps__input--error" : ""
+                  }`}
+                  placeholder="0000000"
+                  value={formData.phoneNumber}
+                  onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                />
+                <span className="steps__input-icon">059</span>
+              </div>
+              {errors.phoneNumber && (
+                <span className="steps__error">{errors.phoneNumber}</span>
+              )}
+            </div>
+
+            <div className="steps__form-group">
+              <label className="steps__label">
+                {locale === "ar" ? "العلاقة" : "Relationship"}{" "}
+                <span className="steps__required">*</span>
+              </label>
+              <select
+                className={`steps__select ${
+                  errors.relationship ? "steps__select--error" : ""
+                }`}
+                value={formData.relationship}
+                onChange={(e) =>
+                  handleInputChange("relationship", e.target.value)
+                }
+              >
+                {relationshipOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              {errors.relationship && (
+                <span className="steps__error">{errors.relationship}</span>
+              )}
+            </div>
+
+
+          </div>
+        </section>
+
+        {/* Navigation */}
+        <div className="steps__navigation">
+          <button
+            type="button"
+            className="steps__button steps__button--previous"
+            onClick={onPrevious}
+          >
+            <span>{locale === "ar" ? "السابق" : "Prev"}</span>
+          </button>
+          <button
+            type="button"
+            className="steps__button steps__button--next"
+            onClick={handleNext}
+            disabled={!canGoNext}
+          >
+            <span>{locale === "ar" ? "التالي" : "Next"}</span>
+          </button>
+        </div>
+      </form>
     </div>
   );
 } 
