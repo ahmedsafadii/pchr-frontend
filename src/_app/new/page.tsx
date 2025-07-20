@@ -57,11 +57,11 @@ export interface CaseData {
     idNumber: string;
   };
 
-  // Step 4: Documents Upload
+  // Step 5: Documents Upload
   documents: {
-    idCard: File | null;
-    photos: File[];
-    otherDocuments: File[];
+    detaineeIdFiles: Array<{ name: string; size: number; url?: string }>;
+    clientIdFiles: Array<{ name: string; size: number; url?: string }>;
+    additionalFiles: Array<{ name: string; size: number; url?: string }>;
   };
 
   // Step 4: Delegation & Communication
@@ -74,9 +74,9 @@ export interface CaseData {
 
   // Step 6: Consent and Submission
   consent: {
-    termsAccepted: boolean;
-    privacyAccepted: boolean;
-    dataProcessingAccepted: boolean;
+    consentAccepted: boolean;
+    signature: string;
+    submissionDate: string;
   };
 }
 
@@ -111,9 +111,9 @@ const initialCaseData: CaseData = {
     idNumber: "",
   },
   documents: {
-    idCard: null,
-    photos: [],
-    otherDocuments: [],
+    detaineeIdFiles: [],
+    clientIdFiles: [],
+    additionalFiles: [],
   },
   delegationInfo: {
     authorizedAnotherParty: "",
@@ -122,9 +122,9 @@ const initialCaseData: CaseData = {
     date: "",
   },
   consent: {
-    termsAccepted: false,
-    privacyAccepted: false,
-    dataProcessingAccepted: false,
+    consentAccepted: false,
+    signature: "",
+    submissionDate: "",
   },
 };
 
@@ -278,6 +278,11 @@ export default function NewCasePage({ locale = "en" }) {
       );
       console.log('Step 4 validation:', { delegationInfo, isValid });
       return isValid;
+    }
+    
+    // For step 5, documents are optional
+    if (stepNumber === 5) {
+      return true; // Documents are optional
     }
     
     // For other steps, check if step is completed
