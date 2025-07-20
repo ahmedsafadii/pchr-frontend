@@ -39,11 +39,12 @@ export interface CaseData {
   // Step 2: Detention/Disappearance Info
   detentionInfo: {
     disappearanceDate: string;
-    disappearanceLocation: string;
+    disappearanceStatus: string;
+    city: string;
+    governorate: string;
+    district: string;
+    streetName: string;
     disappearanceCircumstances: string;
-    lastSeen: string;
-    witnesses: string;
-    authoritiesContacted: string;
   };
 
   // Step 3: Client Info
@@ -95,11 +96,12 @@ const initialCaseData: CaseData = {
   },
   detentionInfo: {
     disappearanceDate: "",
-    disappearanceLocation: "",
+    disappearanceStatus: "",
+    city: "",
+    governorate: "",
+    district: "",
+    streetName: "",
     disappearanceCircumstances: "",
-    lastSeen: "",
-    witnesses: "",
-    authoritiesContacted: "",
   },
   clientInfo: {
     fullName: "",
@@ -240,6 +242,19 @@ export default function NewCasePage({ locale = "en" }) {
         detaineeInfo.district.trim() !== ''
       );
       console.log('Step 1 validation:', { detaineeInfo, isValid });
+      return isValid;
+    }
+    
+    // For step 2, check if all required fields are filled
+    if (stepNumber === 2) {
+      const detentionInfo = caseData.detentionInfo;
+      const isValid = (
+        detentionInfo.disappearanceDate.trim() !== '' &&
+        detentionInfo.city.trim() !== '' &&
+        detentionInfo.governorate.trim() !== '' &&
+        detentionInfo.district.trim() !== ''
+      );
+      console.log('Step 2 validation:', { detentionInfo, isValid });
       return isValid;
     }
     

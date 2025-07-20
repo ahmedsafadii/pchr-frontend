@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { CaseData } from "../page";
 
 interface Step1Props {
@@ -39,9 +39,9 @@ export default function Step1({
       ...formData,
       [field]: value,
     };
-    
+
     setFormData(updatedFormData);
-    
+
     // Update parent component data immediately
     updateData("detaineeInfo", updatedFormData);
 
@@ -133,7 +133,7 @@ export default function Step1({
   const cityOptions = [
     {
       value: "",
-      label: locale === "ar" ? "غزة/الضفة الغربية" : "Gaza/Westbank",
+      label: locale === "ar" ? "اختر المدينة" : "Select City",
     },
     { value: "gaza", label: locale === "ar" ? "غزة" : "Gaza" },
     {
@@ -228,9 +228,13 @@ export default function Step1({
               </label>
               <div className="steps__input-wrapper">
                 <DatePicker
-                  selected={formData.dateOfBirth ? new Date(formData.dateOfBirth) : null}
+                  selected={
+                    formData.dateOfBirth ? new Date(formData.dateOfBirth) : null
+                  }
                   onChange={(date) => {
-                    const formattedDate = date ? date.toISOString().split('T')[0] : '';
+                    const formattedDate = date
+                      ? date.toISOString().split("T")[0]
+                      : "";
                     handleInputChange("dateOfBirth", formattedDate);
                   }}
                   dateFormat="dd/MM/yyyy"
@@ -324,29 +328,6 @@ export default function Step1({
           <div className="steps__form-groups">
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "المدينة" : "City"}{" "}
-                <span className="steps__required">*</span>
-              </label>
-              <select
-                className={`steps__select ${
-                  errors.city ? "steps__select--error" : ""
-                }`}
-                value={formData.city}
-                onChange={(e) => handleInputChange("city", e.target.value)}
-              >
-                {cityOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {errors.city && (
-                <span className="steps__error">{errors.city}</span>
-              )}
-            </div>
-
-            <div className="steps__form-group">
-              <label className="steps__label">
                 {locale === "ar" ? "المحافظة" : "Governorate"}{" "}
                 <span className="steps__required">*</span>
               </label>
@@ -370,6 +351,28 @@ export default function Step1({
               )}
             </div>
 
+            <div className="steps__form-group">
+              <label className="steps__label">
+                {locale === "ar" ? "المدينة" : "City"}{" "}
+                <span className="steps__required">*</span>
+              </label>
+              <select
+                className={`steps__select ${
+                  errors.city ? "steps__select--error" : ""
+                }`}
+                value={formData.city}
+                onChange={(e) => handleInputChange("city", e.target.value)}
+              >
+                {cityOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              {errors.city && (
+                <span className="steps__error">{errors.city}</span>
+              )}
+            </div>
             <div className="steps__form-group">
               <label className="steps__label">
                 {locale === "ar" ? "المنطقة" : "District"}{" "}
