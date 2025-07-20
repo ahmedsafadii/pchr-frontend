@@ -158,6 +158,7 @@
   border: none;
   cursor: pointer;
   transition: background 0.2s;
+  text-align: center;
 }
 .landing__card-btn:hover {
   background: var(--neutral-100);

@@ -1,32 +1,32 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import Logo from "./components/Logo";
 import "@/app/css/landing.css";
 import LanguageSwitcher from "./components/LanguageSwitcher";
 import { getTranslations, useTranslations, useLocale } from "next-globe-gen";
+import Link from "next/link";
 
 export function generateMetadata(): Metadata {
   const t = getTranslations();
-  return { description: t("landing.description")?.toString(), title: t("landing.title") };
+  return {
+    description: t("landing.description")?.toString(),
+    title: t("landing.title"),
+  };
 }
 
 export default function Home() {
   const t = useTranslations();
   const currentLocale = useLocale();
-
   return (
     <div className="landing">
       {/* Header */}
       <header className="landing__header">
         <div className="landing__logo">
-          <Image
-            src={currentLocale === "ar" ? "/img/logo_ar.svg" : "/img/logo_en.svg"}
-            alt="PCHR Logo"
-            width={218}
-            height={93}
-          />
+          <Logo />
         </div>
         <nav className="landing__actions" aria-label="Main actions">
-          <button className="landing__action-btn">{t("landing.header.lawyerLogin")}</button>
+          <button className="landing__action-btn">
+            {t("landing.header.lawyerLogin")}
+          </button>
           <LanguageSwitcher />
         </nav>
       </header>
@@ -38,9 +38,7 @@ export default function Home() {
             className="landing__title"
             dangerouslySetInnerHTML={{ __html: t("landing.header.title") }}
           />
-          <p className="landing__desc">
-            {t("landing.header.description")} 
-          </p>
+          <p className="landing__desc">{t("landing.header.description")}</p>
         </section>
 
         {/* Cards */}
@@ -53,17 +51,22 @@ export default function Home() {
             <p className="landing__card-desc">
               {t("landing.newcase.description")}
             </p>
-            <button className="landing__card-btn">{t("landing.newcase.action")}</button>
+            <Link
+              href={`${currentLocale}/new`}
+              className="landing__card-btn"
+            >
+              {t("landing.newcase.action")}
+            </Link>
           </article>
           {/* Track Card */}
           <article className="landing__card">
-            <h2 className="landing__card-title">
-              {t("landing.status.title")}
-            </h2>
+            <h2 className="landing__card-title">{t("landing.status.title")}</h2>
             <p className="landing__card-desc">
               {t("landing.status.description")}
             </p>
-            <button className="landing__card-btn">{t("landing.status.action")}</button>
+            <button className="landing__card-btn">
+              {t("landing.status.action")}
+            </button>
           </article>
         </section>
       </main>

@@ -18,5 +18,8 @@
       "description": "Check the status of your case at any time. You can see updates and messages from our team and lawyers, so you always know what is happening. We are here to support you and answer your questions.",
       "action": "TRACK NOW"
     }
+  },
+  "newCase": {
+    "back": "Back to Home"
   }
 }
