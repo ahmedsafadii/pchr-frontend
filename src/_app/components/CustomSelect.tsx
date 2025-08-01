@@ -49,7 +49,7 @@ export default function CustomSelect({
       border: isError 
         ? '2px solid #dc3545' 
         : state.isFocused 
-        ? '2px solid #d2691e' 
+        ? '2px solid #da9305' 
         : '2px solid #e0e0e0',
       borderRadius: '8px',
       boxShadow: state.isFocused 
@@ -62,7 +62,7 @@ export default function CustomSelect({
       backgroundColor: isDisabled ? '#f8f9fa' : 'white',
       cursor: isDisabled ? 'not-allowed' : 'pointer',
       '&:hover': {
-        borderColor: isError ? '#dc3545' : '#d2691e',
+        borderColor: isError ? '#dc3545' : '#da9305',
       },
     }),
     placeholder: (provided) => ({
@@ -78,7 +78,7 @@ export default function CustomSelect({
     option: (provided, state) => ({
       ...provided,
       backgroundColor: state.isSelected
-        ? '#d2691e'
+        ? '#da9305'
         : state.isFocused
         ? '#fff3e0'
         : 'white',
@@ -87,7 +87,7 @@ export default function CustomSelect({
       padding: '12px 16px',
       cursor: 'pointer',
       '&:hover': {
-        backgroundColor: state.isSelected ? '#d2691e' : '#fff3e0',
+        backgroundColor: state.isSelected ? '#da9305' : '#fff3e0',
       },
     }),
     menu: (provided) => ({
@@ -111,12 +111,12 @@ export default function CustomSelect({
       transform: state.selectProps.menuIsOpen ? 'rotate(180deg)' : 'rotate(0deg)',
       transition: 'transform 0.2s',
       '&:hover': {
-        color: '#d2691e',
+        color: '#da9305',
       },
     }),
     loadingIndicator: (provided) => ({
       ...provided,
-      color: '#d2691e',
+      color: '#da9305',
     }),
     noOptionsMessage: (provided) => ({
       ...provided,
