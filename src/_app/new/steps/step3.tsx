@@ -191,7 +191,7 @@ export default function Step3({
               <div className="steps__input-wrapper">
                 <input
                   type="tel"
-                  className={`steps__input steps__input--with-icon ${
+                  className={`steps__input ${
                     errors.phoneNumber ? "steps__input--error" : ""
                   }`}
                   placeholder="0591234567"
@@ -199,7 +199,6 @@ export default function Step3({
                   onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
                   maxLength={10}
                 />
-                <span className="steps__input-icon">059</span>
               </div>
               {errors.phoneNumber && (
                 <span className="steps__error">{errors.phoneNumber}</span>
