@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from 'react';
-import Select, { StylesConfig, GroupBase } from 'react-select';
+import Select, { StylesConfig, GroupBase, SingleValue, MultiValue, ActionMeta } from 'react-select';
 
 interface Option {
   value: string;
@@ -126,8 +126,17 @@ export default function CustomSelect({
     }),
   };
 
-  const handleChange = (selectedOption: Option | null) => {
-    onChange(selectedOption ? selectedOption.value : '');
+  const handleChange = (
+    newValue: SingleValue<Option> | MultiValue<Option>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _actionMeta: ActionMeta<Option>
+  ) => {
+    // Handle single value selection (our use case)
+    if (newValue && !Array.isArray(newValue)) {
+      onChange((newValue as Option).value);
+    } else {
+      onChange('');
+    }
   };
 
   return (

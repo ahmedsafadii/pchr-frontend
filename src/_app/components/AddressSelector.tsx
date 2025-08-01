@@ -54,7 +54,7 @@ export default function AddressSelector({
       onCityChange("");
       onDistrictChange("");
     }
-  }, [governorate, locale]);
+  }, [governorate, locale, city, onCityChange, onDistrictChange]);
 
   // Update district options when city changes
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function AddressSelector({
     if (city && district) {
       onDistrictChange("");
     }
-  }, [governorate, city, locale]);
+  }, [governorate, city, locale, district, onDistrictChange]);
 
   const handleGovernorateChange = (value: string) => {
     onGovernorateChange(value);
