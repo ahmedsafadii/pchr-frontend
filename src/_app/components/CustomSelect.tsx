@@ -58,7 +58,6 @@ export default function CustomSelect({
           : '0 0 0 3px rgba(210, 105, 30, 0.1)'
         : 'none',
       fontSize: '14px',
-      fontFamily: '"Geist", sans-serif',
       backgroundColor: isDisabled ? '#f8f9fa' : 'white',
       cursor: isDisabled ? 'not-allowed' : 'pointer',
       '&:hover': {
