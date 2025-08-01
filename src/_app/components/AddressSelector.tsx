@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import CustomSelect from "./CustomSelect";
 import { getGovernorateOptions, getCityOptions, getDistrictOptions } from "../data/palestineLocations";
 
@@ -49,21 +49,39 @@ export default function AddressSelector({
   // Update city options when governorate changes
   useEffect(() => {
     setCityOptions(getCityOptions(governorate, locale));
-    // Reset city and district when governorate changes
-    if (governorate && city) {
-      onCityChange("");
-      onDistrictChange("");
-    }
-  }, [governorate, locale, city, onCityChange, onDistrictChange]);
+  }, [governorate, locale]);
 
   // Update district options when city changes
   useEffect(() => {
     setDistrictOptions(getDistrictOptions(governorate, city, locale));
-    // Reset district when city changes
-    if (city && district) {
-      onDistrictChange("");
+  }, [governorate, city, locale]);
+
+  // Reset city and district when governorate changes
+  const prevGovernorateRef = useRef(governorate);
+  useEffect(() => {
+    if (prevGovernorateRef.current !== governorate && prevGovernorateRef.current !== '') {
+      if (city) {
+        onCityChange("");
+      }
+      if (district) {
+        onDistrictChange("");
+      }
     }
-  }, [governorate, city, locale, district, onDistrictChange]);
+    prevGovernorateRef.current = governorate;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [governorate]); // Only depend on governorate to avoid infinite loop
+
+  // Reset district when city changes
+  const prevCityRef = useRef(city);
+  useEffect(() => {
+    if (prevCityRef.current !== city && prevCityRef.current !== '') {
+      if (district) {
+        onDistrictChange("");
+      }
+    }
+    prevCityRef.current = city;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [city]); // Only depend on city to avoid infinite loop
 
   const handleGovernorateChange = (value: string) => {
     onGovernorateChange(value);
