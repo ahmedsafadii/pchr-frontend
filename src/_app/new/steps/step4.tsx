@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { CaseData } from "../page";
+import CustomSelect from "../../components/CustomSelect";
 
 interface Step4Props {
   data: CaseData;
@@ -104,21 +105,14 @@ export default function Step4({
                 {locale === "ar" ? "هل فوضت طرف آخر من قبل؟" : "Authorized Another Party Before?"}{" "}
                 <span className="steps__required">*</span>
               </label>
-              <select
-                className={`steps__select ${
-                  errors.authorizedAnotherParty ? "steps__select--error" : ""
-                }`}
+              <CustomSelect
+                options={yesNoOptions}
                 value={formData.authorizedAnotherParty}
-                onChange={(e) =>
-                  handleInputChange("authorizedAnotherParty", e.target.value)
-                }
-              >
-                {yesNoOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => handleInputChange("authorizedAnotherParty", value)}
+                placeholder={locale === "ar" ? "اختر" : "Choose"}
+                isError={!!errors.authorizedAnotherParty}
+                instanceId="step4-authorized-party-select"
+              />
               {errors.authorizedAnotherParty && (
                 <span className="steps__error">{errors.authorizedAnotherParty}</span>
               )}
@@ -129,21 +123,14 @@ export default function Step4({
                 {locale === "ar" ? "التفويض السابق؟" : "Previous Delegation?"}{" "}
                 <span className="steps__required">*</span>
               </label>
-              <select
-                className={`steps__select ${
-                  errors.previousDelegation ? "steps__select--error" : ""
-                }`}
+              <CustomSelect
+                options={yesNoOptions}
                 value={formData.previousDelegation}
-                onChange={(e) =>
-                  handleInputChange("previousDelegation", e.target.value)
-                }
-              >
-                {yesNoOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => handleInputChange("previousDelegation", value)}
+                placeholder={locale === "ar" ? "اختر" : "Choose"}
+                isError={!!errors.previousDelegation}
+                instanceId="step4-previous-delegation-select"
+              />
               {errors.previousDelegation && (
                 <span className="steps__error">{errors.previousDelegation}</span>
               )}

@@ -117,7 +117,7 @@ This document is legally binding and constitutes your formal consent for legal a
   };
 
   const validateForm = () => {
-    return consentAccepted && signature !== "";
+    return signature !== "";
   };
 
   const handleSubmit = () => {

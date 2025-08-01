@@ -1,7 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Tooltip } from "react-tooltip";
+import { IconInfoCircle } from "@tabler/icons-react";
 import { CaseData } from "../page";
+import CustomSelect from "../../components/CustomSelect";
+import { 
+  validatePalestinianId, 
+  getPalestinianIdErrorMessage, 
+  getPalestinianIdTooltip,
+  validatePalestinianPhone,
+  getPalestinianPhoneErrorMessage,
+  getPalestinianPhoneTooltip
+} from "../../utils/validation";
+import { defaultTooltipProps, createTooltipProps, tooltipIconClasses } from "../../utils/tooltip";
 
 interface Step3Props {
   data: CaseData;
@@ -64,11 +76,15 @@ export default function Step3({
     if (!formData.idNumber.trim()) {
       newErrors.idNumber =
         locale === "ar" ? "رقم الهوية مطلوب" : "ID number is required";
+    } else if (!validatePalestinianId(formData.idNumber)) {
+      newErrors.idNumber = getPalestinianIdErrorMessage(locale);
     }
 
     if (!formData.phoneNumber.trim()) {
       newErrors.phoneNumber =
         locale === "ar" ? "رقم الهاتف مطلوب" : "Phone number is required";
+    } else if (!validatePalestinianPhone(formData.phoneNumber)) {
+      newErrors.phoneNumber = getPalestinianPhoneErrorMessage(locale);
     }
 
     if (!formData.relationship.trim()) {
@@ -137,25 +153,40 @@ export default function Step3({
               <label className="steps__label">
                 {locale === "ar" ? "رقم الهوية" : "ID Number"}{" "}
                 <span className="steps__required">*</span>
+                <IconInfoCircle 
+                  size={16} 
+                  className={tooltipIconClasses}
+                  {...createTooltipProps("client-id-number-tooltip", getPalestinianIdTooltip(locale))}
+                />
               </label>
               <input
                 type="text"
                 className={`steps__input ${
                   errors.idNumber ? "steps__input--error" : ""
                 }`}
-                placeholder="0000000000"
+                placeholder="123456789"
                 value={formData.idNumber}
                 onChange={(e) => handleInputChange("idNumber", e.target.value)}
+                maxLength={9}
               />
               {errors.idNumber && (
                 <span className="steps__error">{errors.idNumber}</span>
               )}
+              <Tooltip 
+                id="client-id-number-tooltip"
+                {...defaultTooltipProps}
+              />
             </div>
 
             <div className="steps__form-group">
               <label className="steps__label">
                 {locale === "ar" ? "رقم الهاتف" : "Phone Number"}{" "}
                 <span className="steps__required">*</span>
+                <IconInfoCircle 
+                  size={16} 
+                  className={tooltipIconClasses}
+                  {...createTooltipProps("phone-number-tooltip", getPalestinianPhoneTooltip(locale))}
+                />
               </label>
               <div className="steps__input-wrapper">
                 <input
@@ -163,15 +194,20 @@ export default function Step3({
                   className={`steps__input steps__input--with-icon ${
                     errors.phoneNumber ? "steps__input--error" : ""
                   }`}
-                  placeholder="0000000"
+                  placeholder="0591234567"
                   value={formData.phoneNumber}
                   onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                  maxLength={10}
                 />
                 <span className="steps__input-icon">059</span>
               </div>
               {errors.phoneNumber && (
                 <span className="steps__error">{errors.phoneNumber}</span>
               )}
+              <Tooltip 
+                id="phone-number-tooltip"
+                {...defaultTooltipProps}
+              />
             </div>
 
             <div className="steps__form-group">
@@ -179,21 +215,14 @@ export default function Step3({
                 {locale === "ar" ? "العلاقة" : "Relationship"}{" "}
                 <span className="steps__required">*</span>
               </label>
-              <select
-                className={`steps__select ${
-                  errors.relationship ? "steps__select--error" : ""
-                }`}
+              <CustomSelect
+                options={relationshipOptions}
                 value={formData.relationship}
-                onChange={(e) =>
-                  handleInputChange("relationship", e.target.value)
-                }
-              >
-                {relationshipOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => handleInputChange("relationship", value)}
+                placeholder={locale === "ar" ? "اختر" : "Choose"}
+                isError={!!errors.relationship}
+                instanceId="step3-relationship-select"
+              />
               {errors.relationship && (
                 <span className="steps__error">{errors.relationship}</span>
               )}

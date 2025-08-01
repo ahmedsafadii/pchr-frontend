@@ -16,7 +16,9 @@
     "react": "^19.0.0",
     "react-datepicker": "^8.4.0",
     "react-dom": "^19.0.0",
-    "react-dropzone": "^14.3.8"
+    "react-dropzone": "^14.3.8",
+    "react-select": "^5.10.2",
+    "react-tooltip": "^5.29.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

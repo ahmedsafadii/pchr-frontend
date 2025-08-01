@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { CaseData } from "../page";
+import CustomSelect from "../../components/CustomSelect";
+import AddressSelector from "../../components/AddressSelector";
 
 interface Step2Props {
   data: CaseData;
@@ -100,43 +102,7 @@ export default function Step2({
     { value: "other", label: locale === "ar" ? "أخرى" : "Other" },
   ];
 
-  const cityOptions = [
-    {
-      value: "",
-      label: locale === "ar" ? "غزة/الضفة الغربية" : "Gaza/Westbank",
-    },
-    { value: "gaza", label: locale === "ar" ? "غزة" : "Gaza" },
-    {
-      value: "westbank",
-      label: locale === "ar" ? "الضفة الغربية" : "West Bank",
-    },
-  ];
 
-  const governorateOptions = [
-    {
-      value: "",
-      label: locale === "ar" ? "اختر المحافظة" : "Choose Governorate",
-    },
-    { value: "gaza", label: locale === "ar" ? "غزة" : "Gaza" },
-    { value: "north-gaza", label: locale === "ar" ? "شمال غزة" : "North Gaza" },
-    {
-      value: "deir-al-balah",
-      label: locale === "ar" ? "دير البلح" : "Deir Al-Balah",
-    },
-    { value: "khan-yunis", label: locale === "ar" ? "خان يونس" : "Khan Yunis" },
-    { value: "rafah", label: locale === "ar" ? "رفح" : "Rafah" },
-    { value: "jenin", label: locale === "ar" ? "جنين" : "Jenin" },
-    { value: "tubas", label: locale === "ar" ? "طوباس" : "Tubas" },
-    { value: "tulkarm", label: locale === "ar" ? "طولكرم" : "Tulkarm" },
-    { value: "nablus", label: locale === "ar" ? "نابلس" : "Nablus" },
-    { value: "qalqilya", label: locale === "ar" ? "قلقيلية" : "Qalqilya" },
-    { value: "salfit", label: locale === "ar" ? "سلفيت" : "Salfit" },
-    { value: "ramallah", label: locale === "ar" ? "رام الله" : "Ramallah" },
-    { value: "jericho", label: locale === "ar" ? "أريحا" : "Jericho" },
-    { value: "jerusalem", label: locale === "ar" ? "القدس" : "Jerusalem" },
-    { value: "bethlehem", label: locale === "ar" ? "بيت لحم" : "Bethlehem" },
-    { value: "hebron", label: locale === "ar" ? "الخليل" : "Hebron" },
-  ];
 
   return (
     <div className="steps">
@@ -191,19 +157,13 @@ export default function Step2({
               <label className="steps__label">
                 {locale === "ar" ? "حالة الاختفاء" : "Disappearance Status"}
               </label>
-              <select
-                className="steps__select"
+              <CustomSelect
+                options={disappearanceStatusOptions}
                 value={formData.disappearanceStatus}
-                onChange={(e) =>
-                  handleInputChange("disappearanceStatus", e.target.value)
-                }
-              >
-                {disappearanceStatusOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => handleInputChange("disappearanceStatus", value)}
+                placeholder={locale === "ar" ? "اختر" : "Choose"}
+                instanceId="step2-disappearance-status-select"
+              />
             </div>
           </div>
         </section>
@@ -216,83 +176,26 @@ export default function Step2({
               : "Place of detention/disappearance"}
           </h3>
           <div className="steps__form-groups">
-            <div className="steps__form-group">
-              <label className="steps__label">
-                {locale === "ar" ? "المحافظة" : "Governorate"}{" "}
-                <span className="steps__required">*</span>
-              </label>
-              <select
-                className={`steps__select ${
-                  errors.governorate ? "steps__select--error" : ""
-                }`}
-                value={formData.governorate}
-                onChange={(e) =>
-                  handleInputChange("governorate", e.target.value)
-                }
-              >
-                {governorateOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {errors.governorate && (
-                <span className="steps__error">{errors.governorate}</span>
-              )}
-            </div>
-
-            <div className="steps__form-group">
-              <label className="steps__label">
-                {locale === "ar" ? "المدينة" : "City"}{" "}
-                <span className="steps__required">*</span>
-              </label>
-              <select
-                className={`steps__select ${
-                  errors.city ? "steps__select--error" : ""
-                }`}
-                value={formData.city}
-                onChange={(e) => handleInputChange("city", e.target.value)}
-              >
-                {cityOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {errors.city && (
-                <span className="steps__error">{errors.city}</span>
-              )}
-            </div>
-
-            <div className="steps__form-group">
-              <label className="steps__label">
-                {locale === "ar" ? "المنطقة" : "District"}{" "}
-                <span className="steps__required">*</span>
-              </label>
-              <select
-                className={`steps__select ${
-                  errors.district ? "steps__select--error" : ""
-                }`}
-                value={formData.district}
-                onChange={(e) => handleInputChange("district", e.target.value)}
-              >
-                <option value="">
-                  {locale === "ar" ? "المنطقة" : "District"}
-                </option>
-                <option value="district1">
-                  {locale === "ar" ? "المنطقة 1" : "District 1"}
-                </option>
-                <option value="district2">
-                  {locale === "ar" ? "المنطقة 2" : "District 2"}
-                </option>
-                <option value="district3">
-                  {locale === "ar" ? "المنطقة 3" : "District 3"}
-                </option>
-              </select>
-              {errors.district && (
-                <span className="steps__error">{errors.district}</span>
-              )}
-            </div>
+            <AddressSelector
+              governorate={formData.governorate}
+              city={formData.city}
+              district={formData.district}
+              onGovernorateChange={(value) => handleInputChange("governorate", value)}
+              onCityChange={(value) => handleInputChange("city", value)}
+              onDistrictChange={(value) => handleInputChange("district", value)}
+              locale={locale}
+              errors={{
+                governorate: errors.governorate,
+                city: errors.city,
+                district: errors.district,
+              }}
+              required={{
+                governorate: true,
+                city: true,
+                district: true,
+              }}
+              idPrefix="step2-location"
+            />
 
             <div className="steps__form-group">
               <label className="steps__label">
