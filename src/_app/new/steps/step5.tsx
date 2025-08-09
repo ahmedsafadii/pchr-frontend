@@ -67,10 +67,57 @@ export default function Step5({
   };
 
   useEffect(() => {
-    // Initialize with existing data if available
-    if (data.documents) {
-      // Convert existing data to UploadedFile format if needed
-      // This would depend on how you want to handle existing data
+    // Hydrate from existing documents data on mount/prop change
+    const docs = data.documents;
+    if (!docs) return;
+
+    // If there is a known uploaded detainee_document_id but local list is empty, show a placeholder entry
+    if (docs.detainee_document_id && detaineeIdFiles.length === 0) {
+      const meta = docs.display_meta?.detainee;
+      setDetaineeIdFiles([
+        {
+          id: docs.detainee_document_id,
+          name: meta?.name ?? "document.pdf",
+          size: meta?.size ?? 0,
+          type: "application/pdf",
+          file: new File([new Blob()], meta?.name ?? "document.pdf", { type: "application/pdf" }),
+          url: undefined,
+          status: "uploaded",
+        } as any,
+      ]);
+    }
+
+    if (docs.client_document_id && clientIdFiles.length === 0) {
+      const meta = docs.display_meta?.client;
+      setClientIdFiles([
+        {
+          id: docs.client_document_id,
+          name: meta?.name ?? "document.pdf",
+          size: meta?.size ?? 0,
+          type: "application/pdf",
+          file: new File([new Blob()], meta?.name ?? "document.pdf", { type: "application/pdf" }),
+          url: undefined,
+          status: "uploaded",
+        } as any,
+      ]);
+    }
+
+    if (Array.isArray(docs.additional_document_ids) && additionalFiles.length === 0) {
+      const metas = docs.display_meta?.additional ?? [];
+      setAdditionalFiles(
+        docs.additional_document_ids.map((id) => {
+          const meta = metas.find((m) => m.id === id);
+          return {
+            id,
+            name: meta?.name ?? "document.pdf",
+            size: meta?.size ?? 0,
+            type: "application/pdf",
+            file: new File([new Blob()], meta?.name ?? "document.pdf", { type: "application/pdf" }),
+            url: undefined,
+            status: "uploaded",
+          } as any;
+        })
+      );
     }
   }, [data.documents]);
 
@@ -91,9 +138,10 @@ export default function Step5({
   // File size formatting handled in Uploader
 
   const validateForm = () => {
-    // For documents, we might want to require at least one file
-    // or make it optional depending on requirements
-    return true; // For now, documents are optional
+    // Require at least one uploaded (status==='uploaded') file for detainee and client IDs
+    const hasDetaineeId = getUploadedIds(detaineeIdFiles).length > 0;
+    const hasClientId = getUploadedIds(clientIdFiles).length > 0;
+    return hasDetaineeId && hasClientId;
   };
 
   const handleNext = () => {
@@ -134,7 +182,7 @@ export default function Step5({
         )}
         {/* Detainee ID Section */}
         <section className="steps__section">
-          <h3 className="steps__section-title">{t("newCase.step5.detaineeIdTitle")}</h3>
+          <h3 className="steps__section-title">{t("newCase.step5.detaineeIdTitle")} <span className="steps__required">*</span></h3>
           <Uploader
             documentTypeId={idCardTypeId}
             multiple={false}
@@ -142,6 +190,17 @@ export default function Step5({
             setFiles={(files) => {
               setDetaineeIdFiles(files as any);
               updateDocuments(files as any, clientIdFiles as any, additionalFiles as any);
+              // Persist minimal display meta
+              const first = (files as any[])[0];
+              if (first && first.status === 'uploaded') {
+                updateData('documents', {
+                  ...data.documents,
+                  display_meta: {
+                    ...(data.documents?.display_meta || {}),
+                    detainee: { name: first.name, size: first.size },
+                  },
+                });
+              }
             }}
             onRemove={removeDetaineeIdFile}
             dropzoneText={t("newCase.step5.dropzone.text")}
@@ -152,7 +211,7 @@ export default function Step5({
 
         {/* Client ID Section */}
         <section className="steps__section">
-          <h3 className="steps__section-title">{t("newCase.step5.clientIdTitle")}</h3>
+          <h3 className="steps__section-title">{t("newCase.step5.clientIdTitle")} <span className="steps__required">*</span></h3>
           
           <Uploader
             documentTypeId={idCardTypeId}
@@ -161,6 +220,16 @@ export default function Step5({
             setFiles={(files) => {
               setClientIdFiles(files as any);
               updateDocuments(detaineeIdFiles as any, files as any, additionalFiles as any);
+              const first = (files as any[])[0];
+              if (first && first.status === 'uploaded') {
+                updateData('documents', {
+                  ...data.documents,
+                  display_meta: {
+                    ...(data.documents?.display_meta || {}),
+                    client: { name: first.name, size: first.size },
+                  },
+                });
+              }
             }}
             onRemove={removeClientIdFile}
             dropzoneText={t("newCase.step5.dropzone.text")}
@@ -180,6 +249,14 @@ export default function Step5({
             setFiles={(files) => {
               setAdditionalFiles(files as any);
               updateDocuments(detaineeIdFiles as any, clientIdFiles as any, files as any);
+              const metas = (files as any[]).filter((f) => f.status === 'uploaded').map((f) => ({ id: f.id, name: f.name, size: f.size }));
+              updateData('documents', {
+                ...data.documents,
+                display_meta: {
+                  ...(data.documents?.display_meta || {}),
+                  additional: metas,
+                },
+              });
             }}
             onRemove={removeAdditionalFile}
             dropzoneText={t("newCase.step5.dropzone.text")}
@@ -201,7 +278,7 @@ export default function Step5({
             type="button"
             className="steps__button steps__button--next"
             onClick={handleNext}
-            disabled={!canGoNext}
+            disabled={!validateForm()}
           >
             <span>{t("newCase.common.next")}</span>
           </button>

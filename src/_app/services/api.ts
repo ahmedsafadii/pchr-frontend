@@ -82,7 +82,9 @@ export async function fetchPublicConstants(lang: string) {
 
 export async function uploadDocumentFile(documentTypeId: string, file: File, lang: string) {
   const formData = new FormData();
-  formData.append("document_type", "other");
+  // Some backends expect the type id under different keys; include common variants
+  formData.append("document_type", documentTypeId);
+  formData.append("document_type_id", documentTypeId);
   formData.append("file", file);
   return api.post<ApiResponse>("/public/documents/upload/", formData, { lang });
 }

@@ -92,11 +92,14 @@ export default function Uploader({
               )
             );
           } catch (error) {
+            const err: any = error;
             console.error("Uploader:upload:error", {
               instanceId,
               documentTypeId,
               file: { name: f.name, size: f.size, type: f.type },
-              error,
+              status: err?.status,
+              payload: err?.payload,
+              message: err?.message,
             });
             setFiles((prev) =>
               prev.map((pf) => (pf.id === f.id ? { ...pf, status: "error" } : pf))

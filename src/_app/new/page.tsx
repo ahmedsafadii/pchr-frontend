@@ -59,6 +59,11 @@ export interface CaseData {
     detainee_document_id: string | null;
     client_document_id: string | null;
     additional_document_ids: string[];
+    display_meta?: {
+      detainee?: { name: string; size: number };
+      client?: { name: string; size: number };
+      additional?: Array<{ id: string; name: string; size: number }>;
+    };
   };
 
   // Step 4: Delegation & Communication
@@ -109,6 +114,7 @@ const initialCaseData: CaseData = {
     detainee_document_id: null,
     client_document_id: null,
     additional_document_ids: [],
+    display_meta: undefined,
   },
   delegationInfo: {
     authorized_another_party: false,
@@ -258,7 +264,8 @@ export default function NewCasePage({ locale = "en" }) {
         detentionInfo?.detention_date?.trim() !== '' &&
         detentionInfo?.detention_city?.trim() !== '' &&
         detentionInfo?.detention_governorate?.trim() !== '' &&
-        detentionInfo?.detention_district?.trim() !== ''
+        detentionInfo?.detention_district?.trim() !== '' &&
+        (detentionInfo?.detention_circumstances?.trim().length ?? 0) >= 100
       );
       return isValid;
     }
@@ -284,9 +291,12 @@ export default function NewCasePage({ locale = "en" }) {
       return isValid;
     }
     
-    // For step 5, documents are optional
+    // For step 5, require detainee and client ID documents to be uploaded
     if (stepNumber === 5) {
-      return true; // Documents are optional
+      const documents = caseData.documents;
+      const hasDetaineeId = !!documents?.detainee_document_id;
+      const hasClientId = !!documents?.client_document_id;
+      return hasDetaineeId && hasClientId;
     }
     
     // For other steps, check if step is completed

@@ -212,24 +212,102 @@ This document is legally binding and constitutes your formal consent for legal a
       onComplete(currentStep);
     } catch (error: any) {
       console.error("Step6:submitCase:error", error);
-      // If 422, map backend error keys to steps: 1,2,5,6
+      // If 422, map backend error keys to steps
       const status = error?.status ?? error?.payload?.statusCode;
-      const details = error?.payload?.error?.details;
+      const details = error?.payload?.error?.details as any;
       if (status === 422 && details) {
+        // Helper to map a field name to the step number in our wizard
+        const mapFieldToStep = (field: string): number | null => {
+          const step1 = new Set([
+            "detainee_name",
+            "detainee_id",
+            "detainee_date_of_birth",
+            "detainee_job",
+            "detainee_health_status",
+            "detainee_marital_status",
+            "detainee_city",
+            "detainee_governorate",
+            "detainee_district",
+            "detainee_street",
+          ]);
+          const step2 = new Set([
+            "detention_date",
+            "disappearance_status",
+            "detention_city",
+            "detention_governorate",
+            "detention_district",
+            "detention_street",
+            "detention_circumstances",
+          ]);
+          const step3 = new Set([
+            "client_name",
+            "client_phone",
+            "client_relationship",
+          ]);
+          const step4 = new Set([
+            "authorized_another_party",
+            "previous_delegation",
+            "organisation_name",
+            "delegation_date",
+            "delegation_notes",
+          ]);
+          const step5 = new Set([
+            "detainee_document_id",
+            "client_document_id",
+            "additional_document_ids",
+          ]);
+          const step6 = new Set([
+            "consent_agreed",
+            "signature_document_id",
+            "priority",
+          ]);
+
+          if (step1.has(field)) return 1;
+          if (step2.has(field)) return 2;
+          if (step3.has(field)) return 3;
+          if (step4.has(field)) return 4;
+          if (step5.has(field)) return 5;
+          if (step6.has(field)) return 6;
+
+          // Fallback by prefix heuristics
+          if (field.startsWith("detainee_")) return 1;
+          if (field.startsWith("detention_") || field.includes("disappearance")) return 2;
+          if (field.startsWith("client_")) return 3;
+          if (field.includes("delegation") || field.includes("organisation")) return 4;
+          if (field.includes("document")) return 5;
+          if (field.includes("consent") || field.includes("signature")) return 6;
+          return null;
+        };
+
         const steps: number[] = [];
         const summaries: Record<number, string[]> = {};
-        const push = (step: number, obj: Record<string, string[]>) => {
-          steps.push(step);
-          const allMsgs = Object.values(obj).flat();
-          const uniqueMsgs = Array.from(new Set(allMsgs));
-          summaries[step] = uniqueMsgs;
+
+        const pushSummary = (step: number, messages: string[]) => {
+          if (!summaries[step]) summaries[step] = [];
+          const merged = [...summaries[step], ...messages];
+          summaries[step] = Array.from(new Set(merged));
+          if (!steps.includes(step)) steps.push(step);
         };
-        if (details.step1_detainee_info) push(1, details.step1_detainee_info);
-        if (details.step2_detention_info) push(2, details.step2_detention_info);
-        if (details.step5_documents_info) push(5, details.step5_documents_info);
-        if (details.step6_consent_info) push(6, details.step6_consent_info);
-        onValidationErrors?.({ steps, summaries });
-        return;
+
+        // Case A: API already groups by step keys
+        if (details.step1_detainee_info || details.step2_detention_info || details.step5_documents_info || details.step6_consent_info) {
+          if (details.step1_detainee_info) pushSummary(1, Object.values(details.step1_detainee_info as Record<string, string[]>).flat());
+          if (details.step2_detention_info) pushSummary(2, Object.values(details.step2_detention_info as Record<string, string[]>).flat());
+          if (details.step5_documents_info) pushSummary(5, Object.values(details.step5_documents_info as Record<string, string[]>).flat());
+          if (details.step6_consent_info) pushSummary(6, Object.values(details.step6_consent_info as Record<string, string[]>).flat());
+        } else if (typeof details === 'object') {
+          // Case B: Flat field -> messages mapping like { detainee_job: ["Must be a valid UUID."] }
+          Object.entries(details as Record<string, string[] | string>).forEach(([field, msgs]) => {
+            const step = mapFieldToStep(field);
+            const messages = Array.isArray(msgs) ? msgs : [String(msgs)];
+            if (step) pushSummary(step, messages);
+          });
+        }
+
+        if (steps.length > 0) {
+          onValidationErrors?.({ steps, summaries });
+          return;
+        }
       }
       const apiMsg = error?.payload?.error?.message ?? undefined;
       setShowError(apiMsg || undefined);

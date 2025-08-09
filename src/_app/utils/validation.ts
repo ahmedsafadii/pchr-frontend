@@ -55,9 +55,9 @@ export const getPalestinianIdTooltip = (locale: string): string => {
 
 /**
  * Palestinian Phone Number Format:
- * - Must start with 059
+ * - Must start with 059 or 056
  * - Followed by exactly 7 digits
- * - Total: 10 digits (059XXXXXXX)
+ * - Total: 10 digits (059XXXXXXX / 056XXXXXXX)
  */
 
 export const PALESTINIAN_PHONE_REGEX = /^[0-9]{7}$/;
@@ -71,12 +71,12 @@ export const validatePalestinianPhone = (phoneNumber: string): boolean => {
   // Remove any spaces, dashes, or other formatting
   const cleanPhone = phoneNumber.replace(/[\s\-\(\)]/g, '');
   
-  // Check if it starts with 059 and has exactly 7 more digits
-  if (!cleanPhone.startsWith('059')) {
+  // Check if it starts with 059 or 056 and has exactly 7 more digits
+  if (!(cleanPhone.startsWith('059') || cleanPhone.startsWith('056'))) {
     return false;
   }
   
-  // Extract the part after 059 and validate it's exactly 7 digits
+  // Extract the part after the prefix and validate it's exactly 7 digits
   const remainingDigits = cleanPhone.substring(3);
   return PALESTINIAN_PHONE_REGEX.test(remainingDigits);
 };
@@ -88,8 +88,8 @@ export const validatePalestinianPhone = (phoneNumber: string): boolean => {
  */
 export const getPalestinianPhoneErrorMessage = (locale: string): string => {
   return locale === "ar" 
-    ? "رقم الهاتف يجب أن يبدأ بـ 059 ويتبعه 7 أرقام"
-    : "Phone number must start with 059 followed by 7 digits";
+    ? "رقم الهاتف يجب أن يبدأ بـ 059 أو 056 ويتبعه 7 أرقام"
+    : "Phone number must start with 059 or 056 followed by 7 digits";
 };
 
 /**
@@ -99,6 +99,6 @@ export const getPalestinianPhoneErrorMessage = (locale: string): string => {
  */
 export const getPalestinianPhoneTooltip = (locale: string): string => {
   return locale === "ar"
-    ? "رقم الهاتف الفلسطيني يجب أن يبدأ بـ 059 (مثال: 0591234567)"
-    : "Palestinian phone number must start with 059 (example: 0591234567)";
+    ? "رقم الهاتف الفلسطيني يجب أن يبدأ بـ 059 أو 056 (مثال: 0591234567)"
+    : "Palestinian phone number must start with 059 or 056 (example: 0591234567)";
 };

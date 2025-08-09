@@ -129,46 +129,50 @@ export default function Step4({
               )}
             </div>
 
-            <div className="steps__form-group">
-              <label className="steps__label">
-                {t("newCase.step4.organisationName")}
-              </label>
-              <input
-                type="text"
-                className="steps__input"
-                placeholder={t("newCase.step4.organisationNamePlaceholder")}
-                value={formData.organisation_name}
-                onChange={(e) => handleInputChange("organisation_name", e.target.value)}
-              />
-            </div>
+            {formData.authorized_another_party && (
+              <>
+                <div className="steps__form-group">
+                  <label className="steps__label">
+                    {t("newCase.step4.organisationName")}
+                  </label>
+                  <input
+                    type="text"
+                    className="steps__input"
+                    placeholder={t("newCase.step4.organisationNamePlaceholder")}
+                    value={formData.organisation_name}
+                    onChange={(e) => handleInputChange("organisation_name", e.target.value)}
+                  />
+                </div>
 
-            <div className="steps__form-group">
-              <label className="steps__label">
-                {t("newCase.step4.date")}
-              </label>
-              <div className="steps__input-wrapper">
-                <DatePicker
-                  selected={
-                    formData.delegation_date
-                      ? new Date(formData.delegation_date)
-                      : null
-                  }
-                  onChange={(date) => {
-                    const formattedDate = date
-                      ? date.toISOString().split("T")[0]
-                      : "";
-                    handleInputChange("delegation_date", formattedDate);
-                  }}
-                  dateFormat="dd/MM/yyyy"
-                  placeholderText={t("newCase.step4.datePlaceholder")}
-                  maxDate={new Date()}
-                  showYearDropdown
-                  scrollableYearDropdown
-                  yearDropdownItemNumber={100}
-                  className="steps__input"
-                />
-              </div>
-            </div>
+                <div className="steps__form-group">
+                  <label className="steps__label">
+                    {t("newCase.step4.date")}
+                  </label>
+                  <div className="steps__input-wrapper">
+                    <DatePicker
+                      selected={
+                        formData.delegation_date
+                          ? new Date(formData.delegation_date)
+                          : null
+                      }
+                      onChange={(date) => {
+                        const formattedDate = date
+                          ? date.toISOString().split("T")[0]
+                          : "";
+                        handleInputChange("delegation_date", formattedDate);
+                      }}
+                      dateFormat="dd/MM/yyyy"
+                      placeholderText={t("newCase.step4.datePlaceholder")}
+                      maxDate={new Date()}
+                      showYearDropdown
+                      scrollableYearDropdown
+                      yearDropdownItemNumber={100}
+                      className="steps__input"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </section>
 
