@@ -108,6 +108,7 @@ export default function Step1({
 
   const healthStatusOptions = useMemo(() => (constants?.data?.health_statuses as any[]) || [], [constants]);
   const maritalStatusOptions = useMemo(() => (constants?.data?.marital_statuses as any[]) || [], [constants]);
+  const jobOptions = useMemo(() => (constants?.data?.jobs as any[]) || [], [constants]);
 
 
 
@@ -215,12 +216,15 @@ export default function Step1({
 
             <div className="steps__form-group">
               <label className="steps__label">{t("newCase.step1.job")}</label>
-              <input
-                type="text"
-                className="steps__input"
-                placeholder={t("newCase.step1.jobPlaceholder")}
+              <CustomSelect
+                options={jobOptions}
+                labelKey="name"
+                valueKey="id"
                 value={formData.detainee_job}
-                onChange={(e) => handleInputChange("detainee_job", e.target.value)}
+                onChange={(value) => handleInputChange("detainee_job", value)}
+                placeholder={`${t("newCase.common.choose")} ${t("newCase.step1.job")}`}
+                isDisabled={isConstantsLoading || !constants}
+                instanceId="step1-job-select"
               />
             </div>
 

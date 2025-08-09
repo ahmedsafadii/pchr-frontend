@@ -27,7 +27,7 @@ export interface CaseData {
     detainee_name: string;
     detainee_id: string;
     detainee_date_of_birth: string;
-    detainee_job: string;
+    detainee_job: string; // store job id
     detainee_health_status: string;
     detainee_marital_status: string;
     detainee_city: string;
