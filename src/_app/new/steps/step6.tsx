@@ -1,8 +1,15 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useLocale, useTranslations } from "next-globe-gen";
+import { submitCase, uploadDocumentFile } from "../../services/api";
+import ConfirmSubmitModal from "../modals/ConfirmSubmitModal";
+import LoadingModal from "../modals/LoadingModal";
+import SuccessModal from "../modals/SuccessModal";
+import ErrorModal from "../modals/ErrorModal";
 import { IconDownload, IconFileText } from "@tabler/icons-react";
 import { CaseData } from "../page";
+import { useDocumentTypeId } from "../../utils/constants-helpers";
 
 interface Step6Props {
   data: CaseData;
@@ -23,13 +30,23 @@ export default function Step6({
   onComplete,
   onPrevious,
   currentStep,
-  locale = "en",
 }: Step6Props) {
   const [consentAccepted] = useState(true);
-  const [signature, setSignature] = useState<string>("");
+  const [, setSignature] = useState<string>("");
   const [isDrawing, setIsDrawing] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
+  const t = useTranslations();
+  const locale = useLocale();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState<string | null>(null);
+  const [caseRef, setCaseRef] = useState<string>("");
+  const [isUploadingSignature, setIsUploadingSignature] = useState(false);
+  const [hasDrawn, setHasDrawn] = useState(false);
+  const [signatureError, setSignatureError] = useState<string | null>(null);
+  const otherDocTypeId = useDocumentTypeId("other");
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -62,6 +79,7 @@ export default function Step6({
     const { offsetX, offsetY } = event.nativeEvent;
     contextRef.current?.lineTo(offsetX, offsetY);
     contextRef.current?.stroke();
+    if (!hasDrawn) setHasDrawn(true);
   };
 
   const stopDrawing = () => {
@@ -76,14 +94,50 @@ export default function Step6({
     if (!context) return;
     context.clearRect(0, 0, canvas.width, canvas.height);
     setSignature("");
+    setHasDrawn(false);
+    setSignatureError(null);
   };
 
-  const uploadSignature = () => {
+  const uploadSignature = async () => {
+    setSignatureError(null);
+    // If already uploaded via file, skip
+    if (data.consent.signature_document_id) return;
+    if (!hasDrawn) {
+      setSignatureError(t("newCase.step6.alerts.missingSignature"));
+      return;
+    }
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
-    const signatureData = canvas.toDataURL("image/png");
-    setSignature(signatureData);
+    try {
+      setIsUploadingSignature(true);
+      // Convert canvas to blob then to File
+      const blob: Blob | null = await new Promise((resolve) =>
+        canvas.toBlob(resolve as BlobCallback, "image/png")
+      );
+      if (!blob) throw new Error("Failed to get signature blob");
+      const file = new File([blob], `signature-${Date.now()}.png`, {
+        type: "image/png",
+      });
+      if (!otherDocTypeId) throw new Error("Missing document type id");
+      const res = await uploadDocumentFile(otherDocTypeId, file, locale);
+      const serverId = (res?.data?.document_id ?? null) as string | null;
+      if (!serverId) throw new Error("Upload did not return document_id");
+      // Save id in consent; this will satisfy step validation
+      updateData("consent", {
+        ...data.consent,
+        signature_document_id: serverId,
+      });
+    } catch (e: any) {
+      console.error("Step6:signatureUpload:error", e);
+      setSignatureError(e?.message || "Signature upload failed");
+    } finally {
+      setIsUploadingSignature(false);
+    }
+  };
+
+  const removeUploadedSignature = () => {
+    updateData("consent", { ...data.consent, signature_document_id: null });
+    setSignatureError(null);
   };
 
   const downloadDocument = () => {
@@ -117,37 +171,57 @@ This document is legally binding and constitutes your formal consent for legal a
   };
 
   const validateForm = () => {
-    return signature !== "";
+    // Valid only if a signature document has been uploaded
+    return !!data.consent.signature_document_id;
   };
 
-  const handleSubmit = () => {
-    if (validateForm()) {
-      const consentData = {
-        consentAccepted,
-        signature,
-        submissionDate: new Date().toISOString(),
-      };
-      
-      updateData("consent", consentData);
+  const handleSubmit = async () => {
+    if (!validateForm()) {
+      alert(t("newCase.step6.alerts.missingSignature"));
+      return;
+    }
+
+    const consentData = {
+      consent_agreed: consentAccepted,
+      signature_document_id: data.consent.signature_document_id ?? null,
+      priority: data.consent.priority ?? null,
+    };
+    updateData("consent", { ...data.consent, ...consentData });
+
+    const payload = {
+      ...data.detaineeInfo,
+      ...data.detentionInfo,
+      ...data.clientInfo,
+      ...data.delegationInfo,
+      ...data.documents,
+      ...consentData,
+    } as Record<string, any>;
+
+    try {
+      setIsSubmitting(true);
+      console.log("Step6:submitCase:payload", payload);
+      const res = await submitCase(payload, locale);
+      console.log("Step6:submitCase:success", res);
+      const ref = (res as any)?.data?.case_number ?? "";
+      setCaseRef(ref);
+      setShowSuccess(true);
       onComplete(currentStep);
-      
-      // Here you would typically submit the case data to the server
-      console.log("Case submitted successfully!", data);
-      
-      // You could redirect to a success page or show a success message
-      alert(locale === "ar" ? "تم إرسال التقرير بنجاح!" : "Report submitted successfully!");
-    } else {
-      alert(locale === "ar" ? "يرجى الموافقة على الشروط وتوقيع المستند" : "Please accept the terms and sign the document");
+    } catch (error: any) {
+      console.error("Step6:submitCase:error", error);
+      const apiMsg = error?.payload?.error?.message ?? undefined;
+      setShowError(apiMsg || undefined);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="steps">
       <header className="steps__header">
-        <span className="steps__step-number">STEP 6</span>
-        <h2 className="steps__title">
-          {locale === "ar" ? "الموافقة والإرسال" : "Consent and Submission"}
-        </h2>
+        <span className="steps__step-number">
+          {t("newCase.step6.stepNumber")}
+        </span>
+        <h2 className="steps__title">{t("newCase.step6.title")}</h2>
       </header>
 
       <form className="steps__form" onSubmit={(e) => e.preventDefault()}>
@@ -156,9 +230,7 @@ This document is legally binding and constitutes your formal consent for legal a
           <div className="steps__consent-statement">
             <IconFileText size={20} className="steps__consent-icon" />
             <div className="steps__consent-text">
-              {locale === "ar"
-                ? "أوافق على تفويض المركز الفلسطيني لحقوق الإنسان لمتابعة القضية قانونياً..."
-                : "I agree to authorize the Palestinian Center for Human Rights to legally pursue..."}
+              {t("newCase.step6.consentText")}
             </div>
           </div>
         </section>
@@ -166,7 +238,7 @@ This document is legally binding and constitutes your formal consent for legal a
         {/* Legal Document Section */}
         <section className="steps__section">
           <h3 className="steps__section-title">
-            {locale === "ar" ? "المستند القانوني" : "Legal document"}
+            {t("newCase.step6.legalDocTitle")}
           </h3>
           <div className="steps__legal-document">
             <textarea
@@ -195,9 +267,7 @@ This document is legally binding and constitutes your formal consent for legal a
               onClick={downloadDocument}
             >
               <IconDownload size={16} />
-              <span>
-                {locale === "ar" ? "تحميل المستند" : "Download document"}
-              </span>
+              <span>{t("newCase.step6.download")}</span>
             </button>
           </div>
         </section>
@@ -205,34 +275,61 @@ This document is legally binding and constitutes your formal consent for legal a
         {/* Signature Section */}
         <section className="steps__section">
           <h3 className="steps__section-title">
-            {locale === "ar" ? "توقيعك" : "Your Signature"}
+            {t("newCase.step6.signatureTitle")}
           </h3>
-          <div className="steps__signature-controls">
-            <button
-              type="button"
-              className="steps__signature-button"
-              onClick={uploadSignature}
-            >
-              {locale === "ar" ? "رفع" : "Upload"}
-            </button>
-            <button
-              type="button"
-              className="steps__signature-button"
-              onClick={clearSignature}
-            >
-              {locale === "ar" ? "مسح" : "Clear"}
-            </button>
-          </div>
-          <div className="steps__signature-area">
-            <canvas
-              ref={canvasRef}
-              className="steps__signature-canvas"
-              onMouseDown={startDrawing}
-              onMouseMove={draw}
-              onMouseUp={stopDrawing}
-              onMouseLeave={stopDrawing}
-            />
-          </div>
+          {data.consent.signature_document_id ? (
+            <div className="signature__uploaded">
+              <button
+                type="button"
+                className="steps__signature-button"
+                onClick={removeUploadedSignature}
+              >
+                {t("newCase.step6.clear")}
+              </button>
+              <span className="signature__status signature__status--success">
+                {t("newCase.step6.signatureSaved")}
+              </span>
+            </div>
+          ) : (
+            <>
+              <div className="steps__signature-controls">
+                {!signatureError && (
+                  <button
+                    type="button"
+                    className="steps__signature-button"
+                    onClick={uploadSignature}
+                    disabled={
+                      isUploadingSignature || !hasDrawn || !otherDocTypeId
+                    }
+                  >
+                    {isUploadingSignature ? "..." : t("newCase.step6.upload")}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="steps__signature-button"
+                  onClick={clearSignature}
+                >
+                  {t("newCase.step6.clear")}
+                </button>
+              </div>
+              {signatureError && (
+                <p className="steps__error" style={{ marginTop: 8 }}>
+                  {signatureError}
+                </p>
+              )}
+              <div className="steps__signature-area">
+                <canvas
+                  ref={canvasRef}
+                  className="steps__signature-canvas"
+                  onMouseDown={startDrawing}
+                  onMouseMove={draw}
+                  onMouseUp={stopDrawing}
+                  onMouseLeave={stopDrawing}
+                />
+              </div>
+            </>
+          )}
         </section>
 
         {/* Navigation */}
@@ -242,18 +339,41 @@ This document is legally binding and constitutes your formal consent for legal a
             className="steps__button steps__button--previous"
             onClick={onPrevious}
           >
-            <span>{locale === "ar" ? "السابق" : "Prev"}</span>
+            <span>{t("newCase.common.prev")}</span>
           </button>
           <button
             type="button"
             className="steps__button steps__button--submit"
-            onClick={handleSubmit}
+            onClick={() => setShowConfirm(true)}
             disabled={!validateForm()}
           >
-            <span>{locale === "ar" ? "إرسال" : "Send"}</span>
+            <span>{isSubmitting ? "..." : t("newCase.step6.submit")}</span>
           </button>
         </div>
       </form>
+      <ConfirmSubmitModal
+        isOpen={showConfirm}
+        onCancel={() => setShowConfirm(false)}
+        onConfirm={() => {
+          setShowConfirm(false);
+          void handleSubmit();
+        }}
+      />
+      <LoadingModal isOpen={isSubmitting} />
+      <SuccessModal
+        isOpen={showSuccess}
+        caseRef={caseRef}
+        onTrack={() => setShowSuccess(false)}
+      />
+      <ErrorModal
+        isOpen={!!showError}
+        message={showError ?? undefined}
+        onRetry={() => {
+          setShowError(null);
+          void handleSubmit();
+        }}
+        onClose={() => setShowError(null)}
+      />
     </div>
   );
-} 
+}

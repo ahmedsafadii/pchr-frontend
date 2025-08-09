@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Tooltip } from "react-tooltip";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { CaseData } from "../page";
 import CustomSelect from "../../components/CustomSelect";
-import AddressSelector from "../../components/AddressSelector";
+import GazaAddressSelector from "../../components/GazaAddressSelector";
 import { validatePalestinianId, getPalestinianIdErrorMessage, getPalestinianIdTooltip } from "../../utils/validation";
 import { defaultTooltipProps, createTooltipProps, tooltipIconClasses } from "../../utils/tooltip";
+import { useConstantsStore } from "../../store/constants.store";
+import { useTranslations } from "next-globe-gen";
 
 interface Step1Props {
   data: CaseData;
@@ -35,6 +37,8 @@ export default function Step1({
 }: Step1Props) {
   const [formData, setFormData] = useState(data.detaineeInfo);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const { constants, isLoading: isConstantsLoading } = useConstantsStore();
+  const t = useTranslations();
 
   useEffect(() => {
     setFormData(data.detaineeInfo);
@@ -63,48 +67,22 @@ export default function Step1({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName =
-        locale === "ar" ? "الاسم الكامل مطلوب" : "Full name is required";
-    }
+    if (!formData.detainee_name.trim()) newErrors.fullName = t("newCase.step1.errors.fullNameRequired");
 
-    if (!formData.idNumber.trim()) {
-      newErrors.idNumber =
-        locale === "ar" ? "رقم الهوية مطلوب" : "ID number is required";
-    } else if (!validatePalestinianId(formData.idNumber)) {
-      newErrors.idNumber = getPalestinianIdErrorMessage(locale);
-    }
+    if (!formData.detainee_id.trim()) newErrors.idNumber = t("newCase.step1.errors.idNumberRequired");
+    else if (!validatePalestinianId(formData.detainee_id)) newErrors.idNumber = getPalestinianIdErrorMessage(locale);
 
-    if (!formData.dateOfBirth.trim()) {
-      newErrors.dateOfBirth =
-        locale === "ar" ? "تاريخ الميلاد مطلوب" : "Date of birth is required";
-    }
+    if (!formData.detainee_date_of_birth.trim()) newErrors.dateOfBirth = t("newCase.step1.errors.dateOfBirthRequired");
 
-    if (!formData.healthStatus.trim()) {
-      newErrors.healthStatus =
-        locale === "ar" ? "الحالة الصحية مطلوبة" : "Health status is required";
-    }
+    if (!formData.detainee_health_status.trim()) newErrors.healthStatus = t("newCase.step1.errors.healthStatusRequired");
 
-    if (!formData.maritalStatus.trim()) {
-      newErrors.maritalStatus =
-        locale === "ar"
-          ? "الحالة الاجتماعية مطلوبة"
-          : "Marital status is required";
-    }
+    if (!formData.detainee_marital_status.trim()) newErrors.maritalStatus = t("newCase.step1.errors.maritalStatusRequired");
 
-    if (!formData.city.trim()) {
-      newErrors.city = locale === "ar" ? "المدينة مطلوبة" : "City is required";
-    }
+    if (!formData.detainee_city.trim()) newErrors.city = t("newCase.step1.errors.cityRequired");
 
-    if (!formData.governorate.trim()) {
-      newErrors.governorate =
-        locale === "ar" ? "المحافظة مطلوبة" : "Governorate is required";
-    }
+    if (!formData.detainee_governorate.trim()) newErrors.governorate = t("newCase.step1.errors.governorateRequired");
 
-    if (!formData.district.trim()) {
-      newErrors.district =
-        locale === "ar" ? "المنطقة مطلوبة" : "District is required";
-    }
+    if (!formData.detainee_district.trim()) newErrors.district = t("newCase.step1.errors.districtRequired");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -118,34 +96,17 @@ export default function Step1({
     }
   };
 
-  const healthStatusOptions = [
-    { value: "", label: locale === "ar" ? "اختر" : "Choose" },
-    { value: "healthy", label: locale === "ar" ? "صحي" : "Healthy" },
-    {
-      value: "chronic-illness",
-      label: locale === "ar" ? "مرض مزمن" : "Chronic Illness",
-    },
-    { value: "disability", label: locale === "ar" ? "إعاقة" : "Disability" },
-    { value: "pregnancy", label: locale === "ar" ? "حمل" : "Pregnancy" },
-    { value: "other", label: locale === "ar" ? "أخرى" : "Other" },
-  ];
-
-  const maritalStatusOptions = [
-    { value: "", label: locale === "ar" ? "اختر" : "Choose" },
-    { value: "single", label: locale === "ar" ? "أعزب" : "Single" },
-    { value: "married", label: locale === "ar" ? "متزوج" : "Married" },
-    { value: "divorced", label: locale === "ar" ? "مطلق" : "Divorced" },
-    { value: "widowed", label: locale === "ar" ? "أرمل" : "Widowed" },
-  ];
+  const healthStatusOptions = useMemo(() => (constants?.data?.health_statuses as any[]) || [], [constants]);
+  const maritalStatusOptions = useMemo(() => (constants?.data?.marital_statuses as any[]) || [], [constants]);
 
 
 
   return (
     <div className="steps">
       <header className="steps__header">
-        <span className="steps__step-number">STEP 1</span>
+        <span className="steps__step-number">{t("newCase.step1.stepNumber")}</span>
         <h2 className="steps__title">
-          {locale === "ar" ? "معلومات المعتقل" : "Detainee Informations"}
+          {t("newCase.step1.title")}
         </h2>
       </header>
 
@@ -155,7 +116,7 @@ export default function Step1({
           <div className="steps__form-groups">
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "الاسم الكامل" : "Full Name"}{" "}
+                {t("newCase.step1.fullName")} {" "}
                 <span className="steps__required">*</span>
               </label>
               <input
@@ -163,11 +124,9 @@ export default function Step1({
                 className={`steps__input ${
                   errors.fullName ? "steps__input--error" : ""
                 }`}
-                placeholder={
-                  locale === "ar" ? "مثال: محمد علي" : "Ex: Mohammed Ali"
-                }
-                value={formData.fullName}
-                onChange={(e) => handleInputChange("fullName", e.target.value)}
+                placeholder={t("newCase.step1.fullNamePlaceholder")}
+                value={formData.detainee_name}
+                onChange={(e) => handleInputChange("detainee_name", e.target.value)}
               />
               {errors.fullName && (
                 <span className="steps__error">{errors.fullName}</span>
@@ -176,7 +135,7 @@ export default function Step1({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "رقم الهوية" : "ID Number"}{" "}
+                {t("newCase.step1.idNumber")} {" "}
                 <span className="steps__required">*</span>
                 <IconInfoCircle 
                   size={16} 
@@ -189,9 +148,9 @@ export default function Step1({
                 className={`steps__input ${
                   errors.idNumber ? "steps__input--error" : ""
                 }`}
-                placeholder="123456789"
-                value={formData.idNumber}
-                onChange={(e) => handleInputChange("idNumber", e.target.value)}
+                placeholder={t("newCase.step1.idNumberPlaceholder")}
+                value={formData.detainee_id}
+                onChange={(e) => handleInputChange("detainee_id", e.target.value)}
                 maxLength={9}
               />
               {errors.idNumber && (
@@ -205,22 +164,22 @@ export default function Step1({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "تاريخ الميلاد" : "Date Of Birth"}{" "}
+                {t("newCase.step1.dateOfBirth")} {" "}
                 <span className="steps__required">*</span>
               </label>
               <div className="steps__input-wrapper">
                 <DatePicker
                   selected={
-                    formData.dateOfBirth ? new Date(formData.dateOfBirth) : null
+                    formData.detainee_date_of_birth ? new Date(formData.detainee_date_of_birth) : null
                   }
                   onChange={(date) => {
                     const formattedDate = date
                       ? date.toISOString().split("T")[0]
                       : "";
-                    handleInputChange("dateOfBirth", formattedDate);
+                    handleInputChange("detainee_date_of_birth", formattedDate);
                   }}
                   dateFormat="dd/MM/yyyy"
-                  placeholderText="DD/MM/YYYY"
+                  placeholderText={t("newCase.step1.dateOfBirthPlaceholder")}
                   maxDate={new Date()}
                   showYearDropdown
                   scrollableYearDropdown
@@ -228,9 +187,7 @@ export default function Step1({
                 />
               </div>
               <span className="steps__hint">
-                {locale === "ar"
-                  ? "أقل من 18 سنة يعتبر طفلاً"
-                  : "Under 18 To Be Child"}
+                {t("newCase.step1.ageHint")}
               </span>
               {errors.dateOfBirth && (
                 <span className="steps__error">{errors.dateOfBirth}</span>
@@ -239,30 +196,33 @@ export default function Step1({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "المهنة" : "Job"}
+                {t("newCase.step1.job")}
               </label>
               <input
                 type="text"
                 className="steps__input"
-                placeholder={locale === "ar" ? "مثل: عامل" : "Like: Worker"}
-                value={formData.job}
-                onChange={(e) => handleInputChange("job", e.target.value)}
+                placeholder={t("newCase.step1.jobPlaceholder")}
+                value={formData.detainee_street}
+                onChange={(e) => handleInputChange("detainee_street", e.target.value)}
               />
             </div>
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "الحالة الصحية" : "Healthy Status"}{" "}
+                {t("newCase.step1.healthStatus")} {" "}
                 <span className="steps__required">*</span>
               </label>
-              <CustomSelect
-                options={healthStatusOptions}
-                value={formData.healthStatus}
-                onChange={(value) => handleInputChange("healthStatus", value)}
-                placeholder={locale === "ar" ? "اختر" : "Choose"}
-                isError={!!errors.healthStatus}
-                instanceId="step1-health-status-select"
-              />
+                <CustomSelect
+                  options={healthStatusOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  value={formData.detainee_health_status}
+                  onChange={(value) => handleInputChange("detainee_health_status", value)}
+                  placeholder={t("newCase.common.choose")}
+                  isError={!!errors.healthStatus}
+                  isDisabled={isConstantsLoading || !constants}
+                  instanceId="step1-health-status-select"
+                />
               {errors.healthStatus && (
                 <span className="steps__error">{errors.healthStatus}</span>
               )}
@@ -270,15 +230,18 @@ export default function Step1({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "الحالة الاجتماعية" : "Marital Status"}{" "}
+                {t("newCase.step1.maritalStatus")} {" "}
                 <span className="steps__required">*</span>
               </label>
               <CustomSelect
                 options={maritalStatusOptions}
-                value={formData.maritalStatus}
-                onChange={(value) => handleInputChange("maritalStatus", value)}
-                placeholder={locale === "ar" ? "اختر" : "Choose"}
+                labelKey="name"
+                valueKey="id"
+                value={formData.detainee_marital_status}
+                onChange={(value) => handleInputChange("detainee_marital_status", value)}
+                placeholder={t("newCase.common.choose")}
                 isError={!!errors.maritalStatus}
+                isDisabled={isConstantsLoading || !constants}
                 instanceId="step1-marital-status-select"
               />
               {errors.maritalStatus && (
@@ -291,17 +254,16 @@ export default function Step1({
         {/* Address Section */}
         <section className="steps__section">
           <h3 className="steps__section-title">
-            {locale === "ar" ? "العنوان" : "Address"}
+            {t("newCase.address.title")}
           </h3>
           <div className="steps__form-groups">
-            <AddressSelector
-              governorate={formData.governorate}
-              city={formData.city}
-              district={formData.district}
-              onGovernorateChange={(value) => handleInputChange("governorate", value)}
-              onCityChange={(value) => handleInputChange("city", value)}
-              onDistrictChange={(value) => handleInputChange("district", value)}
-              locale={locale}
+            <GazaAddressSelector
+              governorate={formData.detainee_governorate}
+              city={formData.detainee_city}
+              district={formData.detainee_district}
+              onGovernorateChange={(value) => handleInputChange("detainee_governorate", value)}
+              onCityChange={(value) => handleInputChange("detainee_city", value)}
+              onDistrictChange={(value) => handleInputChange("detainee_district", value)}
               errors={{
                 governorate: errors.governorate,
                 city: errors.city,
@@ -317,15 +279,15 @@ export default function Step1({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "اسم الشارع" : "Street Name"}
+                {t("newCase.address.streetName")}
               </label>
               <input
                 type="text"
                 className="steps__input"
-                placeholder={locale === "ar" ? "اسم الشارع" : "Street Name"}
-                value={formData.streetName}
+                placeholder={t("newCase.address.streetNamePlaceholder")}
+                value={formData.detainee_street}
                 onChange={(e) =>
-                  handleInputChange("streetName", e.target.value)
+                  handleInputChange("detainee_street", e.target.value)
                 }
               />
             </div>
@@ -340,7 +302,7 @@ export default function Step1({
             onClick={handleNext}
             disabled={!canGoNext}
           >
-            <span>{locale === "ar" ? "التالي" : "Next"}</span>
+            <span>{t("newCase.common.next")}</span>
           </button>
         </div>
       </form>

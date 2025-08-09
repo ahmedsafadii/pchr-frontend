@@ -20,6 +20,156 @@
       }
     },
     "newCase": {
-      "back": "العودة للرئيسية"
+      "back": "العودة للرئيسية",
+      "common": {
+        "choose": "اختر",
+        "next": "التالي",
+        "prev": "السابق"
+      },
+      "step1": {
+        "stepNumber": "الخطوة 1",
+        "title": "معلومات المعتقل",
+        "fullName": "الاسم الكامل",
+        "fullNamePlaceholder": "مثال: محمد علي",
+        "idNumber": "رقم الهوية",
+        "idNumberPlaceholder": "123456789",
+        "dateOfBirth": "تاريخ الميلاد",
+        "dateOfBirthPlaceholder": "يوم/شهر/سنة",
+        "ageHint": "أقل من 18 سنة يعتبر طفلاً",
+        "job": "المهنة",
+        "jobPlaceholder": "مثل: عامل",
+        "healthStatus": "الحالة الصحية",
+        "maritalStatus": "الحالة الاجتماعية",
+        "errors": {
+          "fullNameRequired": "الاسم الكامل مطلوب",
+          "idNumberRequired": "رقم الهوية مطلوب",
+          "dateOfBirthRequired": "تاريخ الميلاد مطلوب",
+          "healthStatusRequired": "الحالة الصحية مطلوبة",
+          "maritalStatusRequired": "الحالة الاجتماعية مطلوبة",
+          "cityRequired": "المدينة مطلوبة",
+          "governorateRequired": "المحافظة مطلوبة",
+          "districtRequired": "المنطقة مطلوبة"
+        }
+      },
+      "step2": {
+        "stepNumber": "الخطوة 2",
+        "title": "معلومات الاعتقال/الاختفاء",
+        "disappearanceDate": "تاريخ الاختفاء",
+        "disappearanceDatePlaceholder": "يوم/شهر/سنة",
+        "disappearanceStatus": "حالة الاختفاء",
+        "placeTitle": "مكان الاعتقال/الاختفاء",
+        "circumstancesLabel": "ظروف الاعتقال/الاختفاء",
+        "circumstancesPlaceholder": "اكتب هنا...",
+        "statusOptions": {
+          "detained": "معتقل",
+          "disappeared": "مختفي",
+          "kidnapped": "مختطف",
+          "arrested": "مقبوض عليه",
+          "other": "أخرى"
+        },
+        "errors": {
+          "disappearanceDateRequired": "تاريخ الاختفاء مطلوب",
+          "cityRequired": "المدينة مطلوبة",
+          "governorateRequired": "المحافظة مطلوبة",
+          "districtRequired": "المنطقة مطلوبة"
+        }
+      },
+      "step3": {
+        "stepNumber": "الخطوة 3",
+        "title": "معلومات العميل",
+        "fullName": "الاسم الكامل",
+        "fullNamePlaceholder": "مثال: محمد علي",
+        "idNumber": "رقم الهوية",
+        "idNumberPlaceholder": "123456789",
+        "phoneNumber": "رقم الهاتف",
+        "phoneNumberPlaceholder": "0591234567",
+        "relationship": "العلاقة",
+        "errors": {
+          "fullNameRequired": "الاسم الكامل مطلوب",
+          "idNumberRequired": "رقم الهوية مطلوب",
+          "phoneNumberRequired": "رقم الهاتف مطلوب",
+          "relationshipRequired": "العلاقة مطلوبة"
+        }
+      },
+      "step4": {
+        "stepNumber": "الخطوة 4",
+        "title": "التفويض والتواصل",
+        "authorizedAnotherParty": "هل فوضت طرف آخر من قبل؟",
+        "previousDelegation": "التفويض السابق؟",
+        "organisationName": "اسم المنظمة",
+        "organisationNamePlaceholder": "اسم المنظمة",
+        "date": "التاريخ",
+        "datePlaceholder": "يوم/شهر/سنة",
+        "yes": "نعم",
+        "no": "لا",
+        "errors": {
+          "required": "هذا الحقل مطلوب"
+        }
+      },
+      "step5": {
+        "stepNumber": "الخطوة 5",
+        "title": "رفع المستندات",
+        "detaineeIdTitle": "هوية المعتقل",
+        "clientIdTitle": "هوية العميل",
+        "additionalDocsTitle": "مستندات إضافية",
+        "dropzone": {
+          "text": "اسحب وأفلت اختر من الملفات",
+          "hint": "DOCS, PDF, EXL, حتى 1.5 ميجابايت"
+        },
+        "uploadStatus": {
+          "uploading": "جاري الرفع...",
+          "uploaded": "تم الرفع",
+          "failed": "فشل الرفع"
+        }
+      },
+      "step6": {
+        "stepNumber": "الخطوة 6",
+        "title": "الموافقة والإرسال",
+        "consentText": "أوافق على تفويض المركز الفلسطيني لحقوق الإنسان لمتابعة القضية قانونياً...",
+        "legalDocTitle": "المستند القانوني",
+        "download": "تحميل المستند",
+        "signatureTitle": "توقيعك",
+        "upload": "رفع",
+        "clear": "مسح",
+        "submit": "إرسال",
+        "signatureSaved": "تم حفظ التوقيع",
+        "alerts": {
+          "submitted": "تم إرسال التقرير بنجاح!",
+          "missingSignature": "يرجى الموافقة على الشروط وتوقيع المستند"
+        }
+      },
+      "submitModals": {
+        "confirm": {
+          "title": "هل أنت متأكد أنك تريد إرسال الحالة",
+          "yes": "نعم",
+          "no": "لا"
+        },
+        "loading": {
+          "title": "جاري إرسال الحالة..."
+        },
+        "success": {
+          "title": "تم إرسال حالتك بنجاح.",
+          "caseRef": "رقم الحالة:",
+          "copy": "نسخ",
+          "cta": "تتبع طلبك"
+        },
+        "error": {
+          "title": "فشل الإرسال",
+          "message": "حدث خطأ أثناء إرسال الحالة. يرجى المحاولة مرة أخرى.",
+          "retry": "حاول مرة أخرى",
+          "close": "إغلاق"
+        }
+      },
+      "address": {
+        "title": "العنوان",
+        "governorate": "المحافظة",
+        "city": "المدينة",
+        "district": "المنطقة",
+        "streetName": "اسم الشارع",
+        "streetNamePlaceholder": "اسم الشارع"
+      },
+      "validation": {
+        "palestinianIdInvalid": "رقم الهوية غير صالح"
+      }
     }
   }

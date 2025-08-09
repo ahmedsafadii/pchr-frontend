@@ -9,10 +9,13 @@ interface Option {
 }
 
 interface CustomSelectProps {
-  options: Option[];
+  options?: any[]; // Can be Option[] or raw array of objects
+  labelKey?: string; // Used when options are raw objects
+  valueKey?: string; // Used when options are raw objects
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  includeNullOption?: boolean; // Prepend a null/empty option using placeholder
   isSearchable?: boolean;
   isMulti?: boolean;
   className?: string;
@@ -23,9 +26,12 @@ interface CustomSelectProps {
 
 export default function CustomSelect({
   options,
+  labelKey = 'label',
+  valueKey = 'value',
   value,
   onChange,
   placeholder = "Choose",
+  includeNullOption = true,
   isSearchable = true,
   isMulti = false,
   className = "",
@@ -33,7 +39,26 @@ export default function CustomSelect({
   isDisabled = false,
   instanceId,
 }: CustomSelectProps) {
-  const selectedOption = options.find(option => option.value === value) || null;
+  const normalizedOptions: Option[] = useMemo(() => {
+    const input = options ?? [];
+    const mapped = input.map((item: any) => {
+      if (item && typeof item === 'object' && 'value' in item && 'label' in item) {
+        return item as Option;
+      }
+      return {
+        value: String(item?.[valueKey] ?? ''),
+        label: String(item?.[labelKey] ?? ''),
+      } as Option;
+    }).filter((opt: Option) => opt.label !== '');
+
+    const hasNullOption = mapped.some((opt) => opt.value === '');
+    if (includeNullOption && !hasNullOption) {
+      return [{ value: '', label: placeholder }, ...mapped];
+    }
+    return mapped;
+  }, [options, labelKey, valueKey, includeNullOption, placeholder]);
+
+  const selectedOption = normalizedOptions.find(option => option.value === value) || null;
   
   // Generate a stable instanceId to prevent hydration mismatches
   const stableInstanceId = useMemo(() => {
@@ -141,7 +166,7 @@ export default function CustomSelect({
   return (
     <Select
       instanceId={stableInstanceId}
-      options={options}
+      options={normalizedOptions}
       value={selectedOption}
       onChange={handleChange}
       placeholder={placeholder}

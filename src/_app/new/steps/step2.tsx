@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { CaseData } from "../page";
 import CustomSelect from "../../components/CustomSelect";
-import AddressSelector from "../../components/AddressSelector";
+import GazaAddressSelector from "../../components/GazaAddressSelector";
+import { useTranslations } from "next-globe-gen";
+import { useConstantsStore } from "../../store/constants.store";
 
 interface Step2Props {
   data: CaseData;
@@ -28,10 +30,11 @@ export default function Step2({
   onPrevious,
   currentStep,
   canGoNext,
-  locale = "en",
 }: Step2Props) {
   const [formData, setFormData] = useState(data.detentionInfo);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const t = useTranslations();
+  const { constants, isLoading: isConstantsLoading } = useConstantsStore();
 
   useEffect(() => {
     setFormData(data.detentionInfo);
@@ -60,26 +63,19 @@ export default function Step2({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.disappearanceDate.trim()) {
-      newErrors.disappearanceDate =
-        locale === "ar"
-          ? "تاريخ الاختفاء مطلوب"
-          : "Disappearance date is required";
-    }
+    if (!formData.detention_date.trim())
+      newErrors.disappearanceDate = t(
+        "newCase.step2.errors.disappearanceDateRequired"
+      );
 
-    if (!formData.city.trim()) {
-      newErrors.city = locale === "ar" ? "المدينة مطلوبة" : "City is required";
-    }
+    if (!formData.detention_city.trim())
+      newErrors.city = t("newCase.step2.errors.cityRequired");
 
-    if (!formData.governorate.trim()) {
-      newErrors.governorate =
-        locale === "ar" ? "المحافظة مطلوبة" : "Governorate is required";
-    }
+    if (!formData.detention_governorate.trim())
+      newErrors.governorate = t("newCase.step2.errors.governorateRequired");
 
-    if (!formData.district.trim()) {
-      newErrors.district =
-        locale === "ar" ? "المنطقة مطلوبة" : "District is required";
-    }
+    if (!formData.detention_district.trim())
+      newErrors.district = t("newCase.step2.errors.districtRequired");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -93,26 +89,18 @@ export default function Step2({
     }
   };
 
-  const disappearanceStatusOptions = [
-    { value: "", label: locale === "ar" ? "اختر" : "Choose" },
-    { value: "detained", label: locale === "ar" ? "معتقل" : "Detained" },
-    { value: "disappeared", label: locale === "ar" ? "مختفي" : "Disappeared" },
-    { value: "kidnapped", label: locale === "ar" ? "مختطف" : "Kidnapped" },
-    { value: "arrested", label: locale === "ar" ? "مقبوض عليه" : "Arrested" },
-    { value: "other", label: locale === "ar" ? "أخرى" : "Other" },
-  ];
-
-
+  const disappearanceStatusOptions = useMemo(
+    () => (constants?.data?.disappearance_statuses as any[]) || [],
+    [constants]
+  );
 
   return (
     <div className="steps">
       <header className="steps__header">
-        <span className="steps__step-number">STEP 2</span>
-        <h2 className="steps__title">
-          {locale === "ar"
-            ? "معلومات الاعتقال/الاختفاء"
-            : "Detention/Disappearance Info"}
-        </h2>
+        <span className="steps__step-number">
+          {t("newCase.step2.stepNumber")}
+        </span>
+        <h2 className="steps__title">{t("newCase.step2.title")}</h2>
       </header>
 
       <form className="steps__form" onSubmit={(e) => e.preventDefault()}>
@@ -121,24 +109,22 @@ export default function Step2({
           <div className="steps__form-groups">
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "تاريخ الاختفاء" : "Disappearance Date"}{" "}
+                {t("newCase.step2.disappearanceDate")}{" "}
                 <span className="steps__required">*</span>
               </label>
               <div className="steps__input-wrapper">
                 <DatePicker
-                  selected={
-                    formData.disappearanceDate
-                      ? new Date(formData.disappearanceDate)
-                      : null
-                  }
+                  selected={formData.detention_date ? new Date(formData.detention_date) : null}
                   onChange={(date) => {
                     const formattedDate = date
                       ? date.toISOString().split("T")[0]
                       : "";
-                    handleInputChange("disappearanceDate", formattedDate);
+                    handleInputChange("detention_date", formattedDate);
                   }}
                   dateFormat="dd/MM/yyyy"
-                  placeholderText="DD/MM/YYYY"
+                  placeholderText={t(
+                    "newCase.step2.disappearanceDatePlaceholder"
+                  )}
                   maxDate={new Date()}
                   showYearDropdown
                   scrollableYearDropdown
@@ -155,13 +141,16 @@ export default function Step2({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "حالة الاختفاء" : "Disappearance Status"}
+                {t("newCase.step2.disappearanceStatus")}
               </label>
               <CustomSelect
                 options={disappearanceStatusOptions}
-                value={formData.disappearanceStatus}
-                onChange={(value) => handleInputChange("disappearanceStatus", value)}
-                placeholder={locale === "ar" ? "اختر" : "Choose"}
+                labelKey="name"
+                valueKey="id"
+                value={formData.disappearance_status}
+                onChange={(value) => handleInputChange("disappearance_status", value)}
+                placeholder={t("newCase.common.choose")}
+                isDisabled={isConstantsLoading || !constants}
                 instanceId="step2-disappearance-status-select"
               />
             </div>
@@ -171,19 +160,18 @@ export default function Step2({
         {/* Place of Detention/Disappearance Section */}
         <section className="steps__section">
           <h3 className="steps__section-title">
-            {locale === "ar"
-              ? "مكان الاعتقال/الاختفاء"
-              : "Place of detention/disappearance"}
+            {t("newCase.step2.placeTitle")}
           </h3>
           <div className="steps__form-groups">
-            <AddressSelector
-              governorate={formData.governorate}
-              city={formData.city}
-              district={formData.district}
-              onGovernorateChange={(value) => handleInputChange("governorate", value)}
-              onCityChange={(value) => handleInputChange("city", value)}
-              onDistrictChange={(value) => handleInputChange("district", value)}
-              locale={locale}
+            <GazaAddressSelector
+              governorate={formData.detention_governorate}
+              city={formData.detention_city}
+              district={formData.detention_district}
+              onGovernorateChange={(value) =>
+                handleInputChange("detention_governorate", value)
+              }
+              onCityChange={(value) => handleInputChange("detention_city", value)}
+              onDistrictChange={(value) => handleInputChange("detention_district", value)}
               errors={{
                 governorate: errors.governorate,
                 city: errors.city,
@@ -199,15 +187,15 @@ export default function Step2({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "اسم الشارع" : "Street Name"}
+                {t("newCase.address.streetName")}
               </label>
               <input
                 type="text"
                 className="steps__input"
-                placeholder={locale === "ar" ? "اسم الشارع" : "Street Name"}
-                value={formData.streetName}
+                placeholder={t("newCase.address.streetNamePlaceholder")}
+                value={formData.detention_street}
                 onChange={(e) =>
-                  handleInputChange("streetName", e.target.value)
+                  handleInputChange("detention_street", e.target.value)
                 }
               />
             </div>
@@ -218,24 +206,22 @@ export default function Step2({
         <section className="steps__section">
           <div className="steps__form-group">
             <label className="steps__label">
-              {locale === "ar"
-                ? "ظروف الاعتقال/الاختفاء"
-                : "Circumstances Of The Detention/Disappearance"}
+              {t("newCase.step2.circumstancesLabel")}
             </label>
             <textarea
               className="steps__textarea"
-              placeholder={locale === "ar" ? "اكتب هنا..." : "Placeholder"}
-              value={formData.disappearanceCircumstances}
+              placeholder={t("newCase.step2.circumstancesPlaceholder")}
+              value={formData.detention_circumstances}
               onChange={(e) => {
                 const value = e.target.value;
                 if (value.length <= 100) {
-                  handleInputChange("disappearanceCircumstances", value);
+                  handleInputChange("detention_circumstances", value);
                 }
               }}
               rows={4}
             />
             <div className="steps__character-count">
-              {formData.disappearanceCircumstances.length}/100
+              {formData.detention_circumstances.length}/100
             </div>
           </div>
         </section>
@@ -247,7 +233,7 @@ export default function Step2({
             className="steps__button steps__button--previous"
             onClick={onPrevious}
           >
-            <span>{locale === "ar" ? "السابق" : "Prev"}</span>
+            <span>{t("newCase.common.prev")}</span>
           </button>
           <button
             type="button"
@@ -255,7 +241,7 @@ export default function Step2({
             onClick={handleNext}
             disabled={!canGoNext}
           >
-            <span>{locale === "ar" ? "التالي" : "Next"}</span>
+            <span>{t("newCase.common.next")}</span>
           </button>
         </div>
       </form>

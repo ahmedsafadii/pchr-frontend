@@ -24,107 +24,101 @@ import Link from "next/link";
 export interface CaseData {
   // Step 1: Detainee Information
   detaineeInfo: {
-    fullName: string;
-    idNumber: string;
-    dateOfBirth: string;
-    job: string;
-    healthStatus: string;
-    maritalStatus: string;
-    city: string;
-    governorate: string;
-    district: string;
-    streetName: string;
+    detainee_name: string;
+    detainee_id: string;
+    detainee_date_of_birth: string;
+    detainee_health_status: string;
+    detainee_marital_status: string;
+    detainee_city: string;
+    detainee_governorate: string;
+    detainee_district: string;
+    detainee_street: string;
   };
 
   // Step 2: Detention/Disappearance Info
   detentionInfo: {
-    disappearanceDate: string;
-    disappearanceStatus: string;
-    city: string;
-    governorate: string;
-    district: string;
-    streetName: string;
-    disappearanceCircumstances: string;
+    detention_date: string;
+    disappearance_status: string;
+    detention_city: string;
+    detention_governorate: string;
+    detention_district: string;
+    detention_street: string;
+    detention_circumstances: string;
   };
 
   // Step 3: Client Info
   clientInfo: {
-    fullName: string;
-    relationship: string;
-    phoneNumber: string;
-    email: string;
-    address: string;
-    idNumber: string;
+    client_name: string;
+    client_phone: string;
+    client_relationship: string;
   };
 
   // Step 5: Documents Upload
   documents: {
-    detaineeIdFiles: Array<{ name: string; size: number; url?: string }>;
-    clientIdFiles: Array<{ name: string; size: number; url?: string }>;
-    additionalFiles: Array<{ name: string; size: number; url?: string }>;
+    detainee_document_id: string | null;
+    client_document_id: string | null;
+    additional_document_ids: string[];
   };
 
   // Step 4: Delegation & Communication
   delegationInfo: {
-    authorizedAnotherParty: string;
-    previousDelegation: string;
-    organisationName: string;
-    date: string;
+    authorized_another_party: boolean;
+    previous_delegation: boolean;
+    organisation_name: string;
+    delegation_date: string | null;
+    delegation_notes: string;
   };
 
   // Step 6: Consent and Submission
   consent: {
-    consentAccepted: boolean;
-    signature: string;
-    submissionDate: string;
+    consent_agreed: boolean;
+    signature_document_id: string | null;
+    priority: string | null;
   };
 }
 
 const initialCaseData: CaseData = {
   detaineeInfo: {
-    fullName: "",
-    idNumber: "",
-    dateOfBirth: "",
-    job: "",
-    healthStatus: "",
-    maritalStatus: "",
-    city: "",
-    governorate: "",
-    district: "",
-    streetName: "",
+    detainee_name: "",
+    detainee_id: "",
+    detainee_date_of_birth: "",
+    detainee_health_status: "",
+    detainee_marital_status: "",
+    detainee_city: "",
+    detainee_governorate: "",
+    detainee_district: "",
+    detainee_street: "",
   },
   detentionInfo: {
-    disappearanceDate: "",
-    disappearanceStatus: "",
-    city: "",
-    governorate: "",
-    district: "",
-    streetName: "",
-    disappearanceCircumstances: "",
+    detention_date: "",
+    disappearance_status: "",
+    detention_city: "",
+    detention_governorate: "",
+    detention_district: "",
+    detention_street: "",
+    detention_circumstances: "",
   },
   clientInfo: {
-    fullName: "",
-    relationship: "",
-    phoneNumber: "",
-    email: "",
-    address: "",
-    idNumber: "",
+    client_name: "",
+    client_phone: "",
+    client_relationship: "",
   },
   documents: {
-    detaineeIdFiles: [],
-    clientIdFiles: [],
-    additionalFiles: [],
+    detainee_document_id: null,
+    client_document_id: null,
+    additional_document_ids: [],
   },
   delegationInfo: {
-    authorizedAnotherParty: "",
-    previousDelegation: "",
-    organisationName: "",
-    date: "",
+    authorized_another_party: false,
+    previous_delegation: false,
+    organisation_name: "",
+    delegation_date: null,
+    delegation_notes: "",
   },
   consent: {
-    consentAccepted: false,
-    signature: "",
-    submissionDate: "",
+    consent_agreed: false,
+    signature_document_id: null,
+    priority: null,
   },
 };
 
@@ -208,13 +202,11 @@ export default function NewCasePage({ locale = "en" }) {
   }, [caseData, currentStep, completedSteps]);
 
   const updateCaseData = (section: keyof CaseData, data: any) => {
-    console.log('updateCaseData called:', { section, data });
     setCaseData((prev) => {
       const updated = {
         ...prev,
         [section]: { ...prev[section], ...data },
       };
-      console.log('Updated caseData:', updated);
       return updated;
     });
   };
@@ -230,16 +222,15 @@ export default function NewCasePage({ locale = "en" }) {
     if (stepNumber === 1) {
       const detaineeInfo = caseData.detaineeInfo;
       const isValid = (
-        detaineeInfo?.fullName?.trim() !== '' &&
-        detaineeInfo?.idNumber?.trim() !== '' &&
-        detaineeInfo?.dateOfBirth?.trim() !== '' &&
-        detaineeInfo?.healthStatus?.trim() !== '' &&
-        detaineeInfo?.maritalStatus?.trim() !== '' &&
-        detaineeInfo?.city?.trim() !== '' &&
-        detaineeInfo?.governorate?.trim() !== '' &&
-        detaineeInfo?.district?.trim() !== ''
+        detaineeInfo?.detainee_name?.trim() !== '' &&
+        detaineeInfo?.detainee_id?.trim() !== '' &&
+        detaineeInfo?.detainee_date_of_birth?.trim() !== '' &&
+        detaineeInfo?.detainee_health_status?.trim() !== '' &&
+        detaineeInfo?.detainee_marital_status?.trim() !== '' &&
+        detaineeInfo?.detainee_city?.trim() !== '' &&
+        detaineeInfo?.detainee_governorate?.trim() !== '' &&
+        detaineeInfo?.detainee_district?.trim() !== ''
       );
-      console.log('Step 1 validation:', { detaineeInfo, isValid });
       return isValid;
     }
     
@@ -247,12 +238,11 @@ export default function NewCasePage({ locale = "en" }) {
     if (stepNumber === 2) {
       const detentionInfo = caseData.detentionInfo;
       const isValid = (
-        detentionInfo?.disappearanceDate?.trim() !== '' &&
-        detentionInfo?.city?.trim() !== '' &&
-        detentionInfo?.governorate?.trim() !== '' &&
-        detentionInfo?.district?.trim() !== ''
+        detentionInfo?.detention_date?.trim() !== '' &&
+        detentionInfo?.detention_city?.trim() !== '' &&
+        detentionInfo?.detention_governorate?.trim() !== '' &&
+        detentionInfo?.detention_district?.trim() !== ''
       );
-      console.log('Step 2 validation:', { detentionInfo, isValid });
       return isValid;
     }
     
@@ -260,12 +250,10 @@ export default function NewCasePage({ locale = "en" }) {
     if (stepNumber === 3) {
       const clientInfo = caseData.clientInfo;
       const isValid = (
-        clientInfo?.fullName?.trim() !== '' &&
-        clientInfo?.idNumber?.trim() !== '' &&
-        clientInfo?.phoneNumber?.trim() !== '' &&
-        clientInfo?.relationship?.trim() !== ''
+        clientInfo?.client_name?.trim() !== '' &&
+        clientInfo?.client_phone?.trim() !== '' &&
+        clientInfo?.client_relationship?.trim() !== ''
       );
-      console.log('Step 3 validation:', { clientInfo, isValid });
       return isValid;
     }
     
@@ -273,10 +261,9 @@ export default function NewCasePage({ locale = "en" }) {
     if (stepNumber === 4) {
       const delegationInfo = caseData.delegationInfo;
       const isValid = (
-        delegationInfo?.authorizedAnotherParty?.trim() !== '' &&
-        delegationInfo?.previousDelegation?.trim() !== ''
+        typeof delegationInfo?.authorized_another_party === 'boolean' &&
+        typeof delegationInfo?.previous_delegation === 'boolean'
       );
-      console.log('Step 4 validation:', { delegationInfo, isValid });
       return isValid;
     }
     

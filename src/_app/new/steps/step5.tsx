@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useDropzone } from "react-dropzone";
-import { IconTrash, IconPlus } from "@tabler/icons-react";
+import { useState, useEffect } from "react";
+// Dropzone is handled inside Uploader component
 import { CaseData } from "../page";
+import { useTranslations } from "next-globe-gen";
+import Uploader from "../../components/Uploader";
+import { useDocumentTypeId } from "../../utils/constants-helpers";
 
 interface Step5Props {
   data: CaseData;
@@ -35,11 +37,33 @@ export default function Step5({
   onPrevious,
   currentStep,
   canGoNext,
-  locale = "en",
+  
 }: Step5Props) {
+  const t = useTranslations();
   const [detaineeIdFiles, setDetaineeIdFiles] = useState<UploadedFile[]>([]);
   const [clientIdFiles, setClientIdFiles] = useState<UploadedFile[]>([]);
   const [additionalFiles, setAdditionalFiles] = useState<UploadedFile[]>([]);
+  const idCardTypeId = useDocumentTypeId('id_card');
+  const otherTypeId = useDocumentTypeId('other');
+
+  // Helper to extract uploaded server ids
+  const getUploadedIds = (files: any[]) =>
+    files.filter((f) => f?.status === 'uploaded' && typeof f?.id === 'string').map((f) => f.id as string);
+
+  const updateDocuments = (
+    nextDetainee: UploadedFile[] = detaineeIdFiles,
+    nextClient: UploadedFile[] = clientIdFiles,
+    nextAdditional: UploadedFile[] = additionalFiles
+  ) => {
+    const detaineeId = getUploadedIds(nextDetainee)[0] ?? null;
+    const clientId = getUploadedIds(nextClient)[0] ?? null;
+    const additionalIds = getUploadedIds(nextAdditional);
+    updateData('documents', {
+      detainee_document_id: detaineeId,
+      client_document_id: clientId,
+      additional_document_ids: additionalIds,
+    });
+  };
 
   useEffect(() => {
     // Initialize with existing data if available
@@ -49,41 +73,7 @@ export default function Step5({
     }
   }, [data.documents]);
 
-  const onDetaineeIdDrop = useCallback((acceptedFiles: File[]) => {
-    const newFiles = acceptedFiles.map(file => ({
-      id: Math.random().toString(36).substr(2, 9),
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      file: file,
-      url: URL.createObjectURL(file)
-    }));
-    setDetaineeIdFiles(prev => [...prev, ...newFiles]);
-  }, []);
-
-  const onClientIdDrop = useCallback((acceptedFiles: File[]) => {
-    const newFiles = acceptedFiles.map(file => ({
-      id: Math.random().toString(36).substr(2, 9),
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      file: file,
-      url: URL.createObjectURL(file)
-    }));
-    setClientIdFiles(prev => [...prev, ...newFiles]);
-  }, []);
-
-  const onAdditionalDrop = useCallback((acceptedFiles: File[]) => {
-    const newFiles = acceptedFiles.map(file => ({
-      id: Math.random().toString(36).substr(2, 9),
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      file: file,
-      url: URL.createObjectURL(file)
-    }));
-    setAdditionalFiles(prev => [...prev, ...newFiles]);
-  }, []);
+  // Drop handlers moved into Uploader
 
   const removeDetaineeIdFile = (fileId: string) => {
     setDetaineeIdFiles(prev => prev.filter(file => file.id !== fileId));
@@ -97,13 +87,7 @@ export default function Step5({
     setAdditionalFiles(prev => prev.filter(file => file.id !== fileId));
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-  };
+  // File size formatting handled in Uploader
 
   const validateForm = () => {
     // For documents, we might want to require at least one file
@@ -126,176 +110,72 @@ export default function Step5({
     }
   };
 
-  const { getRootProps: getDetaineeIdRootProps, getInputProps: getDetaineeIdInputProps, isDragActive: isDetaineeIdDragActive } = useDropzone({
-    onDrop: onDetaineeIdDrop,
-    accept: {
-      'application/pdf': ['.pdf'],
-      'application/msword': ['.doc'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-      'application/vnd.ms-excel': ['.xls'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
-    },
-    maxSize: 1.5 * 1024 * 1024, // 1.5 MB
-    multiple: false
-  });
-
-  const { getRootProps: getClientIdRootProps, getInputProps: getClientIdInputProps, isDragActive: isClientIdDragActive } = useDropzone({
-    onDrop: onClientIdDrop,
-    accept: {
-      'application/pdf': ['.pdf'],
-      'application/msword': ['.doc'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-      'application/vnd.ms-excel': ['.xls'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
-    },
-    maxSize: 1.5 * 1024 * 1024, // 1.5 MB
-    multiple: true
-  });
-
-  const { getRootProps: getAdditionalRootProps, getInputProps: getAdditionalInputProps, isDragActive: isAdditionalDragActive } = useDropzone({
-    onDrop: onAdditionalDrop,
-    accept: {
-      'application/pdf': ['.pdf'],
-      'application/msword': ['.doc'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-      'application/vnd.ms-excel': ['.xls'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
-    },
-    maxSize: 1.5 * 1024 * 1024, // 1.5 MB
-    multiple: true
-  });
+  // Dropzones moved inside Uploader
 
   return (
     <div className="steps">
       <header className="steps__header">
-        <span className="steps__step-number">STEP 5</span>
+        <span className="steps__step-number">{t("newCase.step5.stepNumber")}</span>
         <h2 className="steps__title">
-          {locale === "ar" ? "رفع المستندات" : "Documents upload"}
+          {t("newCase.step5.title")}
         </h2>
       </header>
 
       <form className="steps__form" onSubmit={(e) => e.preventDefault()}>
         {/* Detainee ID Section */}
         <section className="steps__section">
-          <h3 className="steps__section-title">
-            {locale === "ar" ? "هوية المعتقل" : "Detainee ID"}
-          </h3>
-          
-          {/* Show uploaded files */}
-          {detaineeIdFiles.length > 0 && (
-            <div className="steps__uploaded-files">
-              {detaineeIdFiles.map((file) => (
-                <div key={file.id} className="steps__uploaded-file">
-                  <span className="steps__file-name">{file.name}</span>
-                  <span className="steps__file-size">{formatFileSize(file.size)}</span>
-                  <button
-                    type="button"
-                    className="steps__file-remove"
-                    onClick={() => removeDetaineeIdFile(file.id)}
-                  >
-                    <IconTrash size={16} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Drop zone */}
-          <div
-            {...getDetaineeIdRootProps()}
-            className={`steps__dropzone ${isDetaineeIdDragActive ? 'steps__dropzone--active' : ''}`}
-          >
-            <input {...getDetaineeIdInputProps()} />
-            <IconPlus size={24} className="steps__dropzone-icon" />
-            <p className="steps__dropzone-text">
-              {locale === "ar" ? "اسحب وأفلت اختر من الملفات" : "Drag & Drop Choose from files"}
-            </p>
-            <p className="steps__dropzone-hint">
-              {locale === "ar" ? "DOCS, PDF, EXL, حتى 1.5 ميجابايت" : "DOCS, PDF, EXL, Up To 1.5 MB"}
-            </p>
-          </div>
+          <h3 className="steps__section-title">{t("newCase.step5.detaineeIdTitle")}</h3>
+          <Uploader
+            documentTypeId={idCardTypeId}
+            multiple={false}
+            files={detaineeIdFiles as any}
+            setFiles={(files) => {
+              setDetaineeIdFiles(files as any);
+              updateDocuments(files as any, clientIdFiles as any, additionalFiles as any);
+            }}
+            onRemove={removeDetaineeIdFile}
+            dropzoneText={t("newCase.step5.dropzone.text")}
+            dropzoneHint={t("newCase.step5.dropzone.hint")}
+            instanceId="detainee-id"
+          />
         </section>
 
         {/* Client ID Section */}
         <section className="steps__section">
-          <h3 className="steps__section-title">
-            {locale === "ar" ? "هوية العميل" : "Client ID"}
-          </h3>
+          <h3 className="steps__section-title">{t("newCase.step5.clientIdTitle")}</h3>
           
-          {/* Show uploaded files */}
-          {clientIdFiles.length > 0 && (
-            <div className="steps__uploaded-files">
-              {clientIdFiles.map((file) => (
-                <div key={file.id} className="steps__uploaded-file">
-                  <span className="steps__file-name">{file.name}</span>
-                  <span className="steps__file-size">{formatFileSize(file.size)}</span>
-                  <button
-                    type="button"
-                    className="steps__file-remove"
-                    onClick={() => removeClientIdFile(file.id)}
-                  >
-                    <IconTrash size={16} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Drop zone */}
-          <div
-            {...getClientIdRootProps()}
-            className={`steps__dropzone ${isClientIdDragActive ? 'steps__dropzone--active' : ''}`}
-          >
-            <input {...getClientIdInputProps()} />
-            <IconPlus size={24} className="steps__dropzone-icon" />
-            <p className="steps__dropzone-text">
-              {locale === "ar" ? "اسحب وأفلت اختر من الملفات" : "Drag & Drop Choose from files"}
-            </p>
-            <p className="steps__dropzone-hint">
-              {locale === "ar" ? "DOCS, PDF, EXL, حتى 1.5 ميجابايت" : "DOCS, PDF, EXL, Up To 1.5 MB"}
-            </p>
-          </div>
+          <Uploader
+            documentTypeId={idCardTypeId}
+            multiple={true}
+            files={clientIdFiles as any}
+            setFiles={(files) => {
+              setClientIdFiles(files as any);
+              updateDocuments(detaineeIdFiles as any, files as any, additionalFiles as any);
+            }}
+            onRemove={removeClientIdFile}
+            dropzoneText={t("newCase.step5.dropzone.text")}
+            dropzoneHint={t("newCase.step5.dropzone.hint")}
+            instanceId="client-id"
+          />
         </section>
 
         {/* Additional Documents Section */}
         <section className="steps__section">
-          <h3 className="steps__section-title">
-            {locale === "ar" ? "مستندات إضافية" : "Additional documentations"}
-          </h3>
+          <h3 className="steps__section-title">{t("newCase.step5.additionalDocsTitle")}</h3>
           
-          {/* Show uploaded files */}
-          {additionalFiles.length > 0 && (
-            <div className="steps__uploaded-files">
-              {additionalFiles.map((file) => (
-                <div key={file.id} className="steps__uploaded-file">
-                  <span className="steps__file-name">{file.name}</span>
-                  <span className="steps__file-size">{formatFileSize(file.size)}</span>
-                  <button
-                    type="button"
-                    className="steps__file-remove"
-                    onClick={() => removeAdditionalFile(file.id)}
-                  >
-                    <IconTrash size={16} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Drop zone */}
-          <div
-            {...getAdditionalRootProps()}
-            className={`steps__dropzone ${isAdditionalDragActive ? 'steps__dropzone--active' : ''}`}
-          >
-            <input {...getAdditionalInputProps()} />
-            <IconPlus size={24} className="steps__dropzone-icon" />
-            <p className="steps__dropzone-text">
-              {locale === "ar" ? "اسحب وأفلت اختر من الملفات" : "Drag & Drop Choose from files"}
-            </p>
-            <p className="steps__dropzone-hint">
-              {locale === "ar" ? "DOCS, PDF, EXL, حتى 1.5 ميجابايت" : "DOCS, PDF, EXL, Up To 1.5 MB"}
-            </p>
-          </div>
+          <Uploader
+            documentTypeId={otherTypeId}
+            multiple={true}
+            files={additionalFiles as any}
+            setFiles={(files) => {
+              setAdditionalFiles(files as any);
+              updateDocuments(detaineeIdFiles as any, clientIdFiles as any, files as any);
+            }}
+            onRemove={removeAdditionalFile}
+            dropzoneText={t("newCase.step5.dropzone.text")}
+            dropzoneHint={t("newCase.step5.dropzone.hint")}
+            instanceId="additional-docs"
+          />
         </section>
 
         {/* Navigation */}
@@ -305,7 +185,7 @@ export default function Step5({
             className="steps__button steps__button--previous"
             onClick={onPrevious}
           >
-            <span>{locale === "ar" ? "السابق" : "Prev"}</span>
+            <span>{t("newCase.common.prev")}</span>
           </button>
           <button
             type="button"
@@ -313,7 +193,7 @@ export default function Step5({
             onClick={handleNext}
             disabled={!canGoNext}
           >
-            <span>{locale === "ar" ? "التالي" : "Next"}</span>
+            <span>{t("newCase.common.next")}</span>
           </button>
         </div>
       </form>

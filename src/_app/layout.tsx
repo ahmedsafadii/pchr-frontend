@@ -4,6 +4,7 @@ import { IBM_Plex_Sans_Arabic } from "next/font/google";
 import { useLocale } from "next-globe-gen";
 import { ReactNode } from "react";
 import "@/app/css/globals.css";
+import ClientProviders from "./components/ClientProviders";
 
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   weight: ["100", "200", "300", "400", "500", "600", "700"],
@@ -25,7 +26,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* <div className="overlay">
           <img src="/img/screenshot.png" alt="PCHR" />
         </div> */}
-        {children}
+        <ClientProviders locale={locale}>{children}</ClientProviders>
       </body>
     </html>
   );

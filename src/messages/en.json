@@ -20,6 +20,156 @@
     }
   },
   "newCase": {
-    "back": "Back to Home"
+    "back": "Back to Home",
+    "common": {
+      "choose": "Choose",
+      "next": "Next",
+      "prev": "Prev"
+    },
+    "step1": {
+      "stepNumber": "STEP 1",
+      "title": "Detainee Information",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Ex: Mohammed Ali",
+      "idNumber": "ID Number",
+      "idNumberPlaceholder": "123456789",
+      "dateOfBirth": "Date of birth",
+      "dateOfBirthPlaceholder": "DD/MM/YYYY",
+      "ageHint": "Under 18 is considered a child",
+      "job": "Job",
+      "jobPlaceholder": "Like: Worker",
+      "healthStatus": "Health Status",
+      "maritalStatus": "Marital Status",
+      "errors": {
+        "fullNameRequired": "Full name is required",
+        "idNumberRequired": "ID number is required",
+        "dateOfBirthRequired": "Date of birth is required",
+        "healthStatusRequired": "Health status is required",
+        "maritalStatusRequired": "Marital status is required",
+        "cityRequired": "City is required",
+        "governorateRequired": "Governorate is required",
+        "districtRequired": "District is required"
+      }
+    },
+    "step2": {
+      "stepNumber": "STEP 2",
+      "title": "Detention/Disappearance Info",
+      "disappearanceDate": "Disappearance Date",
+      "disappearanceDatePlaceholder": "DD/MM/YYYY",
+      "disappearanceStatus": "Disappearance Status",
+      "placeTitle": "Place of detention/disappearance",
+      "circumstancesLabel": "Circumstances Of The Detention/Disappearance",
+      "circumstancesPlaceholder": "Write here...",
+      "statusOptions": {
+        "detained": "Detained",
+        "disappeared": "Disappeared",
+        "kidnapped": "Kidnapped",
+        "arrested": "Arrested",
+        "other": "Other"
+      },
+      "errors": {
+        "disappearanceDateRequired": "Disappearance date is required",
+        "cityRequired": "City is required",
+        "governorateRequired": "Governorate is required",
+        "districtRequired": "District is required"
+      }
+    },
+    "step3": {
+      "stepNumber": "STEP 3",
+      "title": "Client Information",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Ex: Mohammed Ali",
+      "idNumber": "ID Number",
+      "idNumberPlaceholder": "123456789",
+      "phoneNumber": "Phone Number",
+      "phoneNumberPlaceholder": "0591234567",
+      "relationship": "Relationship",
+      "errors": {
+        "fullNameRequired": "Full name is required",
+        "idNumberRequired": "ID number is required",
+        "phoneNumberRequired": "Phone number is required",
+        "relationshipRequired": "Relationship is required"
+      }
+    },
+    "step4": {
+      "stepNumber": "STEP 4",
+      "title": "Delegation & Communication",
+      "authorizedAnotherParty": "Authorized Another Party Before?",
+      "previousDelegation": "Previous Delegation?",
+      "organisationName": "Organisation Name",
+      "organisationNamePlaceholder": "Organisation Name",
+      "date": "Date",
+      "datePlaceholder": "DD/MM/YYYY",
+      "yes": "Yes",
+      "no": "No",
+      "errors": {
+        "required": "This field is required"
+      }
+    },
+    "step5": {
+      "stepNumber": "STEP 5",
+      "title": "Documents upload",
+      "detaineeIdTitle": "Detainee ID",
+      "clientIdTitle": "Client ID",
+      "additionalDocsTitle": "Additional documents",
+      "dropzone": {
+        "text": "Drag & Drop Choose from files",
+        "hint": "DOCS, PDF, EXL, Up To 1.5 MB"
+      },
+      "uploadStatus": {
+        "uploading": "Uploading...",
+        "uploaded": "Uploaded",
+        "failed": "Failed"
+      }
+    },
+    "step6": {
+      "stepNumber": "STEP 6",
+      "title": "Consent and Submission",
+      "consentText": "I agree to authorize the Palestinian Center for Human Rights to legally pursue...",
+      "legalDocTitle": "Legal document",
+      "download": "Download document",
+      "signatureTitle": "Your Signature",
+      "upload": "Upload",
+      "clear": "Clear",
+      "submit": "Send",
+      "signatureSaved": "Signature saved",
+      "alerts": {
+        "submitted": "Report submitted successfully!",
+        "missingSignature": "Please accept the terms and sign the document"
+      }
+    },
+    "submitModals": {
+      "confirm": {
+        "title": "Are sure you want to send the case",
+        "yes": "Yes",
+        "no": "No"
+      },
+      "loading": {
+        "title": "Submitting your case..."
+      },
+      "success": {
+        "title": "Your case has been successfully submitted.",
+        "caseRef": "Case Reference #:",
+        "copy": "Copy",
+        "cta": "Track your application"
+      },
+      "error": {
+        "title": "Submission failed",
+        "message": "Something went wrong while submitting your case. Please try again.",
+        "retry": "Try again",
+        "close": "Close"
+      }
+    },
+    "address": {
+      "title": "Address",
+      "governorate": "Governorate",
+      "city": "City",
+      "district": "District",
+      "streetName": "Street Name",
+      "streetNamePlaceholder": "Street Name"
+    },
+    "validation": {
+      "palestinianIdInvalid": "Invalid Palestinian ID"
+    }
   }
 }

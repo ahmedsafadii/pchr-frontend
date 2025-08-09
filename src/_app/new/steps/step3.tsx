@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Tooltip } from "react-tooltip";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { CaseData } from "../page";
@@ -14,6 +14,8 @@ import {
   getPalestinianPhoneTooltip
 } from "../../utils/validation";
 import { defaultTooltipProps, createTooltipProps, tooltipIconClasses } from "../../utils/tooltip";
+import { useTranslations } from "next-globe-gen";
+import { useConstantsStore } from "../../store/constants.store";
 
 interface Step3Props {
   data: CaseData;
@@ -40,6 +42,8 @@ export default function Step3({
 }: Step3Props) {
   const [formData, setFormData] = useState(data.clientInfo);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const t = useTranslations();
+  const { constants, isLoading: isConstantsLoading } = useConstantsStore();
 
   useEffect(() => {
     setFormData(data.clientInfo);
@@ -68,29 +72,15 @@ export default function Step3({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName =
-        locale === "ar" ? "الاسم الكامل مطلوب" : "Full name is required";
-    }
+    if (!formData.fullName.trim()) newErrors.fullName = t("newCase.step3.errors.fullNameRequired");
 
-    if (!formData.idNumber.trim()) {
-      newErrors.idNumber =
-        locale === "ar" ? "رقم الهوية مطلوب" : "ID number is required";
-    } else if (!validatePalestinianId(formData.idNumber)) {
-      newErrors.idNumber = getPalestinianIdErrorMessage(locale);
-    }
+    if (!formData.idNumber.trim()) newErrors.idNumber = t("newCase.step3.errors.idNumberRequired");
+    else if (!validatePalestinianId(formData.idNumber)) newErrors.idNumber = getPalestinianIdErrorMessage(locale);
 
-    if (!formData.phoneNumber.trim()) {
-      newErrors.phoneNumber =
-        locale === "ar" ? "رقم الهاتف مطلوب" : "Phone number is required";
-    } else if (!validatePalestinianPhone(formData.phoneNumber)) {
-      newErrors.phoneNumber = getPalestinianPhoneErrorMessage(locale);
-    }
+    if (!formData.phoneNumber.trim()) newErrors.phoneNumber = t("newCase.step3.errors.phoneNumberRequired");
+    else if (!validatePalestinianPhone(formData.phoneNumber)) newErrors.phoneNumber = getPalestinianPhoneErrorMessage(locale);
 
-    if (!formData.relationship.trim()) {
-      newErrors.relationship =
-        locale === "ar" ? "العلاقة مطلوبة" : "Relationship is required";
-    }
+    if (!formData.relationship.trim()) newErrors.relationship = t("newCase.step3.errors.relationshipRequired");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -104,23 +94,14 @@ export default function Step3({
     }
   };
 
-  const relationshipOptions = [
-    { value: "", label: locale === "ar" ? "اختر" : "Choose" },
-    { value: "spouse", label: locale === "ar" ? "زوج/زوجة" : "Spouse" },
-    { value: "parent", label: locale === "ar" ? "أب/أم" : "Parent" },
-    { value: "child", label: locale === "ar" ? "ابن/ابنة" : "Child" },
-    { value: "sibling", label: locale === "ar" ? "أخ/أخت" : "Sibling" },
-    { value: "relative", label: locale === "ar" ? "قريب" : "Relative" },
-    { value: "friend", label: locale === "ar" ? "صديق" : "Friend" },
-    { value: "other", label: locale === "ar" ? "أخرى" : "Other" },
-  ];
+  const relationshipOptions = useMemo(() => (constants?.data?.relationships as any[]) || [], [constants]);
 
   return (
     <div className="steps">
       <header className="steps__header">
-        <span className="steps__step-number">STEP 3</span>
+        <span className="steps__step-number">{t("newCase.step3.stepNumber")}</span>
         <h2 className="steps__title">
-          {locale === "ar" ? "معلومات العميل" : "Client Informations"}
+          {t("newCase.step3.title")}
         </h2>
       </header>
 
@@ -130,7 +111,7 @@ export default function Step3({
           <div className="steps__form-groups">
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "الاسم الكامل" : "Full Name"}{" "}
+                {t("newCase.step3.fullName")} {" "}
                 <span className="steps__required">*</span>
               </label>
               <input
@@ -138,9 +119,7 @@ export default function Step3({
                 className={`steps__input ${
                   errors.fullName ? "steps__input--error" : ""
                 }`}
-                placeholder={
-                  locale === "ar" ? "مثال: محمد علي" : "Ex: Mohammed Ali"
-                }
+                placeholder={t("newCase.step3.fullNamePlaceholder")}
                 value={formData.fullName}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
               />
@@ -151,7 +130,7 @@ export default function Step3({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "رقم الهوية" : "ID Number"}{" "}
+                {t("newCase.step3.idNumber")} {" "}
                 <span className="steps__required">*</span>
                 <IconInfoCircle 
                   size={16} 
@@ -164,7 +143,7 @@ export default function Step3({
                 className={`steps__input ${
                   errors.idNumber ? "steps__input--error" : ""
                 }`}
-                placeholder="123456789"
+                placeholder={t("newCase.step3.idNumberPlaceholder")}
                 value={formData.idNumber}
                 onChange={(e) => handleInputChange("idNumber", e.target.value)}
                 maxLength={9}
@@ -180,7 +159,7 @@ export default function Step3({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "رقم الهاتف" : "Phone Number"}{" "}
+                {t("newCase.step3.phoneNumber")} {" "}
                 <span className="steps__required">*</span>
                 <IconInfoCircle 
                   size={16} 
@@ -194,7 +173,7 @@ export default function Step3({
                   className={`steps__input ${
                     errors.phoneNumber ? "steps__input--error" : ""
                   }`}
-                  placeholder="0591234567"
+                  placeholder={t("newCase.step3.phoneNumberPlaceholder")}
                   value={formData.phoneNumber}
                   onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
                   maxLength={10}
@@ -211,15 +190,18 @@ export default function Step3({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "العلاقة" : "Relationship"}{" "}
+                {t("newCase.step3.relationship")} {" "}
                 <span className="steps__required">*</span>
               </label>
               <CustomSelect
                 options={relationshipOptions}
+                labelKey="name"
+                valueKey="id"
                 value={formData.relationship}
                 onChange={(value) => handleInputChange("relationship", value)}
-                placeholder={locale === "ar" ? "اختر" : "Choose"}
+                placeholder={t("newCase.common.choose")}
                 isError={!!errors.relationship}
+                isDisabled={isConstantsLoading || !constants}
                 instanceId="step3-relationship-select"
               />
               {errors.relationship && (
@@ -238,7 +220,7 @@ export default function Step3({
             className="steps__button steps__button--previous"
             onClick={onPrevious}
           >
-            <span>{locale === "ar" ? "السابق" : "Prev"}</span>
+            <span>{t("newCase.common.prev")}</span>
           </button>
           <button
             type="button"
@@ -246,7 +228,7 @@ export default function Step3({
             onClick={handleNext}
             disabled={!canGoNext}
           >
-            <span>{locale === "ar" ? "التالي" : "Next"}</span>
+            <span>{t("newCase.common.next")}</span>
           </button>
         </div>
       </form>

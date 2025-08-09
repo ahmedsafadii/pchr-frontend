@@ -2,6 +2,7 @@
 
 .new-case {
   background-color: var(--neutral-50);
+  min-height: 100vh;
 }
 
 .new-case__container {
@@ -545,6 +546,7 @@
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s;
+  margin-right: 8px;
 }
 
 .steps__signature-button:hover {

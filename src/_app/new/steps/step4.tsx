@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { CaseData } from "../page";
 import CustomSelect from "../../components/CustomSelect";
+import { useTranslations } from "next-globe-gen";
 
 interface Step4Props {
   data: CaseData;
@@ -31,6 +32,7 @@ export default function Step4({
 }: Step4Props) {
   const [formData, setFormData] = useState(data.delegationInfo);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const t = useTranslations();
 
   useEffect(() => {
     setFormData(data.delegationInfo);
@@ -59,15 +61,9 @@ export default function Step4({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.authorizedAnotherParty.trim()) {
-      newErrors.authorizedAnotherParty =
-        locale === "ar" ? "هذا الحقل مطلوب" : "This field is required";
-    }
+    if (!formData.authorizedAnotherParty.trim()) newErrors.authorizedAnotherParty = t("newCase.step4.errors.required");
 
-    if (!formData.previousDelegation.trim()) {
-      newErrors.previousDelegation =
-        locale === "ar" ? "هذا الحقل مطلوب" : "This field is required";
-    }
+    if (!formData.previousDelegation.trim()) newErrors.previousDelegation = t("newCase.step4.errors.required");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -81,18 +77,18 @@ export default function Step4({
     }
   };
 
-  const yesNoOptions = [
-    { value: "", label: locale === "ar" ? "اختر" : "Choose" },
-    { value: "yes", label: locale === "ar" ? "نعم" : "Yes" },
-    { value: "no", label: locale === "ar" ? "لا" : "No" },
-  ];
+  const yesNoOptions = useMemo(() => [
+    { value: "", label: t("newCase.common.choose") },
+    { value: "yes", label: t("newCase.step4.yes") },
+    { value: "no", label: t("newCase.step4.no") },
+  ], [t]);
 
   return (
     <div className="steps">
       <header className="steps__header">
-        <span className="steps__step-number">STEP 4</span>
+        <span className="steps__step-number">{t("newCase.step4.stepNumber")}</span>
         <h2 className="steps__title">
-          {locale === "ar" ? "التفويض والتواصل" : "Delegation & Communication"}
+          {t("newCase.step4.title")}
         </h2>
       </header>
 
@@ -102,14 +98,14 @@ export default function Step4({
           <div className="steps__form-groups">
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "هل فوضت طرف آخر من قبل؟" : "Authorized Another Party Before?"}{" "}
+                {t("newCase.step4.authorizedAnotherParty")} {" "}
                 <span className="steps__required">*</span>
               </label>
               <CustomSelect
                 options={yesNoOptions}
                 value={formData.authorizedAnotherParty}
                 onChange={(value) => handleInputChange("authorizedAnotherParty", value)}
-                placeholder={locale === "ar" ? "اختر" : "Choose"}
+                placeholder={t("newCase.common.choose")}
                 isError={!!errors.authorizedAnotherParty}
                 instanceId="step4-authorized-party-select"
               />
@@ -120,14 +116,14 @@ export default function Step4({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "التفويض السابق؟" : "Previous Delegation?"}{" "}
+                {t("newCase.step4.previousDelegation")} {" "}
                 <span className="steps__required">*</span>
               </label>
               <CustomSelect
                 options={yesNoOptions}
                 value={formData.previousDelegation}
                 onChange={(value) => handleInputChange("previousDelegation", value)}
-                placeholder={locale === "ar" ? "اختر" : "Choose"}
+                placeholder={t("newCase.common.choose")}
                 isError={!!errors.previousDelegation}
                 instanceId="step4-previous-delegation-select"
               />
@@ -138,14 +134,12 @@ export default function Step4({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "اسم المنظمة" : "Organisation Name"}
+                {t("newCase.step4.organisationName")}
               </label>
               <input
                 type="text"
                 className="steps__input"
-                placeholder={
-                  locale === "ar" ? "اسم المنظمة" : "Organisation Name"
-                }
+                placeholder={t("newCase.step4.organisationNamePlaceholder")}
                 value={formData.organisationName}
                 onChange={(e) => handleInputChange("organisationName", e.target.value)}
               />
@@ -153,7 +147,7 @@ export default function Step4({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {locale === "ar" ? "التاريخ" : "Date"}
+                {t("newCase.step4.date")}
               </label>
               <div className="steps__input-wrapper">
                 <DatePicker
@@ -169,7 +163,7 @@ export default function Step4({
                     handleInputChange("date", formattedDate);
                   }}
                   dateFormat="dd/MM/yyyy"
-                  placeholderText="DD/MM/YYYY"
+                  placeholderText={t("newCase.step4.datePlaceholder")}
                   maxDate={new Date()}
                   showYearDropdown
                   scrollableYearDropdown
@@ -188,7 +182,7 @@ export default function Step4({
             className="steps__button steps__button--previous"
             onClick={onPrevious}
           >
-            <span>{locale === "ar" ? "السابق" : "Prev"}</span>
+            <span>{t("newCase.common.prev")}</span>
           </button>
           <button
             type="button"
@@ -196,7 +190,7 @@ export default function Step4({
             onClick={handleNext}
             disabled={!canGoNext}
           >
-            <span>{locale === "ar" ? "التالي" : "Next"}</span>
+            <span>{t("newCase.common.next")}</span>
           </button>
         </div>
       </form>
