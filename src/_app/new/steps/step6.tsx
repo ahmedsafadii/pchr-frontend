@@ -22,6 +22,8 @@ interface Step6Props {
   currentStep: number;
   totalSteps: number;
   locale?: string;
+  onResetAll?: () => void;
+  onValidationErrors?: (payload: { steps: number[]; summaries: Record<number, string[]> }) => void;
 }
 
 export default function Step6({
@@ -30,6 +32,8 @@ export default function Step6({
   onComplete,
   onPrevious,
   currentStep,
+  onResetAll,
+  onValidationErrors,
 }: Step6Props) {
   const [consentAccepted] = useState(true);
   const [, setSignature] = useState<string>("");
@@ -208,6 +212,25 @@ This document is legally binding and constitutes your formal consent for legal a
       onComplete(currentStep);
     } catch (error: any) {
       console.error("Step6:submitCase:error", error);
+      // If 422, map backend error keys to steps: 1,2,5,6
+      const status = error?.status ?? error?.payload?.statusCode;
+      const details = error?.payload?.error?.details;
+      if (status === 422 && details) {
+        const steps: number[] = [];
+        const summaries: Record<number, string[]> = {};
+        const push = (step: number, obj: Record<string, string[]>) => {
+          steps.push(step);
+          const allMsgs = Object.values(obj).flat();
+          const uniqueMsgs = Array.from(new Set(allMsgs));
+          summaries[step] = uniqueMsgs;
+        };
+        if (details.step1_detainee_info) push(1, details.step1_detainee_info);
+        if (details.step2_detention_info) push(2, details.step2_detention_info);
+        if (details.step5_documents_info) push(5, details.step5_documents_info);
+        if (details.step6_consent_info) push(6, details.step6_consent_info);
+        onValidationErrors?.({ steps, summaries });
+        return;
+      }
       const apiMsg = error?.payload?.error?.message ?? undefined;
       setShowError(apiMsg || undefined);
     } finally {
@@ -363,7 +386,7 @@ This document is legally binding and constitutes your formal consent for legal a
       <SuccessModal
         isOpen={showSuccess}
         caseRef={caseRef}
-        onTrack={() => setShowSuccess(false)}
+        onTrack={() => { setShowSuccess(false); onResetAll?.(); }}
       />
       <ErrorModal
         isOpen={!!showError}

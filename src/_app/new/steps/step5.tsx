@@ -18,6 +18,7 @@ interface Step5Props {
   currentStep: number;
   totalSteps: number;
   locale?: string;
+  externalErrors?: string[];
 }
 
 interface UploadedFile {
@@ -37,7 +38,7 @@ export default function Step5({
   onPrevious,
   currentStep,
   canGoNext,
-  
+  externalErrors = [],
 }: Step5Props) {
   const t = useTranslations();
   const [detaineeIdFiles, setDetaineeIdFiles] = useState<UploadedFile[]>([]);
@@ -122,6 +123,15 @@ export default function Step5({
       </header>
 
       <form className="steps__form" onSubmit={(e) => e.preventDefault()}>
+        {externalErrors.length > 0 && (
+          <div className="steps__error-summary">
+            <ul>
+              {externalErrors.map((msg, idx) => (
+                <li key={idx}>{msg}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         {/* Detainee ID Section */}
         <section className="steps__section">
           <h3 className="steps__section-title">{t("newCase.step5.detaineeIdTitle")}</h3>

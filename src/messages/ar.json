@@ -48,7 +48,8 @@
           "maritalStatusRequired": "الحالة الاجتماعية مطلوبة",
           "cityRequired": "المدينة مطلوبة",
           "governorateRequired": "المحافظة مطلوبة",
-          "districtRequired": "المنطقة مطلوبة"
+          "districtRequired": "المنطقة مطلوبة",
+          "age18": "يجب أن يكون عمر المعتقل 18 سنة أو أكثر."
         }
       },
       "step2": {
@@ -71,7 +72,8 @@
           "disappearanceDateRequired": "تاريخ الاختفاء مطلوب",
           "cityRequired": "المدينة مطلوبة",
           "governorateRequired": "المحافظة مطلوبة",
-          "districtRequired": "المنطقة مطلوبة"
+          "districtRequired": "المنطقة مطلوبة",
+          "circumstancesMin100": "يجب أن تكون الظروف لا تقل عن 100 حرف."
         }
       },
       "step3": {
@@ -79,16 +81,13 @@
         "title": "معلومات العميل",
         "fullName": "الاسم الكامل",
         "fullNamePlaceholder": "مثال: محمد علي",
-        "idNumber": "رقم الهوية",
-        "idNumberPlaceholder": "123456789",
         "phoneNumber": "رقم الهاتف",
         "phoneNumberPlaceholder": "0591234567",
         "relationship": "العلاقة",
         "errors": {
-          "fullNameRequired": "الاسم الكامل مطلوب",
-          "idNumberRequired": "رقم الهوية مطلوب",
-          "phoneNumberRequired": "رقم الهاتف مطلوب",
-          "relationshipRequired": "العلاقة مطلوبة"
+          "client_name_required": "الاسم الكامل مطلوب",
+          "client_phone_required": "رقم الهاتف مطلوب",
+          "client_relationship_required": "العلاقة مطلوبة"
         }
       },
       "step4": {

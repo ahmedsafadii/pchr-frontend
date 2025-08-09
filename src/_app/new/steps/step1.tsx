@@ -24,6 +24,7 @@ interface Step1Props {
   currentStep: number;
   totalSteps: number;
   locale?: string;
+  externalErrors?: string[];
 }
 
 export default function Step1({
@@ -34,6 +35,7 @@ export default function Step1({
   currentStep,
   canGoNext,
   locale = "en",
+  externalErrors = [],
 }: Step1Props) {
   const [formData, setFormData] = useState(data.detaineeInfo);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -73,6 +75,14 @@ export default function Step1({
     else if (!validatePalestinianId(formData.detainee_id)) newErrors.idNumber = getPalestinianIdErrorMessage(locale);
 
     if (!formData.detainee_date_of_birth.trim()) newErrors.dateOfBirth = t("newCase.step1.errors.dateOfBirthRequired");
+    else {
+      const dob = new Date(formData.detainee_date_of_birth);
+      const now = new Date();
+      const eighteenYearsAgo = new Date(now.getFullYear() - 18, now.getMonth(), now.getDate());
+      if (dob > eighteenYearsAgo) {
+        newErrors.dateOfBirth = (t as any)("newCase.step1.errors.age18");
+      }
+    }
 
     if (!formData.detainee_health_status.trim()) newErrors.healthStatus = t("newCase.step1.errors.healthStatusRequired");
 
@@ -111,6 +121,15 @@ export default function Step1({
       </header>
 
       <form className="steps__form" onSubmit={(e) => e.preventDefault()}>
+        {externalErrors.length > 0 && (
+          <div className="steps__error-summary">
+            <ul>
+              {externalErrors.map((msg, idx) => (
+                <li key={idx}>{msg}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         {/* Personal Details Section */}
         <section className="steps__section">
           <div className="steps__form-groups">
@@ -195,15 +214,13 @@ export default function Step1({
             </div>
 
             <div className="steps__form-group">
-              <label className="steps__label">
-                {t("newCase.step1.job")}
-              </label>
+              <label className="steps__label">{t("newCase.step1.job")}</label>
               <input
                 type="text"
                 className="steps__input"
                 placeholder={t("newCase.step1.jobPlaceholder")}
-                value={formData.detainee_street}
-                onChange={(e) => handleInputChange("detainee_street", e.target.value)}
+                value={formData.detainee_job}
+                onChange={(e) => handleInputChange("detainee_job", e.target.value)}
               />
             </div>
 

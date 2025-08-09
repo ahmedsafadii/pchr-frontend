@@ -20,6 +20,7 @@ interface Step2Props {
   currentStep: number;
   totalSteps: number;
   locale?: string;
+  externalErrors?: string[];
 }
 
 export default function Step2({
@@ -30,6 +31,7 @@ export default function Step2({
   onPrevious,
   currentStep,
   canGoNext,
+  externalErrors = [],
 }: Step2Props) {
   const [formData, setFormData] = useState(data.detentionInfo);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -104,6 +106,15 @@ export default function Step2({
       </header>
 
       <form className="steps__form" onSubmit={(e) => e.preventDefault()}>
+        {externalErrors.length > 0 && (
+          <div className="steps__error-summary">
+            <ul>
+              {Array.from(new Set(externalErrors)).map((msg, idx) => (
+                <li key={idx}>{msg}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         {/* Disappearance Details Section */}
         <section className="steps__section">
           <div className="steps__form-groups">
@@ -209,18 +220,19 @@ export default function Step2({
               {t("newCase.step2.circumstancesLabel")}
             </label>
             <textarea
-              className="steps__textarea"
+              className={`steps__textarea ${formData.detention_circumstances.length > 0 && formData.detention_circumstances.length < 100 ? 'steps__input--error' : ''}`}
               placeholder={t("newCase.step2.circumstancesPlaceholder")}
               value={formData.detention_circumstances}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value.length <= 100) {
-                  handleInputChange("detention_circumstances", value);
-                }
+                handleInputChange("detention_circumstances", value);
               }}
               rows={4}
             />
-            <div className="steps__character-count">
+            {formData.detention_circumstances.length > 0 && formData.detention_circumstances.length < 100 && (
+              <span className="steps__error">{t("newCase.step2.errors.circumstancesMin100")}</span>
+            )}
+            <div className={`steps__character-count ${formData.detention_circumstances.length < 100 ? 'steps__character-count--error' : ''}`}>
               {formData.detention_circumstances.length}/100
             </div>
           </div>

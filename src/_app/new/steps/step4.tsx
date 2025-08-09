@@ -28,7 +28,6 @@ export default function Step4({
   onPrevious,
   currentStep,
   canGoNext,
-  locale = "en",
 }: Step4Props) {
   const [formData, setFormData] = useState(data.delegationInfo);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -38,7 +37,7 @@ export default function Step4({
     setFormData(data.delegationInfo);
   }, [data.delegationInfo]);
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     const updatedFormData = {
       ...formData,
       [field]: value,
@@ -61,9 +60,8 @@ export default function Step4({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.authorizedAnotherParty.trim()) newErrors.authorizedAnotherParty = t("newCase.step4.errors.required");
-
-    if (!formData.previousDelegation.trim()) newErrors.previousDelegation = t("newCase.step4.errors.required");
+    if (typeof formData.authorized_another_party !== 'boolean') newErrors.authorizedAnotherParty = t("newCase.step4.errors.required");
+    if (typeof formData.previous_delegation !== 'boolean') newErrors.previousDelegation = t("newCase.step4.errors.required");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -78,9 +76,8 @@ export default function Step4({
   };
 
   const yesNoOptions = useMemo(() => [
-    { value: "", label: t("newCase.common.choose") },
-    { value: "yes", label: t("newCase.step4.yes") },
-    { value: "no", label: t("newCase.step4.no") },
+    { value: "true", label: t("newCase.step4.yes") },
+    { value: "false", label: t("newCase.step4.no") },
   ], [t]);
 
   return (
@@ -103,8 +100,8 @@ export default function Step4({
               </label>
               <CustomSelect
                 options={yesNoOptions}
-                value={formData.authorizedAnotherParty}
-                onChange={(value) => handleInputChange("authorizedAnotherParty", value)}
+                value={String(formData.authorized_another_party)}
+                onChange={(value) => handleInputChange("authorized_another_party", value === 'true')}
                 placeholder={t("newCase.common.choose")}
                 isError={!!errors.authorizedAnotherParty}
                 instanceId="step4-authorized-party-select"
@@ -121,8 +118,8 @@ export default function Step4({
               </label>
               <CustomSelect
                 options={yesNoOptions}
-                value={formData.previousDelegation}
-                onChange={(value) => handleInputChange("previousDelegation", value)}
+                value={String(formData.previous_delegation)}
+                onChange={(value) => handleInputChange("previous_delegation", value === 'true')}
                 placeholder={t("newCase.common.choose")}
                 isError={!!errors.previousDelegation}
                 instanceId="step4-previous-delegation-select"
@@ -140,8 +137,8 @@ export default function Step4({
                 type="text"
                 className="steps__input"
                 placeholder={t("newCase.step4.organisationNamePlaceholder")}
-                value={formData.organisationName}
-                onChange={(e) => handleInputChange("organisationName", e.target.value)}
+                value={formData.organisation_name}
+                onChange={(e) => handleInputChange("organisation_name", e.target.value)}
               />
             </div>
 
@@ -152,15 +149,15 @@ export default function Step4({
               <div className="steps__input-wrapper">
                 <DatePicker
                   selected={
-                    formData.date
-                      ? new Date(formData.date)
+                    formData.delegation_date
+                      ? new Date(formData.delegation_date)
                       : null
                   }
                   onChange={(date) => {
                     const formattedDate = date
                       ? date.toISOString().split("T")[0]
                       : "";
-                    handleInputChange("date", formattedDate);
+                    handleInputChange("delegation_date", formattedDate);
                   }}
                   dateFormat="dd/MM/yyyy"
                   placeholderText={t("newCase.step4.datePlaceholder")}

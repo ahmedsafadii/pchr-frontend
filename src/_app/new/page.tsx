@@ -27,6 +27,7 @@ export interface CaseData {
     detainee_name: string;
     detainee_id: string;
     detainee_date_of_birth: string;
+    detainee_job: string;
     detainee_health_status: string;
     detainee_marital_status: string;
     detainee_city: string;
@@ -82,6 +83,7 @@ const initialCaseData: CaseData = {
     detainee_name: "",
     detainee_id: "",
     detainee_date_of_birth: "",
+    detainee_job: "",
     detainee_health_status: "",
     detainee_marital_status: "",
     detainee_city: "",
@@ -171,6 +173,10 @@ export default function NewCasePage({ locale = "en" }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [caseData, setCaseData] = useState<CaseData>(initialCaseData);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [errorSteps, setErrorSteps] = useState<number[]>([]);
+  const [errorSummaries, setErrorSummaries] = useState<Record<number, string[]>>({});
+  // reserved for future per-field highlighting if needed
+  // const [errorFieldMaps, setErrorFieldMaps] = useState<Record<number, Record<string, string>>>({});
   const t = useTranslations();
 
 
@@ -215,6 +221,14 @@ export default function NewCasePage({ locale = "en" }) {
     if (!completedSteps.includes(stepNumber)) {
       setCompletedSteps((prev) => [...prev, stepNumber]);
     }
+    // Clear error highlight and summaries for this step
+    setErrorSteps((prev) => prev.filter((s) => s !== stepNumber));
+    setErrorSummaries((prev) => {
+      const next = { ...prev };
+      delete next[stepNumber];
+      return next;
+    });
+    // clear field maps when implemented
   };
 
   const canGoToNext = (stepNumber: number) => {
@@ -288,7 +302,23 @@ export default function NewCasePage({ locale = "en" }) {
     }
   };
 
+  const resetAll = () => {
+    setCaseData(initialCaseData);
+    setCurrentStep(1);
+    setCompletedSteps([]);
+    setErrorSteps([]);
+    setErrorSummaries({});
+    try {
+      localStorage.removeItem("newCaseData");
+      localStorage.removeItem("newCaseCurrentStep");
+      localStorage.removeItem("newCaseCompletedSteps");
+    } catch {}
+  };
+
   const getStepStatus = (stepNumber: number) => {
+    if (errorSteps.includes(stepNumber)) {
+      return "error";
+    }
     if (stepNumber === currentStep) {
       return "current";
     }
@@ -391,6 +421,14 @@ export default function NewCasePage({ locale = "en" }) {
                 currentStep={currentStep}
                 totalSteps={steps.length}
                 locale={locale}
+                onResetAll={resetAll}
+                externalErrors={errorSummaries[currentStep] || []}
+                onValidationErrors={(payload: { steps: number[]; summaries: Record<number, string[]> }) => {
+                  const { steps, summaries } = payload as any;
+                  setErrorSteps(steps);
+                  setErrorSummaries(summaries);
+                  if (steps.length > 0) setCurrentStep(Math.min(...steps));
+                }}
               />
             </div>
           </section>

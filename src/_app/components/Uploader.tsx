@@ -107,7 +107,7 @@ export default function Uploader({
         console.warn("Uploader:no-documentTypeId", { instanceId });
       }
     },
-    [files, multiple, setFiles, documentTypeId, locale]
+    [files, multiple, setFiles, documentTypeId, locale, instanceId]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

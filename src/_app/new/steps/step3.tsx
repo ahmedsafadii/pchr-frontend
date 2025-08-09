@@ -5,13 +5,10 @@ import { Tooltip } from "react-tooltip";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { CaseData } from "../page";
 import CustomSelect from "../../components/CustomSelect";
-import { 
-  validatePalestinianId, 
-  getPalestinianIdErrorMessage, 
-  getPalestinianIdTooltip,
+import {
   validatePalestinianPhone,
   getPalestinianPhoneErrorMessage,
-  getPalestinianPhoneTooltip
+  getPalestinianPhoneTooltip,
 } from "../../utils/validation";
 import { defaultTooltipProps, createTooltipProps, tooltipIconClasses } from "../../utils/tooltip";
 import { useTranslations } from "next-globe-gen";
@@ -72,15 +69,12 @@ export default function Step3({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.fullName.trim()) newErrors.fullName = t("newCase.step3.errors.fullNameRequired");
+    if (!formData.client_name.trim()) newErrors.client_name = t("newCase.step3.errors.client_name_required");
 
-    if (!formData.idNumber.trim()) newErrors.idNumber = t("newCase.step3.errors.idNumberRequired");
-    else if (!validatePalestinianId(formData.idNumber)) newErrors.idNumber = getPalestinianIdErrorMessage(locale);
+    if (!formData.client_phone.trim()) newErrors.client_phone = t("newCase.step3.errors.client_phone_required");
+    else if (!validatePalestinianPhone(formData.client_phone)) newErrors.client_phone = getPalestinianPhoneErrorMessage(locale);
 
-    if (!formData.phoneNumber.trim()) newErrors.phoneNumber = t("newCase.step3.errors.phoneNumberRequired");
-    else if (!validatePalestinianPhone(formData.phoneNumber)) newErrors.phoneNumber = getPalestinianPhoneErrorMessage(locale);
-
-    if (!formData.relationship.trim()) newErrors.relationship = t("newCase.step3.errors.relationshipRequired");
+    if (!formData.client_relationship.trim()) newErrors.client_relationship = t("newCase.step3.errors.client_relationship_required");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -116,45 +110,14 @@ export default function Step3({
               </label>
               <input
                 type="text"
-                className={`steps__input ${
-                  errors.fullName ? "steps__input--error" : ""
-                }`}
+                className={`steps__input ${errors.client_name ? "steps__input--error" : ""}`}
                 placeholder={t("newCase.step3.fullNamePlaceholder")}
-                value={formData.fullName}
-                onChange={(e) => handleInputChange("fullName", e.target.value)}
+                value={formData.client_name}
+                onChange={(e) => handleInputChange("client_name", e.target.value)}
               />
-              {errors.fullName && (
-                <span className="steps__error">{errors.fullName}</span>
+              {errors.client_name && (
+                <span className="steps__error">{errors.client_name}</span>
               )}
-            </div>
-
-            <div className="steps__form-group">
-              <label className="steps__label">
-                {t("newCase.step3.idNumber")} {" "}
-                <span className="steps__required">*</span>
-                <IconInfoCircle 
-                  size={16} 
-                  className={tooltipIconClasses}
-                  {...createTooltipProps("client-id-number-tooltip", getPalestinianIdTooltip(locale))}
-                />
-              </label>
-              <input
-                type="text"
-                className={`steps__input ${
-                  errors.idNumber ? "steps__input--error" : ""
-                }`}
-                placeholder={t("newCase.step3.idNumberPlaceholder")}
-                value={formData.idNumber}
-                onChange={(e) => handleInputChange("idNumber", e.target.value)}
-                maxLength={9}
-              />
-              {errors.idNumber && (
-                <span className="steps__error">{errors.idNumber}</span>
-              )}
-              <Tooltip 
-                id="client-id-number-tooltip"
-                {...defaultTooltipProps}
-              />
             </div>
 
             <div className="steps__form-group">
@@ -170,17 +133,15 @@ export default function Step3({
               <div className="steps__input-wrapper">
                 <input
                   type="tel"
-                  className={`steps__input ${
-                    errors.phoneNumber ? "steps__input--error" : ""
-                  }`}
+                  className={`steps__input ${errors.client_phone ? "steps__input--error" : ""}`}
                   placeholder={t("newCase.step3.phoneNumberPlaceholder")}
-                  value={formData.phoneNumber}
-                  onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                  value={formData.client_phone}
+                  onChange={(e) => handleInputChange("client_phone", e.target.value)}
                   maxLength={10}
                 />
               </div>
-              {errors.phoneNumber && (
-                <span className="steps__error">{errors.phoneNumber}</span>
+              {errors.client_phone && (
+                <span className="steps__error">{errors.client_phone}</span>
               )}
               <Tooltip 
                 id="phone-number-tooltip"
@@ -197,15 +158,15 @@ export default function Step3({
                 options={relationshipOptions}
                 labelKey="name"
                 valueKey="id"
-                value={formData.relationship}
-                onChange={(value) => handleInputChange("relationship", value)}
+                value={formData.client_relationship}
+                onChange={(value) => handleInputChange("client_relationship", value)}
                 placeholder={t("newCase.common.choose")}
-                isError={!!errors.relationship}
+                isError={!!errors.client_relationship}
                 isDisabled={isConstantsLoading || !constants}
                 instanceId="step3-relationship-select"
               />
-              {errors.relationship && (
-                <span className="steps__error">{errors.relationship}</span>
+              {errors.client_relationship && (
+                <span className="steps__error">{errors.client_relationship}</span>
               )}
             </div>
 
