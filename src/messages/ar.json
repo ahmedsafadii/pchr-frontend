@@ -21,6 +21,10 @@
     },
     "newCase": {
       "back": "العودة للرئيسية",
+      "sidebar": {
+        "title": "منصة الإبلاغ عن حالات الاختفاء",
+        "description": "أبلغ بأمان عن شخص مفقود أو محتجز. سيتابع فريقنا القانوني قضيتك."
+      },
       "common": {
         "choose": "اختر",
         "next": "التالي",
@@ -29,6 +33,7 @@
       "step1": {
         "stepNumber": "الخطوة 1",
         "title": "معلومات المعتقل",
+        "shortDescription": "جمع المعلومات الأساسية والهوية وحالة الشخص المفقود.",
         "fullName": "الاسم الكامل",
         "fullNamePlaceholder": "مثال: محمد علي",
         "idNumber": "رقم الهوية",
@@ -55,6 +60,7 @@
       "step2": {
         "stepNumber": "الخطوة 2",
         "title": "معلومات الاعتقال/الاختفاء",
+        "shortDescription": "تسجيل مكان وزمان وكيفية الاختفاء.",
         "disappearanceDate": "تاريخ الاختفاء",
         "disappearanceDatePlaceholder": "يوم/شهر/سنة",
         "disappearanceStatus": "حالة الاختفاء",
@@ -79,6 +85,7 @@
       "step3": {
         "stepNumber": "الخطوة 3",
         "title": "معلومات العميل",
+        "shortDescription": "تحديد هوية مقدم البلاغ ومعلومات التواصل.",
         "fullName": "الاسم الكامل",
         "fullNamePlaceholder": "مثال: محمد علي",
         "phoneNumber": "رقم الهاتف",
@@ -93,6 +100,7 @@
       "step4": {
         "stepNumber": "الخطوة 4",
         "title": "التفويض والتواصل",
+        "shortDescription": "فهم أي إجراءات سابقة وتفضيلات التواصل.",
         "authorizedAnotherParty": "هل فوضت طرف آخر من قبل؟",
         "previousDelegation": "التفويض السابق؟",
         "organisationName": "اسم المنظمة",
@@ -108,6 +116,7 @@
       "step5": {
         "stepNumber": "الخطوة 5",
         "title": "رفع المستندات",
+        "shortDescription": "التأكد من صحة الهوية وإدارة المستندات.",
         "detaineeIdTitle": "هوية المعتقل",
         "clientIdTitle": "هوية العميل",
         "additionalDocsTitle": "مستندات إضافية",
@@ -124,6 +133,7 @@
       "step6": {
         "stepNumber": "الخطوة 6",
         "title": "الموافقة والإرسال",
+        "shortDescription": "الحصول على التفويض القانوني وإرسال البلاغ.",
         "consentText": "أوافق على تفويض المركز الفلسطيني لحقوق الإنسان لمتابعة القضية قانونياً...",
         "legalDocTitle": "المستند القانوني",
         "download": "تحميل المستند",

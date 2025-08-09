@@ -160,7 +160,7 @@ export default function Step3({
                 valueKey="id"
                 value={formData.client_relationship}
                 onChange={(value) => handleInputChange("client_relationship", value)}
-                placeholder={t("newCase.common.choose")}
+                placeholder={`${t("newCase.common.choose")} ${t("newCase.step3.relationship")}`}
                 isError={!!errors.client_relationship}
                 isDisabled={isConstantsLoading || !constants}
                 instanceId="step3-relationship-select"

@@ -102,7 +102,7 @@ export default function Step4({
                 options={yesNoOptions}
                 value={String(formData.authorized_another_party)}
                 onChange={(value) => handleInputChange("authorized_another_party", value === 'true')}
-                placeholder={t("newCase.common.choose")}
+                placeholder={`${t("newCase.common.choose")} ${t("newCase.step4.authorizedAnotherParty")}`}
                 isError={!!errors.authorizedAnotherParty}
                 instanceId="step4-authorized-party-select"
               />
@@ -120,7 +120,7 @@ export default function Step4({
                 options={yesNoOptions}
                 value={String(formData.previous_delegation)}
                 onChange={(value) => handleInputChange("previous_delegation", value === 'true')}
-                placeholder={t("newCase.common.choose")}
+                placeholder={`${t("newCase.common.choose")} ${t("newCase.step4.previousDelegation")}`}
                 isError={!!errors.previousDelegation}
                 instanceId="step4-previous-delegation-select"
               />

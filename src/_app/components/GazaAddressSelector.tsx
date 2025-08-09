@@ -82,7 +82,7 @@ export default function GazaAddressSelector({
           valueKey="id"
           value={governorate}
           onChange={onGovernorateChange}
-          placeholder={t("newCase.common.choose")}
+          placeholder={`${t("newCase.common.choose")} ${t("newCase.address.governorate")}`}
           isError={!!errors.governorate}
           isDisabled={isLoading}
           instanceId={`${idPrefix}-governorate-select`}
@@ -101,7 +101,7 @@ export default function GazaAddressSelector({
           valueKey="id"
           value={city}
           onChange={onCityChange}
-          placeholder={t("newCase.common.choose")}
+          placeholder={`${t("newCase.common.choose")} ${t("newCase.address.city")}`}
           isError={!!errors.city}
           isDisabled={!governorate || isLoading}
           instanceId={`${idPrefix}-city-select`}
@@ -120,7 +120,7 @@ export default function GazaAddressSelector({
           valueKey="id"
           value={district}
           onChange={onDistrictChange}
-          placeholder={t("newCase.common.choose")}
+          placeholder={`${t("newCase.common.choose")} ${t("newCase.address.district")}`}
           isError={!!errors.district}
           isDisabled={!governorate || !city || isLoading}
           instanceId={`${idPrefix}-district-select`}

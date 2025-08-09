@@ -21,6 +21,10 @@
   },
   "newCase": {
     "back": "Back to Home",
+    "sidebar": {
+      "title": "Disappearance Report Platform",
+      "description": "Report a missing or detained person safely. Our legal team will follow up."
+    },
     "common": {
       "choose": "Choose",
       "next": "Next",
@@ -29,6 +33,7 @@
     "step1": {
       "stepNumber": "STEP 1",
       "title": "Detainee Information",
+      "shortDescription": "Collect basic identity and status of the missing person.",
       "fullName": "Full Name",
       "fullNamePlaceholder": "Ex: Mohammed Ali",
       "idNumber": "ID Number",
@@ -48,12 +53,15 @@
         "maritalStatusRequired": "Marital status is required",
         "cityRequired": "City is required",
         "governorateRequired": "Governorate is required",
-        "districtRequired": "District is required"
+        "districtRequired": "District is required",
+        "age18": "Detainee must be 18 years or older."
       }
     },
+    
     "step2": {
       "stepNumber": "STEP 2",
       "title": "Detention/Disappearance Info",
+      "shortDescription": "Record where, when, and how the person went missing.",
       "disappearanceDate": "Disappearance Date",
       "disappearanceDatePlaceholder": "DD/MM/YYYY",
       "disappearanceStatus": "Disappearance Status",
@@ -78,6 +86,7 @@
     "step3": {
       "stepNumber": "STEP 3",
       "title": "Client Information",
+      "shortDescription": "Capture who is reporting the case.",
       "fullName": "Full Name",
       "fullNamePlaceholder": "Ex: Mohammed Ali",
       "phoneNumber": "Phone Number",
@@ -89,35 +98,11 @@
         "client_relationship_required": "Relationship is required"
       }
     },
-    "step1": {
-      "stepNumber": "STEP 1",
-      "title": "Detainee Information",
-      "fullName": "Full Name",
-      "fullNamePlaceholder": "Ex: Mohammed Ali",
-      "idNumber": "ID Number",
-      "idNumberPlaceholder": "123456789",
-      "dateOfBirth": "Date of birth",
-      "dateOfBirthPlaceholder": "DD/MM/YYYY",
-      "ageHint": "Under 18 is considered a child",
-      "job": "Job",
-      "jobPlaceholder": "Like: Worker",
-      "healthStatus": "Health Status",
-      "maritalStatus": "Marital Status",
-      "errors": {
-        "fullNameRequired": "Full name is required",
-        "idNumberRequired": "ID number is required",
-        "dateOfBirthRequired": "Date of birth is required",
-        "healthStatusRequired": "Health status is required",
-        "maritalStatusRequired": "Marital status is required",
-        "cityRequired": "City is required",
-        "governorateRequired": "Governorate is required",
-        "districtRequired": "District is required",
-        "age18": "Detainee must be 18 years or older."
-      }
-    },
+    
     "step4": {
       "stepNumber": "STEP 4",
       "title": "Delegation & Communication",
+      "shortDescription": "Understand any prior efforts made and contact preferences.",
       "authorizedAnotherParty": "Authorized Another Party Before?",
       "previousDelegation": "Previous Delegation?",
       "organisationName": "Organisation Name",
@@ -133,6 +118,7 @@
     "step5": {
       "stepNumber": "STEP 5",
       "title": "Documents upload",
+      "shortDescription": "Ensure identity validation and legal handling.",
       "detaineeIdTitle": "Detainee ID",
       "clientIdTitle": "Client ID",
       "additionalDocsTitle": "Additional documents",
@@ -149,6 +135,7 @@
     "step6": {
       "stepNumber": "STEP 6",
       "title": "Consent and Submission",
+      "shortDescription": "Obtain legal authorization.",
       "consentText": "I agree to authorize the Palestinian Center for Human Rights to legally pursue...",
       "legalDocTitle": "Legal document",
       "download": "Download document",

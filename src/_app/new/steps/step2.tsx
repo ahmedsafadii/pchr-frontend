@@ -160,7 +160,7 @@ export default function Step2({
                 valueKey="id"
                 value={formData.disappearance_status}
                 onChange={(value) => handleInputChange("disappearance_status", value)}
-                placeholder={t("newCase.common.choose")}
+                placeholder={`${t("newCase.common.choose")} ${t("newCase.step2.disappearanceStatus")}`}
                 isDisabled={isConstantsLoading || !constants}
                 instanceId="step2-disappearance-status-select"
               />

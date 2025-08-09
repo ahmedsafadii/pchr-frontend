@@ -124,50 +124,7 @@ const initialCaseData: CaseData = {
   },
 };
 
-const steps = [
-  {
-    id: 1,
-    title: "Detainee information",
-    description: "Collect Basic Identity And Status Of The Missing Person.",
-    component: Step1,
-    icon: IconUser,
-  },
-  {
-    id: 2,
-    title: "Detention/Disappearance Info",
-    description: "Record Where, When, And How The Person Went Missing.",
-    component: Step2,
-    icon: IconMapPin,
-  },
-  {
-    id: 3,
-    title: "Client info",
-    description: "Capture Who Is Reporting The Case.",
-    component: Step3,
-    icon: IconUser,
-  },
-  {
-    id: 4,
-    title: "Documents upload",
-    description: "Ensure Identity Validation And Legal Handling.",
-    component: Step4,
-    icon: IconFileUpload,
-  },
-  {
-    id: 5,
-    title: "Delegation & Communication",
-    description: "Understand Any Prior Efforts Made And Contact Preferences.",
-    component: Step5,
-    icon: IconMessage,
-  },
-  {
-    id: 6,
-    title: "Consent and Submission",
-    description: "Obtain Legal Authorization.",
-    component: Step6,
-    icon: IconCheck,
-  },
-];
+// Steps will be defined inside the component to access translations and locale
 
 export default function NewCasePage({ locale = "en" }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -178,6 +135,52 @@ export default function NewCasePage({ locale = "en" }) {
   // reserved for future per-field highlighting if needed
   // const [errorFieldMaps, setErrorFieldMaps] = useState<Record<number, Record<string, string>>>({});
   const t = useTranslations();
+  const tt = t as any;
+
+  const steps = [
+    {
+      id: 1,
+      title: t("newCase.step1.title"),
+      description: tt("newCase.step1.shortDescription"),
+      component: Step1,
+      icon: IconUser,
+    },
+    {
+      id: 2,
+      title: t("newCase.step2.title"),
+      description: tt("newCase.step2.shortDescription"),
+      component: Step2,
+      icon: IconMapPin,
+    },
+    {
+      id: 3,
+      title: t("newCase.step3.title"),
+      description: tt("newCase.step3.shortDescription"),
+      component: Step3,
+      icon: IconUser,
+    },
+    {
+      id: 4,
+      title: t("newCase.step4.title"),
+      description: tt("newCase.step4.shortDescription"),
+      component: Step4,
+      icon: IconMessage,
+    },
+    {
+      id: 5,
+      title: t("newCase.step5.title"),
+      description: tt("newCase.step5.shortDescription"),
+      component: Step5,
+      icon: IconFileUpload,
+    },
+    {
+      id: 6,
+      title: t("newCase.step6.title"),
+      description: tt("newCase.step6.shortDescription"),
+      component: Step6,
+      icon: IconCheck,
+    },
+  ];
 
 
   // Load saved data from localStorage on component mount
@@ -353,16 +356,8 @@ export default function NewCasePage({ locale = "en" }) {
           {/* Left Column - Progress */}
           <aside className="new-case__progress">
             <div className="new-case__progress-card">
-              <h1 className="new-case__title">
-                {locale === "ar"
-                  ? "منصة تقرير الاختفاء"
-                  : "Disappearance Report Platform"}
-              </h1>
-              <p className="new-case__description">
-                {locale === "ar"
-                  ? "نص تجريبي بسيط لصناعة الطباعة والتنضيد."
-                  : "Lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry."}
-              </p>
+              <h1 className="new-case__title">{tt("newCase.sidebar.title")}</h1>
+              <p className="new-case__description">{tt("newCase.sidebar.description")}</p>
 
               <div className="new-case__steps">
                 {steps.map((step, index) => {

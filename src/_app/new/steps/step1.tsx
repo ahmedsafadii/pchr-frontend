@@ -235,7 +235,7 @@ export default function Step1({
                   valueKey="id"
                   value={formData.detainee_health_status}
                   onChange={(value) => handleInputChange("detainee_health_status", value)}
-                  placeholder={t("newCase.common.choose")}
+                  placeholder={`${t("newCase.common.choose")} ${t("newCase.step1.healthStatus")}`}
                   isError={!!errors.healthStatus}
                   isDisabled={isConstantsLoading || !constants}
                   instanceId="step1-health-status-select"
@@ -256,7 +256,7 @@ export default function Step1({
                 valueKey="id"
                 value={formData.detainee_marital_status}
                 onChange={(value) => handleInputChange("detainee_marital_status", value)}
-                placeholder={t("newCase.common.choose")}
+                placeholder={`${t("newCase.common.choose")} ${t("newCase.step1.maritalStatus")}`}
                 isError={!!errors.maritalStatus}
                 isDisabled={isConstantsLoading || !constants}
                 instanceId="step1-marital-status-select"
