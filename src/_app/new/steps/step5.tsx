@@ -37,7 +37,6 @@ export default function Step5({
   onNext,
   onPrevious,
   currentStep,
-  canGoNext,
   externalErrors = [],
 }: Step5Props) {
   const t = useTranslations();
@@ -119,7 +118,7 @@ export default function Step5({
         })
       );
     }
-  }, [data.documents]);
+  }, [data.documents, detaineeIdFiles.length, clientIdFiles.length, additionalFiles.length]);
 
   // Drop handlers moved into Uploader
 
