@@ -364,7 +364,7 @@
   max-width: 380px;
   margin-bottom: 16px;
 }
-.case-info__signature img{
+.case-info__signature img {
   max-width: 280px;
 }
 
@@ -556,6 +556,12 @@
   margin-top: 8px;
 }
 
+@media (max-width: 840px) {
+  .case-info__row {
+    width: 100%;
+    flex: 0 0 100%;
+  }
+}
 @media (max-width: 420px) {
   .track__code {
     grid-template-columns: repeat(5, 48px);
