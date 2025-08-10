@@ -224,7 +224,9 @@
         "updateTitle": "تحديث هام للقضية",
         "message": "رسالة",
         "messagePlaceholder": "اكتب رسالتك",
-        "next": "التالي",
+        "next": "ارسال",
+        "detainee": "المعتقل",
+        "readMore": "اقرأ المزيد",
         "status": { "underReview": "قيد المراجعة" }
       },
       "info": {

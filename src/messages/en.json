@@ -62,7 +62,9 @@
       "updateTitle": "Huge Update for the case",
       "message": "Message",
       "messagePlaceholder": "Write your message",
-      "next": "Next",
+      "next": "Send",
+      "detainee": "Detainee",
+      "readMore": "Read More",
       "status": { "underReview": "Under Review" }
     },
     "info": {
