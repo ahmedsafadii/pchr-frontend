@@ -64,9 +64,12 @@ export default function Home() {
             <p className="landing__card-desc">
               {t("landing.status.description")}
             </p>
-            <button className="landing__card-btn">
+            <Link
+              href={`${currentLocale}/track`}
+              className="landing__card-btn"
+            >
               {t("landing.status.action")}
-            </button>
+            </Link>
           </article>
         </section>
       </main>

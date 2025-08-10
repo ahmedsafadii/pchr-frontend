@@ -19,6 +19,74 @@
       "action": "TRACK NOW"
     }
   },
+  "track": {
+    "title": "Case Status",
+    "mobile": "Mobile Number",
+    "mobilePlaceholder": "0599000000",
+    "caseNumber": "Case Number",
+    "caseNumberPlaceholder": "00000",
+    "sendCode": "Send code",
+    "verifyTitle": "Enter the 5‑digit code",
+    "verifyDesc": "We sent a verification code to your mobile.",
+    "verify": "Verify",
+    "resend": "Send again",
+    "resendMessage": "Didn't get the code?",
+    "resendIn": "Resend in",
+    "secondsSuffix": "s",
+    
+    "backToSearch": "Back to search",
+    "errors": {
+      "phone": "Phone number must start with 059 or 056 and be 10 digits",
+      "case": "Case number must be exactly 5 digits",
+      "code": "Code must be exactly 5 digits"
+    },
+    "case": {
+      "title": "Case Details",
+      "ref": "Reference #",
+      "status": "Status",
+      "lastUpdate": "Last update"
+    }
+  },
+  "tabs": {
+    "overview": "Overview",
+    "info": "Disappearance information"
+  },
+  "trackCase": {
+    "overview": {
+      "title": "Overview",
+      "basicInfo": "Basic Informations",
+      "dateOfDisappearance": "Date Of Disappearance:",
+      "details": "Disappearance Details:",
+      "files": "Files",
+      "lawyer": "Lawyer",
+      "updateTitle": "Huge Update for the case",
+      "message": "Message",
+      "messagePlaceholder": "Write your message",
+      "next": "Next",
+      "status": { "underReview": "Under Review" }
+    },
+    "info": {
+      "title": "Disappearance Report Info.",
+      "detainee": "Detainee information",
+      "fullName": "Full Name",
+      "job": "Job",
+      "dob": "DOB",
+      "id": "ID Number",
+      "health": "Healthy Status",
+      "marital": "Marital Status",
+      "location": "Location",
+      "detention": "Detention/Disappearance Info",
+      "disappearanceDate": "Disappearance Date",
+      "status": "Marital Status",
+      "describe": "Describe Disappearance",
+      "client": "Client info",
+      "phone": "Phone Number",
+      "relationship": "Relationship",
+      "documents": "Documents upload",
+      "signature": "Your Signature",
+      "terms": "Terms and conditions .PDF"
+    }
+  },
   "newCase": {
     "back": "Back to Home",
     "sidebar": {

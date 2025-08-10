@@ -19,6 +19,34 @@
         "action": "تتبع الآن"
       }
     },
+    "track": {
+      "title": "حالة القضية",
+      "mobile": "رقم الجوال",
+      "mobilePlaceholder": "0599000000",
+      "caseNumber": "رقم القضية",
+      "caseNumberPlaceholder": "00000",
+      "sendCode": "إرسال الرمز",
+      "verifyTitle": "أدخل الرمز المكوّن من 5 أرقام",
+      "verifyDesc": "قمنا بإرسال رمز تحقق إلى جوالك.",
+      "verify": "تحقق",
+      "resend": "أرسل مرة أخرى",
+      "resendMessage": "لم يصلك الرمز؟",
+      "resendIn": "إعادة الإرسال خلال",
+      "secondsSuffix": "ثانية",
+      
+      "backToSearch": "العودة للبحث",
+      "errors": {
+        "phone": "يجب أن يبدأ رقم الجوال بـ 059 أو 056 وأن يتكون من 10 أرقام",
+        "case": "يجب أن يتكون رقم القضية من 5 أرقام",
+        "code": "يجب أن يتكون الرمز من 5 أرقام"
+      },
+      "case": {
+        "title": "تفاصيل القضية",
+        "ref": "رقم المرجع",
+        "status": "الحالة",
+        "lastUpdate": "آخر تحديث"
+      }
+    },
     "newCase": {
       "back": "العودة للرئيسية",
       "sidebar": {
@@ -179,6 +207,46 @@
       },
       "validation": {
         "palestinianIdInvalid": "رقم الهوية غير صالح"
+      }
+    },
+    "tabs": {
+      "overview": "نظرة عامة",
+      "info": "معلومات الاختفاء"
+    },
+    "trackCase": {
+      "overview": {
+        "title": "نظرة عامة",
+        "basicInfo": "معلومات أساسية",
+        "dateOfDisappearance": "تاريخ الاختفاء:",
+        "details": "تفاصيل الاختفاء:",
+        "files": "الملفات",
+        "lawyer": "المحامي",
+        "updateTitle": "تحديث هام للقضية",
+        "message": "رسالة",
+        "messagePlaceholder": "اكتب رسالتك",
+        "next": "التالي",
+        "status": { "underReview": "قيد المراجعة" }
+      },
+      "info": {
+        "title": "معلومات تقرير الاختفاء",
+        "detainee": "معلومات المعتقل",
+        "fullName": "الاسم الكامل",
+        "job": "الوظيفة",
+        "dob": "تاريخ الميلاد",
+        "id": "رقم الهوية",
+        "health": "الحالة الصحية",
+        "marital": "الحالة الاجتماعية",
+        "location": "الموقع",
+        "detention": "معلومات الاعتقال/الاختفاء",
+        "disappearanceDate": "تاريخ الاختفاء",
+        "status": "الحالة",
+        "describe": "وصف الاختفاء",
+        "client": "معلومات العميل",
+        "phone": "رقم الهاتف",
+        "relationship": "العلاقة",
+        "documents": "رفع المستندات",
+        "signature": "توقيعك",
+        "terms": "شروط وأحكام .PDF"
       }
     }
   }
