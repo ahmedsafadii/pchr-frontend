@@ -1,11 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-globe-gen";
-import { IconTag, IconFileText, IconDownload } from "@tabler/icons-react";
+import { useState } from "react";
+import { IconTag, IconFileText, IconDownload, IconPaperclip } from "@tabler/icons-react";
 
 export default function Overview() {
   const t = useTranslations();
   const tt = t as any;
+  const [message, setMessage] = useState("");
   return (
     <div className="case-overview">
       <div className="case-overview__layout">
@@ -153,7 +155,15 @@ export default function Overview() {
                   "trackCase.overview.messagePlaceholder"
                 )?.toString()}
                 maxLength={500}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
               />
+              <div className="chat__toolbar">
+                <button type="button" className="chat__attach" aria-label="attach">
+                  <IconPaperclip size={18} />
+                </button>
+                <span className="chat__counter">{`${message.length}/500`}</span>
+              </div>
               <div className="chat__actions">
                 <button className="chat__btn" type="submit">
                   {tt("trackCase.overview.next")}
