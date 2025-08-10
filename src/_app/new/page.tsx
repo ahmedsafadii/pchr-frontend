@@ -83,6 +83,24 @@ export interface CaseData {
   };
 }
 
+// Persistent storage controls
+const NEW_CASE_STATE_VERSION = 2;
+const NEW_CASE_KEYS = {
+  data: "newCaseData",
+  step: "newCaseCurrentStep",
+  completed: "newCaseCompletedSteps",
+  version: "newCaseVersion",
+} as const;
+
+function clearPersistedCaseState() {
+  try {
+    localStorage.removeItem(NEW_CASE_KEYS.data);
+    localStorage.removeItem(NEW_CASE_KEYS.step);
+    localStorage.removeItem(NEW_CASE_KEYS.completed);
+    localStorage.removeItem(NEW_CASE_KEYS.version);
+  } catch {}
+}
+
 const initialCaseData: CaseData = {
   detaineeInfo: {
     detainee_name: "",
@@ -191,29 +209,64 @@ export default function NewCasePage({ locale = "en" }) {
 
   // Load saved data from localStorage on component mount
   useEffect(() => {
-    const savedData = localStorage.getItem("newCaseData");
-    const savedStep = localStorage.getItem("newCaseCurrentStep");
-    const savedCompletedSteps = localStorage.getItem("newCaseCompletedSteps");
+    try {
+      const savedVersion = localStorage.getItem(NEW_CASE_KEYS.version);
+      if (String(savedVersion) !== String(NEW_CASE_STATE_VERSION)) {
+        clearPersistedCaseState();
+        return;
+      }
 
-    if (savedData) {
-      setCaseData(JSON.parse(savedData));
-    }
-    if (savedStep) {
-      setCurrentStep(parseInt(savedStep));
-    }
-    if (savedCompletedSteps) {
-      setCompletedSteps(JSON.parse(savedCompletedSteps));
+      const savedData = localStorage.getItem(NEW_CASE_KEYS.data);
+      const savedStep = localStorage.getItem(NEW_CASE_KEYS.step);
+      const savedCompletedSteps = localStorage.getItem(NEW_CASE_KEYS.completed);
+
+      if (savedData) {
+        try {
+          const parsed = JSON.parse(savedData);
+          if (parsed && typeof parsed === "object" && parsed.detaineeInfo && parsed.detentionInfo) {
+            setCaseData(parsed);
+          } else {
+            clearPersistedCaseState();
+            return;
+          }
+        } catch {
+          clearPersistedCaseState();
+          return;
+        }
+      }
+
+      if (savedStep) {
+        const n = parseInt(savedStep);
+        const clamped = isNaN(n) ? 1 : Math.min(Math.max(n, 1), 6);
+        setCurrentStep(clamped);
+      }
+
+      if (savedCompletedSteps) {
+        try {
+          const parsed = JSON.parse(savedCompletedSteps);
+          if (Array.isArray(parsed)) {
+            const filtered = parsed
+              .map((x: any) => Number(x))
+              .filter((x: number) => Number.isInteger(x) && x >= 1 && x <= 6);
+            setCompletedSteps(Array.from(new Set(filtered)));
+          }
+        } catch {
+          // ignore invalid completed steps
+        }
+      }
+    } catch {
+      clearPersistedCaseState();
     }
   }, []);
 
   // Save data to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("newCaseData", JSON.stringify(caseData));
-    localStorage.setItem("newCaseCurrentStep", currentStep.toString());
-    localStorage.setItem(
-      "newCaseCompletedSteps",
-      JSON.stringify(completedSteps)
-    );
+    try {
+      localStorage.setItem(NEW_CASE_KEYS.data, JSON.stringify(caseData));
+      localStorage.setItem(NEW_CASE_KEYS.step, currentStep.toString());
+      localStorage.setItem(NEW_CASE_KEYS.completed, JSON.stringify(completedSteps));
+      localStorage.setItem(NEW_CASE_KEYS.version, String(NEW_CASE_STATE_VERSION));
+    } catch {}
   }, [caseData, currentStep, completedSteps]);
 
   const updateCaseData = (section: keyof CaseData, data: any) => {
@@ -321,11 +374,7 @@ export default function NewCasePage({ locale = "en" }) {
     setCompletedSteps([]);
     setErrorSteps([]);
     setErrorSummaries({});
-    try {
-      localStorage.removeItem("newCaseData");
-      localStorage.removeItem("newCaseCurrentStep");
-      localStorage.removeItem("newCaseCompletedSteps");
-    } catch {}
+    clearPersistedCaseState();
   };
 
   const getStepStatus = (stepNumber: number) => {
