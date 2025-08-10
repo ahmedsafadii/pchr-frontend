@@ -34,7 +34,7 @@
     "resendIn": "Resend in",
     "secondsSuffix": "s",
     
-    "backToSearch": "Back to search",
+    "backToSearch": "Back",
     "errors": {
       "phone": "Phone number must start with 059 or 056 and be 10 digits",
       "case": "Case number must be exactly 5 digits",
@@ -90,7 +90,7 @@
     }
   },
   "newCase": {
-    "back": "Back to Home",
+    "back": "Back",
     "sidebar": {
       "title": "Disappearance Report Platform",
       "description": "Report a missing or detained person safely. Our legal team will follow up."
