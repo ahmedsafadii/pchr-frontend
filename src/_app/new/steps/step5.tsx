@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 // Dropzone is handled inside Uploader component
 import { CaseData } from "../page";
 import { useTranslations } from "next-globe-gen";
 import Uploader from "../../components/Uploader";
-import { useDocumentTypeId } from "../../utils/constants-helpers";
 
 interface Step5Props {
   data: CaseData;
@@ -28,6 +27,7 @@ interface UploadedFile {
   type: string;
   url?: string;
   file: File;
+  status?: "uploading" | "uploaded" | "error";
 }
 
 export default function Step5({
@@ -43,116 +43,272 @@ export default function Step5({
   const [detaineeIdFiles, setDetaineeIdFiles] = useState<UploadedFile[]>([]);
   const [clientIdFiles, setClientIdFiles] = useState<UploadedFile[]>([]);
   const [additionalFiles, setAdditionalFiles] = useState<UploadedFile[]>([]);
-  const idCardTypeId = useDocumentTypeId('id_card');
-  const otherTypeId = useDocumentTypeId('other');
+  // Document type keys to send directly instead of IDs
+  const detaineeIdType = "detainee_id";
+  const clientIdType = "client_id";
+  const additionalType = "additional";
 
   // Helper to extract uploaded server ids
-  const getUploadedIds = (files: any[]) =>
-    files.filter((f) => f?.status === 'uploaded' && typeof f?.id === 'string').map((f) => f.id as string);
+  const getUploadedIds = (files: any[]) => {
+    if (!Array.isArray(files)) {
+      console.warn("getUploadedIds: files is not an array", files);
+      return [];
+    }
+    return files
+      .filter((f) => f?.status === "uploaded" && typeof f?.id === "string")
+      .map((f) => f.id as string);
+  };
 
-  const updateDocuments = (
+  const updateDocuments = useCallback((
     nextDetainee: UploadedFile[] = detaineeIdFiles,
     nextClient: UploadedFile[] = clientIdFiles,
     nextAdditional: UploadedFile[] = additionalFiles
   ) => {
-    const detaineeId = getUploadedIds(nextDetainee)[0] ?? null;
-    const clientId = getUploadedIds(nextClient)[0] ?? null;
-    const additionalIds = getUploadedIds(nextAdditional);
-    updateData('documents', {
+    // Ensure all parameters are arrays
+    const safeDetainee = Array.isArray(nextDetainee) ? nextDetainee : [];
+    const safeClient = Array.isArray(nextClient) ? nextClient : [];
+    const safeAdditional = Array.isArray(nextAdditional) ? nextAdditional : [];
+
+    const detaineeId = getUploadedIds(safeDetainee)[0] ?? null;
+    const clientId = getUploadedIds(safeClient)[0] ?? null;
+    const additionalIds = getUploadedIds(safeAdditional);
+
+    updateData("documents", {
       detainee_document_id: detaineeId,
       client_document_id: clientId,
       additional_document_ids: additionalIds,
     });
-  };
+  }, [detaineeIdFiles, clientIdFiles, additionalFiles, updateData]);
 
   useEffect(() => {
     // Hydrate from existing documents data on mount/prop change
     const docs = data.documents;
-    if (!docs) return;
+    if (!docs) {
+      return;
+    }
 
-    // If there is a known uploaded detainee_document_id but local list is empty, show a placeholder entry
-    if (docs.detainee_document_id && detaineeIdFiles.length === 0) {
-      const meta = docs.display_meta?.detainee;
-      setDetaineeIdFiles([
-        {
-          id: docs.detainee_document_id,
+    // If there is a known uploaded detainee_document_id OR metadata exists but local list is empty, show a placeholder entry
+    const detaineeMeta = docs.display_meta?.detainee_id;
+    const hasDetaineeData = docs.detainee_document_id || detaineeMeta?.id;
+
+    if (hasDetaineeData && detaineeIdFiles.length === 0) {
+      const hydratedFile = {
+        id: detaineeMeta?.id ?? docs.detainee_document_id, // Use metadata ID first
+        name: detaineeMeta?.name ?? "document.pdf",
+        size: detaineeMeta?.size ?? 0,
+        type: detaineeMeta?.type ?? "application/pdf",
+        file: new File([new Blob()], detaineeMeta?.name ?? "document.pdf", {
+          type: detaineeMeta?.type ?? "application/pdf",
+        }),
+        url: undefined,
+        status: detaineeMeta?.status ?? "uploaded",
+      } as any;
+
+      setDetaineeIdFiles([hydratedFile]);
+
+      // Also update the document_id if it's missing
+      if (!docs.detainee_document_id && detaineeMeta?.id) {
+        updateData("documents", {
+          ...data.documents,
+          detainee_document_id: detaineeMeta.id,
+        });
+      }
+    } else {
+    }
+
+    // If there is a known uploaded client_document_id OR metadata exists but local list is empty, show a placeholder entry
+    const clientMeta = docs.display_meta?.client_id;
+    const hasClientData = docs.client_document_id || clientMeta?.id;
+
+    if (hasClientData && clientIdFiles.length === 0) {
+      const hydratedFile = {
+        id: clientMeta?.id ?? docs.client_document_id, // Use metadata ID first
+        name: clientMeta?.name ?? "document.pdf",
+        size: clientMeta?.size ?? 0,
+        type: clientMeta?.type ?? "application/pdf",
+        file: new File([new Blob()], clientMeta?.name ?? "document.pdf", {
+          type: clientMeta?.type ?? "application/pdf",
+        }),
+        url: undefined,
+        status: clientMeta?.status ?? "uploaded",
+      } as any;
+
+      setClientIdFiles([hydratedFile]);
+
+      // Also update the document_id if it's missing
+      if (!docs.client_document_id && clientMeta?.id) {
+        updateData("documents", {
+          ...data.documents,
+          client_document_id: clientMeta.id,
+        });
+      }
+    } else {
+    }
+
+    // If there are additional document IDs OR additional metadata exists but local list is empty
+    const additionalMetas = docs.display_meta?.additional ?? [];
+    const hasAdditionalData =
+      (Array.isArray(docs.additional_document_ids) &&
+        docs.additional_document_ids.length > 0) ||
+      additionalMetas.length > 0;
+
+    if (hasAdditionalData && additionalFiles.length === 0) {
+      // Use metadata IDs if document IDs array is empty
+      const idsToUse =
+        docs.additional_document_ids.length > 0
+          ? docs.additional_document_ids
+          : additionalMetas.map((m) => m.id);
+
+      const hydratedFiles = idsToUse.map((id) => {
+        const meta = additionalMetas.find((m) => m.id === id);
+        return {
+          id: meta?.id ?? id, // Use preserved server ID
           name: meta?.name ?? "document.pdf",
           size: meta?.size ?? 0,
-          type: "application/pdf",
-          file: new File([new Blob()], meta?.name ?? "document.pdf", { type: "application/pdf" }),
+          type: meta?.type ?? "application/pdf",
+          file: new File([new Blob()], meta?.name ?? "document.pdf", {
+            type: meta?.type ?? "application/pdf",
+          }),
           url: undefined,
-          status: "uploaded",
-        } as any,
-      ]);
-    }
+          status: meta?.status ?? "uploaded",
+        } as any;
+      });
 
-    if (docs.client_document_id && clientIdFiles.length === 0) {
-      const meta = docs.display_meta?.client;
-      setClientIdFiles([
-        {
-          id: docs.client_document_id,
-          name: meta?.name ?? "document.pdf",
-          size: meta?.size ?? 0,
-          type: "application/pdf",
-          file: new File([new Blob()], meta?.name ?? "document.pdf", { type: "application/pdf" }),
-          url: undefined,
-          status: "uploaded",
-        } as any,
-      ]);
-    }
+      setAdditionalFiles(hydratedFiles);
 
-    if (Array.isArray(docs.additional_document_ids) && additionalFiles.length === 0) {
-      const metas = docs.display_meta?.additional ?? [];
-      setAdditionalFiles(
-        docs.additional_document_ids.map((id) => {
-          const meta = metas.find((m) => m.id === id);
-          return {
-            id,
-            name: meta?.name ?? "document.pdf",
-            size: meta?.size ?? 0,
-            type: "application/pdf",
-            file: new File([new Blob()], meta?.name ?? "document.pdf", { type: "application/pdf" }),
-            url: undefined,
-            status: "uploaded",
-          } as any;
-        })
-      );
+      // Also update the document_ids if they're missing
+      if (
+        docs.additional_document_ids.length === 0 &&
+        additionalMetas.length > 0
+      ) {
+        updateData("documents", {
+          ...data.documents,
+          additional_document_ids: additionalMetas.map((m) => m.id),
+        });
+      }
+    } else {
     }
-  }, [data.documents, detaineeIdFiles.length, clientIdFiles.length, additionalFiles.length]);
+  }, [
+    data.documents,
+    detaineeIdFiles.length,
+    clientIdFiles.length,
+    additionalFiles.length,
+    updateData,
+  ]);
+
+  // Update documents when file states change
+  useEffect(() => {
+    updateDocuments(detaineeIdFiles, clientIdFiles, additionalFiles);
+
+    // Update display metadata for uploaded files
+    const detaineeUploaded = detaineeIdFiles.find(
+      (f) => f.status === "uploaded"
+    );
+    const clientUploaded = clientIdFiles.find((f) => f.status === "uploaded");
+    const additionalUploaded = additionalFiles.filter(
+      (f) => f.status === "uploaded"
+    );
+
+    if (detaineeUploaded || clientUploaded || additionalUploaded.length > 0) {
+      const newDisplayMeta = {
+        ...(data.documents?.display_meta || {}),
+      };
+
+      if (detaineeUploaded) {
+        newDisplayMeta.detainee_id = {
+          id: detaineeUploaded.id,
+          name: detaineeUploaded.name,
+          size: detaineeUploaded.size,
+          type: detaineeUploaded.type,
+          status: detaineeUploaded.status || "uploaded",
+        };
+      }
+
+      if (clientUploaded) {
+        newDisplayMeta.client_id = {
+          id: clientUploaded.id,
+          name: clientUploaded.name,
+          size: clientUploaded.size,
+          type: clientUploaded.type,
+          status: clientUploaded.status || "uploaded",
+        };
+      }
+
+      if (additionalUploaded.length > 0) {
+        newDisplayMeta.additional = additionalUploaded.map((f) => ({
+          id: f.id,
+          name: f.name,
+          size: f.size,
+          type: f.type,
+          status: f.status || "uploaded",
+        }));
+      }
+
+      updateData("documents", {
+        ...data.documents,
+        display_meta: newDisplayMeta,
+      });
+    }
+  }, [
+    detaineeIdFiles,
+    clientIdFiles,
+    additionalFiles,
+    data.documents,
+    updateData,
+    updateDocuments,
+  ]);
 
   // Drop handlers moved into Uploader
 
   const removeDetaineeIdFile = (fileId: string) => {
-    setDetaineeIdFiles(prev => prev.filter(file => file.id !== fileId));
+    setDetaineeIdFiles((prev) => prev.filter((file) => file.id !== fileId));
   };
 
   const removeClientIdFile = (fileId: string) => {
-    setClientIdFiles(prev => prev.filter(file => file.id !== fileId));
+    setClientIdFiles((prev) => prev.filter((file) => file.id !== fileId));
   };
 
   const removeAdditionalFile = (fileId: string) => {
-    setAdditionalFiles(prev => prev.filter(file => file.id !== fileId));
+    setAdditionalFiles((prev) => prev.filter((file) => file.id !== fileId));
   };
 
   // File size formatting handled in Uploader
 
   const validateForm = () => {
     // Require at least one uploaded (status==='uploaded') file for detainee and client IDs
-    const hasDetaineeId = getUploadedIds(detaineeIdFiles).length > 0;
-    const hasClientId = getUploadedIds(clientIdFiles).length > 0;
+    const detaineeUploadedIds = getUploadedIds(detaineeIdFiles);
+    const clientUploadedIds = getUploadedIds(clientIdFiles);
+    const hasDetaineeId = detaineeUploadedIds.length > 0;
+    const hasClientId = clientUploadedIds.length > 0;
+
     return hasDetaineeId && hasClientId;
   };
 
   const handleNext = () => {
-    if (validateForm()) {
+    const isValid = validateForm();
+
+    if (isValid) {
       // Convert files to URLs or upload them to server
       const documents = {
-        detaineeIdFiles: detaineeIdFiles.map(f => ({ name: f.name, size: f.size, url: f.url })),
-        clientIdFiles: clientIdFiles.map(f => ({ name: f.name, size: f.size, url: f.url })),
-        additionalFiles: additionalFiles.map(f => ({ name: f.name, size: f.size, url: f.url }))
+        detaineeIdFiles: detaineeIdFiles.map((f) => ({
+          name: f.name,
+          size: f.size,
+          url: f.url,
+        })),
+        clientIdFiles: clientIdFiles.map((f) => ({
+          name: f.name,
+          size: f.size,
+          url: f.url,
+        })),
+        additionalFiles: additionalFiles.map((f) => ({
+          name: f.name,
+          size: f.size,
+          url: f.url,
+        })),
       };
-      
+
       updateData("documents", documents);
+
       onComplete(currentStep);
       onNext();
     }
@@ -163,10 +319,10 @@ export default function Step5({
   return (
     <div className="steps">
       <header className="steps__header">
-        <span className="steps__step-number">{t("newCase.step5.stepNumber")}</span>
-        <h2 className="steps__title">
-          {t("newCase.step5.title")}
-        </h2>
+        <span className="steps__step-number">
+          {t("newCase.step5.stepNumber")}
+        </span>
+        <h2 className="steps__title">{t("newCase.step5.title")}</h2>
       </header>
 
       <form className="steps__form" onSubmit={(e) => e.preventDefault()}>
@@ -179,28 +335,19 @@ export default function Step5({
             </ul>
           </div>
         )}
+
         {/* Detainee ID Section */}
         <section className="steps__section">
-          <h3 className="steps__section-title">{t("newCase.step5.detaineeIdTitle")} <span className="steps__required">*</span></h3>
+          <h3 className="steps__section-title">
+            {t("newCase.step5.detaineeIdTitle")}{" "}
+            <span className="steps__required">*</span>
+          </h3>
+
           <Uploader
-            documentTypeId={idCardTypeId}
+            documentTypeId={detaineeIdType}
             multiple={false}
             files={detaineeIdFiles as any}
-            setFiles={(files) => {
-              setDetaineeIdFiles(files as any);
-              updateDocuments(files as any, clientIdFiles as any, additionalFiles as any);
-              // Persist minimal display meta
-              const first = (files as any[])[0];
-              if (first && first.status === 'uploaded') {
-                updateData('documents', {
-                  ...data.documents,
-                  display_meta: {
-                    ...(data.documents?.display_meta || {}),
-                    detainee: { name: first.name, size: first.size },
-                  },
-                });
-              }
-            }}
+            setFiles={setDetaineeIdFiles}
             onRemove={removeDetaineeIdFile}
             dropzoneText={t("newCase.step5.dropzone.text")}
             dropzoneHint={t("newCase.step5.dropzone.hint")}
@@ -210,26 +357,16 @@ export default function Step5({
 
         {/* Client ID Section */}
         <section className="steps__section">
-          <h3 className="steps__section-title">{t("newCase.step5.clientIdTitle")} <span className="steps__required">*</span></h3>
-          
+          <h3 className="steps__section-title">
+            {t("newCase.step5.clientIdTitle")}{" "}
+            <span className="steps__required">*</span>
+          </h3>
+
           <Uploader
-            documentTypeId={idCardTypeId}
-            multiple={true}
+            documentTypeId={clientIdType}
+            multiple={false}
             files={clientIdFiles as any}
-            setFiles={(files) => {
-              setClientIdFiles(files as any);
-              updateDocuments(detaineeIdFiles as any, files as any, additionalFiles as any);
-              const first = (files as any[])[0];
-              if (first && first.status === 'uploaded') {
-                updateData('documents', {
-                  ...data.documents,
-                  display_meta: {
-                    ...(data.documents?.display_meta || {}),
-                    client: { name: first.name, size: first.size },
-                  },
-                });
-              }
-            }}
+            setFiles={setClientIdFiles}
             onRemove={removeClientIdFile}
             dropzoneText={t("newCase.step5.dropzone.text")}
             dropzoneHint={t("newCase.step5.dropzone.hint")}
@@ -239,24 +376,15 @@ export default function Step5({
 
         {/* Additional Documents Section */}
         <section className="steps__section">
-          <h3 className="steps__section-title">{t("newCase.step5.additionalDocsTitle")}</h3>
-          
+          <h3 className="steps__section-title">
+            {t("newCase.step5.additionalDocsTitle")}
+          </h3>
+
           <Uploader
-            documentTypeId={otherTypeId}
+            documentTypeId={additionalType}
             multiple={true}
             files={additionalFiles as any}
-            setFiles={(files) => {
-              setAdditionalFiles(files as any);
-              updateDocuments(detaineeIdFiles as any, clientIdFiles as any, files as any);
-              const metas = (files as any[]).filter((f) => f.status === 'uploaded').map((f) => ({ id: f.id, name: f.name, size: f.size }));
-              updateData('documents', {
-                ...data.documents,
-                display_meta: {
-                  ...(data.documents?.display_meta || {}),
-                  additional: metas,
-                },
-              });
-            }}
+            setFiles={setAdditionalFiles}
             onRemove={removeAdditionalFile}
             dropzoneText={t("newCase.step5.dropzone.text")}
             dropzoneHint={t("newCase.step5.dropzone.hint")}
@@ -285,4 +413,4 @@ export default function Step5({
       </form>
     </div>
   );
-} 
+}

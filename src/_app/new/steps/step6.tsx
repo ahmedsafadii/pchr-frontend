@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-globe-gen";
+import SignatureCanvas from "react-signature-canvas";
 import { submitCase, uploadDocumentFile } from "../../services/api";
 import ConfirmSubmitModal from "../modals/ConfirmSubmitModal";
 import LoadingModal from "../modals/LoadingModal";
@@ -9,7 +10,6 @@ import SuccessModal from "../modals/SuccessModal";
 import ErrorModal from "../modals/ErrorModal";
 import { IconDownload, IconFileText } from "@tabler/icons-react";
 import { CaseData } from "../page";
-import { useDocumentTypeId } from "../../utils/constants-helpers";
 
 interface Step6Props {
   data: CaseData;
@@ -23,7 +23,10 @@ interface Step6Props {
   totalSteps: number;
   locale?: string;
   onResetAll?: () => void;
-  onValidationErrors?: (payload: { steps: number[]; summaries: Record<number, string[]> }) => void;
+  onValidationErrors?: (payload: {
+    steps: number[];
+    summaries: Record<number, string[]>;
+  }) => void;
 }
 
 export default function Step6({
@@ -36,10 +39,7 @@ export default function Step6({
   onValidationErrors,
 }: Step6Props) {
   const [consentAccepted] = useState(true);
-  const [, setSignature] = useState<string>("");
-  const [isDrawing, setIsDrawing] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const contextRef = useRef<CanvasRenderingContext2D | null>(null);
+  const signatureRef = useRef<SignatureCanvas>(null);
   const t = useTranslations();
   const locale = useLocale();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,97 +47,59 @@ export default function Step6({
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState<string | null>(null);
   const [caseRef, setCaseRef] = useState<string>("");
-  const [isUploadingSignature, setIsUploadingSignature] = useState(false);
+
   const [hasDrawn, setHasDrawn] = useState(false);
   const [signatureError, setSignatureError] = useState<string | null>(null);
-  const otherDocTypeId = useDocumentTypeId("other");
+  const signatureDocType = "signature";
 
+  // Hydrate signature state if already uploaded
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const signatureMeta = data.documents?.display_meta?.signature;
+    const hasSignatureId = data.consent?.signature_document_id;
 
-    canvas.width = canvas.offsetWidth * 2;
-    canvas.height = canvas.offsetHeight * 2;
-    canvas.style.width = `${canvas.offsetWidth}px`;
-    canvas.style.height = `${canvas.offsetHeight}px`;
+    if ((hasSignatureId || signatureMeta?.id) && !hasDrawn) {
 
-    const context = canvas.getContext("2d");
-    if (!context) return;
+      setHasDrawn(true); // Mark as drawn so upload button becomes available
 
-    context.scale(2, 2);
-    context.lineCap = "round";
-    context.strokeStyle = "#000";
-    context.lineWidth = 2;
-    contextRef.current = context;
-  }, []);
-
-  const startDrawing = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    setIsDrawing(true);
-    const { offsetX, offsetY } = event.nativeEvent;
-    contextRef.current?.beginPath();
-    contextRef.current?.moveTo(offsetX, offsetY);
-  };
-
-  const draw = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return;
-    const { offsetX, offsetY } = event.nativeEvent;
-    contextRef.current?.lineTo(offsetX, offsetY);
-    contextRef.current?.stroke();
-    if (!hasDrawn) setHasDrawn(true);
-  };
-
-  const stopDrawing = () => {
-    setIsDrawing(false);
-    contextRef.current?.closePath();
-  };
+      // If we have metadata but no consent ID, update consent
+      if (!hasSignatureId && signatureMeta?.id) {
+        updateData("consent", {
+          ...data.consent,
+          signature_document_id: signatureMeta.id,
+        });
+      }
+    }
+  }, [data.documents, data.consent, hasDrawn, updateData]);
 
   const clearSignature = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    setSignature("");
+    if (signatureRef.current) {
+      signatureRef.current.clear();
+    }
+
+    // Reset states - this will reset validation too
     setHasDrawn(false);
     setSignatureError(null);
+
+    // Also clear any uploaded signature data
+    updateData("consent", {
+      ...data.consent,
+      signature_document_id: null,
+    });
+
+    // Remove signature metadata
+    if (data.documents?.display_meta?.signature) {
+      const newDisplayMeta = { ...data.documents.display_meta };
+      delete newDisplayMeta.signature;
+      updateData("documents", {
+        ...data.documents,
+        display_meta: newDisplayMeta,
+      });
+    }
+
+
   };
 
-  const uploadSignature = async () => {
-    setSignatureError(null);
-    // If already uploaded via file, skip
-    if (data.consent.signature_document_id) return;
-    if (!hasDrawn) {
-      setSignatureError(t("newCase.step6.alerts.missingSignature"));
-      return;
-    }
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    try {
-      setIsUploadingSignature(true);
-      // Convert canvas to blob then to File
-      const blob: Blob | null = await new Promise((resolve) =>
-        canvas.toBlob(resolve as BlobCallback, "image/png")
-      );
-      if (!blob) throw new Error("Failed to get signature blob");
-      const file = new File([blob], `signature-${Date.now()}.png`, {
-        type: "image/png",
-      });
-      if (!otherDocTypeId) throw new Error("Missing document type id");
-      const res = await uploadDocumentFile(otherDocTypeId, file, locale);
-      const serverId = (res?.data?.document_id ?? null) as string | null;
-      if (!serverId) throw new Error("Upload did not return document_id");
-      // Save id in consent; this will satisfy step validation
-      updateData("consent", {
-        ...data.consent,
-        signature_document_id: serverId,
-      });
-    } catch (e: any) {
-      console.error("Step6:signatureUpload:error", e);
-      setSignatureError(e?.message || "Signature upload failed");
-    } finally {
-      setIsUploadingSignature(false);
-    }
-  };
+
 
   const removeUploadedSignature = () => {
     updateData("consent", { ...data.consent, signature_document_id: null });
@@ -175,8 +137,8 @@ This document is legally binding and constitutes your formal consent for legal a
   };
 
   const validateForm = () => {
-    // Valid only if a signature document has been uploaded
-    return !!data.consent.signature_document_id;
+    // Valid if signature is uploaded OR user has drawn something
+    return !!data.consent.signature_document_id || hasDrawn;
   };
 
   const handleSubmit = async () => {
@@ -185,9 +147,72 @@ This document is legally binding and constitutes your formal consent for legal a
       return;
     }
 
+    // Smart upload logic: Upload signature if drawn but not yet uploaded
+    let finalSignatureId = data.consent.signature_document_id;
+
+    if (
+      !finalSignatureId &&
+      hasDrawn &&
+      signatureRef.current &&
+      !signatureRef.current.isEmpty()
+    ) {
+      try {
+
+        setIsSubmitting(true); // Show loading during upload
+
+        // Get signature as blob
+        const canvas = signatureRef.current.getCanvas();
+        const blob: Blob | null = await new Promise((resolve) =>
+          canvas.toBlob(resolve as BlobCallback, "image/png")
+        );
+
+        if (!blob) throw new Error("Failed to get signature blob");
+
+        const file = new File([blob], `signature-${Date.now()}.png`, {
+          type: "image/png",
+        });
+
+        const res = await uploadDocumentFile(signatureDocType, file, locale);
+        finalSignatureId = (res?.data?.document_id ?? null) as string | null;
+
+        if (!finalSignatureId)
+          throw new Error("Upload did not return document_id");
+
+
+
+        // Update data with the new signature ID
+        updateData("consent", {
+          ...data.consent,
+          signature_document_id: finalSignatureId,
+        });
+
+        // Save signature metadata for persistence
+        updateData("documents", {
+          ...data.documents,
+          display_meta: {
+            ...(data.documents?.display_meta || {}),
+            signature: {
+              id: finalSignatureId,
+              name: file.name,
+              size: file.size,
+              type: file.type,
+              status: "uploaded",
+            },
+          },
+        });
+      } catch (error: any) {
+
+        alert(
+          "Failed to upload signature: " + (error?.message || "Unknown error")
+        );
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     const consentData = {
       consent_agreed: consentAccepted,
-      signature_document_id: data.consent.signature_document_id ?? null,
+      signature_document_id: finalSignatureId,
       priority: data.consent.priority ?? null,
     };
     updateData("consent", { ...data.consent, ...consentData });
@@ -203,15 +228,13 @@ This document is legally binding and constitutes your formal consent for legal a
 
     try {
       setIsSubmitting(true);
-      console.log("Step6:submitCase:payload", payload);
       const res = await submitCase(payload, locale);
-      console.log("Step6:submitCase:success", res);
       const ref = (res as any)?.data?.case_number ?? "";
       setCaseRef(ref);
       setShowSuccess(true);
       onComplete(currentStep);
     } catch (error: any) {
-      console.error("Step6:submitCase:error", error);
+
       // If 422, map backend error keys to steps
       const status = error?.status ?? error?.payload?.statusCode;
       const details = error?.payload?.error?.details as any;
@@ -271,11 +294,14 @@ This document is legally binding and constitutes your formal consent for legal a
 
           // Fallback by prefix heuristics
           if (field.startsWith("detainee_")) return 1;
-          if (field.startsWith("detention_") || field.includes("disappearance")) return 2;
+          if (field.startsWith("detention_") || field.includes("disappearance"))
+            return 2;
           if (field.startsWith("client_")) return 3;
-          if (field.includes("delegation") || field.includes("organisation")) return 4;
+          if (field.includes("delegation") || field.includes("organisation"))
+            return 4;
           if (field.includes("document")) return 5;
-          if (field.includes("consent") || field.includes("signature")) return 6;
+          if (field.includes("consent") || field.includes("signature"))
+            return 6;
           return null;
         };
 
@@ -290,18 +316,49 @@ This document is legally binding and constitutes your formal consent for legal a
         };
 
         // Case A: API already groups by step keys
-        if (details.step1_detainee_info || details.step2_detention_info || details.step5_documents_info || details.step6_consent_info) {
-          if (details.step1_detainee_info) pushSummary(1, Object.values(details.step1_detainee_info as Record<string, string[]>).flat());
-          if (details.step2_detention_info) pushSummary(2, Object.values(details.step2_detention_info as Record<string, string[]>).flat());
-          if (details.step5_documents_info) pushSummary(5, Object.values(details.step5_documents_info as Record<string, string[]>).flat());
-          if (details.step6_consent_info) pushSummary(6, Object.values(details.step6_consent_info as Record<string, string[]>).flat());
-        } else if (typeof details === 'object') {
+        if (
+          details.step1_detainee_info ||
+          details.step2_detention_info ||
+          details.step5_documents_info ||
+          details.step6_consent_info
+        ) {
+          if (details.step1_detainee_info)
+            pushSummary(
+              1,
+              Object.values(
+                details.step1_detainee_info as Record<string, string[]>
+              ).flat()
+            );
+          if (details.step2_detention_info)
+            pushSummary(
+              2,
+              Object.values(
+                details.step2_detention_info as Record<string, string[]>
+              ).flat()
+            );
+          if (details.step5_documents_info)
+            pushSummary(
+              5,
+              Object.values(
+                details.step5_documents_info as Record<string, string[]>
+              ).flat()
+            );
+          if (details.step6_consent_info)
+            pushSummary(
+              6,
+              Object.values(
+                details.step6_consent_info as Record<string, string[]>
+              ).flat()
+            );
+        } else if (typeof details === "object") {
           // Case B: Flat field -> messages mapping like { detainee_job: ["Must be a valid UUID."] }
-          Object.entries(details as Record<string, string[] | string>).forEach(([field, msgs]) => {
-            const step = mapFieldToStep(field);
-            const messages = Array.isArray(msgs) ? msgs : [String(msgs)];
-            if (step) pushSummary(step, messages);
-          });
+          Object.entries(details as Record<string, string[] | string>).forEach(
+            ([field, msgs]) => {
+              const step = mapFieldToStep(field);
+              const messages = Array.isArray(msgs) ? msgs : [String(msgs)];
+              if (step) pushSummary(step, messages);
+            }
+          );
         }
 
         if (steps.length > 0) {
@@ -394,18 +451,6 @@ This document is legally binding and constitutes your formal consent for legal a
           ) : (
             <>
               <div className="steps__signature-controls">
-                {!signatureError && (
-                  <button
-                    type="button"
-                    className="steps__signature-button"
-                    onClick={uploadSignature}
-                    disabled={
-                      isUploadingSignature || !hasDrawn || !otherDocTypeId
-                    }
-                  >
-                    {isUploadingSignature ? "..." : t("newCase.step6.upload")}
-                  </button>
-                )}
                 <button
                   type="button"
                   className="steps__signature-button"
@@ -420,13 +465,32 @@ This document is legally binding and constitutes your formal consent for legal a
                 </p>
               )}
               <div className="steps__signature-area">
-                <canvas
-                  ref={canvasRef}
-                  className="steps__signature-canvas"
-                  onMouseDown={startDrawing}
-                  onMouseMove={draw}
-                  onMouseUp={stopDrawing}
-                  onMouseLeave={stopDrawing}
+                <SignatureCanvas
+                  ref={signatureRef}
+                  canvasProps={{
+                    className: "steps__signature-canvas",
+                    style: {
+                      border: "1px solid #ccc",
+                      borderRadius: "4px",
+                      width: "100%",
+                      height: "200px",
+                    },
+                  }}
+                  // Smoothing and quality options for iPad-like drawing
+                  velocityFilterWeight={0.7} // Higher = smoother lines (0-1)
+                  minWidth={0.5} // Minimum line width
+                  maxWidth={2.5} // Maximum line width
+                  throttle={16} // Throttle drawing events (60fps)
+                  minDistance={5} // Minimum distance between points
+                  dotSize={1} // Size of dots when tapping
+                  penColor="#000000" // Pen color
+                  backgroundColor="rgba(255,255,255,0)" // Transparent background
+                  onBegin={() => {
+                    setHasDrawn(true);
+                  }}
+                  onEnd={() => {
+                    // Signature drawing ended
+                  }}
                 />
               </div>
             </>
@@ -464,7 +528,10 @@ This document is legally binding and constitutes your formal consent for legal a
       <SuccessModal
         isOpen={showSuccess}
         caseRef={caseRef}
-        onTrack={() => { setShowSuccess(false); onResetAll?.(); }}
+        onTrack={() => {
+          setShowSuccess(false);
+          onResetAll?.();
+        }}
       />
       <ErrorModal
         isOpen={!!showError}

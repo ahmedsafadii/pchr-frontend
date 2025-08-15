@@ -41,13 +41,6 @@ export default function Uploader({
   const t = useTranslations();
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      console.log("Uploader:onDrop", {
-        instanceId,
-        documentTypeId,
-        locale,
-        acceptedCount: acceptedFiles.length,
-        acceptedPreview: acceptedFiles.map((f) => ({ name: f.name, size: f.size, type: f.type })),
-      });
       const newFiles: UploadedFile[] = acceptedFiles.map((file) => ({
         id: Math.random().toString(36).slice(2),
         name: file.name,
@@ -63,23 +56,12 @@ export default function Uploader({
       if (documentTypeId) {
         newFiles.forEach(async (f) => {
           try {
-            console.log("Uploader:upload:start", {
-              instanceId,
-              documentTypeId,
-              file: { name: f.name, size: f.size, type: f.type },
-            });
             const res = await uploadDocumentFile(
               documentTypeId,
               f.file,
               locale
             );
             const serverId = (res?.data?.document_id ?? null) as string | null;
-            console.log("Uploader:upload:success", {
-              instanceId,
-              tempId: f.id,
-              serverId,
-              apiResponse: res,
-            });
             setFiles((prev) =>
               prev.map((pf) =>
                 pf.id === f.id
@@ -91,40 +73,25 @@ export default function Uploader({
                   : pf
               )
             );
-          } catch (error) {
-            const err: any = error;
-            console.error("Uploader:upload:error", {
-              instanceId,
-              documentTypeId,
-              file: { name: f.name, size: f.size, type: f.type },
-              status: err?.status,
-              payload: err?.payload,
-              message: err?.message,
-            });
+          } catch {
             setFiles((prev) =>
               prev.map((pf) => (pf.id === f.id ? { ...pf, status: "error" } : pf))
             );
           }
         });
-      } else {
-        console.warn("Uploader:no-documentTypeId", { instanceId });
       }
     },
-    [files, multiple, setFiles, documentTypeId, locale, instanceId]
+    [files, multiple, setFiles, documentTypeId, locale]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    // Accept common document types
+    // Accept PDF and image file types
     accept: {
       "application/pdf": [".pdf"],
-      "application/msword": [".doc"],
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        [".docx"],
-      "application/vnd.ms-excel": [".xls"],
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
-        ".xlsx",
-      ],
+      "image/jpeg": [".jpg", ".jpeg"],
+      "image/png": [".png"],
+      "image/bmp": [".bmp"],
     },
     maxSize: 1.5 * 1024 * 1024,
     multiple,

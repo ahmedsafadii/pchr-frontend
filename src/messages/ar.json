@@ -116,11 +116,14 @@
         "shortDescription": "تحديد هوية مقدم البلاغ ومعلومات التواصل.",
         "fullName": "الاسم الكامل",
         "fullNamePlaceholder": "مثال: محمد علي",
+        "idNumber": "رقم الهوية",
+        "idNumberPlaceholder": "مثال: 123456789",
         "phoneNumber": "رقم الهاتف",
         "phoneNumberPlaceholder": "0591234567",
         "relationship": "العلاقة",
         "errors": {
           "client_name_required": "الاسم الكامل مطلوب",
+          "client_id_required": "رقم الهوية مطلوب",
           "client_phone_required": "رقم الهاتف مطلوب",
           "client_relationship_required": "العلاقة مطلوبة"
         }
@@ -150,7 +153,7 @@
         "additionalDocsTitle": "مستندات إضافية",
         "dropzone": {
           "text": "قم بسحب الملفات هنا أو اختر من الجهاز",
-          "hint": "DOCS, PDF, EXL, حتى 1.5 ميجابايت"
+          "hint": "PDF, JPG, JPEG, BMP, PNG, حتى 1.5 ميجابايت"
         },
         "uploadStatus": {
           "uploading": "جاري الرفع...",

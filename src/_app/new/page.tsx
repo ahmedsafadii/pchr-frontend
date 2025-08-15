@@ -50,6 +50,7 @@ export interface CaseData {
   // Step 3: Client Info
   clientInfo: {
     client_name: string;
+    client_id: string;
     client_phone: string;
     client_relationship: string;
   };
@@ -62,7 +63,10 @@ export interface CaseData {
     display_meta?: {
       detainee?: { name: string; size: number };
       client?: { name: string; size: number };
-      additional?: Array<{ id: string; name: string; size: number }>;
+      additional?: Array<{ id: string; name: string; size: number; type: string; status: string }>;
+      detainee_id?: { id: string; name: string; size: number; type: string; status: string };
+      client_id?: { id: string; name: string; size: number; type: string; status: string };
+      signature?: { id: string; name: string; size: number; type: string; status: string };
     };
   };
 
@@ -125,6 +129,7 @@ const initialCaseData: CaseData = {
   },
   clientInfo: {
     client_name: "",
+    client_id: "",
     client_phone: "",
     client_relationship: "",
   },
@@ -327,6 +332,7 @@ export default function NewCasePage({ locale = "en" }) {
       const clientInfo = caseData.clientInfo;
       const isValid = (
         clientInfo?.client_name?.trim() !== '' &&
+        clientInfo?.client_id?.trim() !== '' &&
         clientInfo?.client_phone?.trim() !== '' &&
         clientInfo?.client_relationship?.trim() !== ''
       );
@@ -346,8 +352,10 @@ export default function NewCasePage({ locale = "en" }) {
     // For step 5, require detainee and client ID documents to be uploaded
     if (stepNumber === 5) {
       const documents = caseData.documents;
-      const hasDetaineeId = !!documents?.detainee_document_id;
-      const hasClientId = !!documents?.client_document_id;
+      // Check both document IDs and metadata for uploaded files
+      const hasDetaineeId = !!documents?.detainee_document_id || !!documents?.display_meta?.detainee_id?.id;
+      const hasClientId = !!documents?.client_document_id || !!documents?.display_meta?.client_id?.id;
+
       return hasDetaineeId && hasClientId;
     }
     

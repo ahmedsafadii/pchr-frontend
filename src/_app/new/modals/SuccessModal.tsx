@@ -1,8 +1,9 @@
 "use client";
 
 import BlockingModal from "./BlockingModal";
-import { useTranslations } from "next-globe-gen";
+import { useTranslations, useLocale } from "next-globe-gen";
 import { IconCircleCheck } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 
 interface SuccessModalProps {
   isOpen: boolean;
@@ -17,6 +18,13 @@ export default function SuccessModal({
   onTrack,
 }: SuccessModalProps) {
   const t = useTranslations();
+  const locale = useLocale();
+  const router = useRouter();
+
+  const handleTrackClick = () => {
+    onTrack(); // Call the original callback (for any cleanup)
+    router.push(`/${locale}/track`); // Navigate to track page with locale prefix
+  };
   return (
     <BlockingModal isOpen={isOpen}>
       <div className="success">
@@ -38,7 +46,7 @@ export default function SuccessModal({
         </div>
         <button
           className="success__cta success__cta--primary"
-          onClick={onTrack}
+          onClick={handleTrackClick}
         >
           {t("newCase.submitModals.success.cta")}
         </button>

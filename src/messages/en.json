@@ -159,11 +159,14 @@
       "shortDescription": "Capture who is reporting the case.",
       "fullName": "Full Name",
       "fullNamePlaceholder": "Ex: Mohammed Ali",
+      "idNumber": "ID Number",
+      "idNumberPlaceholder": "Ex: 123456789",
       "phoneNumber": "Phone Number",
       "phoneNumberPlaceholder": "0591234567",
       "relationship": "Relationship",
       "errors": {
         "client_name_required": "Full name is required",
+        "client_id_required": "ID number is required",
         "client_phone_required": "Phone number is required",
         "client_relationship_required": "Relationship is required"
       }
@@ -194,7 +197,7 @@
       "additionalDocsTitle": "Additional documents",
       "dropzone": {
         "text": "Drag & Drop Choose from files",
-        "hint": "DOCS, PDF, EXL, Up To 1.5 MB"
+        "hint": "PDF, JPG, JPEG, BMP, PNG, Up To 1.5 MB"
       },
       "uploadStatus": {
         "uploading": "Uploading...",

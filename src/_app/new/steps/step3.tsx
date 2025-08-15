@@ -9,6 +9,9 @@ import {
   validatePalestinianPhone,
   getPalestinianPhoneErrorMessage,
   getPalestinianPhoneTooltip,
+  validatePalestinianId,
+  getPalestinianIdErrorMessage,
+  getPalestinianIdTooltip,
 } from "../../utils/validation";
 import { defaultTooltipProps, createTooltipProps, tooltipIconClasses } from "../../utils/tooltip";
 import { useTranslations } from "next-globe-gen";
@@ -71,6 +74,9 @@ export default function Step3({
 
     if (!formData.client_name.trim()) newErrors.client_name = t("newCase.step3.errors.client_name_required");
 
+    if (!formData.client_id.trim()) newErrors.client_id = t("newCase.step3.errors.client_id_required");
+    else if (!validatePalestinianId(formData.client_id)) newErrors.client_id = getPalestinianIdErrorMessage(locale);
+
     if (!formData.client_phone.trim()) newErrors.client_phone = t("newCase.step3.errors.client_phone_required");
     else if (!validatePalestinianPhone(formData.client_phone)) newErrors.client_phone = getPalestinianPhoneErrorMessage(locale);
 
@@ -118,6 +124,33 @@ export default function Step3({
               {errors.client_name && (
                 <span className="steps__error">{errors.client_name}</span>
               )}
+            </div>
+
+            <div className="steps__form-group">
+              <label className="steps__label">
+                {t("newCase.step3.idNumber")} {" "}
+                <span className="steps__required">*</span>
+                <IconInfoCircle 
+                  size={16} 
+                  className={tooltipIconClasses}
+                  {...createTooltipProps("client-id-tooltip", getPalestinianIdTooltip(locale))}
+                />
+              </label>
+              <input
+                type="text"
+                className={`steps__input ${errors.client_id ? "steps__input--error" : ""}`}
+                placeholder={t("newCase.step3.idNumberPlaceholder")}
+                value={formData.client_id}
+                onChange={(e) => handleInputChange("client_id", e.target.value)}
+                maxLength={9}
+              />
+              {errors.client_id && (
+                <span className="steps__error">{errors.client_id}</span>
+              )}
+              <Tooltip 
+                id="client-id-tooltip"
+                {...defaultTooltipProps}
+              />
             </div>
 
             <div className="steps__form-group">

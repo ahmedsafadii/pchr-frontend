@@ -568,12 +568,12 @@
 }
 
 .steps__button--submit {
-  background: #28a745;
+  background: var(--primary-900);
   color: white;
 }
 
 .steps__button--submit:hover:not(:disabled) {
-  background: #218838;
+  background: var(--primary-800);
 }
 
 .steps__button--submit:disabled {
