@@ -220,20 +220,23 @@ export default function Step2({
               {t("newCase.step2.circumstancesLabel")}
             </label>
             <textarea
-              className={`steps__textarea ${formData.detention_circumstances.length > 0 && formData.detention_circumstances.length < 100 ? 'steps__input--error' : ''}`}
+              className={`steps__textarea ${formData.detention_circumstances.length > 500 ? 'steps__input--error' : ''}`}
               placeholder={t("newCase.step2.circumstancesPlaceholder")}
               value={formData.detention_circumstances}
               onChange={(e) => {
                 const value = e.target.value;
-                handleInputChange("detention_circumstances", value);
+                if (value.length <= 500) {
+                  handleInputChange("detention_circumstances", value);
+                }
               }}
               rows={4}
+              maxLength={500}
             />
-            {formData.detention_circumstances.length > 0 && formData.detention_circumstances.length < 100 && (
-              <span className="steps__error">{t("newCase.step2.errors.circumstancesMin100")}</span>
+            {formData.detention_circumstances.length > 500 && (
+              <span className="steps__error">{t("newCase.step2.errors.circumstancesMax500")}</span>
             )}
-            <div className={`steps__character-count ${formData.detention_circumstances.length < 100 ? 'steps__character-count--error' : ''}`}>
-              {formData.detention_circumstances.length}/100
+            <div className={`steps__character-count ${formData.detention_circumstances.length > 500 ? 'steps__character-count--error' : ''}`}>
+              {formData.detention_circumstances.length}/500
             </div>
           </div>
         </section>

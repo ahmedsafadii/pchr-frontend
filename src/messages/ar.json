@@ -107,7 +107,7 @@
           "cityRequired": "المدينة مطلوبة",
           "governorateRequired": "المحافظة مطلوبة",
           "districtRequired": "المنطقة مطلوبة",
-          "circumstancesMin100": "يجب أن تكون الظروف لا تقل عن 100 حرف."
+          "circumstancesMax500": "الحد الأقصى 500 حرف مسموح."
         }
       },
       "step3": {
@@ -130,7 +130,7 @@
         "title": "التفويض والتواصل",
         "shortDescription": "فهم أي إجراءات سابقة وتفضيلات التواصل.",
         "authorizedAnotherParty": "هل فوضت طرف آخر من قبل؟",
-        "previousDelegation": "التفويض السابق؟",
+        "previousDelegation": "الزيارات السابقة؟",
         "organisationName": "اسم المنظمة",
         "organisationNamePlaceholder": "اسم المنظمة",
         "date": "التاريخ",
@@ -149,7 +149,7 @@
         "clientIdTitle": "هوية العميل",
         "additionalDocsTitle": "مستندات إضافية",
         "dropzone": {
-          "text": "اسحب وأفلت اختر من الملفات",
+          "text": "قم بسحب الملفات هنا أو اختر من الجهاز",
           "hint": "DOCS, PDF, EXL, حتى 1.5 ميجابايت"
         },
         "uploadStatus": {

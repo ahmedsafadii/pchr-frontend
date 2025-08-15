@@ -60,8 +60,15 @@ export default function Step4({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (typeof formData.authorized_another_party !== 'boolean') newErrors.authorizedAnotherParty = t("newCase.step4.errors.required");
-    if (typeof formData.previous_delegation !== 'boolean') newErrors.previousDelegation = t("newCase.step4.errors.required");
+    // Always require authorized_another_party
+    if (typeof formData.authorized_another_party !== 'boolean') {
+      newErrors.authorizedAnotherParty = t("newCase.step4.errors.required");
+    }
+
+    // Only require previous_delegation if authorized_another_party is true
+    if (formData.authorized_another_party && typeof formData.previous_delegation !== 'boolean') {
+      newErrors.previousDelegation = t("newCase.step4.errors.required");
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -93,6 +100,7 @@ export default function Step4({
         {/* Delegation Details Section */}
         <section className="steps__section">
           <div className="steps__form-groups">
+            {/* Always show: Authorized Another Party Before? */}
             <div className="steps__form-group">
               <label className="steps__label">
                 {t("newCase.step4.authorizedAnotherParty")} {" "}
@@ -111,24 +119,7 @@ export default function Step4({
               )}
             </div>
 
-            <div className="steps__form-group">
-              <label className="steps__label">
-                {t("newCase.step4.previousDelegation")} {" "}
-                <span className="steps__required">*</span>
-              </label>
-              <CustomSelect
-                options={yesNoOptions}
-                value={String(formData.previous_delegation)}
-                onChange={(value) => handleInputChange("previous_delegation", value === 'true')}
-                placeholder={`${t("newCase.common.choose")} ${t("newCase.step4.previousDelegation")}`}
-                isError={!!errors.previousDelegation}
-                instanceId="step4-previous-delegation-select"
-              />
-              {errors.previousDelegation && (
-                <span className="steps__error">{errors.previousDelegation}</span>
-              )}
-            </div>
-
+            {/* Show if authorized_another_party is Yes */}
             {formData.authorized_another_party && (
               <>
                 <div className="steps__form-group">
@@ -146,31 +137,52 @@ export default function Step4({
 
                 <div className="steps__form-group">
                   <label className="steps__label">
-                    {t("newCase.step4.date")}
+                    {t("newCase.step4.previousDelegation")} {" "}
+                    <span className="steps__required">*</span>
                   </label>
-                  <div className="steps__input-wrapper">
-                    <DatePicker
-                      selected={
-                        formData.delegation_date
-                          ? new Date(formData.delegation_date)
-                          : null
-                      }
-                      onChange={(date) => {
-                        const formattedDate = date
-                          ? date.toISOString().split("T")[0]
-                          : "";
-                        handleInputChange("delegation_date", formattedDate);
-                      }}
-                      dateFormat="dd/MM/yyyy"
-                      placeholderText={t("newCase.step4.datePlaceholder")}
-                      maxDate={new Date()}
-                      showYearDropdown
-                      scrollableYearDropdown
-                      yearDropdownItemNumber={100}
-                      className="steps__input"
-                    />
-                  </div>
+                  <CustomSelect
+                    options={yesNoOptions}
+                    value={String(formData.previous_delegation)}
+                    onChange={(value) => handleInputChange("previous_delegation", value === 'true')}
+                    placeholder={`${t("newCase.common.choose")} ${t("newCase.step4.previousDelegation")}`}
+                    isError={!!errors.previousDelegation}
+                    instanceId="step4-previous-delegation-select"
+                  />
+                  {errors.previousDelegation && (
+                    <span className="steps__error">{errors.previousDelegation}</span>
+                  )}
                 </div>
+
+                {/* Show date field if previous_delegation is Yes */}
+                {formData.previous_delegation && (
+                  <div className="steps__form-group">
+                    <label className="steps__label">
+                      {t("newCase.step4.date")}
+                    </label>
+                    <div className="steps__input-wrapper">
+                      <DatePicker
+                        selected={
+                          formData.delegation_date
+                            ? new Date(formData.delegation_date)
+                            : null
+                        }
+                        onChange={(date) => {
+                          const formattedDate = date
+                            ? date.toISOString().split("T")[0]
+                            : "";
+                          handleInputChange("delegation_date", formattedDate);
+                        }}
+                        dateFormat="dd/MM/yyyy"
+                        placeholderText={t("newCase.step4.datePlaceholder")}
+                        maxDate={new Date()}
+                        showYearDropdown
+                        scrollableYearDropdown
+                        yearDropdownItemNumber={100}
+                        className="steps__input"
+                      />
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </div>

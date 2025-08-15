@@ -317,8 +317,7 @@ export default function NewCasePage({ locale = "en" }) {
         detentionInfo?.detention_date?.trim() !== '' &&
         detentionInfo?.detention_city?.trim() !== '' &&
         detentionInfo?.detention_governorate?.trim() !== '' &&
-        detentionInfo?.detention_district?.trim() !== '' &&
-        (detentionInfo?.detention_circumstances?.trim().length ?? 0) >= 100
+        detentionInfo?.detention_district?.trim() !== ''
       );
       return isValid;
     }

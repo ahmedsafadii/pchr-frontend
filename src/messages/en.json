@@ -150,7 +150,7 @@
         "cityRequired": "City is required",
         "governorateRequired": "Governorate is required",
         "districtRequired": "District is required",
-        "circumstancesMin100": "Circumstances must be at least 100 characters."
+        "circumstancesMax500": "Maximum 500 characters allowed."
       }
     },
     "step3": {
@@ -174,7 +174,7 @@
       "title": "Delegation & Communication",
       "shortDescription": "Understand any prior efforts made and contact preferences.",
       "authorizedAnotherParty": "Authorized Another Party Before?",
-      "previousDelegation": "Previous Delegation?",
+      "previousDelegation": "Previous Visits?",
       "organisationName": "Organisation Name",
       "organisationNamePlaceholder": "Organisation Name",
       "date": "Date",
