@@ -4,7 +4,14 @@ import { useTranslations } from "next-globe-gen";
 import Image from "next/image";
 import { IconFileText, IconDownload } from "@tabler/icons-react";
 
-export default function DisappearanceInfo() {
+import { CaseDetailsData, CaseDocumentsData } from "../page";
+
+interface DisappearanceInfoProps {
+  caseData: CaseDetailsData | null;
+  documentsData?: CaseDocumentsData | null; // Optional for now
+}
+
+export default function DisappearanceInfo({ caseData }: DisappearanceInfoProps) {
   const t = useTranslations();
   return (
     <div className="case-info">
@@ -18,31 +25,31 @@ export default function DisappearanceInfo() {
           <dl className="case-info__dl">
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.fullName")}</dt>
-              <dd>Khaled Ahmed Shaban</dd>
-            </div>
-            <div className="case-info__row">
-              <dt>{(t as any)("trackCase.info.job")}</dt>
-              <dd>Worker</dd>
+              <dd>{caseData?.detainee_name || "Loading..."}</dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.dob")}</dt>
-              <dd>24 FEB 2022</dd>
+              <dd>{caseData?.detainee_date_of_birth ? new Date(caseData.detainee_date_of_birth).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+              }) : "Not available"}</dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.id")}</dt>
-              <dd>123421222222</dd>
+              <dd>{caseData?.detainee_id || "Not available"}</dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.health")}</dt>
-              <dd>Bad</dd>
+              <dd>{caseData?.detainee_health_status_display || "Not available"}</dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.marital")}</dt>
-              <dd>Single</dd>
+              <dd>{caseData?.detainee_marital_status_display || "Not available"}</dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.location")}</dt>
-              <dd>Jabalia Camp, Gaza Strip</dd>
+              <dd>{caseData ? `${caseData.detainee_street || ""}, ${caseData.detainee_district?.name || ""}, ${caseData.detainee_city?.name || ""}, ${caseData.detainee_governorate?.name || ""}`.replace(/^,\s*|,\s*$/g, '').replace(/,\s*,/g, ',') : "Not available"}</dd>
             </div>
           </dl>
         </div>
@@ -54,21 +61,24 @@ export default function DisappearanceInfo() {
           <dl className="case-info__dl">
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.disappearanceDate")}</dt>
-              <dd>24 FEB 2022</dd>
+              <dd>{caseData?.detention_date ? new Date(caseData.detention_date).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+              }) : "Not available"}</dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.status")}</dt>
-              <dd>Worker</dd>
+              <dd>{caseData?.disappearance_status_display || "Not available"}</dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.location")}</dt>
-              <dd>Jabalia Camp, Gaza</dd>
+              <dd>{caseData ? `${caseData.detention_district?.name || ""}, ${caseData.detention_city?.name || ""}, ${caseData.detention_governorate?.name || ""}`.replace(/^,\s*|,\s*$/g, '').replace(/,\s*,/g, ',') : "Not available"}</dd>
             </div>
             <div className="case-info__row case-info__row--full">
             <dt>{(t as any)("trackCase.info.describe")}</dt>
             <dd>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-              quis augue eu purus rhoncus placerat.
+              {caseData?.detention_circumstances || "No description available"}
             </dd>
           </div>
           </dl>
@@ -82,19 +92,19 @@ export default function DisappearanceInfo() {
         <dl className="case-info__dl">
           <div className="case-info__row">
             <dt>{(t as any)("trackCase.info.fullName")}</dt>
-            <dd>Mohammed Ali</dd>
+            <dd>{caseData?.client_name || "Not available"}</dd>
           </div>
           <div className="case-info__row">
             <dt>{(t as any)("trackCase.info.id")}</dt>
-            <dd>000000000</dd>
+            <dd>{caseData?.client_id || "Not available"}</dd>
           </div>
           <div className="case-info__row">
             <dt>{(t as any)("trackCase.info.phone")}</dt>
-            <dd>059 0000000</dd>
+            <dd>{caseData?.client_phone || "Not available"}</dd>
           </div>
           <div className="case-info__row">
             <dt>{(t as any)("trackCase.info.relationship")}</dt>
-            <dd>Friend</dd>
+            <dd>{caseData?.client_relationship_display || "Not available"}</dd>
           </div>
         </dl>
       </div>

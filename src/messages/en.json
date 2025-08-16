@@ -24,7 +24,7 @@
     "mobile": "Mobile Number",
     "mobilePlaceholder": "0599000000",
     "caseNumber": "Case Number",
-    "caseNumberPlaceholder": "00000",
+    "caseNumberPlaceholder": "PCHR-2028-12376125",
     "sendCode": "Send code",
     "verifyTitle": "Enter the 5‑digit code",
     "verifyDesc": "We sent a verification code to your mobile.",
@@ -34,12 +34,23 @@
     "resendIn": "Resend in",
     "secondsSuffix": "s",
     
+    "sending": "Sending...",
+    "verifying": "Verifying...",
+    "logout": "Logout",
     "backToSearch": "Back",
     "errors": {
       "phone": "Phone number must start with 059 or 056 and be 10 digits",
-      "case": "Case number must be exactly 5 digits",
-      "code": "Code must be exactly 5 digits"
+      "case": "Case number must be in format PCHR-YYYY-XXXX",
+      "code": "Code must be exactly 5 digits",
+      "general": "An error occurred. Please try again.",
+      "caseNotFound": "Case not found with provided information",
+      "verificationFailed": "Verification failed. Please try again.",
+      "invalidCode": "Invalid verification code",
+      "expiredCode": "Verification code has expired",
+      "failedToLoadCase": "Failed to load case details. Please try again."
     },
+    "loading": "Loading case details...",
+    "retry": "Try Again",
     "case": {
       "title": "Case Details",
       "ref": "Reference #",

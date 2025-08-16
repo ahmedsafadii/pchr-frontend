@@ -93,4 +93,46 @@ export async function submitCase(payload: Record<string, any>, lang: string) {
   return api.post<ApiResponse>("/public/cases/submit/", payload, { lang });
 }
 
+// Tracking API functions
+export async function requestTrackingCode(caseNumber: string, clientPhone: string, lang: string) {
+  return api.post<ApiResponse>("/public/cases/tracking/request/", {
+    case_number: caseNumber,
+    client_phone: clientPhone
+  }, { lang });
+}
+
+export async function verifyTrackingCode(caseNumber: string, clientPhone: string, verificationCode: string, lang: string) {
+  return api.post<ApiResponse>("/public/cases/tracking/verify/", {
+    case_number: caseNumber,
+    client_phone: clientPhone,
+    verification_code: verificationCode
+  }, { lang });
+}
+
+export async function resendTrackingCode(caseNumber: string, clientPhone: string, lang: string) {
+  return api.post<ApiResponse>("/public/cases/tracking/resend/", {
+    case_number: caseNumber,
+    client_phone: clientPhone
+  }, { lang });
+}
+
+// Case details API functions (requires JWT authentication)
+export async function getCaseDetails(token: string, lang: string) {
+  return api.get<ApiResponse>("/public/cases/details/", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    lang
+  });
+}
+
+export async function getCaseDocuments(token: string, lang: string) {
+  return api.get<ApiResponse>("/public/cases/documents/", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    lang
+  });
+}
+
 

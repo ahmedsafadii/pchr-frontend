@@ -4,7 +4,14 @@ import { useTranslations } from "next-globe-gen";
 import { useState } from "react";
 import { IconTag, IconFileText, IconDownload, IconPaperclip } from "@tabler/icons-react";
 
-export default function Overview() {
+import { CaseDetailsData, CaseDocumentsData } from "../page";
+
+interface OverviewProps {
+  caseData: CaseDetailsData | null;
+  documentsData?: CaseDocumentsData | null; // Optional for now
+}
+
+export default function Overview({ caseData }: OverviewProps) {
   const t = useTranslations();
   const tt = t as any;
   const [message, setMessage] = useState("");
@@ -14,13 +21,19 @@ export default function Overview() {
         {/* Left column: overview details */}
         <section className="case-overview__left">
           <div className="case-overview__card">
-            <div className="case-overview__date">23 FEB 2024</div>
+            <div className="case-overview__date">
+              {caseData?.created ? new Date(caseData.created).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+              }).toUpperCase() : "Loading..."}
+            </div>
             <h1 className="case-overview__main-title">
-              {tt("trackCase.overview.detainee")}: Khaled Ahmed Shaban
+              {tt("trackCase.overview.detainee")}: {caseData?.detainee_name || "Loading..."}
             </h1>
             <span className="case-overview__badge">
               <IconTag size={18} />{" "}
-              {tt("trackCase.overview.status.underReview")}
+              {caseData?.status_display || "Loading..."}
             </span>
             <hr className="case-overview__divider" />
 
@@ -34,22 +47,20 @@ export default function Overview() {
                     <dt className="case-overview__dt">
                       {tt("trackCase.overview.dateOfDisappearance")}
                     </dt>
-                    <dd className="case-overview__dd">23 Feb 2024</dd>
+                    <dd className="case-overview__dd">
+                      {caseData?.detention_date ? new Date(caseData.detention_date).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                      }) : "Not available"}
+                    </dd>
                   </div>
                   <div className="case-overview__row">
                     <dt className="case-overview__dt">
                       {tt("trackCase.overview.details")}
                     </dt>
                     <dd className="case-overview__dd">
-                      Lorem Ipsum Is Simply Dummy Text Of The Printing And
-                      Typesetting Industry. Lorem Ipsum Has Been The
-                      Industry&#39;s Standard Dummy Text Ever Since The 1500s,
-                      When An Unknown Printer Took A Galley Of Type And
-                      Scrambled It To Make A Type Specimen Book. It Has Survived
-                      Not Only Five Centuries, But Also The Leap Into Ele
-                      <a className="case-overview__read-more" href="#">
-                        {tt("trackCase.overview.readMore")}
-                      </a>
+                      {caseData?.detention_circumstances || "No details available"}
                     </dd>
                   </div>
                   <div className="case-overview__row">

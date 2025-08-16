@@ -8,20 +8,22 @@ import "@/app/css/track.css";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { validatePalestinianPhone } from "@/_app/utils/validation";
+import { requestTrackingCode, verifyTrackingCode, resendTrackingCode } from "@/_app/services/api";
 // reCAPTCHA removed
 
 function TrackInner() {
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
-  const [mobile, setMobile] = useState("0599000000");
-  const [caseNo, setCaseNo] = useState("00000");
-  const [errors, setErrors] = useState<{ mobile?: string; case?: string; code?: string }>({});
+  const [mobile, setMobile] = useState("");
+  const [caseNo, setCaseNo] = useState("");
+  const [errors, setErrors] = useState<{ mobile?: string; case?: string; code?: string; general?: string }>({});
   const [step, setStep] = useState<"form" | "verify">("form");
-  const [code, setCode] = useState<string[]>(["0","0","0","0","0"]);
+  const [code, setCode] = useState<string[]>(["","","","",""]); 
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const [resendAt, setResendAt] = useState<number>(0);
   const [now, setNow] = useState<number>(Date.now());
+  const [isLoading, setIsLoading] = useState(false);
   const canResend = useMemo(() => now >= resendAt, [resendAt, now]);
   // reCAPTCHA removed
 
@@ -33,42 +35,93 @@ function TrackInner() {
   }, [resendAt, now]);
 
   const handleSubmit = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
+    async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+      setIsLoading(true);
+      setErrors({});
+      
       const nextErrors: typeof errors = {};
       if (!validatePalestinianPhone(mobile)) {
         nextErrors.mobile = t("track.errors.phone").toString();
       }
-      if (!/^\d{5}$/.test(caseNo)) {
+      if (!/^PCHR-\d{4}-\d+$/.test(caseNo)) {
         nextErrors.case = t("track.errors.case").toString();
       }
-      setErrors(nextErrors);
-      if (Object.keys(nextErrors).length > 0) return;
-      // Move to verify step and start 60s cooldown
-      setStep("verify");
-      setResendAt(Date.now() + 60_000);
-      setTimeout(() => setResendAt(Date.now()), 60_000);
+      
+      if (Object.keys(nextErrors).length > 0) {
+        setErrors(nextErrors);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        await requestTrackingCode(caseNo, mobile, locale);
+        
+        // Move to verify step and start 10-minute cooldown (600 seconds as per API response)
+        setStep("verify");
+        setResendAt(Date.now() + 60_000); // Still use 60s for resend button
+      } catch (error: any) {
+        console.error('Tracking request error:', error);
+        
+        // Handle API error response
+        if (error.payload?.error?.code === 'CASE_NOT_FOUND') {
+          setErrors({ general: t("track.errors.caseNotFound").toString() });
+        } else {
+          setErrors({ general: t("track.errors.general").toString() });
+        }
+      } finally {
+        setIsLoading(false);
+      }
     },
-    [mobile, caseNo, t]
+    [mobile, caseNo, t, locale]
   );
 
   const handleVerify = useCallback(
-    (e: React.FormEvent) => {
+    async (e: React.FormEvent) => {
       e.preventDefault();
+      setIsLoading(true);
+      setErrors({});
+      
       const value = code.join("");
       if (!/^\d{5}$/.test(value)) {
         setErrors((prev) => ({ ...prev, code: t("track.errors.code").toString() }));
+        setIsLoading(false);
         return;
       }
-      // Demo happy-path: accept 00000
-      if (mobile === "0599000000" && caseNo === "00000" && value === "00000") {
-        try { sessionStorage.setItem("track_access_granted", "1"); } catch {}
-        router.push(`/${locale}/track/case`);
-        return;
+
+      try {
+        const response = await verifyTrackingCode(caseNo, mobile, value, locale);
+        
+        if (response.status === 'success' && response.data?.access_token) {
+          // Store JWT token in localStorage for persistent authentication
+          try {
+            localStorage.setItem('track_access_token', response.data.access_token);
+            localStorage.setItem('track_case_number', response.data.case_number);
+            localStorage.setItem('track_detainee_name', response.data.detainee_name);
+            localStorage.setItem('track_token_expires', (Date.now() + (response.data.expires_in * 1000)).toString());
+          } catch (storageError) {
+            console.warn('Failed to store authentication data:', storageError);
+          }
+          
+          // Navigate to case tracking page
+          router.push(`/${locale}/track/case`);
+        } else {
+          setErrors({ general: t("track.errors.verificationFailed").toString() });
+        }
+      } catch (error: any) {
+        console.error('Verification error:', error);
+        
+        // Handle different error types
+        if (error.payload?.error?.code === 'INVALID_VERIFICATION_CODE') {
+          setErrors({ code: t("track.errors.invalidCode").toString() });
+        } else if (error.payload?.error?.code === 'VERIFICATION_CODE_EXPIRED') {
+          setErrors({ code: t("track.errors.expiredCode").toString() });
+        } else {
+          setErrors({ general: t("track.errors.general").toString() });
+        }
+      } finally {
+        setIsLoading(false);
       }
-      // Otherwise still allow navigation for demo
-      try { sessionStorage.setItem("track_access_granted", "1"); } catch {}
-      router.push(`/${locale}/track/case`);
     },
     [code, mobile, caseNo, router, locale, t]
   );
@@ -155,17 +208,28 @@ function TrackInner() {
                   <input
                     id="caseNumber"
                     name="caseNumber"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
                     className="track__input"
                     value={caseNo}
-                    onChange={(e) => setCaseNo(e.target.value.replace(/\D/g, "").slice(0, 5))}
+                    onChange={(e) => {
+                      let value = e.target.value.toUpperCase();
+                      // Allow only valid characters for case number format
+                      value = value.replace(/[^PCHR0-9-]/g, '');
+                      // Format as PCHR-YYYY-XXXXXXXXX while typing
+                      if (value.length <= 4 && !value.startsWith('PCHR')) {
+                        if (value.length > 0) {
+                          value = 'PCHR-' + value;
+                        }
+                      }
+                      setCaseNo(value);
+                    }}
                     placeholder={t("track.caseNumberPlaceholder")?.toString()}
+                    maxLength={50}
                   />
                   {errors.case && <span className="track__error">{errors.case}</span>}
                 </div>
-                <button type="submit" className="track__submit">
-                  {t("track.sendCode")}
+                {errors.general && <span className="track__error">{errors.general}</span>}
+                <button type="submit" className="track__submit" disabled={isLoading}>
+                  {isLoading ? t("track.sending") : t("track.sendCode")}
                 </button>
                 {/* reCAPTCHA legal notice removed */}
               </form>
@@ -193,18 +257,35 @@ function TrackInner() {
                   ))}
                 </div>
                 {errors.code && <span className="track__error">{errors.code}</span>}
-                <button type="submit" className="track__submit">
-                  {t("track.verify")}
+                {errors.general && <span className="track__error">{errors.general}</span>}
+                <button type="submit" className="track__submit" disabled={isLoading}>
+                  {isLoading ? t("track.verifying") : t("track.verify")}
                 </button>
                 <div className="track__resend-wrap">
                   <span className="track__resend-text">{t("track.resendMessage")}</span>
                   <button
                     type="button"
                     className="track__resend"
-                    disabled={!canResend}
-                    onClick={() => {
-                      setResendAt(Date.now() + 60_000);
-                      setTimeout(() => setResendAt(Date.now()), 60_000);
+                    disabled={!canResend || isLoading}
+                    onClick={async () => {
+                      if (!canResend || isLoading) return;
+                      
+                      setIsLoading(true);
+                      setErrors({});
+                      
+                      try {
+                        await resendTrackingCode(caseNo, mobile, locale);
+                        setResendAt(Date.now() + 60_000);
+                      } catch (error: any) {
+                        console.error('Resend error:', error);
+                        if (error.payload?.error?.code === 'CASE_NOT_FOUND') {
+                          setErrors({ general: t("track.errors.caseNotFound").toString() });
+                        } else {
+                          setErrors({ general: t("track.errors.general").toString() });
+                        }
+                      } finally {
+                        setIsLoading(false);
+                      }
                     }}
                   >
                     {canResend
