@@ -28,6 +28,7 @@ interface Step3Props {
   currentStep: number;
   totalSteps: number;
   locale?: string;
+  externalErrors?: string[];
 }
 
 export default function Step3({
@@ -39,6 +40,7 @@ export default function Step3({
   currentStep,
   canGoNext,
   locale = "en",
+  externalErrors = [],
 }: Step3Props) {
   const [formData, setFormData] = useState(data.clientInfo);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -48,6 +50,29 @@ export default function Step3({
   useEffect(() => {
     setFormData(data.clientInfo);
   }, [data.clientInfo]);
+
+  // Handle external errors from API validation
+  useEffect(() => {
+    if (externalErrors.length > 0) {
+      const newErrors: Record<string, string> = {};
+      
+      externalErrors.forEach(errorMsg => {
+        // Map error messages to field names based on content
+        const lowerMsg = errorMsg.toLowerCase();
+        if (lowerMsg.includes('client id') || lowerMsg.includes('client_id')) {
+          newErrors.client_id = errorMsg;
+        } else if (lowerMsg.includes('client name') || lowerMsg.includes('client_name')) {
+          newErrors.client_name = errorMsg;
+        } else if (lowerMsg.includes('phone') || lowerMsg.includes('client_phone')) {
+          newErrors.client_phone = errorMsg;
+        } else if (lowerMsg.includes('relationship') || lowerMsg.includes('client_relationship')) {
+          newErrors.client_relationship = errorMsg;
+        }
+      });
+      
+      setErrors(prev => ({ ...prev, ...newErrors }));
+    }
+  }, [externalErrors]);
 
   const handleInputChange = (field: string, value: string) => {
     const updatedFormData = {

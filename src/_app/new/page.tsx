@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   IconMapPin,
   IconUser,
@@ -274,7 +274,7 @@ export default function NewCasePage({ locale = "en" }) {
     } catch {}
   }, [caseData, currentStep, completedSteps]);
 
-  const updateCaseData = (section: keyof CaseData, data: any) => {
+  const updateCaseData = useCallback((section: keyof CaseData, data: any) => {
     setCaseData((prev) => {
       const updated = {
         ...prev,
@@ -282,7 +282,7 @@ export default function NewCasePage({ locale = "en" }) {
       };
       return updated;
     });
-  };
+  }, []);
 
   const markStepCompleted = (stepNumber: number) => {
     if (!completedSteps.includes(stepNumber)) {

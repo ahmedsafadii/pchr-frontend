@@ -46,6 +46,39 @@ export default function Step1({
     setFormData(data.detaineeInfo);
   }, [data.detaineeInfo]);
 
+  // Handle external errors from API validation
+  useEffect(() => {
+    if (externalErrors.length > 0) {
+      const newErrors: Record<string, string> = {};
+      
+      externalErrors.forEach(errorMsg => {
+        // Map error messages to field names based on content
+        const lowerMsg = errorMsg.toLowerCase();
+        if (lowerMsg.includes('detainee name') || lowerMsg.includes('detainee_name')) {
+          newErrors.fullName = errorMsg;
+        } else if (lowerMsg.includes('detainee id') || lowerMsg.includes('detainee_id')) {
+          newErrors.idNumber = errorMsg;
+        } else if (lowerMsg.includes('date of birth') || lowerMsg.includes('detainee_date_of_birth')) {
+          newErrors.dateOfBirth = errorMsg;
+        } else if (lowerMsg.includes('health') || lowerMsg.includes('detainee_health_status')) {
+          newErrors.healthStatus = errorMsg;
+        } else if (lowerMsg.includes('marital') || lowerMsg.includes('detainee_marital_status')) {
+          newErrors.maritalStatus = errorMsg;
+        } else if (lowerMsg.includes('city') || lowerMsg.includes('detainee_city')) {
+          newErrors.city = errorMsg;
+        } else if (lowerMsg.includes('governorate') || lowerMsg.includes('detainee_governorate')) {
+          newErrors.governorate = errorMsg;
+        } else if (lowerMsg.includes('district') || lowerMsg.includes('detainee_district')) {
+          newErrors.district = errorMsg;
+        } else if (lowerMsg.includes('job') || lowerMsg.includes('detainee_job')) {
+          newErrors.job = errorMsg;
+        }
+      });
+      
+      setErrors(prev => ({ ...prev, ...newErrors }));
+    }
+  }, [externalErrors]);
+
   const handleInputChange = (field: string, value: string) => {
     const updatedFormData = {
       ...formData,
@@ -122,15 +155,6 @@ export default function Step1({
       </header>
 
       <form className="steps__form" onSubmit={(e) => e.preventDefault()}>
-        {externalErrors.length > 0 && (
-          <div className="steps__error-summary">
-            <ul>
-              {externalErrors.map((msg, idx) => (
-                <li key={idx}>{msg}</li>
-              ))}
-            </ul>
-          </div>
-        )}
         {/* Personal Details Section */}
         <section className="steps__section">
           <div className="steps__form-groups">

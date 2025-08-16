@@ -42,6 +42,33 @@ export default function Step2({
     setFormData(data.detentionInfo);
   }, [data.detentionInfo]);
 
+  // Handle external errors from API validation
+  useEffect(() => {
+    if (externalErrors.length > 0) {
+      const newErrors: Record<string, string> = {};
+      
+      externalErrors.forEach(errorMsg => {
+        // Map error messages to field names based on content
+        const lowerMsg = errorMsg.toLowerCase();
+        if (lowerMsg.includes('detention date') || lowerMsg.includes('detention_date') || lowerMsg.includes('disappearance date')) {
+          newErrors.disappearanceDate = errorMsg;
+        } else if (lowerMsg.includes('detention city') || lowerMsg.includes('detention_city')) {
+          newErrors.city = errorMsg;
+        } else if (lowerMsg.includes('detention governorate') || lowerMsg.includes('detention_governorate')) {
+          newErrors.governorate = errorMsg;
+        } else if (lowerMsg.includes('detention district') || lowerMsg.includes('detention_district')) {
+          newErrors.district = errorMsg;
+        } else if (lowerMsg.includes('circumstances') || lowerMsg.includes('detention_circumstances')) {
+          newErrors.circumstances = errorMsg;
+        } else if (lowerMsg.includes('status') || lowerMsg.includes('disappearance_status')) {
+          newErrors.disappearanceStatus = errorMsg;
+        }
+      });
+      
+      setErrors(prev => ({ ...prev, ...newErrors }));
+    }
+  }, [externalErrors]);
+
   const handleInputChange = (field: string, value: string) => {
     const updatedFormData = {
       ...formData,
@@ -106,15 +133,6 @@ export default function Step2({
       </header>
 
       <form className="steps__form" onSubmit={(e) => e.preventDefault()}>
-        {externalErrors.length > 0 && (
-          <div className="steps__error-summary">
-            <ul>
-              {Array.from(new Set(externalErrors)).map((msg, idx) => (
-                <li key={idx}>{msg}</li>
-              ))}
-            </ul>
-          </div>
-        )}
         {/* Disappearance Details Section */}
         <section className="steps__section">
           <div className="steps__form-groups">

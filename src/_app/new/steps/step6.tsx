@@ -69,7 +69,8 @@ export default function Step6({
         });
       }
     }
-  }, [data.documents, data.consent, hasDrawn, updateData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.documents, data.consent, hasDrawn]);
 
   const clearSignature = () => {
     if (signatureRef.current) {
@@ -264,6 +265,7 @@ This document is legally binding and constitutes your formal consent for legal a
           ]);
           const step3 = new Set([
             "client_name",
+            "client_id",
             "client_phone",
             "client_relationship",
           ]);
@@ -319,6 +321,8 @@ This document is legally binding and constitutes your formal consent for legal a
         if (
           details.step1_detainee_info ||
           details.step2_detention_info ||
+          details.step3_client_info ||
+          details.step4_delegation_info ||
           details.step5_documents_info ||
           details.step6_consent_info
         ) {
@@ -334,6 +338,20 @@ This document is legally binding and constitutes your formal consent for legal a
               2,
               Object.values(
                 details.step2_detention_info as Record<string, string[]>
+              ).flat()
+            );
+          if (details.step3_client_info)
+            pushSummary(
+              3,
+              Object.values(
+                details.step3_client_info as Record<string, string[]>
+              ).flat()
+            );
+          if (details.step4_delegation_info)
+            pushSummary(
+              4,
+              Object.values(
+                details.step4_delegation_info as Record<string, string[]>
               ).flat()
             );
           if (details.step5_documents_info)

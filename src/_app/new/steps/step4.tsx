@@ -18,6 +18,7 @@ interface Step4Props {
   currentStep: number;
   totalSteps: number;
   locale?: string;
+  externalErrors?: string[];
 }
 
 export default function Step4({
@@ -28,6 +29,7 @@ export default function Step4({
   onPrevious,
   currentStep,
   canGoNext,
+  externalErrors = [],
 }: Step4Props) {
   const [formData, setFormData] = useState(data.delegationInfo);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -36,6 +38,31 @@ export default function Step4({
   useEffect(() => {
     setFormData(data.delegationInfo);
   }, [data.delegationInfo]);
+
+  // Handle external errors from API validation
+  useEffect(() => {
+    if (externalErrors.length > 0) {
+      const newErrors: Record<string, string> = {};
+      
+      externalErrors.forEach(errorMsg => {
+        // Map error messages to field names based on content
+        const lowerMsg = errorMsg.toLowerCase();
+        if (lowerMsg.includes('authorized') || lowerMsg.includes('authorized_another_party')) {
+          newErrors.authorizedAnotherParty = errorMsg;
+        } else if (lowerMsg.includes('previous delegation') || lowerMsg.includes('previous_delegation')) {
+          newErrors.previousDelegation = errorMsg;
+        } else if (lowerMsg.includes('organisation') || lowerMsg.includes('organisation_name')) {
+          newErrors.organisationName = errorMsg;
+        } else if (lowerMsg.includes('delegation date') || lowerMsg.includes('delegation_date')) {
+          newErrors.delegationDate = errorMsg;
+        } else if (lowerMsg.includes('notes') || lowerMsg.includes('delegation_notes')) {
+          newErrors.delegationNotes = errorMsg;
+        }
+      });
+      
+      setErrors(prev => ({ ...prev, ...newErrors }));
+    }
+  }, [externalErrors]);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     const updatedFormData = {

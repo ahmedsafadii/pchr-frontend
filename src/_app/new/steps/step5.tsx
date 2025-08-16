@@ -78,7 +78,7 @@ export default function Step5({
       client_document_id: clientId,
       additional_document_ids: additionalIds,
     });
-  }, [detaineeIdFiles, clientIdFiles, additionalFiles, updateData]);
+  }, [detaineeIdFiles, clientIdFiles, additionalFiles]);
 
   useEffect(() => {
     // Hydrate from existing documents data on mount/prop change
@@ -193,7 +193,6 @@ export default function Step5({
     detaineeIdFiles.length,
     clientIdFiles.length,
     additionalFiles.length,
-    updateData,
   ]);
 
   // Update documents when file states change
@@ -253,10 +252,16 @@ export default function Step5({
     detaineeIdFiles,
     clientIdFiles,
     additionalFiles,
-    data.documents,
-    updateData,
-    updateDocuments,
   ]);
+
+  // Handle external errors from API validation
+  const [documentErrors, setDocumentErrors] = useState<string[]>([]);
+  
+  useEffect(() => {
+    if (externalErrors.length > 0) {
+      setDocumentErrors(externalErrors);
+    }
+  }, [externalErrors]);
 
   // Drop handlers moved into Uploader
 
@@ -326,16 +331,15 @@ export default function Step5({
       </header>
 
       <form className="steps__form" onSubmit={(e) => e.preventDefault()}>
-        {externalErrors.length > 0 && (
-          <div className="steps__error-summary">
-            <ul>
-              {externalErrors.map((msg, idx) => (
-                <li key={idx}>{msg}</li>
-              ))}
-            </ul>
+        {documentErrors.length > 0 && (
+          <div className="steps__section">
+            {documentErrors.map((error, idx) => (
+              <div key={idx} className="steps__error" style={{ marginBottom: '10px' }}>
+                {error}
+              </div>
+            ))}
           </div>
         )}
-
         {/* Detainee ID Section */}
         <section className="steps__section">
           <h3 className="steps__section-title">
