@@ -294,12 +294,12 @@
         "showCases": "Show Cases"
       },
       "calendar": {
-        "title": "Calendar",
+        "title": "Upcoming visits",
         "month": "December 2023"
       },
       "recentCases": {
         "title": "Recent Cases",
-        "viewAll": "View All Cases"
+        "viewAll": "All Cases"
       },
       "upcomingVisits": "Up coming visits",
       "newestCases": "Newest Cases",
