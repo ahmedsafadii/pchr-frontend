@@ -108,14 +108,6 @@ export default function Step1({
     else if (!validatePalestinianId(formData.detainee_id)) newErrors.idNumber = getPalestinianIdErrorMessage(locale);
 
     if (!formData.detainee_date_of_birth.trim()) newErrors.dateOfBirth = t("newCase.step1.errors.dateOfBirthRequired");
-    else {
-      const dob = new Date(formData.detainee_date_of_birth);
-      const now = new Date();
-      const eighteenYearsAgo = new Date(now.getFullYear() - 18, now.getMonth(), now.getDate());
-      if (dob > eighteenYearsAgo) {
-        newErrors.dateOfBirth = (t as any)("newCase.step1.errors.age18");
-      }
-    }
 
     if (!formData.detainee_health_status.trim()) newErrors.healthStatus = t("newCase.step1.errors.healthStatusRequired");
 
@@ -142,6 +134,15 @@ export default function Step1({
   const healthStatusOptions = useMemo(() => (constants?.data?.health_statuses as any[]) || [], [constants]);
   const maritalStatusOptions = useMemo(() => (constants?.data?.marital_statuses as any[]) || [], [constants]);
   const jobOptions = useMemo(() => (constants?.data?.jobs as any[]) || [], [constants]);
+
+  // Check if the person is under 18
+  const isUnder18 = useMemo(() => {
+    if (!formData.detainee_date_of_birth) return false;
+    const dob = new Date(formData.detainee_date_of_birth);
+    const now = new Date();
+    const eighteenYearsAgo = new Date(now.getFullYear() - 18, now.getMonth(), now.getDate());
+    return dob > eighteenYearsAgo;
+  }, [formData.detainee_date_of_birth]);
 
 
 
@@ -230,9 +231,11 @@ export default function Step1({
                   yearDropdownItemNumber={100}
                 />
               </div>
-              <span className="steps__hint">
-                {t("newCase.step1.ageHint")}
-              </span>
+              {isUnder18 && (
+                <span className="steps__hint">
+                  {t("newCase.step1.ageHint")}
+                </span>
+              )}
               {errors.dateOfBirth && (
                 <span className="steps__error">{errors.dateOfBirth}</span>
               )}
