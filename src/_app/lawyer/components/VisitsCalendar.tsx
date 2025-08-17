@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import Calendar from "react-calendar";
-import { useLocale } from "next-globe-gen";
 import "react-calendar/dist/Calendar.css";
 
 // Mock visit data - replace with real API data
@@ -86,7 +85,6 @@ interface VisitsCalendarProps {
 }
 
 export default function VisitsCalendar({ onCaseClick }: VisitsCalendarProps) {
-  const locale = useLocale();
   const [date, setDate] = useState(new Date(2024, 11, 1)); // December 2024
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
@@ -176,7 +174,7 @@ export default function VisitsCalendar({ onCaseClick }: VisitsCalendarProps) {
     <div className="lawyer__visits-calendar">
       <div className="lawyer__calendar-wrapper">
         <Calendar
-          onChange={setDate}
+          onChange={setDate as any}
           value={date}
           tileContent={tileContent}
           tileClassName={tileClassName}
