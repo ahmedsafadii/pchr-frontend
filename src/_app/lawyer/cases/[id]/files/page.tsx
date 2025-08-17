@@ -1,15 +1,16 @@
 "use client";
 
 import { useTranslations } from "next-globe-gen";
+import { IconFile, IconDownload, IconTrash } from "@tabler/icons-react";
 
 // Mock files data - replace with real API calls
 const mockFilesData = {
   caseFiles: [
-    { id: 1, name: "ID.PDF", icon: "📄" }
+    { id: 1, name: "ID.PDF", icon: <IconFile size={20} /> }
   ],
   uploadedFiles: [
-    { id: 2, name: "ID.PDF", icon: "📄" },
-    { id: 3, name: "Proposal.PDF", icon: "📄" }
+    { id: 2, name: "ID.PDF", icon: <IconFile size={20} /> },
+    { id: 3, name: "Proposal.PDF", icon: <IconFile size={20} /> }
   ]
 };
 
@@ -46,14 +47,14 @@ export default function LawyerCaseFilesPage() {
             onClick={() => handleFileDownload(file.name)}
             title="Download"
           >
-            ⬇
+            <IconDownload size={16} />
           </button>
           <button 
             className="lawyer__file-action"
             onClick={() => handleFileDelete(file.id)}
             title="Delete"
           >
-            🗑
+            <IconTrash size={16} />
           </button>
         </div>
       )}

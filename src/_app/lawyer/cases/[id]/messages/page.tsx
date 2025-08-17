@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-globe-gen";
 import { useState } from "react";
+import { IconFile, IconDownload } from "@tabler/icons-react";
 
 // Mock messages data - replace with real API calls
 const mockMessages = [
@@ -11,7 +12,7 @@ const mockMessages = [
     title: "Huge Update for the case",
     content: "Lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry. Lorem Ipsum Has Been The Industry's Standard Dummy Text Ever Since The 1500s, When An Unknown Printer Took A Galley Of Type And Scrambled It To Make A Type Specimen Book. It Has Survived Not Only Five Centuries, But Also The Leap Into",
     attachments: [
-      { name: "ID.PDF", icon: "📄" }
+      { name: "ID.PDF", icon: <IconFile size={16} /> }
     ]
   },
   {
@@ -62,7 +63,7 @@ export default function LawyerCaseMessagesPage() {
                     <span>{attachment.icon}</span>
                     <span>{attachment.name}</span>
                     <button className="lawyer__message-attachment-download">
-                      <span>⬇</span>
+                      <IconDownload size={16} />
                     </button>
                   </div>
                 ))}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-globe-gen";
+import { IconFile } from "@tabler/icons-react";
 
 // Mock case data - replace with real API calls
 const mockCaseData = {
@@ -133,7 +134,7 @@ export default function LawyerCaseDetailsPage() {
         <div className="lawyer__documents">
           {mockCaseData.documents.map((doc, index) => (
             <a key={index} href={doc.url} className="lawyer__document-link">
-              <span>📄</span>
+              <IconFile size={16} />
               <span>{doc.name}</span>
             </a>
           ))}
