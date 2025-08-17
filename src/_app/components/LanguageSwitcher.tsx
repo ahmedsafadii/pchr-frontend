@@ -1,6 +1,7 @@
 "use client";
 
 import { Link, useRoute, useLocale } from "next-globe-gen";
+import { useParams } from "next/navigation";
 
 /**
  * If there is dynamic route segments in some of the application routes (i.e. "/images/[id]"),
@@ -10,15 +11,17 @@ import { Link, useRoute, useLocale } from "next-globe-gen";
 export default function LanguageSwitcher() {
   const route = useRoute();
   const currentLocale = useLocale();
+  const params = useParams();
+  
   return (
     <span>
       {currentLocale !== "en" && (
-        <Link href={route} locale="en">
+        <Link href={route} locale="en" params={params as any}>
           English
         </Link>
       )}
       {currentLocale !== "ar" && (
-        <Link href={route} locale="ar">
+        <Link href={route} locale="ar" params={params as any}>
           عربي
         </Link>
       )}

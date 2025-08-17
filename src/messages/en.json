@@ -47,7 +47,7 @@
       "verificationFailed": "Verification failed. Please try again.",
       "invalidCode": "Invalid verification code",
       "expiredCode": "Verification code has expired",
-      "failedToLoadCase": "Failed to load case details. Please try again."
+              "failedToLoadCase": "Failed to load case details. Please try again."
     },
     "loading": "Loading case details...",
     "retry": "Try Again",
@@ -265,6 +265,168 @@
     },
     "validation": {
       "palestinianIdInvalid": "Invalid Palestinian ID"
+    }
+  },
+  "lawyerLogin": {
+    "title": "Lawyer Login",
+    "email": "Email Address",
+    "emailPlaceholder": "lawyer@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "login": "Login",
+    "loggingIn": "Logging in...",
+    "backToHome": "Back to Home",
+    "errors": {
+      "email": "Please enter a valid email address",
+      "password": "Password is required",
+      "invalidCredentials": "Invalid email or password",
+      "general": "An error occurred. Please try again."
+    }
+  },
+  "lawyer": {
+    "dashboard": {
+      "title": "Dashboard",
+      "welcome": "Welcome to your dashboard",
+      "subtitle": "Manage your cases and track progress",
+      "stats": {
+        "pending": "Pending Cases",
+        "inProgress": "In Progress Cases",
+        "completed": "Completed Cases",
+        "showCases": "Show Cases"
+      },
+      "calendar": {
+        "title": "Calendar",
+        "month": "December 2023"
+      },
+      "recentCases": {
+        "title": "Recent Cases",
+        "viewAll": "View All Cases"
+      },
+      "upcomingVisits": "Up coming visits",
+      "newestCases": "Newest Cases",
+      "allCases": "All cases",
+      "today": "Today",
+      "visitDay": "Visit Day",
+      "showCase": "Show Case"
+    },
+    "navigation": {
+      "overview": "Overview",
+      "allCases": "All Cases",
+      "logout": "Logout"
+    },
+    "cases": {
+      "title": "All Cases",
+      "search": "Search cases...",
+      "allStatuses": "All Statuses",
+      "status": "Status",
+      "createdDate": "Created Date",
+      "table": {
+        "caseNumber": "Case Number",
+        "detaineeName": "Detainee Name",
+        "clientName": "Client Name",
+        "clientPhone": "Client Phone",
+        "status": "Status",
+        "lastUpdate": "Last Update",
+        "actions": "Actions",
+        "viewDetails": "View Details"
+      },
+      "columns": {
+        "caseNumber": "CASE#",
+        "detaineeName": "Detainee Name",
+        "detaineeId": "Detainee ID",
+        "creationDate": "Creation Date",
+        "clientName": "Client name",
+        "clientPhone": "Client Phone",
+        "status": "Status"
+      },
+      "statusOptions": {
+        "detentionConfirmed": "Detention Confirmed",
+        "deceased": "Deceased",
+        "pending": "Pending",
+        "awaitingDocuments": "Awaiting Documents",
+        "released": "Released",
+        "enforcedDisappearance": "Enforced Disappearance",
+        "rejected": "Rejected"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "showing": "Showing {start} to {end} of {total} cases",
+        "from": "from",
+        "results": "results",
+        "prev": "Prev"
+      }
+    },
+    "caseDetails": {
+      "title": "Case Details",
+      "backToCases": "Back to Cases",
+      "lastUpdate": "Latest update",
+      "startCase": "Start case",
+      "navigation": {
+        "allDetails": "All the Details",
+        "visits": "Visits",
+        "messages": "Messages",
+        "files": "Files"
+      },
+      "detaineeInfo": {
+        "title": "Detainee information",
+        "fullName": "Full Name",
+        "job": "Job",
+        "dateOfBirth": "Date Of Birth",
+        "idNumber": "ID Number",
+        "healthyStatus": "Healthy Status",
+        "maritalStatus": "Marital Status",
+        "location": "Location"
+      },
+      "detentionInfo": {
+        "title": "Detention/Disappearance Info",
+        "disappearanceDate": "Disappearance Date",
+        "disappearanceStatus": "Disappearance Status",
+        "location": "Location",
+        "describeDisappearance": "Describe Disappearance"
+      },
+      "clientInfo": {
+        "title": "Client info",
+        "fullName": "Full Name",
+        "idNumber": "ID Number",
+        "phoneNumber": "Phone Number",
+        "relationship": "Relationship"
+      },
+      "documentsUpload": {
+        "title": "Documents upload"
+      }
+    },
+    "visits": {
+      "title": "Visits",
+      "startVisit": "Start visit",
+      "toDo": "To Do",
+      "onProgress": "On Progress",
+      "done": "Done",
+      "visit": "Visit",
+      "visiting": "Visiting",
+      "at": "At",
+      "person": "Person",
+      "visitApprove": "Visit Approve",
+      "visitRejected": "Visit Rejected",
+      "visitOutcome": "Visit Outcome",
+      "outcome": "Outcome",
+      "rejectionReason": "Rejection reason",
+      "pending": "Pending",
+      "rejected": "Rejected"
+    },
+    "messages": {
+      "title": "Messages",
+      "lawyer": "LAWYER",
+      "message": "Message",
+      "messagePlaceholder": "Write Your Message",
+      "next": "Next"
+    },
+    "files": {
+      "title": "Files",
+      "uploadFiles": "Upload Files",
+      "caseFiles": "Case Files",
+      "uploadedFiles": "Uploaded Files",
+      "fileName": "File Name"
     }
   }
 }

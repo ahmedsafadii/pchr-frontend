@@ -47,8 +47,8 @@
         "verificationFailed": "فشل التحقق. يرجى المحاولة مرة أخرى.",
         "invalidCode": "رمز التحقق غير صحيح",
         "expiredCode": "انتهت صلاحية رمز التحقق",
-        "failedToLoadCase": "فشل في تحميل تفاصيل القضية. يرجى المحاولة مرة أخرى."
-      },
+                "failedToLoadCase": "فشل في تحميل تفاصيل القضية. يرجى المحاولة مرة أخرى."
+    },
       "loading": "جاري تحميل تفاصيل القضية...",
       "retry": "إعادة المحاولة",
       "case": {
@@ -264,5 +264,167 @@
         "signature": "توقيعك",
         "terms": "شروط وأحكام .PDF"
       }
+  },
+  "lawyerLogin": {
+    "title": "تسجيل دخول المحامي",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "lawyer@example.com",
+    "password": "كلمة المرور",
+    "passwordPlaceholder": "أدخل كلمة المرور",
+    "login": "تسجيل الدخول",
+    "loggingIn": "جاري تسجيل الدخول...",
+    "backToHome": "العودة للرئيسية",
+    "errors": {
+      "email": "يرجى إدخال بريد إلكتروني صحيح",
+      "password": "كلمة المرور مطلوبة",
+      "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+      "general": "حدث خطأ. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "lawyer": {
+    "dashboard": {
+      "title": "لوحة التحكم",
+      "welcome": "مرحباً بك في لوحة التحكم",
+      "subtitle": "إدارة قضاياك وتتبع التقدم",
+      "stats": {
+        "pending": "القضايا المعلقة",
+        "inProgress": "القضايا قيد التنفيذ",
+        "completed": "القضايا المكتملة",
+        "showCases": "عرض القضايا"
+      },
+      "calendar": {
+        "title": "التقويم",
+        "month": "ديسمبر 2023"
+      },
+      "recentCases": {
+        "title": "القضايا الحديثة",
+        "viewAll": "عرض جميع القضايا"
+      },
+      "upcomingVisits": "الزيارات القادمة",
+      "newestCases": "أحدث القضايا",
+      "allCases": "جميع القضايا",
+      "today": "اليوم",
+      "visitDay": "يوم الزيارة",
+      "showCase": "عرض القضية"
+    },
+    "navigation": {
+      "overview": "نظرة عامة",
+      "allCases": "جميع القضايا",
+      "logout": "تسجيل الخروج"
+    },
+    "cases": {
+      "title": "جميع القضايا",
+      "search": "البحث في القضايا...",
+      "allStatuses": "جميع الحالات",
+      "status": "الحالة",
+      "createdDate": "تاريخ الإنشاء",
+      "table": {
+        "caseNumber": "رقم القضية",
+        "detaineeName": "اسم المعتقل",
+        "clientName": "اسم العميل",
+        "clientPhone": "هاتف العميل",
+        "status": "الحالة",
+        "lastUpdate": "آخر تحديث",
+        "actions": "الإجراءات",
+        "viewDetails": "عرض التفاصيل"
+      },
+      "columns": {
+        "caseNumber": "رقم القضية",
+        "detaineeName": "اسم المعتقل",
+        "detaineeId": "رقم هوية المعتقل",
+        "creationDate": "تاريخ الإنشاء",
+        "clientName": "اسم العميل",
+        "clientPhone": "هاتف العميل",
+        "status": "الحالة"
+      },
+      "statusOptions": {
+        "detentionConfirmed": "تأكيد الاعتقال",
+        "deceased": "متوفى",
+        "pending": "قيد الانتظار",
+        "awaitingDocuments": "في انتظار الوثائق",
+        "released": "محرر",
+        "enforcedDisappearance": "اختفاء قسري",
+        "rejected": "مرفوض"
+      },
+      "pagination": {
+        "previous": "السابق",
+        "next": "التالي",
+        "showing": "عرض {start} إلى {end} من {total} قضية",
+        "from": "من",
+        "results": "نتيجة",
+        "prev": "السابق"
+      }
+    },
+    "caseDetails": {
+      "title": "تفاصيل القضية",
+      "backToCases": "العودة للقضايا",
+      "lastUpdate": "آخر تحديث",
+      "startCase": "بدء القضية",
+      "navigation": {
+        "allDetails": "جميع التفاصيل",
+        "visits": "الزيارات",
+        "messages": "الرسائل",
+        "files": "الملفات"
+      },
+      "detaineeInfo": {
+        "title": "معلومات المعتقل",
+        "fullName": "الاسم الكامل",
+        "job": "المهنة",
+        "dateOfBirth": "تاريخ الميلاد",
+        "idNumber": "رقم الهوية",
+        "healthyStatus": "الحالة الصحية",
+        "maritalStatus": "الحالة الاجتماعية",
+        "location": "الموقع"
+      },
+      "detentionInfo": {
+        "title": "معلومات الاعتقال/الاختفاء",
+        "disappearanceDate": "تاريخ الاختفاء",
+        "disappearanceStatus": "حالة الاختفاء",
+        "location": "الموقع",
+        "describeDisappearance": "وصف الاختفاء"
+      },
+      "clientInfo": {
+        "title": "معلومات العميل",
+        "fullName": "الاسم الكامل",
+        "idNumber": "رقم الهوية",
+        "phoneNumber": "رقم الهاتف",
+        "relationship": "صلة القرابة"
+      },
+      "documentsUpload": {
+        "title": "تحميل المستندات"
+      }
+    },
+    "visits": {
+      "title": "الزيارات",
+      "startVisit": "بدء الزيارة",
+      "toDo": "للقيام بها",
+      "onProgress": "قيد التنفيذ",
+      "done": "مكتملة",
+      "visit": "زيارة",
+      "visiting": "زيارة",
+      "at": "في",
+      "person": "شخص",
+      "visitApprove": "موافقة الزيارة",
+      "visitRejected": "رفض الزيارة",
+      "visitOutcome": "نتيجة الزيارة",
+      "outcome": "النتيجة",
+      "rejectionReason": "سبب الرفض",
+      "pending": "قيد الانتظار",
+      "rejected": "مرفوض"
+    },
+    "messages": {
+      "title": "الرسائل",
+      "lawyer": "المحامي",
+      "message": "رسالة",
+      "messagePlaceholder": "اكتب رسالتك",
+      "next": "التالي"
+    },
+    "files": {
+      "title": "الملفات",
+      "uploadFiles": "تحميل الملفات",
+      "caseFiles": "ملفات القضية",
+      "uploadedFiles": "الملفات المحملة",
+      "fileName": "اسم الملف"
     }
   }
+}

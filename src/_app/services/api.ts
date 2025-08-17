@@ -135,4 +135,12 @@ export async function getCaseDocuments(token: string, lang: string) {
   });
 }
 
+// Lawyer authentication API functions
+export async function lawyerLogin(email: string, password: string, lang: string) {
+  return api.post<ApiResponse>("/lawyers/auth/login/", {
+    email,
+    password
+  }, { lang });
+}
+
 
