@@ -228,9 +228,9 @@ function LawyerCasesInner() {
             
             <div className="lawyer__pagination-info">
               {t("lawyer.cases.pagination.showing", {
-                start: indexOfFirstCase + 1,
-                end: Math.min(indexOfLastCase, filteredCases.length),
-                total: filteredCases.length
+                start: String(indexOfFirstCase + 1),
+                end: String(Math.min(indexOfLastCase, filteredCases.length)),
+                total: String(filteredCases.length)
               })}
             </div>
             
