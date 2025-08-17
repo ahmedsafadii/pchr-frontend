@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Calendar from "react-calendar";
-import { useLocale, useTranslations } from "next-globe-gen";
+import { useLocale } from "next-globe-gen";
 import "react-calendar/dist/Calendar.css";
 
 // Mock visit data - replace with real API data
@@ -86,7 +86,6 @@ interface VisitsCalendarProps {
 }
 
 export default function VisitsCalendar({ onCaseClick }: VisitsCalendarProps) {
-  const t = useTranslations();
   const locale = useLocale();
   const [date, setDate] = useState(new Date(2024, 11, 1)); // December 2024
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
@@ -109,44 +108,6 @@ export default function VisitsCalendar({ onCaseClick }: VisitsCalendarProps) {
   const isToday = (date: Date) => {
     const today = new Date();
     return date.toDateString() === today.toDateString();
-  };
-
-  // Handle click on calendar tile
-  const handleTileClick = (date: Date, event: React.MouseEvent) => {
-    const visits = getVisitsForDate(date);
-    if (visits.length > 0) {
-      event.stopPropagation();
-      const rect = event.currentTarget.getBoundingClientRect();
-      setTooltipPosition({
-        x: rect.left + rect.width / 2,
-        y: rect.top - 10
-      });
-      setHoveredDate(date.toISOString().split('T')[0]);
-      setShowTooltip(true);
-    }
-  };
-
-  // Handle mouse enter on calendar tile
-  const handleMouseEnter = (event: React.MouseEvent, date: Date) => {
-    const visits = getVisitsForDate(date);
-    if (visits.length > 0) {
-      const rect = event.currentTarget.getBoundingClientRect();
-      setTooltipPosition({
-        x: rect.left + rect.width / 2,
-        y: rect.top - 10
-      });
-      setHoveredDate(date.toISOString().split('T')[0]);
-      setShowTooltip(true);
-    }
-  };
-
-  // Handle mouse leave
-  const handleMouseLeave = () => {
-    // Don't hide tooltip immediately, give some time for user to interact
-    setTimeout(() => {
-      setShowTooltip(false);
-      setHoveredDate(null);
-    }, 200);
   };
 
   // Custom tile content

@@ -6,65 +6,66 @@ import LawyerHeader from "../components/LawyerHeader";
 import "@/app/css/lawyer.css";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IconSearch, IconCalendar, IconChevronDown, IconEye } from "@tabler/icons-react";
+import { IconSearch, IconCalendar, IconChevronDown, IconRefresh } from "@tabler/icons-react";
 
 // Mock data - replace with real API calls
 const mockCases = [
   {
     id: "23444",
     detaineeName: "Ahmed Khaled",
+    detaineeId: "DET001",
     clientName: "Cooper, Kristin",
     clientPhone: "(201) 555-0124",
     creationDate: "November 16, 2014",
-    status: "Under Review",
+    status: "pending",
     lastUpdate: "2023-10-26"
   },
   {
     id: "23445", 
     detaineeName: "Mohammed Ali",
+    detaineeId: "DET002",
     clientName: "Smith, John", 
     clientPhone: "(201) 555-0125",
     creationDate: "November 15, 2014",
-    status: "In Progress",
+    status: "in progress",
     lastUpdate: "2023-10-25"
   },
   {
     id: "23446",
-    detaineeName: "Omar Hassan", 
+    detaineeName: "Omar Hassan",
+    detaineeId: "DET003", 
     clientName: "Johnson, Maria",
     clientPhone: "(201) 555-0126", 
     creationDate: "November 14, 2014",
-    status: "Completed",
+    status: "completed",
     lastUpdate: "2023-10-24"
   },
   {
     id: "23447",
     detaineeName: "Khalil Ahmad",
+    detaineeId: "DET004",
     clientName: "Williams, David",
     clientPhone: "(201) 555-0127",
     creationDate: "November 13, 2014", 
-    status: "Under Review",
+    status: "pending",
     lastUpdate: "2023-10-23"
   },
   {
     id: "23448",
     detaineeName: "Yusuf Ibrahim",
+    detaineeId: "DET005",
     clientName: "Brown, Lisa",
     clientPhone: "(201) 555-0128",
     creationDate: "November 12, 2014",
-    status: "In Progress", 
+    status: "in progress", 
     lastUpdate: "2023-10-22"
   }
 ];
 
 const statusOptions = [
-  "Under Review",
-  "In Progress", 
-  "Completed",
-  "Rejected",
-  "Awaiting Documents",
-  "Released",
-  "Enforced Disappearance"
+  "pending",
+  "completed", 
+  "in progress"
 ];
 
 function LawyerCasesInner() {
@@ -115,10 +116,9 @@ function LawyerCasesInner() {
 
   const getStatusClass = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'under review': return 'lawyer__status--review';
+      case 'pending': return 'lawyer__status--pending';
       case 'in progress': return 'lawyer__status--progress';
       case 'completed': return 'lawyer__status--completed';
-      case 'rejected': return 'lawyer__status--rejected';
       default: return 'lawyer__status--default';
     }
   };
@@ -133,7 +133,9 @@ function LawyerCasesInner() {
         <main className="lawyer__cases">
           <div className="lawyer__cases-header">
             <h1 className="lawyer__cases-title">{t("lawyer.cases.title")}</h1>
-            <button className="lawyer__refresh">🔄</button>
+            <button className="lawyer__refresh">
+              <IconRefresh size={20} />
+            </button>
           </div>
 
           {/* Filters */}
@@ -173,48 +175,41 @@ function LawyerCasesInner() {
           <table className="lawyer__table">
             <thead className="lawyer__table-header">
               <tr>
-                <th>{t("lawyer.cases.table.caseNumber")}</th>
-                <th>{t("lawyer.cases.table.detaineeName")}</th>
-                <th>{t("lawyer.cases.table.clientName")}</th>
-                <th>{t("lawyer.cases.table.clientPhone")}</th>
-                <th>{t("lawyer.cases.table.status")}</th>
-                <th>{t("lawyer.cases.table.lastUpdate")}</th>
-                <th>{t("lawyer.cases.table.actions")}</th>
+                <th>Case ID</th>
+                <th>Detainee Name</th>
+                <th>Detainee ID</th>
+                <th>Creation Date</th>
+                <th>Client Name</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody className="lawyer__table-body">
               {currentCases.map((caseItem) => (
                 <tr key={caseItem.id} className="lawyer__table-row">
                   <td className="lawyer__table-cell">
-                    <span className="lawyer__case-number">#{caseItem.id}</span>
+                    <Link 
+                      href={`/${locale}/lawyer/cases/${caseItem.id}`}
+                      className="lawyer__case-id-link"
+                    >
+                      #{caseItem.id}
+                    </Link>
                   </td>
                   <td className="lawyer__table-cell">
-                    <div className="lawyer__detainee-info">
-                      <span className="lawyer__detainee-name">{caseItem.detaineeName}</span>
-                    </div>
+                    <span className="lawyer__detainee-name">{caseItem.detaineeName}</span>
+                  </td>
+                  <td className="lawyer__table-cell">
+                    <span className="lawyer__detainee-id">{caseItem.detaineeId}</span>
+                  </td>
+                  <td className="lawyer__table-cell">
+                    <span className="lawyer__creation-date">{caseItem.creationDate}</span>
                   </td>
                   <td className="lawyer__table-cell">
                     <span className="lawyer__client-name">{caseItem.clientName}</span>
                   </td>
                   <td className="lawyer__table-cell">
-                    <span className="lawyer__client-phone">{caseItem.clientPhone}</span>
-                  </td>
-                  <td className="lawyer__table-cell">
                     <span className={`lawyer__status ${getStatusClass(caseItem.status)}`}>
                       {caseItem.status}
                     </span>
-                  </td>
-                  <td className="lawyer__table-cell">
-                    <span className="lawyer__last-update">{caseItem.lastUpdate}</span>
-                  </td>
-                  <td className="lawyer__table-cell">
-                    <Link 
-                      href={`/${locale}/lawyer/cases/${caseItem.id}`}
-                      className="lawyer__action-button"
-                    >
-                      <IconEye size={16} />
-                      {t("lawyer.cases.table.viewDetails")}
-                    </Link>
                   </td>
                 </tr>
               ))}
