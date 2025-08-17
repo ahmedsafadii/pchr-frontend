@@ -286,12 +286,11 @@
   "lawyer": {
     "dashboard": {
       "title": "Dashboard",
-      "welcome": "Welcome to your dashboard",
-      "subtitle": "Manage your cases and track progress",
+      "welcome": "Welcome back, Mr.",
       "stats": {
-        "pending": "Pending Cases",
-        "inProgress": "In Progress Cases",
-        "completed": "Completed Cases",
+        "pending": "Pending",
+        "inProgress": "In Progress",
+        "completed": "Completed",
         "showCases": "Show Cases"
       },
       "calendar": {

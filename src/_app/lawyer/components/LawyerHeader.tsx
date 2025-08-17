@@ -6,13 +6,24 @@ import Logo from "../../components/Logo";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IconHomeSpark, IconBriefcase, IconUser, IconLogout, IconChevronDown, IconLock, IconWorld, IconBell } from "@tabler/icons-react";
+import {
+  IconHomeSpark,
+  IconBriefcase,
+  IconUser,
+  IconLogout,
+  IconChevronDown,
+  IconLock,
+  IconWorld,
+  IconBell,
+} from "@tabler/icons-react";
 
 interface LawyerHeaderProps {
-  activeTab?: 'overview' | 'cases';
+  activeTab?: "overview" | "cases";
 }
 
-export default function LawyerHeader({ activeTab = 'overview' }: LawyerHeaderProps) {
+export default function LawyerHeader({
+  activeTab = "overview",
+}: LawyerHeaderProps) {
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
@@ -26,7 +37,7 @@ export default function LawyerHeader({ activeTab = 'overview' }: LawyerHeaderPro
       message: "Case #23444 - Ahmed Khaled has been assigned to you",
       date: "2 hours ago",
       isRead: false,
-      caseId: "23444"
+      caseId: "23444",
     },
     {
       id: 2,
@@ -34,7 +45,7 @@ export default function LawyerHeader({ activeTab = 'overview' }: LawyerHeaderPro
       message: "Visit for Case #23445 scheduled for tomorrow 10:00 AM",
       date: "1 day ago",
       isRead: false,
-      caseId: "23445"
+      caseId: "23445",
     },
     {
       id: 3,
@@ -42,41 +53,44 @@ export default function LawyerHeader({ activeTab = 'overview' }: LawyerHeaderPro
       message: "Case #23446 status changed to completed",
       date: "2 days ago",
       isRead: true,
-      caseId: "23446"
-    }
+      caseId: "23446",
+    },
   ]);
 
   useEffect(() => {
     // Check if user is authenticated
-    const token = localStorage.getItem('lawyer_access_token');
+    const token = localStorage.getItem("lawyer_access_token");
     if (!token) {
       // Add fake JWT for UI exploration
-      localStorage.setItem('lawyer_access_token', 'fake-jwt-token-for-ui-exploration');
-      localStorage.setItem('lawyer_name', 'Sami Alkhaldi');
-      localStorage.setItem('lawyer_email', 'sami.alkhaldi@example.com');
+      localStorage.setItem(
+        "lawyer_access_token",
+        "fake-jwt-token-for-ui-exploration"
+      );
+      localStorage.setItem("lawyer_name", "Sami Alkhaldi");
+      localStorage.setItem("lawyer_email", "sami.alkhaldi@example.com");
       // router.push(`/${locale}/lawyer-login`);
       // return;
     }
 
     // Get lawyer name from localStorage
-    const name = localStorage.getItem('lawyer_name') || 'Sami Alkhaldi';
+    const name = localStorage.getItem("lawyer_name") || "Sami Alkhaldi";
     setLawyerName(name);
   }, [locale, router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('lawyer_access_token');
-    localStorage.removeItem('lawyer_email');
-    localStorage.removeItem('lawyer_name');
-    localStorage.removeItem('lawyer_token_expires');
+    localStorage.removeItem("lawyer_access_token");
+    localStorage.removeItem("lawyer_email");
+    localStorage.removeItem("lawyer_name");
+    localStorage.removeItem("lawyer_token_expires");
     router.push(`/${locale}/lawyer-login`);
   };
 
   // Get initials from lawyer name
   const getInitials = (name: string) => {
     return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
+      .split(" ")
+      .map((word) => word.charAt(0))
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
@@ -84,40 +98,41 @@ export default function LawyerHeader({ activeTab = 'overview' }: LawyerHeaderPro
   // Handle notification click
   const handleNotificationClick = (notification: any) => {
     // Mark as read
-    setNotifications(prev => 
-      prev.map(n => 
-        n.id === notification.id ? { ...n, isRead: true } : n
-      )
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === notification.id ? { ...n, isRead: true } : n))
     );
-    
+
     // Close dropdown
     setShowNotifications(false);
-    
+
     // Navigate to case details
     router.push(`/${locale}/lawyer/cases/${notification.caseId}`);
   };
 
   // Get unread notifications count
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
     <header className="lawyer__header">
+      <div className="lawyer__logo">
+        <Logo />
+      </div>
       <div className="lawyer__header-left">
-        <div className="lawyer__logo">
-          <Logo />
-        </div>
-        
         <nav className="lawyer__nav">
-          <Link 
-            href={`/${locale}/lawyer`} 
-            className={`lawyer__nav-link ${activeTab === 'overview' ? 'lawyer__nav-link--active' : ''}`}
+          <Link
+            href={`/${locale}/lawyer`}
+            className={`lawyer__nav-link ${
+              activeTab === "overview" ? "lawyer__nav-link--active" : ""
+            }`}
           >
             <IconHomeSpark size={20} />
             <span>{t("lawyer.navigation.overview")}</span>
           </Link>
-          <Link 
-            href={`/${locale}/lawyer/cases`} 
-            className={`lawyer__nav-link ${activeTab === 'cases' ? 'lawyer__nav-link--active' : ''}`}
+          <Link
+            href={`/${locale}/lawyer/cases`}
+            className={`lawyer__nav-link ${
+              activeTab === "cases" ? "lawyer__nav-link--active" : ""
+            }`}
           >
             <IconBriefcase size={20} />
             <span>{t("lawyer.navigation.allCases")}</span>
@@ -128,20 +143,20 @@ export default function LawyerHeader({ activeTab = 'overview' }: LawyerHeaderPro
       <div className="lawyer__header-right">
         {/* Notifications */}
         <div className="lawyer__notifications">
-          <div 
+          <div
             className="lawyer__notifications-button"
             onClick={() => setShowNotifications(!showNotifications)}
           >
             <div className="lawyer__notifications-icon">
-              <IconBell size={20} />
+              <IconBell size={24} stroke={1.5} />
               {unreadCount > 0 && (
                 <div className="lawyer__notifications-badge">
-                  {unreadCount > 9 ? '9+' : unreadCount}
+                  {unreadCount > 9 ? "9+" : unreadCount}
                 </div>
               )}
             </div>
           </div>
-          
+
           {showNotifications && (
             <div className="lawyer__notifications-dropdown">
               <div className="lawyer__notifications-header">
@@ -160,7 +175,9 @@ export default function LawyerHeader({ activeTab = 'overview' }: LawyerHeaderPro
                     <div
                       key={notification.id}
                       className={`lawyer__notification-item ${
-                        !notification.isRead ? 'lawyer__notification-item--unread' : ''
+                        !notification.isRead
+                          ? "lawyer__notification-item--unread"
+                          : ""
                       }`}
                       onClick={() => handleNotificationClick(notification)}
                     >
@@ -187,13 +204,13 @@ export default function LawyerHeader({ activeTab = 'overview' }: LawyerHeaderPro
         </div>
 
         <div className="lawyer__user">
-          <div 
+          <div
             className="lawyer__user-dropdown"
             onClick={() => setShowUserMenu(!showUserMenu)}
           >
             <div className="lawyer__user-avatar">{getInitials(lawyerName)}</div>
             <IconChevronDown size={16} />
-            
+
             {showUserMenu && (
               <div className="lawyer__user-menu">
                 <button className="lawyer__user-menu-item">
@@ -208,7 +225,10 @@ export default function LawyerHeader({ activeTab = 'overview' }: LawyerHeaderPro
                   <IconWorld size={16} />
                   <LanguageSwitcher />
                 </div>
-                <button className="lawyer__user-menu-item" onClick={handleLogout}>
+                <button
+                  className="lawyer__user-menu-item"
+                  onClick={handleLogout}
+                >
                   <IconLogout size={16} />
                   {t("lawyer.navigation.logout")}
                 </button>

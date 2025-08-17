@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from "next-globe-gen";
 import LawyerHeader from "./components/LawyerHeader";
 import Link from "next/link";
 import "@/app/css/lawyer.css";
-import { IconBriefcase } from "@tabler/icons-react";
+import { IconHourglassLow, IconProgressBolt, IconProgressCheck } from "@tabler/icons-react";
 
 // Mock data - replace with real API calls
 const mockStats = {
@@ -86,51 +86,53 @@ function LawyerDashboardInner() {
 
         {/* Dashboard Content */}
         <main className="lawyer__dashboard">
-          {/* Welcome Section */}
-          <section className="lawyer__welcome">
-            <h1 className="lawyer__welcome-title">{t("lawyer.dashboard.welcome")}</h1>
-            <p className="lawyer__welcome-subtitle">{t("lawyer.dashboard.subtitle")}</p>
-          </section>
-
-          {/* Stats Cards */}
+          {/* Stats Cards with Welcome */}
           <section className="lawyer__stats">
+            {/* Welcome Card */}
+            <div className="lawyer__stat-card lawyer__stat-card--welcome">
+              <div className="lawyer__welcome-content">
+                <h1 className="lawyer__welcome-title">{t("lawyer.dashboard.welcome")}</h1>
+                <p className="lawyer__welcome-subtitle">Sami Alkhaldi</p>
+              </div>
+            </div>
+
             <div className="lawyer__stat-card">
-              <div className="lawyer__stat-info">
-                <div className="lawyer__stat-number">{mockStats.pending}</div>
+              <div className="lawyer__stat-header">
+                <div className="lawyer__stat-icon lawyer__stat-icon--pending">
+                  <IconHourglassLow size={32} stroke={1.1} />
+                </div>
                 <div className="lawyer__stat-label">{t("lawyer.dashboard.stats.pending")}</div>
-                <Link href={`/${locale}/lawyer/cases?status=pending`} className="lawyer__stat-link">
-                  {t("lawyer.dashboard.stats.showCases")}
-                </Link>
               </div>
-              <div className="lawyer__stat-icon lawyer__stat-icon--pending">
-                <IconBriefcase size={24} />
-              </div>
+              <div className="lawyer__stat-number">{mockStats.pending}</div>
+              <Link href={`/${locale}/lawyer/cases?status=pending`} className="lawyer__stat-link">
+                {t("lawyer.dashboard.stats.showCases")}
+              </Link>
             </div>
 
             <div className="lawyer__stat-card">
-              <div className="lawyer__stat-info">
-                <div className="lawyer__stat-number">{mockStats.inProgress}</div>
+              <div className="lawyer__stat-header">
+                <div className="lawyer__stat-icon lawyer__stat-icon--progress">
+                  <IconProgressBolt size={32} stroke={1.1} />
+                </div>
                 <div className="lawyer__stat-label">{t("lawyer.dashboard.stats.inProgress")}</div>
-                <Link href={`/${locale}/lawyer/cases?status=progress`} className="lawyer__stat-link">
-                  {t("lawyer.dashboard.stats.showCases")}
-                </Link>
               </div>
-              <div className="lawyer__stat-icon lawyer__stat-icon--progress">
-                <IconBriefcase size={24} />
-              </div>
+              <div className="lawyer__stat-number">{mockStats.inProgress}</div>
+              <Link href={`/${locale}/lawyer/cases?status=progress`} className="lawyer__stat-link">
+                {t("lawyer.dashboard.stats.showCases")}
+              </Link>
             </div>
 
             <div className="lawyer__stat-card">
-              <div className="lawyer__stat-info">
-                <div className="lawyer__stat-number">{mockStats.completed}</div>
+              <div className="lawyer__stat-header">
+                <div className="lawyer__stat-icon lawyer__stat-icon--completed">
+                  <IconProgressCheck size={32} stroke={1.1} />
+                </div>
                 <div className="lawyer__stat-label">{t("lawyer.dashboard.stats.completed")}</div>
-                <Link href={`/${locale}/lawyer/cases?status=completed`} className="lawyer__stat-link">
-                  {t("lawyer.dashboard.stats.showCases")}
-                </Link>
               </div>
-              <div className="lawyer__stat-icon lawyer__stat-icon--completed">
-                <IconBriefcase size={24} />
-              </div>
+              <div className="lawyer__stat-number">{mockStats.completed}</div>
+              <Link href={`/${locale}/lawyer/cases?status=completed`} className="lawyer__stat-link">
+                {t("lawyer.dashboard.stats.showCases")}
+              </Link>
             </div>
           </section>
 
