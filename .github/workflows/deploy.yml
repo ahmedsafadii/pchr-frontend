@@ -64,9 +64,15 @@ jobs:
               pm2 install pm2-logrotate
               pm2 set pm2-logrotate:max_size 10M
               pm2 set pm2-logrotate:retain 30
-              pm2 startup
+              
+              # Setup PM2 startup script non-interactively
+              echo "Setting up PM2 startup script..."
               sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u $USER --hp $HOME
+              
               sudo systemctl enable pm2-$USER.service
+              echo "✅ PM2 service enabled"
+            else
+              echo "✅ PM2 service already enabled"
             fi
             
             # Stop existing process if running
