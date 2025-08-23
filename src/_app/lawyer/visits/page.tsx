@@ -16,6 +16,7 @@ import {
   IconX,
   IconDots,
   IconFileText,
+  IconRefresh,
 } from "@tabler/icons-react";
 import RequestVisitModal from "../../components/modals/RequestVisitModal";
 import VisitOutcomeModal from "../../components/modals/VisitOutcomeModal";
@@ -211,6 +212,18 @@ function LawyerVisitsInner() {
     console.log(`Visit ${selectedVisitId} rejection reason:`, reason);
   };
 
+  const handleRefresh = () => {
+    // Handle refresh action - reload data from API
+    console.log('Refreshing visits data...');
+    // In real app, make API call to refresh visits data
+    // For now, reset filters and reload mock data
+    setSearchTerm("");
+    setStatusFilter("");
+    setDateFilter(null);
+    setFilteredVisits(mockVisits);
+    setCurrentPage(1);
+  };
+
   const toggleDropdown = (visitId: string) => {
     setOpenDropdown(openDropdown === visitId ? null : visitId);
   };
@@ -237,9 +250,14 @@ function LawyerVisitsInner() {
         <main className="lawyer__cases">
           <div className="lawyer__cases-header">
             <h1 className="lawyer__cases-title">{t("lawyer.visits.title")}</h1>
-            <button className="lawyer__start-visit-btn" onClick={handleStartVisit}>
-              {t("lawyer.visits.startVisit")}
-            </button>
+            <div className="lawyer__header-actions">
+              <button className="lawyer__refresh" onClick={handleRefresh}>
+                <IconRefresh size={20} />
+              </button>
+              <button className="lawyer__start-visit-btn" onClick={handleStartVisit}>
+                {t("lawyer.visits.startVisit")}
+              </button>
+            </div>
           </div>
 
           {/* Filters */}
