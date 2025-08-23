@@ -11,10 +11,12 @@ interface OverviewProps {
   documentsData?: CaseDocumentsData | null; // Optional for now
 }
 
-export default function Overview({ caseData }: OverviewProps) {
+export default function Overview({ caseData, documentsData }: OverviewProps) {
   const t = useTranslations();
   const tt = t as any;
   const [message, setMessage] = useState("");
+  
+  console.log('Overview - documentsData:', documentsData);
   return (
     <div className="case-overview">
       <div className="case-overview__layout">
@@ -31,7 +33,7 @@ export default function Overview({ caseData }: OverviewProps) {
             <h1 className="case-overview__main-title">
               {tt("trackCase.overview.detainee")}: {caseData?.detainee_name || "Loading..."}
             </h1>
-            <span className="case-overview__badge">
+            <span className={`case-overview__badge ${caseData?.status_display ? `case-status--${caseData.status_display.toLowerCase().replace(/\s+/g, '-')}` : ""}`}>
               <IconTag size={18} />{" "}
               {caseData?.status_display || "Loading..."}
             </span>
@@ -69,39 +71,31 @@ export default function Overview({ caseData }: OverviewProps) {
                     </dt>
                     <dd className="case-overview__dd">
                       <ul className="case-overview__files">
-                        <li className="case-overview__file">
-                          <span className="case-overview__file-left">
-                            <IconFileText size={18} /> ID.PDF
-                          </span>
-                          <button
-                            className="case-overview__file-download"
-                            aria-label="download"
-                          >
-                            <IconDownload size={18} />
-                          </button>
-                        </li>
-                        <li className="case-overview__file">
-                          <span className="case-overview__file-left">
-                            <IconFileText size={18} /> Proposal.PDF
-                          </span>
-                          <button
-                            className="case-overview__file-download"
-                            aria-label="download"
-                          >
-                            <IconDownload size={18} />
-                          </button>
-                        </li>
-                        <li className="case-overview__file">
-                          <span className="case-overview__file-left">
-                            <IconFileText size={18} /> Case.PDF
-                          </span>
-                          <button
-                            className="case-overview__file-download"
-                            aria-label="download"
-                          >
-                            <IconDownload size={18} />
-                          </button>
-                        </li>
+                        {documentsData?.data && documentsData.data.length > 0 ? (
+                          documentsData.data.map((document) => (
+                            <li key={document.id} className="case-overview__file">
+                              <span className="case-overview__file-left">
+                                <IconFileText size={18} /> {document.document_type_display} ({document.file_size_mb}MB)
+                              </span>
+                              <button
+                                className="case-overview__file-download"
+                                aria-label="download"
+                                onClick={() => {
+                                  // Handle download - will need to implement download functionality
+                                  console.log('Download document:', document.id);
+                                }}
+                              >
+                                <IconDownload size={18} />
+                              </button>
+                            </li>
+                          ))
+                        ) : (
+                                      <li className="case-overview__file">
+              <span className="case-overview__file-left">
+                <IconFileText size={18} /> {tt("trackCase.info.noDocuments")}
+              </span>
+            </li>
+                        )}
                       </ul>
                     </dd>
                   </div>

@@ -193,9 +193,7 @@ function LawyerVisitsInner() {
     setOpenDropdown(null);
   };
 
-  const handleStartVisit = () => {
-    setShowRequestVisitModal(true);
-  };
+
 
   const handleRequestVisitSubmit = (data: any) => {
     // Handle request visit submission - replace with actual API call

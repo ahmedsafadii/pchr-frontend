@@ -88,16 +88,19 @@
       "health": "Healthy Status",
       "marital": "Marital Status",
       "location": "Location",
+      "street": "Street",
       "detention": "Detention/Disappearance Info",
       "disappearanceDate": "Disappearance Date",
-      "status": "Marital Status",
+      "disappearanceStatus": "Disappearance Status",
       "describe": "Describe Disappearance",
       "client": "Client info",
       "phone": "Phone Number",
       "relationship": "Relationship",
       "documents": "Documents upload",
       "signature": "Your Signature",
-      "terms": "Terms and conditions .PDF"
+      "terms": "Terms and conditions .PDF",
+      "noDocuments": "No documents available",
+      "signaturePdfMessage": "Signature cannot be displayed here but you can download it from the files above"
     }
   },
   "newCase": {

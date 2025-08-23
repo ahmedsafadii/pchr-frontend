@@ -253,16 +253,19 @@
         "health": "الحالة الصحية",
         "marital": "الحالة الاجتماعية",
         "location": "الموقع",
+        "street": "الشارع",
         "detention": "معلومات الاعتقال/الاختفاء",
         "disappearanceDate": "تاريخ الاختفاء",
-        "status": "الحالة",
+        "disappearanceStatus": "حالة الاختفاء",
         "describe": "وصف الاختفاء",
         "client": "معلومات العميل",
         "phone": "رقم الهاتف",
         "relationship": "العلاقة",
         "documents": "رفع المستندات",
         "signature": "توقيعك",
-        "terms": "شروط وأحكام .PDF"
+        "terms": "شروط وأحكام .PDF",
+        "noDocuments": "لا توجد مستندات متاحة",
+        "signaturePdfMessage": "لا يمكن عرض التوقيع هنا ولكن يمكنك تنزيله من الملفات أعلاه"
       }
   },
   "lawyerLogin": {

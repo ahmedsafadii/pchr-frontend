@@ -7,6 +7,7 @@ import LanguageSwitcher from "../components/LanguageSwitcher";
 import "@/app/css/track.css";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { validatePalestinianPhone } from "@/_app/utils/validation";
 import { requestTrackingCode, verifyTrackingCode, resendTrackingCode } from "@/_app/services/api";
 // reCAPTCHA removed
@@ -17,7 +18,7 @@ function TrackInner() {
   const router = useRouter();
   const [mobile, setMobile] = useState("");
   const [caseNo, setCaseNo] = useState("");
-  const [errors, setErrors] = useState<{ mobile?: string; case?: string; code?: string; general?: string }>({});
+
   const [step, setStep] = useState<"form" | "verify">("form");
   const [code, setCode] = useState<string[]>(["","","","",""]); 
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
@@ -38,18 +39,19 @@ function TrackInner() {
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setIsLoading(true);
-      setErrors({});
       
-      const nextErrors: typeof errors = {};
+      const validationErrors: string[] = [];
       if (!validatePalestinianPhone(mobile)) {
-        nextErrors.mobile = t("track.errors.phone").toString();
+        validationErrors.push(t("track.errors.phone").toString());
       }
       if (!/^PCHR-\d{4}-\d+$/.test(caseNo)) {
-        nextErrors.case = t("track.errors.case").toString();
+        validationErrors.push(t("track.errors.case").toString());
       }
       
-      if (Object.keys(nextErrors).length > 0) {
-        setErrors(nextErrors);
+      if (validationErrors.length > 0) {
+        validationErrors.forEach(error => {
+          toast.error(error);
+        });
         setIsLoading(false);
         return;
       }
@@ -65,9 +67,9 @@ function TrackInner() {
         
         // Handle API error response
         if (error.payload?.error?.code === 'CASE_NOT_FOUND') {
-          setErrors({ general: t("track.errors.caseNotFound").toString() });
+          toast.error(t("track.errors.caseNotFound").toString());
         } else {
-          setErrors({ general: t("track.errors.general").toString() });
+          toast.error(t("track.errors.general").toString());
         }
       } finally {
         setIsLoading(false);
@@ -80,11 +82,10 @@ function TrackInner() {
     async (e: React.FormEvent) => {
       e.preventDefault();
       setIsLoading(true);
-      setErrors({});
       
       const value = code.join("");
       if (!/^\d{5}$/.test(value)) {
-        setErrors((prev) => ({ ...prev, code: t("track.errors.code").toString() }));
+        toast.error(t("track.errors.code").toString());
         setIsLoading(false);
         return;
       }
@@ -106,18 +107,18 @@ function TrackInner() {
           // Navigate to case tracking page
           router.push(`/${locale}/track/case`);
         } else {
-          setErrors({ general: t("track.errors.verificationFailed").toString() });
+          toast.error(t("track.errors.verificationFailed").toString());
         }
       } catch (error: any) {
         console.error('Verification error:', error);
         
         // Handle different error types
         if (error.payload?.error?.code === 'INVALID_VERIFICATION_CODE') {
-          setErrors({ code: t("track.errors.invalidCode").toString() });
+          toast.error(t("track.errors.invalidCode").toString());
         } else if (error.payload?.error?.code === 'VERIFICATION_CODE_EXPIRED') {
-          setErrors({ code: t("track.errors.expiredCode").toString() });
+          toast.error(t("track.errors.expiredCode").toString());
         } else {
-          setErrors({ general: t("track.errors.general").toString() });
+          toast.error(t("track.errors.general").toString());
         }
       } finally {
         setIsLoading(false);
@@ -198,7 +199,7 @@ function TrackInner() {
                     placeholder={t("track.mobilePlaceholder")?.toString()}
                     required
                   />
-                  {errors.mobile && <span className="track__error">{errors.mobile}</span>}
+
                 </div>
 
                 <div className="track__form-group">
@@ -225,9 +226,8 @@ function TrackInner() {
                     placeholder={t("track.caseNumberPlaceholder")?.toString()}
                     maxLength={50}
                   />
-                  {errors.case && <span className="track__error">{errors.case}</span>}
+
                 </div>
-                {errors.general && <span className="track__error">{errors.general}</span>}
                 <button type="submit" className="track__submit" disabled={isLoading}>
                   {isLoading ? t("track.sending") : t("track.sendCode")}
                 </button>
@@ -256,8 +256,7 @@ function TrackInner() {
                     />
                   ))}
                 </div>
-                {errors.code && <span className="track__error">{errors.code}</span>}
-                {errors.general && <span className="track__error">{errors.general}</span>}
+
                 <button type="submit" className="track__submit" disabled={isLoading}>
                   {isLoading ? t("track.verifying") : t("track.verify")}
                 </button>
@@ -271,17 +270,17 @@ function TrackInner() {
                       if (!canResend || isLoading) return;
                       
                       setIsLoading(true);
-                      setErrors({});
                       
                       try {
                         await resendTrackingCode(caseNo, mobile, locale);
                         setResendAt(Date.now() + 60_000);
+                        toast.success(t("track.resend").toString() + " ✓");
                       } catch (error: any) {
                         console.error('Resend error:', error);
                         if (error.payload?.error?.code === 'CASE_NOT_FOUND') {
-                          setErrors({ general: t("track.errors.caseNotFound").toString() });
+                          toast.error(t("track.errors.caseNotFound").toString());
                         } else {
-                          setErrors({ general: t("track.errors.general").toString() });
+                          toast.error(t("track.errors.general").toString());
                         }
                       } finally {
                         setIsLoading(false);

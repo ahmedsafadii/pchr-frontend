@@ -11,7 +11,7 @@ interface DisappearanceInfoProps {
   documentsData?: CaseDocumentsData | null; // Optional for now
 }
 
-export default function DisappearanceInfo({ caseData }: DisappearanceInfoProps) {
+export default function DisappearanceInfo({ caseData, documentsData }: DisappearanceInfoProps) {
   const t = useTranslations();
   return (
     <div className="case-info">
@@ -44,6 +44,10 @@ export default function DisappearanceInfo({ caseData }: DisappearanceInfoProps) 
               <dd>{caseData?.detainee_health_status_display || "Not available"}</dd>
             </div>
             <div className="case-info__row">
+              <dt>{(t as any)("trackCase.info.job")}</dt>
+              <dd>{caseData?.detainee_job_display || "Not available"}</dd>
+            </div>
+            <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.marital")}</dt>
               <dd>{caseData?.detainee_marital_status_display || "Not available"}</dd>
             </div>
@@ -68,8 +72,12 @@ export default function DisappearanceInfo({ caseData }: DisappearanceInfoProps) 
               }) : "Not available"}</dd>
             </div>
             <div className="case-info__row">
-              <dt>{(t as any)("trackCase.info.status")}</dt>
+              <dt>{(t as any)("trackCase.info.disappearanceStatus")}</dt>
               <dd>{caseData?.disappearance_status_display || "Not available"}</dd>
+            </div>
+            <div className="case-info__row">
+              <dt>{(t as any)("trackCase.info.street")}</dt>
+              <dd>{caseData?.detention_street || "Not available"}</dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.location")}</dt>
@@ -114,39 +122,31 @@ export default function DisappearanceInfo({ caseData }: DisappearanceInfoProps) 
           {(t as any)("trackCase.info.documents")}
         </h3>
         <ul className="case-overview__files">
-          <li className="case-overview__file">
-            <span className="case-overview__file-left">
-              <IconFileText size={18} /> ID.PDF
-            </span>
-            <button
-              className="case-overview__file-download"
-              aria-label="download"
-            >
-              <IconDownload size={18} />
-            </button>
-          </li>
-          <li className="case-overview__file">
-            <span className="case-overview__file-left">
-              <IconFileText size={18} /> Proposal.PDF
-            </span>
-            <button
-              className="case-overview__file-download"
-              aria-label="download"
-            >
-              <IconDownload size={18} />
-            </button>
-          </li>
-          <li className="case-overview__file">
-            <span className="case-overview__file-left">
-              <IconFileText size={18} /> Case.PDF
-            </span>
-            <button
-              className="case-overview__file-download"
-              aria-label="download"
-            >
-              <IconDownload size={18} />
-            </button>
-          </li>
+          {documentsData?.data && documentsData.data.length > 0 ? (
+            documentsData.data.map((document) => (
+              <li key={document.id} className="case-overview__file">
+                <span className="case-overview__file-left">
+                  <IconFileText size={18} /> {document.document_type_display} ({document.file_size_mb}MB)
+                </span>
+                <button
+                  className="case-overview__file-download"
+                  aria-label="download"
+                  onClick={() => {
+                    // Handle download - will need to implement download functionality
+                    console.log('Download document:', document.id);
+                  }}
+                >
+                  <IconDownload size={18} />
+                </button>
+              </li>
+            ))
+          ) : (
+            <li className="case-overview__file">
+              <span className="case-overview__file-left">
+                <IconFileText size={18} /> {(t as any)("trackCase.info.noDocuments")}
+              </span>
+            </li>
+          )}
         </ul>
       </div>
 
@@ -154,27 +154,49 @@ export default function DisappearanceInfo({ caseData }: DisappearanceInfoProps) 
         <h3 className="case-info__subtitle">
           {(t as any)("trackCase.info.signature")}
         </h3>
-        <ul className="case-overview__files">
-          <li className="case-overview__file">
-            <span className="case-overview__file-left">
-              <IconFileText size={18} /> {t("trackCase.info.terms")}
-            </span>
-            <button
-              className="case-overview__file-download"
-              aria-label="download"
-            >
-              <IconDownload size={18} />
-            </button>
-          </li>
-        </ul>
         <div className="case-info__signature">
-          <Image
-            src="https://upload.wikimedia.org/wikipedia/commons/8/86/Muhammad-ali-signature-6a40cd5a6c27559411db066f62d64886c42bbeb03b347237ffae98b0b15e0005_%28905749513095%29.svg"
-            alt="signature"
-            width={600}
-            height={160}
-            style={{ width: "100%", height: "auto" }}
-          />
+          {(() => {
+            // Find signature document from the documents data
+            const signatureDoc = documentsData?.data?.find(doc => doc.document_type === 'signature');
+            console.log('Signature document found:', signatureDoc);
+            
+            if (signatureDoc) {
+              // Check if it's an image file
+              const isImage = signatureDoc.mime_type?.startsWith('image/');
+              
+              if (isImage) {
+                // Use preview_url if available, otherwise try download_url
+                const imageUrl = signatureDoc.preview_url || signatureDoc.download_url;
+                
+                if (imageUrl) {
+                  // Display image signature
+                  return (
+                    <Image
+                      src={imageUrl}
+                      alt="signature"
+                      width={600}
+                      height={160}
+                      style={{ width: "100%", height: "auto" }}
+                    />
+                  );
+                }
+              } else {
+                // Display message for PDF or non-image files
+                return (
+                  <div className="case-info__signature-message">
+                    <p>{(t as any)("trackCase.info.signaturePdfMessage")}</p>
+                  </div>
+                );
+              }
+            } else {
+              // No signature document found
+              return (
+                <div className="case-info__signature-message">
+                  <p>{(t as any)("trackCase.info.noDocuments")}</p>
+                </div>
+              );
+            }
+          })()}
         </div>
       </div>
     </div>

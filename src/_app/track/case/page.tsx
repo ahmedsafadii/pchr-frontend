@@ -36,6 +36,7 @@ export interface CaseDetailsData {
   detainee_id: string;
   detainee_date_of_birth: string;
   detainee_health_status_display: string;
+  detainee_job_display: string;
   detainee_marital_status_display: string;
   detainee_city: LocationData;
   detainee_governorate: LocationData;
@@ -65,9 +66,27 @@ export interface CaseDetailsData {
   updated: string;
 }
 
+export interface DocumentData {
+  id: string;
+  file_name: string;
+  document_type: string;
+  document_type_display: string;
+  file_size: number;
+  file_size_mb: number;
+  file_extension: string;
+  mime_type: string;
+  description: string;
+  is_verified: boolean;
+  verified_at: string;
+  download_url: string | null;
+  preview_url: string | null;
+  created: string;
+}
+
 export interface CaseDocumentsData {
-  // Will be defined based on the documents API response structure
-  documents?: any[];
+  status: string;
+  data: DocumentData[];
+  message: string;
 }
 
 export default function CaseDetailsPage() {
@@ -77,7 +96,7 @@ export default function CaseDetailsPage() {
   const [authorized, setAuthorized] = useState(false);
   const [activeTab, setActiveTab] = useState<"overview" | "info">("overview");
   const [caseData, setCaseData] = useState<CaseDetailsData | null>(null);
-  const [documentsData, setDocumentsData] = useState<CaseDocumentsData | null>(null); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [documentsData, setDocumentsData] = useState<CaseDocumentsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -122,7 +141,10 @@ export default function CaseDetailsPage() {
           }
           
           if (documentsResponse.status === 'success') {
-            setDocumentsData(documentsResponse.data);
+            console.log('Documents response:', documentsResponse);
+            setDocumentsData(documentsResponse);
+          } else {
+            console.log('Documents fetch failed:', documentsResponse);
           }
           
         } catch (apiError: any) {
@@ -220,9 +242,9 @@ export default function CaseDetailsPage() {
 
                 <div className="tabs__content">
                   {activeTab === "overview" ? (
-                    <Overview caseData={caseData} />
+                    <Overview caseData={caseData} documentsData={documentsData} />
                   ) : (
-                    <DisappearanceInfo caseData={caseData} />
+                    <DisappearanceInfo caseData={caseData} documentsData={documentsData} />
                   )}
                 </div>
               </div>

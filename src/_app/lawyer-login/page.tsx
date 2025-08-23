@@ -7,6 +7,7 @@ import LanguageSwitcher from "../components/LanguageSwitcher";
 import "@/app/css/track.css";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
+import toast from "react-hot-toast";
 import { lawyerLogin } from "@/_app/services/api";
 import { LawyerAuth } from "@/_app/utils/auth";
 
@@ -16,7 +17,7 @@ function LawyerLoginInner() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
+
   const [isLoading, setIsLoading] = useState(false);
 
   const validateEmail = (email: string) => {
@@ -28,22 +29,24 @@ function LawyerLoginInner() {
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setIsLoading(true);
-      setErrors({});
       
-      const nextErrors: typeof errors = {};
+      const validationErrors: string[] = [];
       
       if (!email.trim()) {
-        nextErrors.email = t("lawyerLogin.errors.email").toString();
+        validationErrors.push(t("lawyerLogin.errors.email").toString());
       } else if (!validateEmail(email)) {
-        nextErrors.email = t("lawyerLogin.errors.email").toString();
+        validationErrors.push(t("lawyerLogin.errors.email").toString());
       }
       
       if (!password.trim()) {
-        nextErrors.password = t("lawyerLogin.errors.password").toString();
+        validationErrors.push(t("lawyerLogin.errors.password").toString());
       }
       
-      if (Object.keys(nextErrors).length > 0) {
-        setErrors(nextErrors);
+      if (validationErrors.length > 0) {
+        // Show validation errors as toast
+        validationErrors.forEach(error => {
+          toast.error(error);
+        });
         setIsLoading(false);
         return;
       }
@@ -61,7 +64,7 @@ function LawyerLoginInner() {
           // Navigate to lawyer dashboard
           router.push(`/${locale}/lawyer`);
         } else {
-          setErrors({ general: t("lawyerLogin.errors.invalidCredentials").toString() });
+          toast.error(t("lawyerLogin.errors.invalidCredentials").toString());
         }
         
       } catch (error: any) {
@@ -69,9 +72,9 @@ function LawyerLoginInner() {
         
         // Handle different error types based on the new API response structure
         if (error.payload?.error?.code === 'LOGIN_FAILED' || error.payload?.error?.type === 'authentication_error') {
-          setErrors({ general: t("lawyerLogin.errors.invalidCredentials").toString() });
+          toast.error(t("lawyerLogin.errors.invalidCredentials").toString());
         } else {
-          setErrors({ general: t("lawyerLogin.errors.general").toString() });
+          toast.error(t("lawyerLogin.errors.general").toString());
         }
       } finally {
         setIsLoading(false);
@@ -116,7 +119,7 @@ function LawyerLoginInner() {
                   placeholder={t("lawyerLogin.emailPlaceholder")?.toString()}
                   required
                 />
-                {errors.email && <span className="track__error">{errors.email}</span>}
+
               </div>
 
               <div className="track__form-group">
@@ -133,10 +136,10 @@ function LawyerLoginInner() {
                   placeholder={t("lawyerLogin.passwordPlaceholder")?.toString()}
                   required
                 />
-                {errors.password && <span className="track__error">{errors.password}</span>}
+
               </div>
               
-              {errors.general && <span className="track__error">{errors.general}</span>}
+
               
               <button type="submit" className="track__submit" disabled={isLoading}>
                 {isLoading ? t("lawyerLogin.loggingIn") : t("lawyerLogin.login")}
