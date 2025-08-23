@@ -12,17 +12,17 @@ Set up PM2 as a systemd service that automatically starts on boot and manages yo
 
 ## Quick Setup
 
-### Option 1: Automatic Setup (Recommended)
+### Option 1: One-Time Setup (Recommended)
 
-Run the provided setup script on your Ubuntu server:
+Run this ONCE on your Ubuntu server to set up PM2 as a service:
 
 ```bash
-# On your Ubuntu server
+# On your Ubuntu server (run only once)
 cd /var/www/nextapp
-./deploy-setup.sh
+./pm2-setup-once.sh
 ```
 
-Follow the instructions displayed by the script.
+After this one-time setup, all future deployments via GitHub Actions will work automatically.
 
 ### Option 2: Manual Setup
 

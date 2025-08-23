@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: "nextapp",
-      script: "./node_modules/next/dist/bin/next",
-      args: ["start", "-p", "3000"],
+      script: "npm",
+      args: "start",
       cwd: "/var/www/nextapp",
       instances: 1,
       autorestart: true,
@@ -17,9 +17,6 @@ module.exports = {
       out_file: "/var/log/pm2/nextapp-out.log",
       log_file: "/var/log/pm2/nextapp-combined.log",
       time: true,
-      restart_delay: 1000,
-      min_uptime: "10s",
-      max_restarts: 10,
     },
   ],
 };

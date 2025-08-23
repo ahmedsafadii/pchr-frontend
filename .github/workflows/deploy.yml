@@ -34,7 +34,7 @@ jobs:
           source: ".next,public,package.json,package-lock.json,ecosystem.config.js,ecosystem.npm.config.js"
           target: "/var/www/nextapp"
 
-      - name: Setup PM2 service and restart app
+      - name: Deploy and restart app
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -44,65 +44,13 @@ jobs:
             cd /var/www/nextapp
             
             # Install dependencies
-            echo "📦 Installing dependencies..."
             npm ci --omit=dev
             
-            # Verify Next.js build exists
-            if [ ! -d ".next" ]; then
-              echo "❌ .next directory not found! Build may have failed."
-              exit 1
-            fi
+            # Simple PM2 restart - will start if not running
+            pm2 startOrRestart ecosystem.config.js
             
-            # Create log directory
-            echo "📁 Setting up log directory..."
-            sudo mkdir -p /var/log/pm2
-            sudo chown -R $USER:$USER /var/log/pm2
-            
-            # Setup PM2 as system service (only run once)
-            if ! systemctl is-enabled pm2-$USER.service >/dev/null 2>&1; then
-              echo "⚙️ Setting up PM2 as system service..."
-              pm2 install pm2-logrotate
-              pm2 set pm2-logrotate:max_size 10M
-              pm2 set pm2-logrotate:retain 30
-              
-              # Setup PM2 startup script non-interactively
-              echo "Setting up PM2 startup script..."
-              sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u $USER --hp $HOME
-              
-              sudo systemctl enable pm2-$USER.service
-              echo "✅ PM2 service enabled"
-            else
-              echo "✅ PM2 service already enabled"
-            fi
-            
-            # Stop existing process if running
-            echo "🛑 Stopping existing processes..."
-            pm2 stop nextapp || true
-            pm2 delete nextapp || true
-            
-            # Start the application
-            echo "🚀 Starting application..."
-            pm2 start ecosystem.config.js
-            
-            # Wait a moment for startup
-            sleep 5
-            
-            # Check if app started successfully
-            if pm2 list | grep -q "nextapp.*online"; then
-              echo "✅ Application started successfully!"
-            else
-              echo "❌ Application failed to start. Checking logs..."
-              pm2 logs nextapp --lines 20
-              echo "Trying alternative configuration..."
-              pm2 delete nextapp || true
-              pm2 start ecosystem.npm.config.js
-              sleep 5
-            fi
-            
-            # Save PM2 process list
+            # Save PM2 configuration
             pm2 save
             
-            # Verify service is running
-            echo "📊 Final status:"
-            pm2 status
-            pm2 logs nextapp --lines 10
+            # Quick status check
+            pm2 list
