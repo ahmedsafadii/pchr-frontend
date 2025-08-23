@@ -301,7 +301,10 @@
         "title": "Recent Cases",
         "viewAll": "All Cases"
       },
-      "upcomingVisits": "Up coming visits",
+      "upcomingVisits": {
+        "title": "Upcoming Visits",
+        "viewAll": "All Visits"
+      },
       "newestCases": "Newest Cases",
       "allCases": "All cases",
       "today": "Today",
@@ -358,6 +361,7 @@
     },
     "caseDetails": {
       "title": "Case Details",
+      "casePrefix": "Case",
       "backToCases": "Back to Cases",
       "lastUpdate": "Latest update",
       "startCase": "Start case",
@@ -398,6 +402,9 @@
     "visits": {
       "title": "Visits",
       "startVisit": "Start visit",
+      "search": "Search visits...",
+      "allStatuses": "All Statuses",
+      "visitDate": "Visit Date",
       "toDo": "To Do",
       "onProgress": "On Progress",
       "done": "Done",
@@ -411,7 +418,56 @@
       "outcome": "Outcome",
       "rejectionReason": "Rejection reason",
       "pending": "Pending",
-      "rejected": "Rejected"
+      "rejected": "Rejected",
+      "table": {
+        "visitDate": "Visit Date",
+        "detaineeName": "Detainee Name",
+        "clientName": "Client Name",
+        "prisonName": "Prison Name",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "statusOptions": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "actions": {
+        "approve": "Approve",
+        "reject": "Reject",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "outcome": "Outcome"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "showing": "Showing {start} to {end} of {total} visits"
+      }
+    },
+    "modals": {
+      "requestVisit": {
+        "title": "Request a visit",
+        "titleField": "Title",
+        "titlePlaceholder": "Enter visit title",
+        "prisonName": "Prison Name",
+        "choosePrison": "Choose Type",
+        "visitDate": "Visit Date",
+        "chooseDate": "Choose Date",
+        "send": "Send"
+      },
+      "visitOutcome": {
+        "title": "Visit Outcome",
+        "outcomesField": "Outcomes",
+        "outcomesPlaceholder": "Enter visit outcomes and details...",
+        "save": "Save"
+      },
+      "visitRejection": {
+        "title": "Rejection reason",
+        "rejectionReasonField": "Rejection Reason",
+        "rejectionReasonPlaceholder": "Enter the reason for rejecting this visit...",
+        "save": "Save"
+      }
     },
     "messages": {
       "title": "Messages",

@@ -78,7 +78,7 @@ export default function Step5({
       client_document_id: clientId,
       additional_document_ids: additionalIds,
     });
-  }, [detaineeIdFiles, clientIdFiles, additionalFiles]);
+  }, [detaineeIdFiles, clientIdFiles, additionalFiles, updateData]);
 
   useEffect(() => {
     // Hydrate from existing documents data on mount/prop change
@@ -193,6 +193,7 @@ export default function Step5({
     detaineeIdFiles.length,
     clientIdFiles.length,
     additionalFiles.length,
+    updateData,
   ]);
 
   // Update documents when file states change
@@ -252,6 +253,9 @@ export default function Step5({
     detaineeIdFiles,
     clientIdFiles,
     additionalFiles,
+    data.documents,
+    updateData,
+    updateDocuments,
   ]);
 
   // Handle external errors from API validation

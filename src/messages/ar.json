@@ -299,7 +299,10 @@
         "title": "القضايا الحديثة",
         "viewAll": "عرض جميع القضايا"
       },
-      "upcomingVisits": "الزيارات القادمة",
+      "upcomingVisits": {
+        "title": "الزيارات القادمة",
+        "viewAll": "جميع الزيارات"
+      },
       "newestCases": "أحدث القضايا",
       "allCases": "جميع القضايا",
       "today": "اليوم",
@@ -356,6 +359,7 @@
     },
     "caseDetails": {
       "title": "تفاصيل القضية",
+      "casePrefix": "القضية",
       "backToCases": "العودة للقضايا",
       "lastUpdate": "آخر تحديث",
       "startCase": "بدء القضية",
@@ -396,6 +400,9 @@
     "visits": {
       "title": "الزيارات",
       "startVisit": "بدء الزيارة",
+      "search": "البحث في الزيارات...",
+      "allStatuses": "جميع الحالات",
+      "visitDate": "تاريخ الزيارة",
       "toDo": "للقيام بها",
       "onProgress": "قيد التنفيذ",
       "done": "مكتملة",
@@ -409,7 +416,56 @@
       "outcome": "النتيجة",
       "rejectionReason": "سبب الرفض",
       "pending": "قيد الانتظار",
-      "rejected": "مرفوض"
+      "rejected": "مرفوض",
+      "table": {
+        "visitDate": "تاريخ الزيارة",
+        "detaineeName": "اسم المعتقل",
+        "clientName": "اسم العميل",
+        "prisonName": "اسم السجن",
+        "status": "الحالة",
+        "actions": "الإجراءات"
+      },
+      "statusOptions": {
+        "pending": "قيد الانتظار",
+        "approved": "موافق عليها",
+        "rejected": "مرفوض"
+      },
+      "actions": {
+        "approve": "موافقة",
+        "reject": "رفض",
+        "approved": "موافق عليها",
+        "rejected": "مرفوض",
+        "outcome": "النتيجة"
+      },
+      "pagination": {
+        "previous": "السابق",
+        "next": "التالي",
+        "showing": "عرض {start} إلى {end} من {total} زيارة"
+      }
+    },
+    "modals": {
+      "requestVisit": {
+        "title": "طلب زيارة",
+        "titleField": "العنوان",
+        "titlePlaceholder": "أدخل عنوان الزيارة",
+        "prisonName": "اسم السجن",
+        "choosePrison": "اختر النوع",
+        "visitDate": "تاريخ الزيارة",
+        "chooseDate": "اختر التاريخ",
+        "send": "إرسال"
+      },
+      "visitOutcome": {
+        "title": "نتيجة الزيارة",
+        "outcomesField": "النتائج",
+        "outcomesPlaceholder": "أدخل نتائج الزيارة والتفاصيل...",
+        "save": "حفظ"
+      },
+      "visitRejection": {
+        "title": "سبب الرفض",
+        "rejectionReasonField": "سبب الرفض",
+        "rejectionReasonPlaceholder": "أدخل سبب رفض هذه الزيارة...",
+        "save": "حفظ"
+      }
     },
     "messages": {
       "title": "الرسائل",

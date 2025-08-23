@@ -140,7 +140,13 @@ function LawyerDashboardInner() {
             {/* Calendar Section */}
             <section className="lawyer__calendar-section">
               <div className="lawyer__section-header">
-                <h2 className="lawyer__section-title">Upcoming Visits</h2>
+                <h2 className="lawyer__section-title">{t("lawyer.dashboard.upcomingVisits.title")}</h2>
+                <Link
+                  href={`/${locale}/lawyer/visits`}
+                  className="lawyer__section-link"
+                >
+                  {t("lawyer.dashboard.upcomingVisits.viewAll")}
+                </Link>
               </div>
               <VisitsCalendar onCaseClick={handleCaseClick} />
             </section>

@@ -98,6 +98,7 @@ export default function CustomSelect({
       ...provided,
       color: '#333',
       fontSize: '14px',
+      fontWeight: '500',
     }),
     option: (provided, state) => ({
       ...provided,

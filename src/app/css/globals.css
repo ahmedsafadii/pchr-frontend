@@ -20,6 +20,12 @@
   --secondary-50: #fafcee;
 
   /* Info Color Scale */
+  --success-900: #32833a;
+  --success-500: #32833a;
+  --success-200: #d1fae5;
+  --success-50: #f0fdf4;
+
+  /* Info Color Scale */
   --info-900: #0545da;
   --info-500: #4662e1;
   --info-200: #c3c7f4;
@@ -34,7 +40,7 @@
   /* Danger Color Scale */
   --danger-900: #c30013;
   --danger-500: #ff2f2f;
-  --danger-200: #f69698;
+  --danger-200: #f2cdce;
   --danger-50: #ffeaee;
 
   /* Neutral Color Scale */

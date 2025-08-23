@@ -3,10 +3,13 @@
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-globe-gen";
 import LawyerHeader from "../components/LawyerHeader";
+import CustomSelect from "../../components/CustomSelect";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import "@/app/css/lawyer.css";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IconSearch, IconCalendar, IconChevronDown, IconRefresh } from "@tabler/icons-react";
+import { IconSearch, IconCalendar, IconRefresh } from "@tabler/icons-react";
 
 // Mock data - replace with real API calls
 const mockCases = [
@@ -74,6 +77,7 @@ function LawyerCasesInner() {
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState<Date | null>(null);
   const [filteredCases, setFilteredCases] = useState(mockCases);
   const [currentPage, setCurrentPage] = useState(1);
   const casesPerPage = 10;
@@ -87,7 +91,7 @@ function LawyerCasesInner() {
   }, [searchParams]);
 
   useEffect(() => {
-    // Filter cases based on search term and status
+    // Filter cases based on search term, status, and date
     let filtered = mockCases;
 
     if (searchTerm) {
@@ -104,9 +108,18 @@ function LawyerCasesInner() {
       );
     }
 
+    if (dateFilter) {
+      const filterDate = dateFilter.toISOString().split("T")[0];
+      filtered = filtered.filter(caseItem => {
+        // Convert creation date to comparable format
+        const caseDate = new Date(caseItem.creationDate).toISOString().split("T")[0];
+        return caseDate === filterDate;
+      });
+    }
+
     setFilteredCases(filtered);
     setCurrentPage(1); // Reset to first page when filtering
-  }, [searchTerm, statusFilter]);
+  }, [searchTerm, statusFilter, dateFilter]);
 
   // Pagination
   const indexOfLastCase = currentPage * casesPerPage;
@@ -152,22 +165,35 @@ function LawyerCasesInner() {
             </div>
 
             <div className="lawyer__filter">
-              <select 
-                value={statusFilter} 
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="lawyer__filter-select"
-              >
-                <option value="">{t("lawyer.cases.allStatuses")}</option>
-                {statusOptions.map((status) => (
-                  <option key={status} value={status}>{status}</option>
-                ))}
-              </select>
+              <CustomSelect
+                value={statusFilter}
+                onChange={setStatusFilter}
+                placeholder={t("lawyer.cases.allStatuses")?.toString() || "All Statuses"}
+                options={statusOptions.map((status) => ({
+                  value: status,
+                  label: status
+                }))}
+                includeNullOption={true}
+                isSearchable={false}
+                instanceId="cases-status-filter"
+              />
             </div>
 
-            <div className="lawyer__filter">
-              <IconCalendar size={20} />
-              <span>{t("lawyer.cases.createdDate")}</span>
-              <IconChevronDown size={16} />
+            <div className="lawyer__filter lawyer__filter--date">
+              <div className="lawyer__date-picker-wrapper">
+                <DatePicker
+                  selected={dateFilter}
+                  onChange={(date) => setDateFilter(date)}
+                  dateFormat="dd/MM/yyyy"
+                  placeholderText={t("lawyer.cases.createdDate")?.toString() || "Created Date"}
+                  className="lawyer__date-picker-input"
+                  isClearable
+                  showYearDropdown
+                  scrollableYearDropdown
+                  yearDropdownItemNumber={10}
+                />
+                <IconCalendar size={20} className="lawyer__date-picker-icon" />
+              </div>
             </div>
           </div>
 

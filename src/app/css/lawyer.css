@@ -1071,10 +1071,17 @@
 .lawyer__search-input {
   width: 100%;
   height: 44px;
-  border: 1px solid var(--neutral-300);
+  border: 2px solid var(--neutral-300);
   border-radius: 8px;
   padding: 10px 16px 10px 44px;
   font-size: 14px;
+  font-weight: 500;
+}
+
+.lawyer__search-input:focus {
+  outline: none;
+  border-color: var(--secondary-800);
+  box-shadow: 0 0 0 3px rgba(218, 147, 5, 0.1);
 }
 
 .lawyer__search-icon {
@@ -1086,16 +1093,44 @@
 }
 
 .lawyer__filter {
+  position: relative;
+  padding: 0;
+}
+
+.lawyer__date-picker-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border: 1px solid var(--neutral-300);
+}
+
+.lawyer__date-picker-input {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  border: 2px solid var(--neutral-300);
   border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--neutral-700);
   background: var(--white);
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
+}
+
+.lawyer__date-picker-input:focus {
+  outline: none;
+  border-color: var(--secondary-800);
+  box-shadow: 0 0 0 3px rgba(218, 147, 5, 0.1);
+}
+
+.lawyer__date-picker-input::placeholder {
+  color: var(--neutral-500);
+  font-weight: 500;
+}
+
+.lawyer__date-picker-icon {
+  position: absolute;
+  right: 12px;
+  color: var(--neutral-500);
+  pointer-events: none;
 }
 
 .lawyer__refresh {
@@ -1179,28 +1214,32 @@
 }
 
 .lawyer__status--pending {
-  background: #FEF3C7;
-  color: #D97706;
+  background: #fef3c7;
+  color: #d97706;
+}
+.lawyer__status--approved {
+  background: var(--success-200);
+  color: var(--success-500);
 }
 
 .lawyer__status--review {
-  background: var(--info-100);
-  color: var(--info-800);
+  background: var(--info-200);
+  color: var(--info-500);
 }
 
 .lawyer__status--progress {
-  background: #DBEAFE;
-  color: #1D4ED8;
+  background: #dbeafe;
+  color: #1d4ed8;
 }
 
 .lawyer__status--completed {
-  background: #D1FAE5;
+  background: #d1fae5;
   color: #059669;
 }
 
 .lawyer__status--rejected {
-  background: var(--danger-100);
-  color: var(--danger-800);
+  background: var(--danger-200);
+  color: var(--danger-500);
 }
 
 .lawyer__status--default {
@@ -1965,4 +2004,319 @@
   .lawyer__messages {
     height: 400px;
   }
+}
+
+.react-datepicker__close-icon {
+  left: auto;
+  right: 32px;
+}
+html[lang="ar"] .react-datepicker__close-icon {
+  left: 32px;
+  right: auto;
+}
+.react-datepicker__close-icon:after {
+  background: var(--secondary-800);
+}
+
+.lawyer__search + .lawyer__filter {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+html[lang="ar"] .lawyer__search + .lawyer__filter {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+/* Visit Action Buttons */
+.lawyer__visit-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.lawyer__action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.lawyer__action-btn--approve {
+  color: var(--primary-800);
+  border-color: var(--primary-800);
+  background: transparent;
+}
+
+.lawyer__action-btn--approve:hover {
+  background: var(--secondary-800);
+  color: var(--secondary-800);
+}
+
+.lawyer__action-btn--reject {
+  color: var(--primary-800);
+  border-color: var(--primary-800);
+  background: transparent;
+}
+
+.lawyer__action-btn--reject:hover {
+  background: var(--secondary-800);
+  color: var(--secondary-800);
+}
+
+.lawyer__action-disabled {
+  color: var(--neutral-500);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Case Last Update */
+.lawyer__case-last-update {
+  color: var(--neutral-600);
+  font-size: 14px;
+  font-weight: 400;
+  margin: 8px 0 0 0;
+}
+
+/* Dropdown Menu */
+.lawyer__dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.lawyer__dropdown-trigger {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--neutral-600);
+  transition: all 0.2s ease;
+}
+
+.lawyer__dropdown-trigger:hover {
+  background: var(--neutral-100);
+  color: var(--neutral-800);
+}
+
+.lawyer__dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 150px;
+  padding: 4px 0;
+}
+
+.lawyer__dropdown-item {
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--neutral-700);
+  transition: background-color 0.2s ease;
+}
+
+.lawyer__dropdown-item:hover {
+  background: var(--neutral-50);
+}
+
+.lawyer__dropdown-item:first-child {
+  margin-top: 0;
+}
+
+.lawyer__dropdown-item:last-child {
+  margin-bottom: 0;
+}
+
+html[lang="ar"] .lawyer__dropdown-menu {
+  right: auto;
+  left: 0;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.modal-container {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 24px 0 24px;
+  border-bottom: 1px solid var(--neutral-200);
+  margin-bottom: 24px;
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--neutral-900);
+  margin: 0;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: var(--neutral-500);
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: var(--neutral-100);
+  color: var(--neutral-700);
+}
+
+.modal-form {
+  padding: 0 24px 24px 24px;
+}
+
+.modal-field {
+  margin-bottom: 24px;
+}
+
+.modal-label {
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--neutral-700);
+  margin-bottom: 8px;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--neutral-300);
+  border-radius: 8px;
+  font-size: 16px;
+  color: var(--neutral-900);
+  background: white;
+  transition: border-color 0.2s ease;
+}
+
+.modal-input:focus {
+  outline: none;
+  border-color: var(--secondary-800);
+  box-shadow: 0 0 0 3px rgba(218, 147, 5, 0.1);
+}
+
+.modal-input::placeholder {
+  color: var(--neutral-500);
+}
+
+.modal-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--neutral-300);
+  border-radius: 8px;
+  font-size: 16px;
+  color: var(--neutral-900);
+  background: white;
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.modal-textarea:focus {
+  outline: none;
+  border-color: var(--secondary-800);
+  box-shadow: 0 0 0 3px rgba(218, 147, 5, 0.1);
+}
+
+.modal-textarea::placeholder {
+  color: var(--neutral-500);
+}
+
+.modal-date-picker-wrapper {
+  position: relative;
+}
+
+.modal-date-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--neutral-300);
+  border-radius: 8px;
+  font-size: 16px;
+  color: var(--neutral-900);
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.modal-date-input:focus {
+  outline: none;
+  border-color: var(--secondary-800);
+  box-shadow: 0 0 0 3px rgba(218, 147, 5, 0.1);
+}
+
+.modal-date-input::placeholder {
+  color: var(--neutral-500);
+}
+
+.modal-submit-btn {
+  width: 100%;
+  background: var(--neutral-900);
+  color: white;
+  border: none;
+  padding: 16px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modal-submit-btn:hover {
+  background: var(--neutral-800);
+}
+
+.modal-submit-btn:disabled {
+  background: var(--neutral-400);
+  cursor: not-allowed;
 }
