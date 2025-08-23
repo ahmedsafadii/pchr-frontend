@@ -6,6 +6,7 @@ import VisitsCalendar from "./components/VisitsCalendar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import "@/app/css/lawyer.css";
+import LawyerProtectedLayout from "../components/LawyerProtectedLayout";
 import {
   IconHourglassLow,
   IconProgressBolt,
@@ -241,5 +242,9 @@ function LawyerDashboardInner() {
 }
 
 export default function LawyerDashboardPage() {
-  return <LawyerDashboardInner />;
+  return (
+    <LawyerProtectedLayout>
+      <LawyerDashboardInner />
+    </LawyerProtectedLayout>
+  );
 }

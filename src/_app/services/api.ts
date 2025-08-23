@@ -137,10 +137,67 @@ export async function getCaseDocuments(token: string, lang: string) {
 
 // Lawyer authentication API functions
 export async function lawyerLogin(email: string, password: string, lang: string) {
-  return api.post<ApiResponse>("/lawyers/auth/login/", {
+  return api.post<ApiResponse>("/lawyer/auth/login/", {
     email,
     password
   }, { lang });
+}
+
+export async function lawyerRefreshToken(refreshToken: string, lang: string) {
+  return api.post<ApiResponse>("/lawyer/auth/refresh/", {
+    refresh: refreshToken
+  }, { lang });
+}
+
+export async function lawyerLogout(refreshToken: string, lang: string) {
+  return api.post<ApiResponse>("/lawyer/auth/logout/", {
+    refresh: refreshToken
+  }, { lang });
+}
+
+// Lawyer profile API functions
+export async function getLawyerProfile(token: string, lang: string) {
+  return api.get<ApiResponse>("/lawyer/auth/profile/", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    lang
+  });
+}
+
+export async function updateLawyerProfile(
+  token: string, 
+  profileData: {
+    first_name: string;
+    last_name: string;
+    phone_number: string;
+    address: string;
+  }, 
+  lang: string
+) {
+  return api.put<ApiResponse>("/lawyer/auth/profile/", profileData, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    lang
+  });
+}
+
+export async function changeLawyerPassword(
+  token: string,
+  passwordData: {
+    current_password: string;
+    new_password: string;
+    confirm_password: string;
+  },
+  lang: string
+) {
+  return api.post<ApiResponse>("/lawyer/auth/change-password/", passwordData, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    lang
+  });
 }
 
 

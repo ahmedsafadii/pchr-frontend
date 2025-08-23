@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-globe-gen";
 import LawyerHeader from "../../components/LawyerHeader";
 import "@/app/css/lawyer.css";
+import LawyerProtectedLayout from "../../../components/LawyerProtectedLayout";
 import { usePathname, useParams } from "next/navigation";
 import { IconFileText, IconCalendar, IconMessage, IconFiles } from "@tabler/icons-react";
 
@@ -21,6 +22,14 @@ interface LawyerCaseLayoutProps {
 }
 
 export default function LawyerCaseLayout({ children }: LawyerCaseLayoutProps) {
+  return (
+    <LawyerProtectedLayout>
+      <LawyerCaseLayoutInner>{children}</LawyerCaseLayoutInner>
+    </LawyerProtectedLayout>
+  );
+}
+
+function LawyerCaseLayoutInner({ children }: LawyerCaseLayoutProps) {
   const t = useTranslations();
   const locale = useLocale();
   const pathname = usePathname();

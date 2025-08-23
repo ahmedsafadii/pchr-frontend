@@ -5,7 +5,8 @@ import { useLocale, useTranslations } from "next-globe-gen";
 import Logo from "../../components/Logo";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useLawyerAuth } from "@/_app/hooks/useLawyerAuth";
 import {
   IconHomeSpark,
   IconBriefcase,
@@ -27,7 +28,7 @@ export default function LawyerHeader({
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
-  const [lawyerName, setLawyerName] = useState("");
+  const { user, logout } = useLawyerAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([
@@ -57,32 +58,11 @@ export default function LawyerHeader({
     },
   ]);
 
-  useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem("lawyer_access_token");
-    if (!token) {
-      // Add fake JWT for UI exploration
-      localStorage.setItem(
-        "lawyer_access_token",
-        "fake-jwt-token-for-ui-exploration"
-      );
-      localStorage.setItem("lawyer_name", "Sami Alkhaldi");
-      localStorage.setItem("lawyer_email", "sami.alkhaldi@example.com");
-      // router.push(`/${locale}/lawyer-login`);
-      // return;
-    }
+  // Get lawyer display name
+  const lawyerName = user ? `${user.first_name} ${user.last_name}` : "";
 
-    // Get lawyer name from localStorage
-    const name = localStorage.getItem("lawyer_name") || "Sami Alkhaldi";
-    setLawyerName(name);
-  }, [locale, router]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("lawyer_access_token");
-    localStorage.removeItem("lawyer_email");
-    localStorage.removeItem("lawyer_name");
-    localStorage.removeItem("lawyer_token_expires");
-    router.push(`/${locale}/lawyer-login`);
+  const handleLogout = async () => {
+    await logout();
   };
 
   // Get initials from lawyer name
@@ -213,14 +193,22 @@ export default function LawyerHeader({
 
             {showUserMenu && (
               <div className="lawyer__user-menu">
-                <button className="lawyer__user-menu-item">
+                <Link 
+                  href={`/${locale}/lawyer/profile`}
+                  className="lawyer__user-menu-item"
+                  onClick={() => setShowUserMenu(false)}
+                >
                   <IconUser size={16} />
-                  Profile
-                </button>
-                <button className="lawyer__user-menu-item">
+                  {t("lawyerProfile.title")}
+                </Link>
+                <Link 
+                  href={`/${locale}/lawyer/change-password`}
+                  className="lawyer__user-menu-item"
+                  onClick={() => setShowUserMenu(false)}
+                >
                   <IconLock size={16} />
-                  Change Password
-                </button>
+                  {t("lawyerProfile.changePassword.title")}
+                </Link>
                 <div className="lawyer__user-menu-item">
                   <IconWorld size={16} />
                   <LanguageSwitcher />

@@ -483,5 +483,41 @@
       "uploadedFiles": "Uploaded Files",
       "fileName": "File Name"
     }
+  },
+  "lawyerProfile": {
+    "title": "Profile",
+    "personalInfo": "Personal Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email Address",
+    "phoneNumber": "Phone Number",
+    "address": "Address",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "success": "Profile updated successfully",
+    "errors": {
+      "firstName": "First name is required",
+      "lastName": "Last name is required",
+      "phoneNumber": "Please enter a valid phone number",
+      "general": "An error occurred while updating profile"
+    },
+    "changePassword": {
+      "title": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "changePassword": "Change Password",
+      "changing": "Changing...",
+      "success": "Password changed successfully",
+      "errors": {
+        "currentPassword": "Current password is required",
+        "newPassword": "New password is required",
+        "confirmPassword": "Please confirm your new password",
+        "passwordMismatch": "New passwords do not match",
+        "passwordTooShort": "Password must be at least 8 characters long",
+        "wrongCurrentPassword": "Current password is incorrect",
+        "general": "An error occurred while changing password"
+      }
+    }
   }
 }

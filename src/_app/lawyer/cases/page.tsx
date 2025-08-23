@@ -7,6 +7,7 @@ import CustomSelect from "../../components/CustomSelect";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "@/app/css/lawyer.css";
+import LawyerProtectedLayout from "../../components/LawyerProtectedLayout";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { IconSearch, IconCalendar, IconRefresh } from "@tabler/icons-react";
@@ -275,5 +276,9 @@ function LawyerCasesInner() {
 }
 
 export default function LawyerCasesPage() {
-  return <LawyerCasesInner />;
+  return (
+    <LawyerProtectedLayout>
+      <LawyerCasesInner />
+    </LawyerProtectedLayout>
+  );
 }

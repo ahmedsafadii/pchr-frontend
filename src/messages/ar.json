@@ -481,5 +481,41 @@
       "uploadedFiles": "الملفات المحملة",
       "fileName": "اسم الملف"
     }
+  },
+  "lawyerProfile": {
+    "title": "الملف الشخصي",
+    "personalInfo": "المعلومات الشخصية",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "phoneNumber": "رقم الهاتف",
+    "address": "العنوان",
+    "save": "حفظ التغييرات",
+    "saving": "جاري الحفظ...",
+    "success": "تم تحديث الملف الشخصي بنجاح",
+    "errors": {
+      "firstName": "الاسم الأول مطلوب",
+      "lastName": "اسم العائلة مطلوب",
+      "phoneNumber": "يرجى إدخال رقم هاتف صحيح",
+      "general": "حدث خطأ أثناء تحديث الملف الشخصي"
+    },
+    "changePassword": {
+      "title": "تغيير كلمة المرور",
+      "currentPassword": "كلمة المرور الحالية",
+      "newPassword": "كلمة المرور الجديدة",
+      "confirmPassword": "تأكيد كلمة المرور الجديدة",
+      "changePassword": "تغيير كلمة المرور",
+      "changing": "جاري التغيير...",
+      "success": "تم تغيير كلمة المرور بنجاح",
+      "errors": {
+        "currentPassword": "كلمة المرور الحالية مطلوبة",
+        "newPassword": "كلمة المرور الجديدة مطلوبة",
+        "confirmPassword": "يرجى تأكيد كلمة المرور الجديدة",
+        "passwordMismatch": "كلمات المرور الجديدة غير متطابقة",
+        "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+        "wrongCurrentPassword": "كلمة المرور الحالية غير صحيحة",
+        "general": "حدث خطأ أثناء تغيير كلمة المرور"
+      }
+    }
   }
 }

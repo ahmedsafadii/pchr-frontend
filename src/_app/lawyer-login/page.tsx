@@ -8,6 +8,7 @@ import "@/app/css/track.css";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { lawyerLogin } from "@/_app/services/api";
+import { LawyerAuth } from "@/_app/utils/auth";
 
 function LawyerLoginInner() {
   const t = useTranslations();
@@ -50,16 +51,12 @@ function LawyerLoginInner() {
       try {
         const response = await lawyerLogin(email, password, locale);
         
-        if (response.status === 'success' && response.data?.access_token) {
-          // Store JWT token in localStorage for persistent authentication
-          try {
-            localStorage.setItem('lawyer_access_token', response.data.access_token);
-            localStorage.setItem('lawyer_email', email);
-            localStorage.setItem('lawyer_name', response.data.name || '');
-            localStorage.setItem('lawyer_token_expires', (Date.now() + (response.data.expires_in * 1000)).toString());
-          } catch (storageError) {
-            console.warn('Failed to store authentication data:', storageError);
-          }
+        if (response.status === 'success' && response.data?.access) {
+          // Store authentication data using the utility
+          LawyerAuth.storeAuth(
+            { access: response.data.access, refresh: response.data.refresh },
+            response.data.user
+          );
           
           // Navigate to lawyer dashboard
           router.push(`/${locale}/lawyer`);
@@ -70,8 +67,8 @@ function LawyerLoginInner() {
       } catch (error: any) {
         console.error('Lawyer login error:', error);
         
-        // Handle different error types
-        if (error.payload?.error?.code === 'INVALID_CREDENTIALS') {
+        // Handle different error types based on the new API response structure
+        if (error.payload?.error?.code === 'LOGIN_FAILED' || error.payload?.error?.type === 'authentication_error') {
           setErrors({ general: t("lawyerLogin.errors.invalidCredentials").toString() });
         } else {
           setErrors({ general: t("lawyerLogin.errors.general").toString() });

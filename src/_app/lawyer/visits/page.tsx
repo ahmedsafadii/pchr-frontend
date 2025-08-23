@@ -6,6 +6,7 @@ import CustomSelect from "../../components/CustomSelect";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "@/app/css/lawyer.css";
+import LawyerProtectedLayout from "../../components/LawyerProtectedLayout";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -452,5 +453,9 @@ function LawyerVisitsInner() {
 }
 
 export default function LawyerAllVisitsPage() {
-  return <LawyerVisitsInner />;
+  return (
+    <LawyerProtectedLayout>
+      <LawyerVisitsInner />
+    </LawyerProtectedLayout>
+  );
 }
