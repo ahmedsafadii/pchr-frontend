@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: "nextapp",
-      script: "./node_modules/next/dist/bin/next",
-      args: ["start", "-p", "3000"],
+      script: "npm",
+      args: "start",
       cwd: "/var/www/nextapp",
       instances: 1,
       autorestart: true,
