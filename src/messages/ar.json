@@ -274,6 +274,8 @@
     "emailPlaceholder": "lawyer@example.com",
     "password": "كلمة المرور",
     "passwordPlaceholder": "أدخل كلمة المرور",
+    "showPassword": "إظهار كلمة المرور",
+    "hidePassword": "إخفاء كلمة المرور",
     "login": "تسجيل الدخول",
     "loggingIn": "جاري تسجيل الدخول...",
     "backToHome": "العودة للرئيسية",
@@ -288,11 +290,18 @@
     "dashboard": {
       "title": "لوحة التحكم",
       "welcome": "مرحباً بك, أستاذ",
+      "loading": "جاري تحميل لوحة التحكم...",
+      "retry": "إعادة المحاولة",
+      "detentionLocation": "مكان الاعتقال",
       "stats": {
         "pending": "القضايا المعلقة",
         "inProgress": "القضايا قيد التنفيذ",
         "completed": "القضايا المكتملة",
+        "urgent": "القضايا العاجلة",
         "showCases": "عرض القضايا"
+      },
+      "error": {
+        "general": "فشل في تحميل بيانات لوحة التحكم. يرجى المحاولة مرة أخرى."
       },
       "calendar": {
         "title": "الزيارات القادمة",

@@ -285,50 +285,6 @@
   font-weight: 700;
 }
 
-.case-status--pending {
-  background: #fff7ed;
-  color: #b45309;
-}
-
-.case-status--in-progress {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-.case-status--completed {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.case-status--under-review {
-  background: #f3e8ff;
-  color: #7c3aed;
-}
-
-.case-status--awaiting-documents {
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-.case-status--detention-confirmed {
-  background: #f1f5f9;
-  color: #475569;
-}
-
-.case-status--released {
-  background: #ecfdf5;
-  color: #059669;
-}
-
-.case-status--deceased {
-  background: #f9fafb;
-  color: #374151;
-}
-
-.case-status--enforced-disappearance {
-  background: #fef2f2;
-  color: #991b1b;
-}
 .case-overview__divider {
   border: none;
   border-top: 1px solid #eee;

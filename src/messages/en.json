@@ -276,6 +276,8 @@
     "emailPlaceholder": "lawyer@example.com",
     "password": "Password",
     "passwordPlaceholder": "Enter your password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
     "login": "Login",
     "loggingIn": "Logging in...",
     "backToHome": "Back to Home",
@@ -289,12 +291,19 @@
   "lawyer": {
     "dashboard": {
       "title": "Dashboard",
-      "welcome": "Welcome back, Mr.",
+      "welcome": "Welcome back,",
+      "loading": "Loading dashboard...",
+      "retry": "Try Again",
+      "detentionLocation": "Detention Location",
       "stats": {
         "pending": "Pending",
         "inProgress": "In Progress",
         "completed": "Completed",
+        "urgent": "Urgent",
         "showCases": "Show Cases"
+      },
+      "error": {
+        "general": "Failed to load dashboard data. Please try again."
       },
       "calendar": {
         "title": "Upcoming visits",

@@ -34,15 +34,15 @@ function LawyerLoginInner() {
       
       const validationErrors: string[] = [];
       
-      if (!email.trim()) {
-        validationErrors.push(t("lawyerLogin.errors.email").toString());
-      } else if (!validateEmail(email)) {
-        validationErrors.push(t("lawyerLogin.errors.email").toString());
-      }
-      
-      if (!password.trim()) {
-        validationErrors.push(t("lawyerLogin.errors.password").toString());
-      }
+              if (!email.trim()) {
+          validationErrors.push(t("lawyerLogin.errors.email"));
+        } else if (!validateEmail(email)) {
+          validationErrors.push(t("lawyerLogin.errors.email"));
+        }
+        
+        if (!password.trim()) {
+          validationErrors.push(t("lawyerLogin.errors.password"));
+        }
       
       if (validationErrors.length > 0) {
         // Show validation errors as toast
@@ -66,7 +66,7 @@ function LawyerLoginInner() {
           // Navigate to lawyer dashboard
           router.push(`/${locale}/lawyer`);
         } else {
-          toast.error(t("lawyerLogin.errors.invalidCredentials").toString());
+          toast.error(t("lawyerLogin.errors.invalidCredentials"));
         }
         
       } catch (error: any) {
@@ -74,9 +74,9 @@ function LawyerLoginInner() {
         
         // Handle different error types based on the new API response structure
         if (error.payload?.error?.code === 'LOGIN_FAILED' || error.payload?.error?.type === 'authentication_error') {
-          toast.error(t("lawyerLogin.errors.invalidCredentials").toString());
+          toast.error(t("lawyerLogin.errors.invalidCredentials"));
         } else {
-          toast.error(t("lawyerLogin.errors.general").toString());
+          toast.error(t("lawyerLogin.errors.general"));
         }
       } finally {
         setIsLoading(false);
@@ -120,7 +120,7 @@ function LawyerLoginInner() {
                     className="track__input track__input--with-icon"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder={t("lawyerLogin.emailPlaceholder")?.toString()}
+                    placeholder={t("lawyerLogin.emailPlaceholder")}
                     required
                   />
                 </div>
@@ -139,14 +139,14 @@ function LawyerLoginInner() {
                     className="track__input track__input--with-icon track__input--with-toggle"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder={t("lawyerLogin.passwordPlaceholder")?.toString()}
+                    placeholder={t("lawyerLogin.passwordPlaceholder")}
                     required
                   />
                   <button
                     type="button"
                     className="track__input-toggle"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? t("lawyerLogin.hidePassword")?.toString() : t("lawyerLogin.showPassword")?.toString()}
+                    aria-label={showPassword ? t("lawyerLogin.hidePassword") : t("lawyerLogin.showPassword")}
                   >
                     {showPassword ? <IconEyeOff size={20} /> : <IconEye size={20} />}
                   </button>

@@ -4,97 +4,54 @@ import { useState, useEffect, useRef } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
-// Mock visit data - replace with real API data
-const mockVisits = [
-  {
-    id: 1,
-    date: "2024-12-05",
-    caseNumber: "23444",
-    clientName: "Ahmed Khaled",
-    time: "10:00 AM",
-    location: "Prison A"
-  },
-  {
-    id: 2,
-    date: "2024-12-05", 
-    caseNumber: "23445",
-    clientName: "Mohammed Ali",
-    time: "2:00 PM",
-    location: "Court B"
-  },
-  {
-    id: 3,
-    date: "2024-12-15",
-    caseNumber: "23446",
-    clientName: "Omar Hassan",
-    time: "11:00 AM",
-    location: "Police Station C"
-  },
-  {
-    id: 4,
-    date: "2024-12-20",
-    caseNumber: "23447",
-    clientName: "Khalil Ahmad",
-    time: "3:00 PM",
-    location: "Prison D"
-  },
-  {
-    id: 5,
-    date: "2024-12-28",
-    caseNumber: "23448",
-    clientName: "Yusuf Ibrahim",
-    time: "9:00 AM",
-    location: "Court A"
-  },
-  {
-    id: 6,
-    date: "2025-01-08",
-    caseNumber: "23449",
-    clientName: "Samir Nasser",
-    time: "1:00 PM",
-    location: "Prison B"
-  },
-  {
-    id: 7,
-    date: "2025-01-12",
-    caseNumber: "23450",
-    clientName: "Hassan Ali",
-    time: "10:30 AM",
-    location: "Police Station D"
-  },
-  {
-    id: 8,
-    date: "2025-01-18",
-    caseNumber: "23451",
-    clientName: "Ahmad Mahmoud",
-    time: "2:30 PM",
-    location: "Court C"
-  },
-  {
-    id: 9,
-    date: "2025-01-25",
-    caseNumber: "23452",
-    clientName: "Fadi Khoury",
-    time: "11:15 AM",
-    location: "Prison C"
-  }
-];
-
-interface VisitsCalendarProps {
-  onCaseClick?: (caseNumber: string) => void;
+// Interface for upcoming visit data
+interface UpcomingVisit {
+  id: string;
+  title: string;
+  case_number: string;
+  detainee_name: string;
+  visit_date: string;
+  visit_time: string | null;
+  visit_type: string;
+  status: string;
+  is_urgent: boolean;
+  prison_name: string;
 }
 
-export default function VisitsCalendar({ onCaseClick }: VisitsCalendarProps) {
-  const [date, setDate] = useState(new Date(2024, 11, 1)); // December 2024
+interface VisitsCalendarProps {
+  onCaseClick?: (caseId: string) => void;
+  upcomingVisits?: UpcomingVisit[];
+}
+
+export default function VisitsCalendar({ onCaseClick, upcomingVisits = [] }: VisitsCalendarProps) {
+  const [date, setDate] = useState(new Date()); // Current date
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
+  // Debug: Log the visits data
+  useEffect(() => {
+    console.log('VisitsCalendar received visits:', upcomingVisits);
+  }, [upcomingVisits]);
+
   // Get visits for a specific date
   const getVisitsForDate = (date: Date) => {
-    const dateString = date.toISOString().split('T')[0];
-    return mockVisits.filter(visit => visit.date === dateString);
+    // Use local date string to avoid timezone issues
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    
+    const visitsForDate = upcomingVisits.filter(visit => visit.visit_date === dateString);
+    
+    // Debug: Log date filtering
+    console.log(`Checking date ${dateString} against visits:`, upcomingVisits.map(v => v.visit_date));
+    if (visitsForDate.length > 0) {
+      console.log(`Found ${visitsForDate.length} visits for ${dateString}:`, visitsForDate);
+    }
+    
+    return visitsForDate;
   };
 
   // Check if date has visits
@@ -142,9 +99,9 @@ export default function VisitsCalendar({ onCaseClick }: VisitsCalendarProps) {
   };
 
   // Handle case click
-  const handleCaseClick = (caseNumber: string) => {
+  const handleCaseClick = (caseId: string) => {
     if (onCaseClick) {
-      onCaseClick(caseNumber);
+      onCaseClick(caseId);
     }
     setHoveredDate(null);
     setShowTooltip(false);
@@ -183,9 +140,11 @@ export default function VisitsCalendar({ onCaseClick }: VisitsCalendarProps) {
             date.toLocaleDateString(locale, { weekday: 'narrow' }).toUpperCase()
           }
           onClickDay={(clickedDate, event) => {
+            console.log('Calendar day clicked:', clickedDate);
             setDate(clickedDate);
             // Check if clicked date has visits
             const visits = getVisitsForDate(clickedDate);
+            console.log('Visits found for clicked date:', visits);
             if (visits.length > 0) {
               // Get the position of the clicked tile
               const target = event.target as HTMLElement;
@@ -205,8 +164,14 @@ export default function VisitsCalendar({ onCaseClick }: VisitsCalendarProps) {
                 });
               }
               
-              setHoveredDate(clickedDate.toISOString().split('T')[0]);
+              // Use local date string to avoid timezone issues
+              const year = clickedDate.getFullYear();
+              const month = String(clickedDate.getMonth() + 1).padStart(2, '0');
+              const day = String(clickedDate.getDate()).padStart(2, '0');
+              const localDateString = `${year}-${month}-${day}`;
+              setHoveredDate(localDateString);
               setShowTooltip(true);
+              console.log('Tooltip should show:', { hoveredDate: localDateString, showTooltip: true });
             }
           }}
           onActiveStartDateChange={({ activeStartDate }) => {
@@ -238,17 +203,18 @@ export default function VisitsCalendar({ onCaseClick }: VisitsCalendarProps) {
               <div 
                 key={visit.id} 
                 className="lawyer__calendar-tooltip-item"
-                onClick={() => handleCaseClick(visit.caseNumber)}
+                onClick={() => handleCaseClick(visit.case_number)}
               >
                 <div className="lawyer__calendar-tooltip-case">
-                  Case: {visit.clientName}
+                  {visit.case_number}: {visit.detainee_name}
+                  {visit.is_urgent && (
+                    <span className="lawyer__calendar-urgent-badge">Urgent</span>
+                  )}
                 </div>
                 <div className="lawyer__calendar-tooltip-details">
-                  {new Date(visit.date).toLocaleDateString('en-GB', { 
-                    day: 'numeric', 
-                    month: 'short', 
-                    year: 'numeric' 
-                  })}
+                  <div>{visit.prison_name}</div>
+                  <div>{visit.visit_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                  {visit.visit_time && <div>{visit.visit_time}</div>}
                 </div>
                 <div className="lawyer__calendar-tooltip-action">
                   Show Case

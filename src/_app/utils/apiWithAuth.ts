@@ -51,11 +51,29 @@ class AuthenticatedApi {
     const headers = { ...apiOptions.headers, ...authHeaders };
 
     try {
-      // Make the API request
-      const response = await api.post<T>(path, apiOptions.body, {
-        ...apiOptions,
-        headers,
-      });
+      // Make the API request using the specified method
+      const method = apiOptions.method || 'GET';
+      let response: T;
+      
+      switch (method) {
+        case 'GET':
+          response = await api.get<T>(path, { ...apiOptions, headers });
+          break;
+        case 'POST':
+          response = await api.post<T>(path, apiOptions.body, { ...apiOptions, headers });
+          break;
+        case 'PUT':
+          response = await api.put<T>(path, apiOptions.body, { ...apiOptions, headers });
+          break;
+        case 'PATCH':
+          response = await api.patch<T>(path, apiOptions.body, { ...apiOptions, headers });
+          break;
+        case 'DELETE':
+          response = await api.delete<T>(path, { ...apiOptions, headers });
+          break;
+        default:
+          throw new Error(`Unsupported HTTP method: ${method}`);
+      }
       
       return response;
     } catch (error: any) {
@@ -146,4 +164,8 @@ export async function getLawyerVisits(lang: string = 'en') {
 
 export async function getLawyerCaseDetails(caseId: string, lang: string = 'en') {
   return apiWithAuth.get<ApiResponse>(`/lawyer/cases/${caseId}/`, { lang });
+}
+
+export async function getLawyerDashboard(lang: string = 'en') {
+  return apiWithAuth.get<ApiResponse>('/lawyer/dashboard/', { lang });
 }

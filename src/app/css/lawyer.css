@@ -330,6 +330,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 24px;
+  margin-bottom: 24px;
 }
 
 /* Calendar Section */
@@ -525,7 +526,6 @@
   padding: 16px;
   border: 1px solid var(--neutral-200);
   border-radius: 12px;
-  margin-bottom: 12px;
   background: var(--white);
 }
 
@@ -557,6 +557,22 @@
   color: var(--neutral-900);
   font-size: 16px;
   margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lawyer__case-urgent-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--danger-500);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 12px;
+  line-height: 1.2;
 }
 
 .lawyer__case-details-grid {
@@ -618,6 +634,25 @@
   gap: 0;
 }
 
+.lawyer__cases-more {
+  text-align: center;
+  padding: 16px;
+  border-top: 1px solid var(--neutral-200);
+  margin-top: 8px;
+}
+
+.lawyer__cases-more-link {
+  color: var(--secondary-500);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.lawyer__cases-more-link:hover {
+  color: var(--secondary-800);
+  text-decoration: underline;
+}
+
 .lawyer__case-name {
   font-weight: 600;
   color: var(--neutral-900);
@@ -637,17 +672,12 @@
 .lawyer__case-status-badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   padding: 8px;
   border-radius: 8px;
   font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
-  min-width: 105px;
-}
-
-.lawyer__case-status-badge--review {
-  background: var(--warning-50);
-  color: var(--warning-900);
 }
 
 /* Header Layout */
@@ -962,6 +992,7 @@
   padding: 12px;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   min-width: 200px;
+  max-height: 200px;
   pointer-events: auto;
 }
 
@@ -976,12 +1007,35 @@
   border-left: 14px solid transparent;
   border-right: 14px solid transparent;
   border-top: 14px solid var(--neutral-900);
+  z-index: 1001;
 }
 
 .lawyer__calendar-tooltip-content {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-height: 176px; /* 200px - 24px padding */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--neutral-600) transparent;
+}
+
+/* Custom scrollbar for webkit browsers */
+.lawyer__calendar-tooltip-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lawyer__calendar-tooltip-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lawyer__calendar-tooltip-content::-webkit-scrollbar-thumb {
+  background: var(--neutral-600);
+  border-radius: 3px;
+}
+
+.lawyer__calendar-tooltip-content::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-400);
 }
 
 .lawyer__calendar-tooltip-item {
@@ -1007,6 +1061,29 @@
   font-size: 14px;
   color: var(--secondary-800);
   text-decoration: underline;
+}
+
+.lawyer__calendar-tooltip-more {
+  font-size: 12px;
+  color: var(--neutral-400);
+  text-align: center;
+  padding: 8px;
+  border-top: 1px solid var(--neutral-600);
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.lawyer__calendar-urgent-badge {
+  display: inline-flex;
+  align-items: center;
+  background: var(--danger-500);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin-left: 8px;
+  line-height: 1.2;
 }
 
 /* Calendar Legend */
