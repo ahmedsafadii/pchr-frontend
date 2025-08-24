@@ -338,6 +338,11 @@
       "allStatuses": "جميع الحالات",
       "status": "الحالة",
       "createdDate": "تاريخ الإنشاء",
+      "urgentOnly": "عاجل فقط",
+      "urgentFilter": {
+        "allCases": "جميع القضايا",
+        "onlyUrgent": "العاجلة فقط"
+      },
       "table": {
         "caseNumber": "رقم القضية",
         "detaineeName": "اسم المعتقل",
@@ -358,13 +363,15 @@
         "status": "الحالة"
       },
       "statusOptions": {
-        "detentionConfirmed": "تأكيد الاعتقال",
-        "deceased": "متوفى",
         "pending": "قيد الانتظار",
+        "inProgress": "قيد التنفيذ",
+        "completed": "مكتمل",
+        "underReview": "قيد المراجعة",
         "awaitingDocuments": "في انتظار الوثائق",
+        "detentionConfirmed": "تأكيد الاعتقال",
         "released": "محرر",
-        "enforcedDisappearance": "اختفاء قسري",
-        "rejected": "مرفوض"
+        "deceased": "متوفى",
+        "enforcedDisappearance": "اختفاء قسري"
       },
       "pagination": {
         "previous": "السابق",

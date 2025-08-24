@@ -200,4 +200,39 @@ export async function changeLawyerPassword(
   });
 }
 
+// Lawyer cases API functions
+export async function getLawyerCases(
+  token: string, 
+  params: {
+    status?: string;
+    search?: string;
+    page?: number;
+    page_size?: number;
+    urgent_only?: boolean;
+    sort?: string;
+    order?: 'asc' | 'desc';
+  }, 
+  lang: string
+) {
+  const searchParams = new URLSearchParams();
+  
+  if (params.status) searchParams.append('status', params.status);
+  if (params.search) searchParams.append('search', params.search);
+  if (params.page) searchParams.append('page', params.page.toString());
+  if (params.page_size) searchParams.append('page_size', params.page_size.toString());
+  if (params.urgent_only !== undefined) searchParams.append('urgent_only', params.urgent_only.toString());
+  if (params.sort) searchParams.append('sort', params.sort);
+  if (params.order) searchParams.append('order', params.order);
+
+  const queryString = searchParams.toString();
+  const path = `/lawyer/cases${queryString ? `?${queryString}` : ''}`;
+
+  return api.get<ApiResponse>(path, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    lang
+  });
+}
+
 

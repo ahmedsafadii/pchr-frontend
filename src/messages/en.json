@@ -340,6 +340,11 @@
       "allStatuses": "All Statuses",
       "status": "Status",
       "createdDate": "Created Date",
+      "urgentOnly": "Urgent Only",
+      "urgentFilter": {
+        "allCases": "All Cases",
+        "onlyUrgent": "Urgent Cases"
+      },
       "table": {
         "caseNumber": "Case Number",
         "detaineeName": "Detainee Name",
@@ -360,13 +365,15 @@
         "status": "Status"
       },
       "statusOptions": {
-        "detentionConfirmed": "Detention Confirmed",
-        "deceased": "Deceased",
         "pending": "Pending",
+        "inProgress": "In Progress",
+        "completed": "Completed",
+        "underReview": "Under Review",
         "awaitingDocuments": "Awaiting Documents",
+        "detentionConfirmed": "Detention Confirmed",
         "released": "Released",
-        "enforcedDisappearance": "Enforced Disappearance",
-        "rejected": "Rejected"
+        "deceased": "Deceased",
+        "enforcedDisappearance": "Enforced Disappearance"
       },
       "pagination": {
         "previous": "Previous",

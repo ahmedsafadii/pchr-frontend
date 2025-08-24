@@ -562,6 +562,27 @@
   gap: 8px;
 }
 
+.lawyer__case-id-link {
+  font-weight: 600;
+  color: var(--primary-600);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.lawyer__case-id-link:hover {
+  color: var(--primary-700);
+  text-decoration: underline;
+}
+
+.lawyer__case-number-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
 .lawyer__case-urgent-badge {
   display: inline-flex;
   align-items: center;
@@ -1327,6 +1348,8 @@
   color: var(--primary-600);
   text-decoration: none;
   transition: color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
 .lawyer__case-id-link:hover {
@@ -1379,9 +1402,142 @@
   color: var(--danger-500);
 }
 
+.lawyer__status--confirmed {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.lawyer__status--deceased {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+.lawyer__status--awaiting {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.lawyer__status--released {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.lawyer__status--disappearance {
+  background: #fecaca;
+  color: #dc2626;
+}
+
 .lawyer__status--default {
   background: var(--neutral-100);
   color: var(--neutral-800);
+}
+
+/* Urgent Filter */
+.lawyer__urgent-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--neutral-700);
+}
+
+.lawyer__urgent-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-600);
+  cursor: pointer;
+}
+
+.lawyer__urgent-icon {
+  color: var(--warning-500);
+}
+
+
+
+/* Error Display */
+.lawyer__error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  margin-bottom: 24px;
+  background: var(--danger-50);
+  border: 1px solid var(--danger-200);
+  border-radius: 8px;
+  color: var(--danger-700);
+  font-size: 14px;
+}
+
+.lawyer__retry-button {
+  padding: 8px 16px;
+  background: var(--danger-600);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.lawyer__retry-button:hover {
+  background: var(--danger-700);
+}
+
+/* Loading State */
+.lawyer__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  font-size: 16px;
+  color: var(--neutral-600);
+  background: var(--white);
+  border-radius: 16px;
+}
+
+/* Table Loading and Empty States */
+.lawyer__table-loading-row,
+.lawyer__table-empty-row {
+  background: var(--white);
+}
+
+.lawyer__table-loading-cell,
+.lawyer__table-empty-cell {
+  padding: 40px 20px;
+  text-align: center;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.lawyer__table-loading-content,
+.lawyer__table-empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: var(--neutral-600);
+}
+
+.lawyer__loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--neutral-200);
+  border-top: 3px solid var(--primary-600);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.lawyer__table-empty-content span {
+  font-size: 16px;
+  font-weight: 500;
 }
 
 /* Action Button */
@@ -2847,4 +3003,145 @@ html[lang="ar"] .lawyer__dropdown-menu {
 
 .lawyer__case-nav-item--logout:hover .lawyer__case-nav-icon {
   color: var(--danger-900);
+}
+
+/* Expandable Table Rows */
+.lawyer__table-expand-header {
+  width: 50px;
+  padding: 8px 16px;
+}
+
+.lawyer__table-expand-cell {
+  width: 50px;
+  padding: 8px 16px;
+  text-align: center;
+}
+
+.lawyer__expand-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--neutral-600);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lawyer__expand-button:hover {
+  background: var(--neutral-100);
+  color: var(--neutral-800);
+}
+
+.lawyer__table-expanded-row {
+  background: var(--neutral-50);
+}
+
+.lawyer__table-expanded-cell {
+  padding: 0;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.lawyer__expanded-content {
+  padding: 24px;
+  background: var(--white);
+  margin: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--neutral-200);
+}
+
+.lawyer__expanded-section {
+  margin-bottom: 24px;
+}
+
+.lawyer__expanded-section:last-child {
+  margin-bottom: 0;
+}
+
+.lawyer__expanded-section h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--neutral-800);
+  padding-bottom: 8px;
+}
+
+.lawyer__expanded-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.lawyer__expanded-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lawyer__expanded-item--full {
+  grid-column: 1 / -1;
+}
+
+.lawyer__expanded-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--neutral-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.lawyer__expanded-value {
+  font-size: 14px;
+  color: var(--neutral-800);
+  font-weight: 500;
+}
+
+/* Responsive styling for expanded content */
+@media (max-width: 768px) {
+  .lawyer__expanded-content {
+    padding: 16px;
+    margin: 4px;
+  }
+  
+  .lawyer__expanded-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .lawyer__expanded-section h4 {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  
+  .lawyer__expanded-label {
+    font-size: 11px;
+  }
+  
+  .lawyer__expanded-value {
+    font-size: 13px;
+  }
+}
+/* Fixed column widths for last two columns only */
+.lawyer__table th:nth-child(1), /* Creation Date column */
+.lawyer__table td:nth-child(1) {
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+}
+
+/* Fixed column widths for last two columns only */
+.lawyer__table th:nth-child(4), /* Creation Date column */
+.lawyer__table td:nth-child(4) {
+  width: 140px;
+  min-width: 140px;
+  max-width: 140px;
+}
+
+.lawyer__table th:nth-child(5), /* Status column */
+.lawyer__table td:nth-child(5) {
+  width: 140px;
+  min-width: 140px;
+  max-width: 140px;
 }

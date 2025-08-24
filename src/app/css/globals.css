@@ -36,6 +36,10 @@
   --warning-500: #ffb219;
   --warning-200: #ffdd99;
   --warning-50: #f6f4e5;
+  --warning-100: #fff3cd;
+  --warning-600: #e6a700;
+  --warning-700: #cc9500;
+  --warning-800: #b37f00;
 
   /* Danger Color Scale */
   --danger-900: #c30013;
