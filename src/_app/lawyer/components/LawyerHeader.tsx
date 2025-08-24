@@ -14,12 +14,12 @@ import {
   IconLogout,
   IconChevronDown,
   IconLock,
-  IconWorld,
   IconBell,
+  IconCalendarEvent,
 } from "@tabler/icons-react";
 
 interface LawyerHeaderProps {
-  activeTab?: "overview" | "cases";
+  activeTab?: "overview" | "cases" | "profile" | "visits";
 }
 
 export default function LawyerHeader({
@@ -93,138 +93,183 @@ export default function LawyerHeader({
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
-    <header className="lawyer__header">
-      <div className="lawyer__logo">
-        <Logo />
-      </div>
-      <div className="lawyer__header-left">
-        <nav className="lawyer__nav">
-          <Link
-            href={`/${locale}/lawyer`}
-            className={`lawyer__nav-link ${
-              activeTab === "overview" ? "lawyer__nav-link--active" : ""
-            }`}
-          >
-            <IconHomeSpark size={20} />
-            <span>{t("lawyer.navigation.overview")}</span>
-          </Link>
-          <Link
-            href={`/${locale}/lawyer/cases`}
-            className={`lawyer__nav-link ${
-              activeTab === "cases" ? "lawyer__nav-link--active" : ""
-            }`}
-          >
-            <IconBriefcase size={20} />
-            <span>{t("lawyer.navigation.allCases")}</span>
-          </Link>
-        </nav>
-      </div>
+    <>
+      <header className="lawyer__header">
+        <div className="lawyer__logo">
+          <Logo />
+        </div>
+        <div className="lawyer__header-left lawyer__header-left--desktop">
+          <nav className="lawyer__nav">
+            <Link
+              href={`/${locale}/lawyer`}
+              className={`lawyer__nav-link ${
+                activeTab === "overview" ? "lawyer__nav-link--active" : ""
+              }`}
+            >
+              <IconHomeSpark size={20} />
+              <span>{t("lawyer.navigation.overview")}</span>
+            </Link>
+            <Link
+              href={`/${locale}/lawyer/cases`}
+              className={`lawyer__nav-link ${
+                activeTab === "cases" ? "lawyer__nav-link--active" : ""
+              }`}
+            >
+              <IconBriefcase size={20} />
+              <span>{t("lawyer.navigation.allCases")}</span>
+            </Link>
+          </nav>
+        </div>
 
-      <div className="lawyer__header-right">
-        {/* Notifications */}
-        <div className="lawyer__notifications">
-          <div
-            className="lawyer__notifications-button"
-            onClick={() => setShowNotifications(!showNotifications)}
-          >
-            <div className="lawyer__notifications-icon">
-              <IconBell size={24} stroke={1.5} />
-              {unreadCount > 0 && (
-                <div className="lawyer__notifications-badge">
-                  {unreadCount > 9 ? "9+" : unreadCount}
+        <div className="lawyer__header-right">
+          {/* Language Switcher */}
+          <div className="lawyer__language-switcher">
+            <LanguageSwitcher />
+          </div>
+          {/* Notifications */}
+          <div className="lawyer__notifications">
+            <div
+              className="lawyer__notifications-button"
+              onClick={() => setShowNotifications(!showNotifications)}
+            >
+              <div className="lawyer__notifications-icon">
+                <IconBell size={24} stroke={1.5} />
+                {unreadCount > 0 && (
+                  <div className="lawyer__notifications-badge">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {showNotifications && (
+              <div className="lawyer__notifications-dropdown">
+                <div className="lawyer__notifications-header">
+                  <h3>Notifications</h3>
+                  <span className="lawyer__notifications-count">
+                    {unreadCount} unread
+                  </span>
+                </div>
+                <div className="lawyer__notifications-list">
+                  {notifications.length === 0 ? (
+                    <div className="lawyer__notifications-empty">
+                      No notifications
+                    </div>
+                  ) : (
+                    notifications.map((notification) => (
+                      <div
+                        key={notification.id}
+                        className={`lawyer__notification-item ${
+                          !notification.isRead
+                            ? "lawyer__notification-item--unread"
+                            : ""
+                        }`}
+                        onClick={() => handleNotificationClick(notification)}
+                      >
+                        <div className="lawyer__notification-content">
+                          <div className="lawyer__notification-title">
+                            {notification.title}
+                          </div>
+                          <div className="lawyer__notification-message">
+                            {notification.message}
+                          </div>
+                          <div className="lawyer__notification-date">
+                            {notification.date}
+                          </div>
+                        </div>
+                        {!notification.isRead && (
+                          <div className="lawyer__notification-dot"></div>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="lawyer__user lawyer__user--desktop">
+            <div
+              className="lawyer__user-dropdown"
+              onClick={() => setShowUserMenu(!showUserMenu)}
+            >
+              <div className="lawyer__user-avatar">
+                {getInitials(lawyerName)}
+              </div>
+              <IconChevronDown size={16} />
+
+              {showUserMenu && (
+                <div className="lawyer__user-menu">
+                  <Link
+                    href={`/${locale}/lawyer/profile`}
+                    className="lawyer__user-menu-item"
+                    onClick={() => setShowUserMenu(false)}
+                  >
+                    <IconUser size={16} />
+                    {t("lawyerProfile.title")}
+                  </Link>
+                  <Link
+                    href={`/${locale}/lawyer/change-password`}
+                    className="lawyer__user-menu-item"
+                    onClick={() => setShowUserMenu(false)}
+                  >
+                    <IconLock size={16} />
+                    {t("lawyerProfile.changePassword.title")}
+                  </Link>
+
+                  <button
+                    className="lawyer__user-menu-item"
+                    onClick={handleLogout}
+                  >
+                    <IconLogout size={16} />
+                    {t("lawyer.navigation.logout")}
+                  </button>
                 </div>
               )}
             </div>
           </div>
-
-          {showNotifications && (
-            <div className="lawyer__notifications-dropdown">
-              <div className="lawyer__notifications-header">
-                <h3>Notifications</h3>
-                <span className="lawyer__notifications-count">
-                  {unreadCount} unread
-                </span>
-              </div>
-              <div className="lawyer__notifications-list">
-                {notifications.length === 0 ? (
-                  <div className="lawyer__notifications-empty">
-                    No notifications
-                  </div>
-                ) : (
-                  notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`lawyer__notification-item ${
-                        !notification.isRead
-                          ? "lawyer__notification-item--unread"
-                          : ""
-                      }`}
-                      onClick={() => handleNotificationClick(notification)}
-                    >
-                      <div className="lawyer__notification-content">
-                        <div className="lawyer__notification-title">
-                          {notification.title}
-                        </div>
-                        <div className="lawyer__notification-message">
-                          {notification.message}
-                        </div>
-                        <div className="lawyer__notification-date">
-                          {notification.date}
-                        </div>
-                      </div>
-                      {!notification.isRead && (
-                        <div className="lawyer__notification-dot"></div>
-                      )}
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
         </div>
+      </header>
 
-        <div className="lawyer__user">
-          <div
-            className="lawyer__user-dropdown"
-            onClick={() => setShowUserMenu(!showUserMenu)}
-          >
-            <div className="lawyer__user-avatar">{getInitials(lawyerName)}</div>
-            <IconChevronDown size={16} />
-
-            {showUserMenu && (
-              <div className="lawyer__user-menu">
-                <Link 
-                  href={`/${locale}/lawyer/profile`}
-                  className="lawyer__user-menu-item"
-                  onClick={() => setShowUserMenu(false)}
-                >
-                  <IconUser size={16} />
-                  {t("lawyerProfile.title")}
-                </Link>
-                <Link 
-                  href={`/${locale}/lawyer/change-password`}
-                  className="lawyer__user-menu-item"
-                  onClick={() => setShowUserMenu(false)}
-                >
-                  <IconLock size={16} />
-                  {t("lawyerProfile.changePassword.title")}
-                </Link>
-                <div className="lawyer__user-menu-item">
-                  <IconWorld size={16} />
-                  <LanguageSwitcher />
-                </div>
-                <button
-                  className="lawyer__user-menu-item"
-                  onClick={handleLogout}
-                >
-                  <IconLogout size={16} />
-                  {t("lawyer.navigation.logout")}
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </header>
+      {/* Mobile Bottom Navigation */}
+      <nav className="lawyer__bottom-nav">
+        <Link
+          href={`/${locale}/lawyer`}
+          className={`lawyer__bottom-nav-item ${
+            activeTab === "overview" ? "lawyer__bottom-nav-item--active" : ""
+          }`}
+        >
+          <IconHomeSpark size={20} />
+          <span>{(t as any)("lawyer.navigation.mobile.overview")}</span>
+        </Link>
+        <Link
+          href={`/${locale}/lawyer/cases`}
+          className={`lawyer__bottom-nav-item ${
+            activeTab === "cases" ? "lawyer__bottom-nav-item--active" : ""
+          }`}
+        >
+          <IconBriefcase size={20} />
+          <span>{(t as any)("lawyer.navigation.mobile.allCases")}</span>
+        </Link>
+        <Link
+          href={`/${locale}/lawyer/profile`}
+          className={`lawyer__bottom-nav-item ${
+            activeTab === "profile" ? "lawyer__bottom-nav-item--active" : ""
+          }`}
+        >
+          <IconUser size={20} />
+          <span>{(t as any)("lawyer.navigation.mobile.profile")}</span>
+        </Link>
+        <Link
+          href={`/${locale}/lawyer/visits`}
+          className={`lawyer__bottom-nav-item ${
+            activeTab === "visits" ? "lawyer__bottom-nav-item--active" : ""
+          }`}
+        >
+          <IconCalendarEvent size={20} />
+          <span>{(t as any)("lawyer.navigation.mobile.visits")}</span>
+        </Link>
+      </nav>
+    </>
   );
 }

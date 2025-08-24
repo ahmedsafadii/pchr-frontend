@@ -199,7 +199,8 @@ function LawyerCasesInner() {
           </div>
 
           {/* Cases Table */}
-          <table className="lawyer__table">
+          <div className="lawyer__table-wrapper">
+            <table className="lawyer__table">
             <thead className="lawyer__table-header">
               <tr>
                 <th>Case ID</th>
@@ -241,7 +242,8 @@ function LawyerCasesInner() {
                 </tr>
               ))}
             </tbody>
-          </table>
+            </table>
+          </div>
 
           {/* Pagination */}
           <div className="lawyer__pagination">

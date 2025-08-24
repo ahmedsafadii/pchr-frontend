@@ -142,7 +142,13 @@ export default function CaseDetailsPage() {
           
           if (documentsResponse.status === 'success') {
             console.log('Documents response:', documentsResponse);
-            setDocumentsData(documentsResponse);
+            // Transform ApiResponse to CaseDocumentsData
+            const documentsData: CaseDocumentsData = {
+              status: documentsResponse.status,
+              data: documentsResponse.data || [],
+              message: documentsResponse.message || ''
+            };
+            setDocumentsData(documentsData);
           } else {
             console.log('Documents fetch failed:', documentsResponse);
           }

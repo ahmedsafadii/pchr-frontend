@@ -315,7 +315,13 @@
     "navigation": {
       "overview": "نظرة عامة",
       "allCases": "جميع القضايا",
-      "logout": "تسجيل الخروج"
+      "logout": "تسجيل الخروج",
+      "mobile": {
+        "overview": "الرئيسية",
+        "allCases": "القضايا",
+        "profile": "الملف الشخصي",
+        "visits": "الزيارات"
+      }
     },
     "cases": {
       "title": "جميع القضايا",

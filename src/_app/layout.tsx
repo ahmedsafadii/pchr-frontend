@@ -17,6 +17,13 @@ export const metadata: Metadata = {
   title: { template: "%s | PCHR GAZA", default: "PCHR GAZA" },
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1.0,
+  maximumScale: 1.0,
+  userScalable: false,
+};
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   const locale = useLocale();
   return (

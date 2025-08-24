@@ -252,9 +252,6 @@ function LawyerVisitsInner() {
               <button className="lawyer__refresh" onClick={handleRefresh}>
                 <IconRefresh size={20} />
               </button>
-              <button className="lawyer__start-visit-btn" onClick={handleStartVisit}>
-                {t("lawyer.visits.startVisit")}
-              </button>
             </div>
           </div>
 
@@ -310,7 +307,8 @@ function LawyerVisitsInner() {
           </div>
 
           {/* Visits Table */}
-          <table className="lawyer__table">
+          <div className="lawyer__table-wrapper">
+            <table className="lawyer__table">
             <thead className="lawyer__table-header">
               <tr>
                 <th>{t("lawyer.visits.table.visitDate")}</th>
@@ -413,7 +411,8 @@ function LawyerVisitsInner() {
                 </tr>
               ))}
             </tbody>
-          </table>
+            </table>
+          </div>
 
           {/* Pagination */}
           <div className="lawyer__pagination">

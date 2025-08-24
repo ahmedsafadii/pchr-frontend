@@ -317,7 +317,13 @@
     "navigation": {
       "overview": "Overview",
       "allCases": "All Cases",
-      "logout": "Logout"
+      "logout": "Logout",
+      "mobile": {
+        "overview": "Home",
+        "allCases": "Cases",
+        "profile": "Profile",
+        "visits": "Visits"
+      }
     },
     "cases": {
       "title": "All Cases",

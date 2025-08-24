@@ -51,6 +51,7 @@
   --neutral-300: #d2d4e2;
   --neutral-100: #f1f2fd;
   --neutral-50: #f5f6fd;
+  --neutral-10: #fbfbff;
 }
 html[lang="ar"] body {
   direction: rtl;
