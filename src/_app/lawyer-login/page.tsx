@@ -10,6 +10,7 @@ import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { lawyerLogin } from "@/_app/services/api";
 import { LawyerAuth } from "@/_app/utils/auth";
+import { IconMail, IconLock, IconEye, IconEyeOff } from "@tabler/icons-react";
 
 function LawyerLoginInner() {
   const t = useTranslations();
@@ -17,6 +18,7 @@ function LawyerLoginInner() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -109,34 +111,46 @@ function LawyerLoginInner() {
                 <label className="track__label" htmlFor="email">
                   {t("lawyerLogin.email")} <span className="track__required">*</span>
                 </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  className="track__input"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={t("lawyerLogin.emailPlaceholder")?.toString()}
-                  required
-                />
-
+                <div className="track__input-container">
+                  <IconMail className="track__input-icon" size={20} />
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    className="track__input track__input--with-icon"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={t("lawyerLogin.emailPlaceholder")?.toString()}
+                    required
+                  />
+                </div>
               </div>
 
               <div className="track__form-group">
                 <label className="track__label" htmlFor="password">
                   {t("lawyerLogin.password")} <span className="track__required">*</span>
                 </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  className="track__input"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder={t("lawyerLogin.passwordPlaceholder")?.toString()}
-                  required
-                />
-
+                <div className="track__input-container">
+                  <IconLock className="track__input-icon" size={20} />
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    className="track__input track__input--with-icon track__input--with-toggle"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={t("lawyerLogin.passwordPlaceholder")?.toString()}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="track__input-toggle"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? t("lawyerLogin.hidePassword")?.toString() : t("lawyerLogin.showPassword")?.toString()}
+                  >
+                    {showPassword ? <IconEyeOff size={20} /> : <IconEye size={20} />}
+                  </button>
+                </div>
               </div>
               
 
