@@ -6,14 +6,15 @@ import LawyerHeader from "../components/LawyerHeader";
 import CustomSelect from "../../components/CustomSelect";
 import "@/app/css/lawyer.css";
 import LawyerProtectedLayout from "../../components/LawyerProtectedLayout";
-import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
   IconSearch,
   IconRefresh,
   IconAlertCircle,
   IconChevronDown,
   IconChevronRight,
+  IconLoader,
 } from "@tabler/icons-react";
 import { getLawyerCases } from "../../services/api";
 import { LawyerAuth } from "../../utils/auth";
@@ -53,13 +54,12 @@ interface PaginationInfo {
 function LawyerCasesInner() {
   const t = useTranslations();
   const locale = useLocale();
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   // State
   const [cases, setCases] = useState<Case[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Changed from true to false
   const [error, setError] = useState<string | null>(null);
 
   // Filter states
@@ -71,6 +71,9 @@ function LawyerCasesInner() {
 
   // Expanded rows state
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+  const [isFilterParamsReady, setIsFilterParamsReady] = useState(false);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const statusOptions = [
     { value: "pending", label: t("lawyer.cases.statusOptions.pending") },
@@ -96,66 +99,26 @@ function LawyerCasesInner() {
     },
   ];
 
-  // Initialize filters from URL params
+
+
+  // Debounced search effect
   useEffect(() => {
-    const status = searchParams.get("status") || "";
-    const search = searchParams.get("search") || "";
-    const urgent = searchParams.get("urgent_only") === "true";
-    const page = parseInt(searchParams.get("page") || "1");
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
 
-    setStatusFilter(status);
-    setSearchTerm(search);
-    setUrgentOnly(urgent);
-    setCurrentPage(page);
-  }, [searchParams]);
+    searchTimeoutRef.current = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500); // 2000ms delay
 
-  // Update URL when filters change
-  const updateURL = useCallback(
-    (newFilters: {
-      status?: string;
-      search?: string;
-      urgent_only?: boolean;
-      page?: number;
-    }) => {
-      const params = new URLSearchParams(searchParams);
-
-      if (newFilters.status !== undefined) {
-        if (newFilters.status) {
-          params.set("status", newFilters.status);
-        } else {
-          params.delete("status");
-        }
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
       }
+    };
+  }, [searchTerm]);
 
-      if (newFilters.search !== undefined) {
-        if (newFilters.search) {
-          params.set("search", newFilters.search);
-        } else {
-          params.delete("search");
-        }
-      }
 
-      if (newFilters.urgent_only !== undefined) {
-        if (newFilters.urgent_only) {
-          params.set("urgent_only", "true");
-        } else {
-          params.delete("urgent_only");
-        }
-      }
-
-      if (newFilters.page !== undefined) {
-        if (newFilters.page > 1) {
-          params.set("page", newFilters.page.toString());
-        } else {
-          params.delete("page");
-        }
-      }
-
-      const newURL = params.toString() ? `?${params.toString()}` : "";
-      router.push(`/${locale}/lawyer/cases${newURL}`);
-    },
-    [searchParams, router, locale]
-  );
 
   // Fetch cases from API
   const fetchCases = useCallback(async () => {
@@ -172,7 +135,7 @@ function LawyerCasesInner() {
         token,
         {
           status: statusFilter || undefined,
-          search: searchTerm || undefined,
+          search: debouncedSearchTerm || undefined,
           page: currentPage,
           page_size: pageSize,
           urgent_only: urgentOnly,
@@ -185,6 +148,8 @@ function LawyerCasesInner() {
       if (response.status === "success" && response.data) {
         setCases(response.data.cases || []);
         setPagination(response.data.pagination || null);
+        
+
       } else {
         throw new Error(response.message || "Failed to fetch cases");
       }
@@ -194,38 +159,109 @@ function LawyerCasesInner() {
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, searchTerm, urgentOnly, currentPage, pageSize, locale]);
+  }, [statusFilter, debouncedSearchTerm, urgentOnly, currentPage, pageSize, locale]);
 
-  // Fetch cases when filters change
+  // Initialize filters from URL params
   useEffect(() => {
+    const status = searchParams.get("status") || "";
+    const search = searchParams.get("search") || "";
+    const urgent = searchParams.get("urgent_only") === "true";
+    const page = parseInt(searchParams.get("page") || "1");
+
+    // Batch all state updates together
+    setStatusFilter(status);
+    setSearchTerm(search);
+    setUrgentOnly(urgent);
+    setCurrentPage(page);
+    
+    // Set flag to true after all params are set
+    setIsFilterParamsReady(true);
+  }, [searchParams]);
+
+  // Single effect to fetch cases when all params are ready
+  useEffect(() => {
+    // Only fetch when all parameters are ready
+    if (isFilterParamsReady) {
+      fetchCases();
+    }
+  }, [isFilterParamsReady, fetchCases]);
+
+  // Track if initial load is complete
+  const initialLoadComplete = useRef(false);
+
+  // Handle filter changes after initial load
+  useEffect(() => {
+    // Skip if initial load is not complete
+    if (!initialLoadComplete.current) {
+      return;
+    }
+
+    // Skip if parameters aren't ready
+    if (!isFilterParamsReady) {
+      return;
+    }
+
+    // Fetch cases when filters change
     fetchCases();
-  }, [fetchCases]);
+  }, [statusFilter, urgentOnly, currentPage, debouncedSearchTerm, fetchCases, isFilterParamsReady]);
+
+  // Mark initial load as complete after first fetch
+  useEffect(() => {
+    if (isFilterParamsReady && !loading && cases.length > 0) {
+      initialLoadComplete.current = true;
+    }
+  }, [isFilterParamsReady, loading, cases.length]);
 
   // Handle filter changes
   const handleStatusChange = (value: string) => {
+    // Skip if parameters aren't ready or if already loading
+    if (!isFilterParamsReady || loading) {
+      return;
+    }
+    
     setStatusFilter(value);
     setCurrentPage(1);
-    updateURL({ status: value, page: 1 });
+    // Don't update URL immediately - let the API call handle it
   };
 
   const handleSearchChange = (value: string) => {
+    // Skip if parameters aren't ready or if already loading
+    if (!isFilterParamsReady || loading) {
+      return;
+    }
+    
     setSearchTerm(value);
     setCurrentPage(1);
-    updateURL({ search: value, page: 1 });
+    // Don't update URL immediately - wait for debounced search and successful API call
   };
 
   const handleUrgentChange = (value: boolean) => {
+    // Skip if parameters aren't ready or if already loading
+    if (!isFilterParamsReady || loading) {
+      return;
+    }
+    
     setUrgentOnly(value);
     setCurrentPage(1);
-    updateURL({ urgent_only: value, page: 1 });
+    // Don't update URL immediately - let the API call handle it
   };
 
   const handlePageChange = (page: number) => {
+    // Skip if parameters aren't ready or if already loading
+    if (!isFilterParamsReady || loading) {
+      return;
+    }
+    
     setCurrentPage(page);
-    updateURL({ page });
+    // Don't update URL immediately - let the API call handle it
   };
 
   const handleRefresh = () => {
+    // Skip if parameters aren't ready or if already loading
+    if (!isFilterParamsReady || loading) {
+      return;
+    }
+    
     setCurrentPage(1);
     setExpandedRows(new Set()); // Reset expanded rows
     fetchCases();
@@ -364,7 +400,7 @@ function LawyerCasesInner() {
                   <tr className="lawyer__table-loading-row">
                     <td colSpan={5} className="lawyer__table-loading-cell">
                       <div className="lawyer__table-loading-content">
-                        <div className="lawyer__loading-spinner"></div>
+                        <IconLoader size={24} className="lawyer__loading-spinner" />
                         <span>Loading cases...</span>
                       </div>
                     </td>

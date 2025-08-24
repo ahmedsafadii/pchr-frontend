@@ -225,7 +225,7 @@ export async function getLawyerCases(
   if (params.order) searchParams.append('order', params.order);
 
   const queryString = searchParams.toString();
-  const path = `/lawyer/cases${queryString ? `?${queryString}` : ''}`;
+  const path = `/lawyer/cases/${queryString ? `?${queryString}` : ''}`;
 
   return api.get<ApiResponse>(path, {
     headers: {

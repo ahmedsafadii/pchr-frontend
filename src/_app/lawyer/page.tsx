@@ -187,7 +187,7 @@ function LawyerDashboardInner() {
 
             <div className="lawyer__stat-card">
               <div className="lawyer__stat-header">
-                <div className="lawyer__stat-icon lawyer__stat-icon--pending">
+                <div className="lawyer__stat-icon">
                   <IconHourglassLow size={32} stroke={1.1} />
                 </div>
                 <div className="lawyer__stat-label">

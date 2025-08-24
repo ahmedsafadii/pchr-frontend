@@ -2853,7 +2853,6 @@ html[lang="ar"] .lawyer__dropdown-menu {
   border-top: 4px solid var(--blue-500);
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 16px;
 }
 
 @keyframes spin {
