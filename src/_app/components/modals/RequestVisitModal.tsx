@@ -35,7 +35,6 @@ export default function RequestVisitModal({ isOpen, onClose, onSubmit }: Request
   const locale = useLocale();
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [prisons, setPrisons] = useState<any[]>([]);
   const [visitTypes, setVisitTypes] = useState<any[]>([]);
@@ -51,7 +50,6 @@ export default function RequestVisitModal({ isOpen, onClose, onSubmit }: Request
     const loadOptions = async () => {
       if (!isOpen) return;
       setIsLoading(true);
-      setError(null);
       setFieldErrors({});
       try {
         const token = LawyerAuth.getAccessToken();
@@ -61,7 +59,6 @@ export default function RequestVisitModal({ isOpen, onClose, onSubmit }: Request
         setPrisons(Array.isArray(data.prisons) ? data.prisons : []);
         setVisitTypes(Array.isArray(data.visit_types) ? data.visit_types : []);
       } catch (e: any) {
-        setError("Failed to load visit options");
         console.error("Failed to load visit form options", e);
       } finally {
         setIsLoading(false);
@@ -73,7 +70,6 @@ export default function RequestVisitModal({ isOpen, onClose, onSubmit }: Request
 
 
   const clearErrors = () => {
-    setError(null);
     setFieldErrors({});
   };
 
@@ -98,7 +94,6 @@ export default function RequestVisitModal({ isOpen, onClose, onSubmit }: Request
     
     if (Object.keys(validationErrors).length > 0) {
       setFieldErrors(validationErrors);
-      setError(t("lawyer.modals.requestVisit.errors.general"));
       return;
     }
     
@@ -141,22 +136,18 @@ export default function RequestVisitModal({ isOpen, onClose, onSubmit }: Request
     if (errorResponse?.error?.type === "validation_error" && errorResponse?.error?.details) {
       // Use the exact field names from the API response
       setFieldErrors(errorResponse.error.details);
-      const generalError = t("lawyer.modals.requestVisit.errors.general");
-      if (generalError) {
-        setError(generalError);
-      }
     } 
-    // Handle other API errors
+    // Handle other API errors - just log them for now
     else if (errorResponse?.error?.message) {
-      setError(errorResponse.error.message);
+      console.error("API Error:", errorResponse.error.message);
     } 
     // Handle generic errors
     else if (errorResponse?.message) {
-      setError(errorResponse.message);
+      console.error("API Error:", errorResponse.message);
     } 
     // Fallback
     else {
-      setError("An error occurred while processing your request");
+      console.error("An error occurred while processing your request");
     }
   };
 

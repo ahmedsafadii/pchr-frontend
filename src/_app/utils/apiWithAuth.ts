@@ -217,3 +217,61 @@ export async function requestCaseVisit(
 ) {
   return apiWithAuth.post<ApiResponse>(`/lawyer/cases/${caseId}/visits/request/`, payload, { lang });
 }
+
+export async function getLawyerNotifications(
+  lang: string = 'en',
+  params?: {
+    page?: number;
+    page_size?: number;
+    message_type?: string;
+    is_read?: boolean;
+    search?: string;
+  }
+) {
+  // Build query parameters
+  const queryParams = new URLSearchParams();
+  
+  // Set default values only if not provided by user
+  const finalParams = {
+    page: 1,
+    page_size: 5, // Changed to 5 for notifications
+    message_type: 'notification',
+    ...params // User params override defaults
+  };
+  
+  // Add all parameters
+  Object.entries(finalParams).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      queryParams.append(key, String(value));
+    }
+  });
+  
+  // Construct final URL
+  const queryString = queryParams.toString();
+  const path = `/lawyer/notifications/?${queryString}`;
+  
+  return apiWithAuth.get<ApiResponse>(path, { lang });
+}
+
+export async function markNotificationAsRead(
+  notificationId: string,
+  lang: string = 'en'
+) {
+  const payload = {
+    is_read: true,
+    is_archived: false
+  };
+  
+  return apiWithAuth.patch<ApiResponse>(`/lawyer/notifications/${notificationId}/`, payload, { lang });
+}
+
+export async function markAllNotificationsAsRead(
+  lang: string = 'en'
+) {
+  const payload = {
+    is_read: true,
+    is_archived: false
+  };
+  
+  return apiWithAuth.patch<ApiResponse>('/lawyer/notifications/mark-all-read/', payload, { lang });
+}

@@ -5,8 +5,10 @@ import { useLocale, useTranslations } from "next-globe-gen";
 import Logo from "../../components/Logo";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLawyerAuth } from "@/_app/hooks/useLawyerAuth";
+import { getLawyerNotifications, markNotificationAsRead } from "@/_app/utils/apiWithAuth";
+import { Notification } from "@/types/notifications";
 import {
   IconHomeSpark,
   IconBriefcase,
@@ -16,6 +18,7 @@ import {
   IconLock,
   IconBell,
   IconCalendarEvent,
+  IconRefresh,
 } from "@tabler/icons-react";
 
 interface LawyerHeaderProps {
@@ -31,32 +34,12 @@ export default function LawyerHeader({
   const { user, logout } = useLawyerAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: "New case assignment",
-      message: "Case #23444 - Ahmed Khaled has been assigned to you",
-      date: "2 hours ago",
-      isRead: false,
-      caseId: "23444",
-    },
-    {
-      id: 2,
-      title: "Visit scheduled",
-      message: "Visit for Case #23445 scheduled for tomorrow 10:00 AM",
-      date: "1 day ago",
-      isRead: false,
-      caseId: "23445",
-    },
-    {
-      id: 3,
-      title: "Case update",
-      message: "Case #23446 status changed to completed",
-      date: "2 days ago",
-      isRead: true,
-      caseId: "23446",
-    },
-  ]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [notificationsError, setNotificationsError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   // Get lawyer display name
   const lawyerName = user ? `${user.first_name} ${user.last_name}` : "";
@@ -76,21 +59,157 @@ export default function LawyerHeader({
   };
 
   // Handle notification click
-  const handleNotificationClick = (notification: any) => {
-    // Mark as read
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === notification.id ? { ...n, isRead: true } : n))
-    );
+  const handleNotificationClick = async (notification: Notification) => {
+    try {
+      // Mark notification as read
+      await markNotificationAsRead(notification.id, locale);
+      
+      // Update local state immediately for better UX
+      setNotifications(prev => 
+        prev.map(n => 
+          n.id === notification.id ? { ...n, is_read: true } : n
+        )
+      );
+      
+      // Update unread count
+      setUnreadCount(prev => Math.max(0, prev - 1));
+      
+      // Close dropdown
+      setShowNotifications(false);
 
-    // Close dropdown
-    setShowNotifications(false);
-
-    // Navigate to case details
-    router.push(`/${locale}/lawyer/cases/${notification.caseId}`);
+      // Navigate to case details
+      router.push(`/${locale}/lawyer/cases/${notification.case.id}`);
+      
+      // Refresh notifications to get updated data
+      setTimeout(() => {
+        fetchNotifications(1, false);
+      }, 100);
+      
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error);
+      // Still navigate even if marking as read fails
+      setShowNotifications(false);
+      router.push(`/${locale}/lawyer/cases/${notification.case.id}`);
+    }
   };
 
-  // Get unread notifications count
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  // Fetch notifications
+  const fetchNotifications = useCallback(async (page: number = 1, append: boolean = false, updateCountOnly: boolean = false) => {
+    try {
+      if (!updateCountOnly) {
+        setNotificationsLoading(true);
+      }
+      setNotificationsError(null);
+      
+      const response = await getLawyerNotifications(locale, { page, page_size: 5 });
+      
+      if (response.status === 'success') {
+        const newNotifications = response.data.notifications;
+        const pagination = response.data.pagination;
+        const summary = response.data.summary;
+        
+        if (!updateCountOnly) {
+          if (append) {
+            setNotifications(prev => [...prev, ...newNotifications]);
+          } else {
+            setNotifications(newNotifications);
+          }
+          
+          setCurrentPage(pagination.current_page);
+          setHasMore(pagination.has_next);
+        }
+        
+        // Always update unread count
+        setUnreadCount(summary.unread_count);
+      } else {
+        setNotificationsError(response.message || 'Failed to fetch notifications');
+      }
+    } catch (error: any) {
+      console.error('Failed to fetch notifications:', error);
+      setNotificationsError(error.message || 'Failed to fetch notifications');
+    } finally {
+      if (!updateCountOnly) {
+        setNotificationsLoading(false);
+      }
+    }
+  }, [locale]);
+
+  // Load more notifications
+  const handleLoadMore = () => {
+    if (hasMore && !notificationsLoading) {
+      fetchNotifications(currentPage + 1, true);
+    }
+  };
+
+
+
+  // Format date helper
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+      
+      if (diffInHours < 1) return 'Just now';
+      if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+      
+      const diffInDays = Math.floor(diffInHours / 24);
+      if (diffInDays < 7) return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+      
+      return date.toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en-US');
+    } catch {
+      return dateString;
+    }
+  };
+
+  // Fetch notifications when component mounts and keep them updated
+  useEffect(() => {
+    // Initial fetch for unread count
+    fetchNotifications(1, false);
+    
+    // Set up periodic refresh every 30 seconds to keep unread count updated
+    const interval = setInterval(() => {
+      fetchNotifications(1, false, true); // updateCountOnly = true
+    }, 30000); // 30 seconds
+    
+    return () => clearInterval(interval);
+  }, [locale, fetchNotifications]);
+
+  // Fetch notifications when dropdown is opened (for full list)
+  useEffect(() => {
+    if (showNotifications) {
+      fetchNotifications(1, false);
+    }
+  }, [showNotifications, fetchNotifications]);
+
+  // Close notifications dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (showNotifications && !target.closest('.lawyer__notifications')) {
+        setShowNotifications(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showNotifications]);
+
+  // Refresh notifications when page becomes visible (user returns to tab)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchNotifications(1, false, true); // updateCountOnly = true
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [fetchNotifications]);
 
   return (
     <>
@@ -145,43 +264,85 @@ export default function LawyerHeader({
             {showNotifications && (
               <div className="lawyer__notifications-dropdown">
                 <div className="lawyer__notifications-header">
-                  <h3>Notifications</h3>
-                  <span className="lawyer__notifications-count">
-                    {unreadCount} unread
-                  </span>
+                  <div className="lawyer__notifications-header-left">
+                    <h3>{t("lawyer.notifications.title")}</h3>
+                    <span className="lawyer__notifications-count">
+                      {unreadCount} {t("lawyer.notifications.unread")}
+                    </span>
+                  </div>
+                  <div className="lawyer__notifications-header-actions">
+                    <button
+                      className="lawyer__notifications-action-btn"
+                      onClick={() => fetchNotifications(1, false)}
+                      title="Refresh notifications"
+                      disabled={notificationsLoading}
+                    >
+                      <IconRefresh size={16} className={notificationsLoading ? "animate-spin" : ""} />
+                    </button>
+                  </div>
                 </div>
+                
+                {notificationsError && (
+                  <div className="lawyer__notifications-error">
+                    {notificationsError}
+                  </div>
+                )}
+                
                 <div className="lawyer__notifications-list">
-                  {notifications.length === 0 ? (
+                  {notificationsLoading && notifications.length === 0 ? (
+                    <div className="lawyer__notifications-loading">
+                      <IconRefresh size={20} className="animate-spin" />
+                      <span>{t("lawyer.notifications.loading")}</span>
+                    </div>
+                  ) : notifications.length === 0 ? (
                     <div className="lawyer__notifications-empty">
-                      No notifications
+                      {t("lawyer.notifications.empty")}
                     </div>
                   ) : (
-                    notifications.map((notification) => (
-                      <div
-                        key={notification.id}
-                        className={`lawyer__notification-item ${
-                          !notification.isRead
-                            ? "lawyer__notification-item--unread"
-                            : ""
-                        }`}
-                        onClick={() => handleNotificationClick(notification)}
-                      >
-                        <div className="lawyer__notification-content">
-                          <div className="lawyer__notification-title">
-                            {notification.title}
+                    <>
+                      {notifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          className={`lawyer__notification-item ${
+                            !notification.is_read
+                              ? "lawyer__notification-item--unread"
+                              : ""
+                          }`}
+                          onClick={() => handleNotificationClick(notification)}
+                        >
+                          <div className="lawyer__notification-content">
+                            <div className="lawyer__notification-title">
+                              {notification.content_preview}
+                            </div>
+                            <div className="lawyer__notification-message">
+                              {notification.case.case_number} - {notification.case.detainee_name}
+                            </div>
+                            <div className="lawyer__notification-date">
+                              {formatDate(notification.created)}
+                            </div>
                           </div>
-                          <div className="lawyer__notification-message">
-                            {notification.message}
-                          </div>
-                          <div className="lawyer__notification-date">
-                            {notification.date}
-                          </div>
+                          {!notification.is_read && (
+                            <div className="lawyer__notification-dot"></div>
+                          )}
                         </div>
-                        {!notification.isRead && (
-                          <div className="lawyer__notification-dot"></div>
-                        )}
-                      </div>
-                    ))
+                      ))}
+                      
+                      {hasMore && (
+                        <div className="lawyer__notifications-load-more">
+                          <button
+                            className="lawyer__notifications-load-more-btn"
+                            onClick={handleLoadMore}
+                            disabled={notificationsLoading}
+                          >
+                            {notificationsLoading ? (
+                              <IconRefresh size={16} className="animate-spin" />
+                            ) : (
+                              t("lawyer.notifications.loadMore")
+                            )}
+                          </button>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>

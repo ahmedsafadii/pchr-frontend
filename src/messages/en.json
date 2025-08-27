@@ -365,6 +365,16 @@
         "visits": "Visits"
       }
     },
+    "notifications": {
+      "title": "Notifications",
+      "unread": "unread",
+      "empty": "No notifications",
+      "loading": "Loading notifications...",
+      "loadMore": "Load More",
+      "clearAll": "Clear All",
+      "markAsRead": "Mark as read",
+      "markAllAsRead": "Mark all as read"
+    },
     "cases": {
       "title": "All Cases",
       "search": "Search cases...",

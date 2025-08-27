@@ -94,7 +94,7 @@ export default function LawyerCaseDetailsPage() {
     }
   }, [caseId]);
 
-  const handleUpdateCase = async (updateData: any) => {
+  const handleUpdateCase = async () => {
     try {
       // Refresh case details to get the updated status
       await fetchCaseDetails();
