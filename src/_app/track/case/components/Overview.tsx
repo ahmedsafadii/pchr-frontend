@@ -33,7 +33,7 @@ export default function Overview({ caseData, documentsData }: OverviewProps) {
             <h1 className="case-overview__main-title">
               {tt("trackCase.overview.detainee")}: {caseData?.detainee_name || "Loading..."}
             </h1>
-            <span className={`case-overview__badge ${caseData?.status_display ? `case-status--${caseData.status_display.toLowerCase().replace(/\s+/g, '-')}` : ""}`}>
+            <span className={`case-overview__badge ${caseData?.status_display ? `case__status--${caseData.status_display.toLowerCase().replace(/\s+/g, '-')}` : ""}`}>
               <IconTag size={18} />{" "}
               {caseData?.status_display || "Loading..."}
             </span>

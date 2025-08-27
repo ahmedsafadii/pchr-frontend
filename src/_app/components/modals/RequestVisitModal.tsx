@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { useTranslations } from "next-globe-gen";
+import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-globe-gen";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import CustomSelect from "../CustomSelect";
 import { IconX } from "@tabler/icons-react";
+import { getVisitFormOptions } from "@/_app/services/api";
+import { LawyerAuth } from "@/_app/utils/auth";
 
 interface RequestVisitModalProps {
   isOpen: boolean;
@@ -15,41 +17,63 @@ interface RequestVisitModalProps {
 
 interface RequestVisitData {
   title: string;
-  prisonName: string;
+  prison_id: string;
+  visit_type: string; // backend expects a string value key
   visitDate: Date | null;
 }
 
-// Mock prison data - replace with real API data
-const mockPrisons = [
-  { id: "1", name: "Central Prison Gaza" },
-  { id: "2", name: "Ofer Military Prison" },
-  { id: "3", name: "Megiddo Prison" },
-  { id: "4", name: "Gilboa Prison" },
-  { id: "5", name: "Ramon Prison" },
-  { id: "6", name: "Ashkelon Prison" },
-  { id: "7", name: "Hadarim Prison" },
-  { id: "8", name: "Nafha Prison" },
-];
-
 export default function RequestVisitModal({ isOpen, onClose, onSubmit }: RequestVisitModalProps) {
   const t = useTranslations();
+  const locale = useLocale();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [prisons, setPrisons] = useState<any[]>([]);
+  const [visitTypes, setVisitTypes] = useState<any[]>([]);
   const [formData, setFormData] = useState<RequestVisitData>({
     title: "",
-    prisonName: "",
+    prison_id: "",
+    visit_type: "",
     visitDate: null,
   });
 
+  // Load form options when modal opens
+  useEffect(() => {
+    const loadOptions = async () => {
+      if (!isOpen) return;
+      setIsLoading(true);
+      setError(null);
+      try {
+        const token = LawyerAuth.getAccessToken();
+        if (!token) throw new Error("NOT_AUTHENTICATED");
+        const res = await getVisitFormOptions(token, locale);
+        const data = res?.data ?? {};
+        setPrisons(Array.isArray(data.prisons) ? data.prisons : []);
+        setVisitTypes(Array.isArray(data.visit_types) ? data.visit_types : []);
+      } catch (e: any) {
+        setError("Failed to load visit options");
+        console.error("Failed to load visit form options", e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadOptions();
+  }, [isOpen, locale]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.title && formData.prisonName && formData.visitDate) {
-      onSubmit(formData);
-      setFormData({ title: "", prisonName: "", visitDate: null });
-      onClose();
+    if (formData.title && formData.prison_id && formData.visit_type && formData.visitDate) {
+      const payload = {
+        title: formData.title,
+        prison_id: formData.prison_id,
+        visit_type: formData.visit_type,
+        visit_date: formData.visitDate.toISOString().split("T")[0],
+      };
+      onSubmit(payload as any);
     }
   };
 
   const handleClose = () => {
-    setFormData({ title: "", prisonName: "", visitDate: null });
+    setFormData({ title: "", prison_id: "", visit_type: "", visitDate: null });
     onClose();
   };
 
@@ -85,15 +109,34 @@ export default function RequestVisitModal({ isOpen, onClose, onSubmit }: Request
               {t("lawyer.modals.requestVisit.prisonName")}*
             </label>
             <CustomSelect
-              value={formData.prisonName}
-              onChange={(value) => setFormData({ ...formData, prisonName: value })}
-              placeholder={t("lawyer.modals.requestVisit.choosePrison")?.toString() || "Choose Type"}
-              options={mockPrisons}
+              value={formData.prison_id}
+              onChange={(value) => setFormData({ ...formData, prison_id: value })}
+              placeholder={t("lawyer.modals.requestVisit.choosePrison")?.toString() || "Choose"}
+              options={prisons}
               labelKey="name"
               valueKey="id"
               includeNullOption={false}
               isSearchable={true}
               instanceId="request-visit-prison-select"
+              fullWidth
+            />
+          </div>
+
+          <div className="modal-field">
+            <label className="modal-label">
+              {t("lawyer.visits.table.visitType")}*
+            </label>
+            <CustomSelect
+              value={formData.visit_type}
+              onChange={(value) => setFormData({ ...formData, visit_type: value })}
+              placeholder={`${t("newCase.common.choose")} ${t("lawyer.visits.table.visitType")}`}
+              options={visitTypes}
+              labelKey="name"
+              valueKey="value"
+              includeNullOption={false}
+              isSearchable={true}
+              instanceId="request-visit-type-select"
+              fullWidth
             />
           </div>
 
@@ -117,8 +160,14 @@ export default function RequestVisitModal({ isOpen, onClose, onSubmit }: Request
             </div>
           </div>
 
+          {error && (
+            <div className="modal-error" role="alert">
+              {error}
+            </div>
+          )}
+
           <button type="submit" className="modal-submit-btn">
-            {t("lawyer.modals.requestVisit.send")}
+            {isLoading ? t("newCase.common.loading") : t("lawyer.modals.requestVisit.send")}
           </button>
         </form>
       </div>

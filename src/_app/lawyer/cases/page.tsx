@@ -282,25 +282,25 @@ function LawyerCasesInner() {
   const getStatusClass = (status: string) => {
     switch (status.toLowerCase()) {
       case "pending":
-        return "lawyer__status--pending";
+        return "case__status--pending";
       case "in_progress":
-        return "lawyer__status--progress";
+        return "case__status--progress";
       case "completed":
-        return "lawyer__status--completed";
+        return "case__status--completed";
       case "under_review":
-        return "lawyer__status--review";
+        return "case__status--review";
       case "detention_confirmed":
-        return "lawyer__status--confirmed";
+        return "case__status--confirmed";
       case "deceased":
-        return "lawyer__status--deceased";
+        return "case__status--deceased";
       case "awaiting_documents":
-        return "lawyer__status--awaiting";
+        return "case__status--awaiting";
       case "released":
-        return "lawyer__status--released";
+        return "case__status--released";
       case "enforced_disappearance":
-        return "lawyer__status--disappearance";
+        return "case__status--disappearance";
       default:
-        return "lawyer__status--default";
+        return "case__status--default";
     }
   };
 

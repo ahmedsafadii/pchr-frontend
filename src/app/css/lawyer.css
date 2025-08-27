@@ -638,16 +638,6 @@
   text-transform: uppercase;
 }
 
-.lawyer__case-status--pending {
-  background: var(--warning-100);
-  color: var(--warning-800);
-}
-
-.lawyer__case-status--review {
-  background: var(--info-100);
-  color: var(--info-800);
-}
-
 /* Cases List */
 .lawyer__cases-list {
   display: flex;
@@ -2634,6 +2624,12 @@ html[lang="ar"] .lawyer__dropdown-menu {
 
 .modal-date-input::placeholder {
   color: var(--neutral-500);
+}
+
+.modal-date-picker-wrapper .react-datepicker-wrapper,
+.modal-date-picker-wrapper .react-datepicker__input-container {
+  width: 100%;
+  display: block;
 }
 
 .modal-submit-btn {

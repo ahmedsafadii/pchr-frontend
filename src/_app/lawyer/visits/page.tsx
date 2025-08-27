@@ -1,177 +1,178 @@
 "use client";
 
-import { useTranslations } from "next-globe-gen";
+import Link from "next/link";
+import { useLocale, useTranslations } from "next-globe-gen";
 import LawyerHeader from "../components/LawyerHeader";
 import CustomSelect from "../../components/CustomSelect";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import "@/app/css/lawyer.css";
 import LawyerProtectedLayout from "../../components/LawyerProtectedLayout";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
-  IconSearch,
-  IconCalendar,
+  IconRefresh,
+  IconAlertCircle,
+  IconChevronDown,
+  IconChevronRight,
+  IconLoader,
   IconCheck,
   IconX,
   IconDots,
   IconFileText,
-  IconRefresh,
 } from "@tabler/icons-react";
-import RequestVisitModal from "../../components/modals/RequestVisitModal";
-import VisitOutcomeModal from "../../components/modals/VisitOutcomeModal";
-import VisitRejectionModal from "../../components/modals/VisitRejectionModal";
+import { getLawyerVisits } from "../../services/api";
+import { LawyerAuth } from "../../utils/auth";
+import React from "react";
 
-// Mock visits data - replace with real API calls
-const mockVisits = [
-  {
-    id: "V001",
-    visitDate: "2024-02-15",
-    detaineeName: "Ahmed Khaled",
-    clientName: "Cooper, Kristin",
-    prisonName: "Central Prison Gaza",
-    status: "pending",
-    caseNumber: "23444",
-  },
-  {
-    id: "V002",
-    visitDate: "2024-02-16",
-    detaineeName: "Mohammed Ali",
-    clientName: "Smith, John",
-    prisonName: "Ofer Military Prison",
-    status: "approved",
-    caseNumber: "23445",
-  },
-  {
-    id: "V003",
-    visitDate: "2024-02-17",
-    detaineeName: "Omar Hassan",
-    clientName: "Johnson, Maria",
-    prisonName: "Megiddo Prison",
-    status: "rejected",
-    caseNumber: "23446",
-  },
-  {
-    id: "V004",
-    visitDate: "2024-02-18",
-    detaineeName: "Khalil Ahmad",
-    clientName: "Williams, David",
-    prisonName: "Gilboa Prison",
-    status: "pending",
-    caseNumber: "23447",
-  },
-  {
-    id: "V005",
-    visitDate: "2024-02-19",
-    detaineeName: "Yusuf Ibrahim",
-    clientName: "Brown, Lisa",
-    prisonName: "Ramon Prison",
-    status: "approved",
-    caseNumber: "23448",
-  },
-  {
-    id: "V006",
-    visitDate: "2024-02-20",
-    detaineeName: "Samir Nasser",
-    clientName: "Davis, Michael",
-    prisonName: "Ashkelon Prison",
-    status: "pending",
-    caseNumber: "23449",
-  },
-  {
-    id: "V007",
-    visitDate: "2024-02-21",
-    detaineeName: "Hassan Ali",
-    clientName: "Wilson, Sarah",
-    prisonName: "Hadarim Prison",
-    status: "rejected",
-    caseNumber: "23450",
-  },
-  {
-    id: "V008",
-    visitDate: "2024-02-22",
-    detaineeName: "Ahmad Mahmoud",
-    clientName: "Miller, James",
-    prisonName: "Nafha Prison",
-    status: "approved",
-    caseNumber: "23451",
-  },
-];
+interface Visit {
+  id: string;
+  title: string;
+  case_id: string;
+  case_number: string;
+  detainee_name: string;
+  visit_date: string;
+  visit_time: string | null;
+  visit_type: string;
+  status: string;
+  status_display: string;
+  is_urgent: boolean;
+  prison_name: string;
+  prison_id: string;
+  duration_minutes: number | null;
+  notes: string;
+  created: string;
+  updated: string;
+}
 
-const statusOptions = ["pending", "approved", "rejected"];
+interface PaginationInfo {
+  current_page: number;
+  page_size: number;
+  total_items: number;
+  total_pages: number;
+  has_next: boolean;
+  has_previous: boolean;
+}
+
+
 
 function LawyerVisitsInner() {
   const t = useTranslations();
+  const locale = useLocale();
   const searchParams = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [dateFilter, setDateFilter] = useState<Date | null>(null);
-  const [filteredVisits, setFilteredVisits] = useState(mockVisits);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [showRequestVisitModal, setShowRequestVisitModal] = useState(false);
-  const [showOutcomeModal, setShowOutcomeModal] = useState(false);
-  const [showRejectionModal, setShowRejectionModal] = useState(false);
-  const [selectedVisitId, setSelectedVisitId] = useState<string | null>(null);
-  const visitsPerPage = 10;
 
-  useEffect(() => {
-    // Get status filter from URL params
-    const status = searchParams.get("status");
-    if (status) {
-      setStatusFilter(status);
+  // State
+  const [visits, setVisits] = useState<Visit[]>([]);
+  const [pagination, setPagination] = useState<PaginationInfo | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Filter states
+  const [statusFilter, setStatusFilter] = useState("");
+  const [urgentOnly, setUrgentOnly] = useState(false);
+  const [daysFilter, setDaysFilter] = useState(7); // Default to 7 days
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
+
+  // Expanded rows state
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [isFilterParamsReady, setIsFilterParamsReady] = useState(false);
+
+  // Dropdown state
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  const statusOptions = [
+    { value: "todo", label: t("lawyer.visits.statusOptions.todo") },
+    {
+      value: "in_progress",
+      label: t("lawyer.visits.statusOptions.in_progress"),
+    },
+    { value: "completed", label: t("lawyer.visits.statusOptions.completed") },
+    { value: "cancelled", label: t("lawyer.visits.statusOptions.cancelled") },
+  ];
+
+  const daysOptions = [
+    { value: 1, label: t("lawyer.visits.filters.daysFilter.today") },
+    { value: 7, label: t("lawyer.visits.filters.daysFilter.thisWeek") },
+    { value: 30, label: t("lawyer.visits.filters.daysFilter.thisMonth") },
+    { value: 90, label: t("lawyer.visits.filters.daysFilter.next3Months") },
+  ];
+
+  // Fetch visits from API
+  const fetchVisits = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const token = LawyerAuth.getAccessToken();
+      if (!token) {
+        throw new Error("No authentication token");
+      }
+
+      const response = await getLawyerVisits(
+        token,
+        {
+          days: daysFilter,
+          status: statusFilter || undefined,
+          page: currentPage,
+          page_size: pageSize,
+          urgent_only: urgentOnly,
+        },
+        locale
+      );
+
+      if (response.status === "success" && response.data) {
+        setVisits(response.data.visits || []);
+        setPagination(response.data.pagination || null);
+
+      } else {
+        throw new Error(response.message || "Failed to fetch visits");
+      }
+    } catch (err: any) {
+      console.error("Error fetching visits:", err);
+      setError(err.message || "Failed to fetch visits");
+    } finally {
+      setLoading(false);
     }
+  }, [statusFilter, urgentOnly, daysFilter, currentPage, pageSize, locale]);
+
+  // Initialize filters from URL params
+  useEffect(() => {
+    const status = searchParams.get("status") || "";
+    const urgent = searchParams.get("urgent_only") === "true";
+    const days = parseInt(searchParams.get("days") || "7");
+    const page = parseInt(searchParams.get("page") || "1");
+
+    setStatusFilter(status);
+    setUrgentOnly(urgent);
+    setDaysFilter(days);
+    setCurrentPage(page);
+
+    setIsFilterParamsReady(true);
   }, [searchParams]);
 
+  // Fetch visits when params are ready
   useEffect(() => {
-    // Filter visits based on search term, status, and date
-    let filtered = mockVisits;
-
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (visit) =>
-          visit.detaineeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          visit.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          visit.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          visit.prisonName.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+    if (isFilterParamsReady) {
+      fetchVisits();
     }
+  }, [isFilterParamsReady, fetchVisits]);
 
-    if (statusFilter) {
-      filtered = filtered.filter((visit) =>
-        visit.status.toLowerCase().includes(statusFilter.toLowerCase())
-      );
-    }
+  // Handle filter changes
+  const handleStatusChange = (value: string) => {
+    if (!isFilterParamsReady || loading) return;
+    setStatusFilter(value);
+    setCurrentPage(1);
+  };
 
-    if (dateFilter) {
-      const filterDate = dateFilter.toISOString().split("T")[0];
-      filtered = filtered.filter((visit) => visit.visitDate === filterDate);
-    }
+  const handleUrgentChange = (value: boolean) => {
+    if (!isFilterParamsReady || loading) return;
+    setUrgentOnly(value);
+    setCurrentPage(1);
+  };
 
-    setFilteredVisits(filtered);
-    setCurrentPage(1); // Reset to first page when filtering
-  }, [searchTerm, statusFilter, dateFilter]);
-
-  // Pagination
-  const indexOfLastVisit = currentPage * visitsPerPage;
-  const indexOfFirstVisit = indexOfLastVisit - visitsPerPage;
-  const currentVisits = filteredVisits.slice(
-    indexOfFirstVisit,
-    indexOfLastVisit
-  );
-  const totalPages = Math.ceil(filteredVisits.length / visitsPerPage);
-
-  const getStatusClass = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "pending":
-        return "lawyer__status--pending";
-      case "approved":
-        return "lawyer__status--approved";
-      case "rejected":
-        return "lawyer__status--rejected";
-      default:
-        return "lawyer__status--default";
-    }
+  const handleDaysChange = (value: number) => {
+    if (!isFilterParamsReady || loading) return;
+    setDaysFilter(value);
+    setCurrentPage(1);
   };
 
   const handleApprove = (visitId: string) => {
@@ -182,44 +183,17 @@ function LawyerVisitsInner() {
   };
 
   const handleReject = (visitId: string) => {
-    setSelectedVisitId(visitId);
-    setShowRejectionModal(true);
+    // Handle reject action - replace with actual API call
+    console.log(`Rejecting visit ${visitId}`);
     setOpenDropdown(null);
+    // In real app, make API call to reject visit
   };
 
   const handleOutcome = (visitId: string) => {
-    setSelectedVisitId(visitId);
-    setShowOutcomeModal(true);
+    // Handle outcome action - replace with actual API call
+    console.log(`Recording outcome for visit ${visitId}`);
     setOpenDropdown(null);
-  };
-
-
-
-  const handleRequestVisitSubmit = (data: any) => {
-    // Handle request visit submission - replace with actual API call
-    console.log('Request visit data:', data);
-  };
-
-  const handleOutcomeSubmit = (outcome: string) => {
-    // Handle outcome submission - replace with actual API call
-    console.log(`Visit ${selectedVisitId} outcome:`, outcome);
-  };
-
-  const handleRejectionSubmit = (reason: string) => {
-    // Handle rejection submission - replace with actual API call
-    console.log(`Visit ${selectedVisitId} rejection reason:`, reason);
-  };
-
-  const handleRefresh = () => {
-    // Handle refresh action - reload data from API
-    console.log('Refreshing visits data...');
-    // In real app, make API call to refresh visits data
-    // For now, reset filters and reload mock data
-    setSearchTerm("");
-    setStatusFilter("");
-    setDateFilter(null);
-    setFilteredVisits(mockVisits);
-    setCurrentPage(1);
+    // In real app, make API call to record outcome
   };
 
   const toggleDropdown = (visitId: string) => {
@@ -231,238 +205,436 @@ function LawyerVisitsInner() {
     const handleClickOutside = () => {
       setOpenDropdown(null);
     };
-    
+
     if (openDropdown) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
     }
   }, [openDropdown]);
+
+  const handlePageChange = (page: number) => {
+    if (!isFilterParamsReady || loading) return;
+    setCurrentPage(page);
+  };
+
+  const handleRefresh = () => {
+    if (!isFilterParamsReady || loading) return;
+    setCurrentPage(1);
+    setExpandedRows(new Set());
+    fetchVisits();
+  };
+
+  const toggleRowExpansion = (visitId: string) => {
+    const newExpandedRows = new Set(expandedRows);
+    if (newExpandedRows.has(visitId)) {
+      newExpandedRows.delete(visitId);
+    } else {
+      newExpandedRows.add(visitId);
+    }
+    setExpandedRows(newExpandedRows);
+  };
+
+  const isRowExpanded = (visitId: string) => expandedRows.has(visitId);
+
+  const getStatusClass = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "todo":
+        return "lawyer__status--pending";
+      case "in_progress":
+        return "lawyer__status--progress";
+      case "completed":
+        return "lawyer__status--completed";
+      case "cancelled":
+        return "lawyer__status--cancelled";
+      default:
+        return "lawyer__status--default";
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString(
+      locale === "ar" ? "ar-SA" : "en-US",
+      {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      }
+    );
+  };
+
+  const formatTime = (timeString: string | null) => {
+    if (!timeString) return "—";
+    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString(
+      locale === "ar" ? "ar-SA" : "en-US",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      }
+    );
+  };
 
   return (
     <div className="lawyer">
       <div className="lawyer__container">
         {/* Header */}
-        <LawyerHeader activeTab="cases" />
+        <LawyerHeader activeTab="visits" />
 
         {/* Visits Content */}
         <main className="lawyer__cases">
           <div className="lawyer__cases-header">
             <h1 className="lawyer__cases-title">{t("lawyer.visits.title")}</h1>
-            <div className="lawyer__header-actions">
-              <button className="lawyer__refresh" onClick={handleRefresh}>
-                <IconRefresh size={20} />
-              </button>
-            </div>
+            <button className="lawyer__refresh" onClick={handleRefresh}>
+              <IconRefresh size={20} />
+            </button>
           </div>
 
           {/* Filters */}
           <div className="lawyer__cases-filters">
-            <div className="lawyer__search">
-              <IconSearch size={20} className="lawyer__search-icon" />
-              <input
-                type="text"
-                className="lawyer__search-input"
-                placeholder={t("lawyer.visits.search")?.toString()}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+            <div className="lawyer__filter">
+              <CustomSelect
+                value={String(daysFilter)}
+                onChange={(value) => handleDaysChange(Number(value))}
+                placeholder={
+                  t("lawyer.visits.filters.daysFilter.label")?.toString() ||
+                  "Time Period"
+                }
+                options={daysOptions.map((option) => ({
+                  value: String(option.value),
+                  label: option.label,
+                }))}
+                includeNullOption={false}
+                isSearchable={false}
+                instanceId="visits-days-filter"
               />
             </div>
 
             <div className="lawyer__filter">
               <CustomSelect
                 value={statusFilter}
-                onChange={setStatusFilter}
+                onChange={handleStatusChange}
                 placeholder={
-                  t("lawyer.visits.allStatuses")?.toString() || "All Statuses"
+                  t("lawyer.visits.filters.allStatuses")?.toString() ||
+                  "All Statuses"
                 }
-                options={statusOptions.map((status) => ({
-                  value: status,
-                  label:
-                    t(`lawyer.visits.statusOptions.${status}` as any) || status,
-                }))}
+                options={statusOptions}
                 includeNullOption={true}
                 isSearchable={false}
                 instanceId="visits-status-filter"
               />
             </div>
 
-            <div className="lawyer__filter lawyer__filter--date">
-              <div className="lawyer__date-picker-wrapper">
-                <DatePicker
-                  selected={dateFilter}
-                  onChange={(date) => setDateFilter(date)}
-                  dateFormat="dd/MM/yyyy"
-                  placeholderText={
-                    t("lawyer.visits.visitDate")?.toString() || "Visit Date"
-                  }
-                  className="lawyer__date-picker-input"
-                  isClearable
-                  showYearDropdown
-                  scrollableYearDropdown
-                  yearDropdownItemNumber={10}
-                />
-                <IconCalendar size={20} className="lawyer__date-picker-icon" />
-              </div>
+            <div className="lawyer__filter">
+              <CustomSelect
+                value={urgentOnly ? "urgent" : "all"}
+                onChange={(value) => handleUrgentChange(value === "urgent")}
+                placeholder="Filter by urgency"
+                options={[
+                  { value: "all", label: t("lawyer.visits.filters.allVisits") },
+                  {
+                    value: "urgent",
+                    label: t("lawyer.visits.filters.urgentOnly"),
+                  },
+                ]}
+                includeNullOption={false}
+                isSearchable={false}
+                instanceId="visits-urgent-filter"
+              />
             </div>
           </div>
+
+          {/* Error Display */}
+          {error && (
+            <div className="lawyer__error">
+              {error}
+              <button onClick={fetchVisits} className="lawyer__retry-button">
+                Retry
+              </button>
+            </div>
+          )}
 
           {/* Visits Table */}
           <div className="lawyer__table-wrapper">
             <table className="lawyer__table">
-            <thead className="lawyer__table-header">
-              <tr>
-                <th>{t("lawyer.visits.table.visitDate")}</th>
-                <th>{t("lawyer.visits.table.detaineeName")}</th>
-                <th>{t("lawyer.visits.table.clientName")}</th>
-                <th>{t("lawyer.visits.table.prisonName")}</th>
-                <th>{t("lawyer.visits.table.status")}</th>
-                <th style={{ width: "100px" }}>
-                  {t("lawyer.visits.table.actions")}
-                </th>
-              </tr>
-            </thead>
-            <tbody className="lawyer__table-body">
-              {currentVisits.map((visit) => (
-                <tr key={visit.id} className="lawyer__table-row">
-                  <td className="lawyer__table-cell">
-                    <span className="lawyer__visit-date">
-                      {visit.visitDate}
-                    </span>
-                  </td>
-                  <td className="lawyer__table-cell">
-                    <span className="lawyer__detainee-name">
-                      {visit.detaineeName}
-                    </span>
-                  </td>
-                  <td className="lawyer__table-cell">
-                    <span className="lawyer__client-name">
-                      {visit.clientName}
-                    </span>
-                  </td>
-                  <td className="lawyer__table-cell">
-                    <span className="lawyer__prison-name">
-                      {visit.prisonName}
-                    </span>
-                  </td>
-                  <td className="lawyer__table-cell">
-                    <span
-                      className={`lawyer__status ${getStatusClass(
-                        visit.status
-                      )}`}
-                    >
-                      {t(`lawyer.visits.statusOptions.${visit.status}` as any)}
-                    </span>
-                  </td>
-                  <td className="lawyer__table-cell">
-                    <div className="lawyer__visit-actions">
-                      <div className="lawyer__dropdown-container">
-                        <button
-                          className="lawyer__dropdown-trigger"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleDropdown(visit.id);
-                          }}
-                        >
-                          <IconDots size={20} />
-                        </button>
-                        
-                        {openDropdown === visit.id && (
-                          <div className="lawyer__dropdown-menu">
-                            {visit.status === "pending" ? (
-                              <>
-                                <button
-                                  className="lawyer__dropdown-item"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleApprove(visit.id);
-                                  }}
-                                >
-                                  <IconCheck size={16} />
-                                  {t("lawyer.visits.actions.approve")}
-                                </button>
-                                <button
-                                  className="lawyer__dropdown-item"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleReject(visit.id);
-                                  }}
-                                >
-                                  <IconX size={16} />
-                                  {t("lawyer.visits.actions.reject")}
-                                </button>
-                              </>
-                            ) : (
-                              <button
-                                className="lawyer__dropdown-item"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleOutcome(visit.id);
-                                }}
-                              >
-                                <IconFileText size={16} />
-                                {t("lawyer.visits.actions.outcome")}
-                              </button>
-                            )}
-                          </div>
+              <thead className="lawyer__table-header">
+                <tr>
+                  <th className="lawyer__table-expand-header"></th>
+                  <th>{t("lawyer.visits.table.visitDate")}</th>
+                  <th>{t("lawyer.visits.table.detaineeName")}</th>
+                  <th>{t("lawyer.visits.table.prisonName")}</th>
+                  <th>{t("lawyer.visits.table.visitType")}</th>
+                  <th>{t("lawyer.visits.table.status")}</th>
+                  <th style={{ width: "80px" }}>
+                    {t("lawyer.visits.table.actions")}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="lawyer__table-body">
+                {loading && (
+                  <tr className="lawyer__table-loading-row">
+                    <td colSpan={7} className="lawyer__table-loading-cell">
+                      <div className="lawyer__table-loading-content">
+                        <IconLoader
+                          size={24}
+                          className="lawyer__loading-spinner"
+                        />
+                        <span>Loading visits...</span>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+                {!loading && visits.length === 0 && (
+                  <tr className="lawyer__table-empty-row">
+                    <td colSpan={7} className="lawyer__table-empty-cell">
+                      <div className="lawyer__table-empty-content">
+                        <span>No visits found</span>
+                        {error && (
+                          <button
+                            onClick={fetchVisits}
+                            className="lawyer__retry-button"
+                          >
+                            Retry
+                          </button>
                         )}
                       </div>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+                    </td>
+                  </tr>
+                )}
+                {!loading &&
+                  visits.length > 0 &&
+                  visits.map((visit) => (
+                    <React.Fragment key={visit.id}>
+                      <tr className="lawyer__table-row">
+                        <td className="lawyer__table-cell lawyer__table-expand-cell">
+                          <button
+                            className="lawyer__expand-button"
+                            onClick={() => toggleRowExpansion(visit.id)}
+                            aria-label={
+                              isRowExpanded(visit.id)
+                                ? "Collapse row"
+                                : "Expand row"
+                            }
+                          >
+                            {isRowExpanded(visit.id) ? (
+                              <IconChevronDown size={20} />
+                            ) : (
+                              <IconChevronRight size={20} />
+                            )}
+                          </button>
+                        </td>
+                        <td className="lawyer__table-cell">
+                          <div className="lawyer__visit-date-wrapper">
+                            <span className="lawyer__visit-date">
+                              {formatDate(visit.visit_date)}
+                            </span>
+                            {visit.visit_time && (
+                              <span className="lawyer__visit-time">
+                                {formatTime(visit.visit_time)}
+                              </span>
+                            )}
+                            {visit.is_urgent && (
+                              <span className="lawyer__case-urgent-badge">
+                                <IconAlertCircle size={16} stroke={1.5} />
+                                {t("lawyer.dashboard.stats.urgent")}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="lawyer__table-cell">
+                          <span className="lawyer__detainee-name">
+                            {visit.detainee_name}
+                          </span>
+                        </td>
+                        <td className="lawyer__table-cell">
+                          <span className="lawyer__prison-name">
+                            {visit.prison_name}
+                          </span>
+                        </td>
+                        <td className="lawyer__table-cell">
+                          <span className="lawyer__visit-type">
+                            {t(
+                              `lawyer.visits.visitTypes.${visit.visit_type}` as any
+                            ) || visit.visit_type}
+                          </span>
+                        </td>
+                        <td className="lawyer__table-cell">
+                          <span
+                            className={`lawyer__status ${getStatusClass(
+                              visit.status
+                            )}`}
+                          >
+                            {visit.status_display}
+                          </span>
+                        </td>
+                        <td className="lawyer__table-cell">
+                          <div className="lawyer__visit-actions">
+                            <div className="lawyer__dropdown-container">
+                              <button
+                                className="lawyer__dropdown-trigger"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleDropdown(visit.id);
+                                }}
+                              >
+                                <IconDots size={20} />
+                              </button>
+
+                              {openDropdown === visit.id && (
+                                <div className="lawyer__dropdown-menu">
+                                  {visit.status === "todo" ? (
+                                    <>
+                                      <button
+                                        className="lawyer__dropdown-item"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleApprove(visit.id);
+                                        }}
+                                      >
+                                        <IconCheck size={16} />
+                                        {t("lawyer.visits.actions.approve")}
+                                      </button>
+                                      <button
+                                        className="lawyer__dropdown-item"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleReject(visit.id);
+                                        }}
+                                      >
+                                        <IconX size={16} />
+                                        {t("lawyer.visits.actions.reject")}
+                                      </button>
+                                    </>
+                                  ) : (
+                                    <button
+                                      className="lawyer__dropdown-item"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleOutcome(visit.id);
+                                      }}
+                                    >
+                                      <IconFileText size={16} />
+                                      {t("lawyer.visits.actions.outcome")}
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      {isRowExpanded(visit.id) && (
+                        <tr className="lawyer__table-expanded-row">
+                          <td
+                            colSpan={7}
+                            className="lawyer__table-expanded-cell"
+                          >
+                            <div className="lawyer__expanded-content">
+                              <div className="lawyer__expanded-section">
+                                <div className="lawyer__expanded-grid">
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Case Number:
+                                    </span>
+                                    <Link
+                                      href={`/${locale}/lawyer/cases/${visit.case_id}`}
+                                      className="lawyer__case-id-link"
+                                    >
+                                      {visit.case_number}
+                                    </Link>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Detainee:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {visit.detainee_name}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Prison:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {visit.prison_name}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Visit Type:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {t(
+                                        `lawyer.visits.visitTypes.${visit.visit_type}` as any
+                                      ) || visit.visit_type}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Urgent:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {visit.is_urgent ? "Yes" : "No"}
+                                    </span>
+                                  </div>
+                                  {visit.notes && (
+                                    <div className="lawyer__expanded-item lawyer__expanded-item--full">
+                                      <span className="lawyer__expanded-label">
+                                        Notes:
+                                      </span>
+                                      <span className="lawyer__expanded-value">
+                                        {visit.notes}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))}
+              </tbody>
             </table>
           </div>
 
           {/* Pagination */}
-          <div className="lawyer__pagination">
-            <button
-              className="lawyer__pagination-button"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
-            >
-              {t("lawyer.visits.pagination.previous")}
-            </button>
+          {pagination && (
+            <div className="lawyer__pagination">
+              <button
+                className="lawyer__pagination-button"
+                disabled={!pagination.has_previous}
+                onClick={() => handlePageChange(pagination.current_page - 1)}
+              >
+                {t("lawyer.visits.pagination.previous")}
+              </button>
 
-            <div className="lawyer__pagination-info">
-              {t("lawyer.visits.pagination.showing", {
-                start: String(indexOfFirstVisit + 1),
-                end: String(Math.min(indexOfLastVisit, filteredVisits.length)),
-                total: String(filteredVisits.length),
-              })}
+              <div className="lawyer__pagination-info">
+                {t("lawyer.visits.pagination.showing", {
+                  start: String(
+                    (pagination.current_page - 1) * pagination.page_size + 1
+                  ),
+                  end: String(
+                    Math.min(
+                      pagination.current_page * pagination.page_size,
+                      pagination.total_items
+                    )
+                  ),
+                  total: String(pagination.total_items),
+                })}
+              </div>
+
+              <button
+                className="lawyer__pagination-button"
+                disabled={!pagination.has_next}
+                onClick={() => handlePageChange(pagination.current_page + 1)}
+              >
+                {t("lawyer.visits.pagination.next")}
+              </button>
             </div>
-
-            <button
-              className="lawyer__pagination-button"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(currentPage + 1)}
-            >
-              {t("lawyer.visits.pagination.next")}
-            </button>
-          </div>
+          )}
         </main>
       </div>
-
-      {/* Modals */}
-      <RequestVisitModal
-        isOpen={showRequestVisitModal}
-        onClose={() => setShowRequestVisitModal(false)}
-        onSubmit={handleRequestVisitSubmit}
-      />
-      
-      <VisitOutcomeModal
-        isOpen={showOutcomeModal}
-        onClose={() => setShowOutcomeModal(false)}
-        onSubmit={handleOutcomeSubmit}
-        visitId={selectedVisitId || undefined}
-      />
-      
-      <VisitRejectionModal
-        isOpen={showRejectionModal}
-        onClose={() => setShowRejectionModal(false)}
-        onSubmit={handleRejectionSubmit}
-        visitId={selectedVisitId || undefined}
-      />
     </div>
   );
 }

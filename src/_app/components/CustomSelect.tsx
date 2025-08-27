@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import Select, { StylesConfig, GroupBase, SingleValue, MultiValue, ActionMeta } from 'react-select';
 
 interface Option {
@@ -12,7 +12,7 @@ interface CustomSelectProps {
   options?: any[]; // Can be Option[] or raw array of objects
   labelKey?: string; // Used when options are raw objects
   valueKey?: string; // Used when options are raw objects
-  value: string;
+  value: string | number;
   onChange: (value: string) => void;
   placeholder?: string;
   includeNullOption?: boolean; // Prepend a null/empty option using placeholder
@@ -22,6 +22,7 @@ interface CustomSelectProps {
   isError?: boolean;
   isDisabled?: boolean;
   instanceId?: string;
+  fullWidth?: boolean; // Force 100% width instead of dynamic width
 }
 
 export default function CustomSelect({
@@ -38,7 +39,10 @@ export default function CustomSelect({
   isError = false,
   isDisabled = false,
   instanceId,
+  fullWidth = false,
 }: CustomSelectProps) {
+  const selectRef = useRef<any>(null);
+
   const normalizedOptions: Option[] = useMemo(() => {
     const input = options ?? [];
     const mapped = input.map((item: any) => {
@@ -58,7 +62,7 @@ export default function CustomSelect({
     return mapped;
   }, [options, labelKey, valueKey, includeNullOption, placeholder]);
 
-  const selectedOption = normalizedOptions.find(option => option.value === value) || null;
+  const selectedOption = normalizedOptions.find(option => option.value === String(value)) || null;
   
   // Generate a stable instanceId to prevent hydration mismatches
   const stableInstanceId = useMemo(() => {
@@ -67,10 +71,41 @@ export default function CustomSelect({
     return `custom-select-${placeholder.replace(/\s+/g, '-').toLowerCase()}`;
   }, [instanceId, placeholder]);
 
+  // Calculate dynamic width based on the longest option
+  const dynamicWidth = useMemo(() => {
+    if (!normalizedOptions.length) return 'auto';
+    
+    // Create a temporary span to measure text width
+    const tempSpan = document.createElement('span');
+    tempSpan.style.visibility = 'hidden';
+    tempSpan.style.position = 'absolute';
+    tempSpan.style.whiteSpace = 'nowrap';
+    tempSpan.style.fontSize = '14px';
+    tempSpan.style.fontFamily = 'inherit';
+    tempSpan.style.fontWeight = '500';
+    
+    // Find the longest label
+    let maxWidth = 0;
+    normalizedOptions.forEach(option => {
+      tempSpan.textContent = option.label;
+      document.body.appendChild(tempSpan);
+      const width = tempSpan.offsetWidth;
+      maxWidth = Math.max(maxWidth, width);
+      document.body.removeChild(tempSpan);
+    });
+    
+    // Add padding for the select control (left + right padding + dropdown arrow + some buffer)
+    const totalWidth = Math.max(maxWidth + 80, 120); // Minimum width of 120px
+    return `${totalWidth}px`;
+  }, [normalizedOptions]);
+
+  // Let react-select manage its own menu open/close state
+
   const customStyles: StylesConfig<Option, boolean, GroupBase<Option>> = {
     control: (provided, state) => ({
       ...provided,
       minHeight: '48px',
+      width: fullWidth ? '100%' : dynamicWidth,
       border: isError 
         ? '2px solid #dc3545' 
         : state.isFocused 
@@ -121,6 +156,7 @@ export default function CustomSelect({
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
       border: '1px solid #e0e0e0',
       zIndex: 9999,
+      width: fullWidth ? '100%' : dynamicWidth,
     }),
     menuList: (provided) => ({
       ...provided,
@@ -164,8 +200,11 @@ export default function CustomSelect({
     }
   };
 
+  // No custom menu open/close handlers
+
   return (
     <Select
+      ref={selectRef}
       instanceId={stableInstanceId}
       options={normalizedOptions}
       value={selectedOption}

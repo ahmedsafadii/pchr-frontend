@@ -7,15 +7,31 @@ import "@/app/css/lawyer.css";
 import LawyerProtectedLayout from "../../../components/LawyerProtectedLayout";
 import { usePathname, useParams } from "next/navigation";
 import { IconFileText, IconCalendar, IconMessage, IconFiles } from "@tabler/icons-react";
+import { useEffect, useState, useCallback } from "react";
+import { getLawyerCaseDetails } from "../../../utils/apiWithAuth";
+import { useLawyerAuth } from "../../../hooks/useLawyerAuth";
 
-// Mock case data - replace with real API calls
-const mockCaseData: Record<string, { detaineeName: string }> = {
-  "23444": { detaineeName: "Ahmed Khaled" },
-  "23445": { detaineeName: "Mohammed Ali" },
-  "23446": { detaineeName: "Omar Hassan" },
-  "23447": { detaineeName: "Khalil Ahmad" },
-  "23448": { detaineeName: "Yusuf Ibrahim" },
-};
+interface CaseData {
+  id: string;
+  case_number: string;
+  detainee_name: string;
+  detainee_id: string;
+  detainee_date_of_birth: string;
+  client_name: string;
+  client_phone: string;
+  client_relationship: string;
+  status: string;
+  status_display: string;
+  is_urgent: boolean;
+  detention_date: string;
+  detention_circumstances: string;
+  created: string;
+  updated: string;
+  detainee_job: string;
+  detainee_health_status: string;
+  detainee_city: string;
+  detainee_governorate: string;
+}
 
 interface LawyerCaseLayoutProps {
   children: React.ReactNode;
@@ -35,10 +51,70 @@ function LawyerCaseLayoutInner({ children }: LawyerCaseLayoutProps) {
   const pathname = usePathname();
   const params = useParams();
   const caseId = params.id as string;
+  const { isAuthenticated } = useLawyerAuth();
   
-  // Get case details - replace with real API call
-  const caseData = mockCaseData[caseId];
-  const detaineeName = caseData?.detaineeName || "Unknown Detainee";
+  const [caseData, setCaseData] = useState<CaseData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchCaseDetails = useCallback(async () => {
+    if (!caseId) return;
+    
+    try {
+      setLoading(true);
+      const response = await getLawyerCaseDetails(caseId, locale);
+      
+      if (response.status === 'success') {
+        // Check different possible data structures
+        if (response.data?.cases && response.data.cases.length > 0) {
+          // If it's an array of cases, find the one matching the caseId
+          const caseItem = response.data.cases.find((caseItem: any) => caseItem.id === caseId);
+          if (caseItem) {
+            setCaseData(caseItem);
+          } else {
+            setError('Case not found in response');
+          }
+        } else if (response.data?.id === caseId) {
+          // If it's a single case object
+          setCaseData(response.data);
+        } else if (response.data && typeof response.data === 'object') {
+          // If data is directly the case object
+          setCaseData(response.data);
+        } else {
+          setError('Unexpected data structure');
+        }
+      } else {
+        setError(response.message || 'Case not found');
+      }
+    } catch (err) {
+      console.error('Error fetching case details:', err);
+      setError('Failed to load case details');
+    } finally {
+      setLoading(false);
+    }
+  }, [caseId, locale]);
+
+  useEffect(() => {
+    if (isAuthenticated && caseId) {
+      fetchCaseDetails();
+    }
+  }, [isAuthenticated, caseId, fetchCaseDetails]);
+
+  const formatDateTime = (dateString: string) => {
+    if (!dateString) return '-';
+    try {
+      const date = new Date(dateString);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      
+      return `${day}.${month}.${year} ${hours}:${minutes}`;
+    } catch {
+      return dateString;
+    }
+  };
 
   const isActiveRoute = (route: string) => {
     if (route === 'details') {
@@ -46,6 +122,58 @@ function LawyerCaseLayoutInner({ children }: LawyerCaseLayoutProps) {
     }
     return pathname.includes(`/${route}`);
   };
+
+  // Show loading state while fetching case data
+  if (loading) {
+    return (
+      <LawyerProtectedLayout>
+        <div className="lawyer">
+          <div className="lawyer__container">
+            <LawyerHeader activeTab="cases" />
+            <main className="lawyer__case-layout">
+              <aside className="lawyer__case-sidebar">
+                <div className="lawyer__case-header">
+                  <div className="lawyer__loading-spinner"></div>
+                  <p>{t("common.loading")}</p>
+                </div>
+              </aside>
+              <section className="lawyer__case-content">
+                {children}
+              </section>
+            </main>
+          </div>
+        </div>
+      </LawyerProtectedLayout>
+    );
+  }
+
+  // Show error state if case data couldn't be loaded
+  if (error || !caseData) {
+    return (
+      <LawyerProtectedLayout>
+        <div className="lawyer">
+          <div className="lawyer__container">
+            <LawyerHeader activeTab="cases" />
+            <main className="lawyer__case-layout">
+              <aside className="lawyer__case-sidebar">
+                <div className="lawyer__case-header">
+                  <h1 className="lawyer__case-title">
+                    {t("common.error")}
+                  </h1>
+                  <p className="lawyer__case-last-update">
+                    {error || t("common.caseNotFound")}
+                  </p>
+                </div>
+              </aside>
+              <section className="lawyer__case-content">
+                {children}
+              </section>
+            </main>
+          </div>
+        </div>
+      </LawyerProtectedLayout>
+    );
+  }
 
   return (
     <div className="lawyer">
@@ -59,10 +187,10 @@ function LawyerCaseLayoutInner({ children }: LawyerCaseLayoutProps) {
           <aside className="lawyer__case-sidebar">
             <div className="lawyer__case-header">
               <h1 className="lawyer__case-title">
-                {t("lawyer.caseDetails.casePrefix")}: {detaineeName}
+                {t("lawyer.caseDetails.casePrefix")}: {caseData.detainee_name}
               </h1>
               <p className="lawyer__case-last-update">
-                {t("lawyer.caseDetails.lastUpdate")}: 23 Feb 2025
+                {t("lawyer.caseDetails.lastUpdate")}: {formatDateTime(caseData.updated)}
               </p>
             </div>
             

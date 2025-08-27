@@ -112,7 +112,16 @@
     "common": {
       "choose": "Choose",
       "next": "Next",
-      "prev": "Prev"
+      "prev": "Prev",
+      "loading": "Loading...",
+      "error": "Error",
+      "retry": "Retry",
+      "notFound": "Not Found",
+      "caseNotFound": "Case not found",
+      "yes": "Yes",
+      "no": "No",
+      "noDescription": "No description provided",
+      "noDocuments": "No documents uploaded yet"
     },
     "step1": {
       "stepNumber": "STEP 1",
@@ -396,27 +405,33 @@
         "messages": "Messages",
         "files": "Files"
       },
+      "caseInfo": {
+        "title": "Case Information",
+        "caseNumber": "Case Number",
+        "status": "Status",
+        "isUrgent": "Urgent Case",
+        "created": "Created Date",
+        "updated": "Last Updated"
+      },
       "detaineeInfo": {
         "title": "Detainee information",
         "fullName": "Full Name",
         "job": "Job",
         "dateOfBirth": "Date Of Birth",
         "idNumber": "ID Number",
-        "healthyStatus": "Healthy Status",
-        "maritalStatus": "Marital Status",
-        "location": "Location"
+        "healthyStatus": "Health Status",
+        "city": "City",
+        "governorate": "Governorate"
       },
       "detentionInfo": {
         "title": "Detention/Disappearance Info",
-        "disappearanceDate": "Disappearance Date",
-        "disappearanceStatus": "Disappearance Status",
-        "location": "Location",
-        "describeDisappearance": "Describe Disappearance"
+        "detentionDate": "Detention Date",
+        "status": "Status",
+        "circumstances": "Detention Circumstances"
       },
       "clientInfo": {
         "title": "Client info",
         "fullName": "Full Name",
-        "idNumber": "ID Number",
         "phoneNumber": "Phone Number",
         "relationship": "Relationship"
       },
@@ -453,6 +468,10 @@
         "actions": "Actions"
       },
       "statusOptions": {
+        "todo": "To Do",
+        "in_progress": "In Progress", 
+        "completed": "Completed",
+        "cancelled": "Cancelled",
         "pending": "Pending",
         "approved": "Approved",
         "rejected": "Rejected"
@@ -468,6 +487,38 @@
         "previous": "Previous",
         "next": "Next",
         "showing": "Showing {start} to {end} of {total} visits"
+      },
+      "filters": {
+        "allStatuses": "All Statuses",
+        "urgentOnly": "Urgent Only",
+        "allVisits": "All Visits",
+        "timePeriod": "Time Period",
+        "status": "Status",
+        "selectTimePeriod": "Select time period",
+        "selectStatus": "Select status",
+        "daysFilter": {
+          "label": "Time Period",
+          "today": "Today",
+          "thisWeek": "This Week (7 days)",
+          "thisMonth": "This Month (30 days)",
+          "next3Months": "Next 3 Months (90 days)"
+        }
+      },
+      "visitTypes": {
+        "initial_consultation": "Initial Consultation",
+        "follow_up": "Follow-up",
+        "court_visit": "Court Visit", 
+        "client_meeting": "Client Meeting",
+        "document_review": "Document Review"
+      },
+      "table": {
+        "visitDate": "Visit Date",
+        "detaineeName": "Detainee Name",
+        "caseNumber": "Case Number",
+        "prisonName": "Prison Name",
+        "visitType": "Visit Type",
+        "status": "Status",
+        "actions": "Actions"
       }
     },
     "modals": {
@@ -544,5 +595,26 @@
         "general": "An error occurred while changing password"
       }
     }
+  }
+  ,
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "noDocuments": "No documents available",
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "choose": "Choose",
+    "search": "Search...",
+    "all": "All",
+    "today": "Today",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "next3Months": "Next 3 Months",
+    "next": "Next",
+    "prev": "Prev",
+    "notFound": "Not Found",
+    "caseNotFound": "Case not found",
+    "noDescription": "No description provided"
   }
 }

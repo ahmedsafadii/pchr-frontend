@@ -312,7 +312,7 @@ function LawyerDashboardInner() {
                           <span className="lawyer__case-detail-label">
                             {t("lawyer.cases.table.status")}
                           </span>
-                          <span className={`lawyer__case-status-badge case-status--${caseItem.status_display.toLowerCase().replace(/\s+/g, '-')}`}>
+                          <span className={`lawyer__case-status-badge case__status--${caseItem.status_display.toLowerCase().replace(/\s+/g, '-')}`}>
                             {caseItem.status_display}
                           </span>
                         </div>

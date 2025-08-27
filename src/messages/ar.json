@@ -1,272 +1,281 @@
 {
-    "landing": {
-      "title": "منصة الإبلاغ عن المفقودين | المركز الفلسطيني لحقوق الإنسان",
+  "landing": {
+    "title": "منصة الإبلاغ عن المفقودين | المركز الفلسطيني لحقوق الإنسان",
+    "description": "منصة رقمية مخصصة لمساعدة العائلات في غزة على الإبلاغ عن المفقودين أثناء الأزمات والحروب والكوارث. تسمح للناس بإرسال التفاصيل والصور ومعلومات الاتصال بأمان.",
+    "header": {
+      "title": "منصة<br />الإبلاغ عن المفقودين",
       "description": "منصة رقمية مخصصة لمساعدة العائلات في غزة على الإبلاغ عن المفقودين أثناء الأزمات والحروب والكوارث. تسمح للناس بإرسال التفاصيل والصور ومعلومات الاتصال بأمان.",
-      "header": {
-        "title": "منصة<br />الإبلاغ عن المفقودين",
-        "description": "منصة رقمية مخصصة لمساعدة العائلات في غزة على الإبلاغ عن المفقودين أثناء الأزمات والحروب والكوارث. تسمح للناس بإرسال التفاصيل والصور ومعلومات الاتصال بأمان.",
-        "lawyerLogin": "تسجيل دخول المحامي",
-        "language": "عربي"
-      },
-      "newcase": {
-        "title": "الإبلاغ عن شخص مفقود أو محتجز",
-        "description": "أخبرنا عن شخص مفقود أو محتجز. املأ نموذجاً بسيطاً وأرسل لنا التفاصيل والصور بأمان. سيتابع فريقنا والمحامون معك ويدعمونك ويبقونك على اطلاع بكل خطوة.",
-        "action": "إبلاغ عن حالة جديدة"
-      },
-      "status": {
-        "title": "تحقق من حالة قضيتك",
-        "description": "تحقق من حالة قضيتك في أي وقت. يمكنك رؤية التحديثات والرسائل من فريقنا والمحامون، حتى تعرف دائماً ما يحدث. نحن هنا لدعمك والإجابة على أسئلتك.",
-        "action": "تتبع الآن"
-      }
+      "lawyerLogin": "تسجيل دخول المحامي",
+      "language": "عربي"
     },
-    "track": {
-      "title": "حالة القضية",
-      "mobile": "رقم الجوال",
-      "mobilePlaceholder": "0599000000",
-      "caseNumber": "رقم القضية",
-      "caseNumberPlaceholder": "PCHR-2028-12376125",
-      "sendCode": "إرسال الرمز",
-      "verifyTitle": "أدخل الرمز المكوّن من 5 أرقام",
-      "verifyDesc": "قمنا بإرسال رمز تحقق إلى جوالك.",
-      "verify": "تحقق",
-      "resend": "أرسل مرة أخرى",
-      "resendMessage": "لم يصلك الرمز؟",
-      "resendIn": "إعادة الإرسال خلال",
-      "secondsSuffix": "ثانية",
-      
-      "sending": "جاري الإرسال...",
-      "verifying": "جاري التحقق...",
-      "logout": "تسجيل الخروج",
-      "backToSearch": "العودة",
-      "errors": {
-        "phone": "يجب أن يبدأ رقم الجوال بـ 059 أو 056 وأن يتكون من 10 أرقام",
-        "case": "يجب أن يكون رقم القضية بصيغة PCHR-YYYY-XXXX",
-        "code": "يجب أن يتكون الرمز من 5 أرقام",
-        "general": "حدث خطأ. يرجى المحاولة مرة أخرى.",
-        "caseNotFound": "لم يتم العثور على القضية بالمعلومات المقدمة",
-        "verificationFailed": "فشل التحقق. يرجى المحاولة مرة أخرى.",
-        "invalidCode": "رمز التحقق غير صحيح",
-        "expiredCode": "انتهت صلاحية رمز التحقق",
-                "failedToLoadCase": "فشل في تحميل تفاصيل القضية. يرجى المحاولة مرة أخرى."
+    "newcase": {
+      "title": "الإبلاغ عن شخص مفقود أو محتجز",
+      "description": "أخبرنا عن شخص مفقود أو محتجز. املأ نموذجاً بسيطاً وأرسل لنا التفاصيل والصور بأمان. سيتابع فريقنا والمحامون معك ويدعمونك ويبقونك على اطلاع بكل خطوة.",
+      "action": "إبلاغ عن حالة جديدة"
     },
-      "loading": "جاري تحميل تفاصيل القضية...",
+    "status": {
+      "title": "تحقق من حالة قضيتك",
+      "description": "تحقق من حالة قضيتك في أي وقت. يمكنك رؤية التحديثات والرسائل من فريقنا والمحامون، حتى تعرف دائماً ما يحدث. نحن هنا لدعمك والإجابة على أسئلتك.",
+      "action": "تتبع الآن"
+    }
+  },
+  "track": {
+    "title": "حالة القضية",
+    "mobile": "رقم الجوال",
+    "mobilePlaceholder": "0599000000",
+    "caseNumber": "رقم القضية",
+    "caseNumberPlaceholder": "PCHR-2028-12376125",
+    "sendCode": "إرسال الرمز",
+    "verifyTitle": "أدخل الرمز المكوّن من 5 أرقام",
+    "verifyDesc": "قمنا بإرسال رمز تحقق إلى جوالك.",
+    "verify": "تحقق",
+    "resend": "أرسل مرة أخرى",
+    "resendMessage": "لم يصلك الرمز؟",
+    "resendIn": "إعادة الإرسال خلال",
+    "secondsSuffix": "ثانية",
+
+    "sending": "جاري الإرسال...",
+    "verifying": "جاري التحقق...",
+    "logout": "تسجيل الخروج",
+    "backToSearch": "العودة",
+    "errors": {
+      "phone": "يجب أن يبدأ رقم الجوال بـ 059 أو 056 وأن يتكون من 10 أرقام",
+      "case": "يجب أن يكون رقم القضية بصيغة PCHR-YYYY-XXXX",
+      "code": "يجب أن يتكون الرمز من 5 أرقام",
+      "general": "حدث خطأ. يرجى المحاولة مرة أخرى.",
+      "caseNotFound": "لم يتم العثور على القضية بالمعلومات المقدمة",
+      "verificationFailed": "فشل التحقق. يرجى المحاولة مرة أخرى.",
+      "invalidCode": "رمز التحقق غير صحيح",
+      "expiredCode": "انتهت صلاحية رمز التحقق",
+      "failedToLoadCase": "فشل في تحميل تفاصيل القضية. يرجى المحاولة مرة أخرى."
+    },
+    "loading": "جاري تحميل تفاصيل القضية...",
+    "retry": "إعادة المحاولة",
+    "case": {
+      "title": "تفاصيل القضية",
+      "ref": "رقم المرجع",
+      "status": "الحالة",
+      "lastUpdate": "آخر تحديث"
+    }
+  },
+  "newCase": {
+    "back": "العودة",
+    "sidebar": {
+      "title": "منصة الإبلاغ عن حالات الاختفاء",
+      "description": "أبلغ بأمان عن شخص مفقود أو محتجز. سيتابع فريقنا القانوني قضيتك."
+    },
+    "common": {
+      "choose": "اختر",
+      "next": "التالي",
+      "prev": "السابق",
+      "loading": "جاري التحميل...",
+      "error": "خطأ",
       "retry": "إعادة المحاولة",
-      "case": {
-        "title": "تفاصيل القضية",
-        "ref": "رقم المرجع",
-        "status": "الحالة",
-        "lastUpdate": "آخر تحديث"
+      "notFound": "غير موجود",
+      "caseNotFound": "القضية غير موجودة",
+      "yes": "نعم",
+      "no": "لا",
+      "noDescription": "لا يوجد وصف",
+      "noDocuments": "لا توجد مستندات مرفوعة بعد"
+    },
+    "step1": {
+      "stepNumber": "الخطوة 1",
+      "title": "معلومات المعتقل",
+      "shortDescription": "جمع المعلومات الأساسية والهوية وحالة الشخص المفقود.",
+      "fullName": "الاسم الكامل",
+      "fullNamePlaceholder": "مثال: محمد علي",
+      "idNumber": "رقم الهوية",
+      "idNumberPlaceholder": "123456789",
+      "dateOfBirth": "تاريخ الميلاد",
+      "dateOfBirthPlaceholder": "يوم/شهر/سنة",
+      "ageHint": "أقل من 18 سنة يعتبر طفلاً",
+      "job": "المهنة",
+      "jobPlaceholder": "مثل: عامل",
+      "healthStatus": "الحالة الصحية",
+      "maritalStatus": "الحالة الاجتماعية",
+      "errors": {
+        "fullNameRequired": "الاسم الكامل مطلوب",
+        "idNumberRequired": "رقم الهوية مطلوب",
+        "dateOfBirthRequired": "تاريخ الميلاد مطلوب",
+        "healthStatusRequired": "الحالة الصحية مطلوبة",
+        "maritalStatusRequired": "الحالة الاجتماعية مطلوبة",
+        "cityRequired": "المدينة مطلوبة",
+        "governorateRequired": "المحافظة مطلوبة",
+        "districtRequired": "المنطقة مطلوبة",
+        "age18": "يجب أن يكون عمر المعتقل 18 سنة أو أكثر."
       }
     },
-    "newCase": {
-      "back": "العودة",
-      "sidebar": {
-        "title": "منصة الإبلاغ عن حالات الاختفاء",
-        "description": "أبلغ بأمان عن شخص مفقود أو محتجز. سيتابع فريقنا القانوني قضيتك."
+    "step2": {
+      "stepNumber": "الخطوة 2",
+      "title": "معلومات الاعتقال/الاختفاء",
+      "shortDescription": "تسجيل مكان وزمان وكيفية الاختفاء.",
+      "disappearanceDate": "تاريخ الاختفاء",
+      "disappearanceDatePlaceholder": "يوم/شهر/سنة",
+      "disappearanceStatus": "حالة الاختفاء",
+      "placeTitle": "مكان الاعتقال/الاختفاء",
+      "circumstancesLabel": "ظروف الاعتقال/الاختفاء",
+      "circumstancesPlaceholder": "اكتب هنا...",
+      "statusOptions": {
+        "detained": "معتقل",
+        "disappeared": "مختفي",
+        "kidnapped": "مختطف",
+        "arrested": "مقبوض عليه",
+        "other": "أخرى"
       },
-      "common": {
-        "choose": "اختر",
-        "next": "التالي",
-        "prev": "السابق"
+      "errors": {
+        "disappearanceDateRequired": "تاريخ الاختفاء مطلوب",
+        "cityRequired": "المدينة مطلوبة",
+        "governorateRequired": "المحافظة مطلوبة",
+        "districtRequired": "المنطقة مطلوبة",
+        "circumstancesMax500": "الحد الأقصى 500 حرف مسموح."
+      }
+    },
+    "step3": {
+      "stepNumber": "الخطوة 3",
+      "title": "معلومات العميل",
+      "shortDescription": "تحديد هوية مقدم البلاغ ومعلومات التواصل.",
+      "fullName": "الاسم الكامل",
+      "fullNamePlaceholder": "مثال: محمد علي",
+      "idNumber": "رقم الهوية",
+      "idNumberPlaceholder": "مثال: 123456789",
+      "phoneNumber": "رقم الهاتف",
+      "phoneNumberPlaceholder": "0591234567",
+      "relationship": "العلاقة",
+      "errors": {
+        "client_name_required": "الاسم الكامل مطلوب",
+        "client_id_required": "رقم الهوية مطلوب",
+        "client_phone_required": "رقم الهاتف مطلوب",
+        "client_relationship_required": "العلاقة مطلوبة"
+      }
+    },
+    "step4": {
+      "stepNumber": "الخطوة 4",
+      "title": "التفويض والتواصل",
+      "shortDescription": "فهم أي إجراءات سابقة وتفضيلات التواصل.",
+      "authorizedAnotherParty": "هل فوضت طرف آخر من قبل؟",
+      "previousDelegation": "الزيارات السابقة؟",
+      "organisationName": "اسم المنظمة",
+      "organisationNamePlaceholder": "اسم المنظمة",
+      "date": "التاريخ",
+      "datePlaceholder": "يوم/شهر/سنة",
+      "yes": "نعم",
+      "no": "لا",
+      "errors": {
+        "required": "هذا الحقل مطلوب"
+      }
+    },
+    "step5": {
+      "stepNumber": "الخطوة 5",
+      "title": "رفع المستندات",
+      "shortDescription": "التأكد من صحة الهوية وإدارة المستندات.",
+      "detaineeIdTitle": "هوية المعتقل",
+      "clientIdTitle": "هوية العميل",
+      "additionalDocsTitle": "مستندات إضافية",
+      "dropzone": {
+        "text": "قم بسحب الملفات هنا أو اختر من الجهاز",
+        "hint": "PDF, JPG, JPEG, BMP, PNG, حتى 1.5 ميجابايت"
       },
-      "step1": {
-        "stepNumber": "الخطوة 1",
-        "title": "معلومات المعتقل",
-        "shortDescription": "جمع المعلومات الأساسية والهوية وحالة الشخص المفقود.",
-        "fullName": "الاسم الكامل",
-        "fullNamePlaceholder": "مثال: محمد علي",
-        "idNumber": "رقم الهوية",
-        "idNumberPlaceholder": "123456789",
-        "dateOfBirth": "تاريخ الميلاد",
-        "dateOfBirthPlaceholder": "يوم/شهر/سنة",
-        "ageHint": "أقل من 18 سنة يعتبر طفلاً",
-        "job": "المهنة",
-        "jobPlaceholder": "مثل: عامل",
-        "healthStatus": "الحالة الصحية",
-        "maritalStatus": "الحالة الاجتماعية",
-        "errors": {
-          "fullNameRequired": "الاسم الكامل مطلوب",
-          "idNumberRequired": "رقم الهوية مطلوب",
-          "dateOfBirthRequired": "تاريخ الميلاد مطلوب",
-          "healthStatusRequired": "الحالة الصحية مطلوبة",
-          "maritalStatusRequired": "الحالة الاجتماعية مطلوبة",
-          "cityRequired": "المدينة مطلوبة",
-          "governorateRequired": "المحافظة مطلوبة",
-          "districtRequired": "المنطقة مطلوبة",
-          "age18": "يجب أن يكون عمر المعتقل 18 سنة أو أكثر."
-        }
-      },
-      "step2": {
-        "stepNumber": "الخطوة 2",
-        "title": "معلومات الاعتقال/الاختفاء",
-        "shortDescription": "تسجيل مكان وزمان وكيفية الاختفاء.",
-        "disappearanceDate": "تاريخ الاختفاء",
-        "disappearanceDatePlaceholder": "يوم/شهر/سنة",
-        "disappearanceStatus": "حالة الاختفاء",
-        "placeTitle": "مكان الاعتقال/الاختفاء",
-        "circumstancesLabel": "ظروف الاعتقال/الاختفاء",
-        "circumstancesPlaceholder": "اكتب هنا...",
-        "statusOptions": {
-          "detained": "معتقل",
-          "disappeared": "مختفي",
-          "kidnapped": "مختطف",
-          "arrested": "مقبوض عليه",
-          "other": "أخرى"
-        },
-        "errors": {
-          "disappearanceDateRequired": "تاريخ الاختفاء مطلوب",
-          "cityRequired": "المدينة مطلوبة",
-          "governorateRequired": "المحافظة مطلوبة",
-          "districtRequired": "المنطقة مطلوبة",
-          "circumstancesMax500": "الحد الأقصى 500 حرف مسموح."
-        }
-      },
-      "step3": {
-        "stepNumber": "الخطوة 3",
-        "title": "معلومات العميل",
-        "shortDescription": "تحديد هوية مقدم البلاغ ومعلومات التواصل.",
-        "fullName": "الاسم الكامل",
-        "fullNamePlaceholder": "مثال: محمد علي",
-        "idNumber": "رقم الهوية",
-        "idNumberPlaceholder": "مثال: 123456789",
-        "phoneNumber": "رقم الهاتف",
-        "phoneNumberPlaceholder": "0591234567",
-        "relationship": "العلاقة",
-        "errors": {
-          "client_name_required": "الاسم الكامل مطلوب",
-          "client_id_required": "رقم الهوية مطلوب",
-          "client_phone_required": "رقم الهاتف مطلوب",
-          "client_relationship_required": "العلاقة مطلوبة"
-        }
-      },
-      "step4": {
-        "stepNumber": "الخطوة 4",
-        "title": "التفويض والتواصل",
-        "shortDescription": "فهم أي إجراءات سابقة وتفضيلات التواصل.",
-        "authorizedAnotherParty": "هل فوضت طرف آخر من قبل؟",
-        "previousDelegation": "الزيارات السابقة؟",
-        "organisationName": "اسم المنظمة",
-        "organisationNamePlaceholder": "اسم المنظمة",
-        "date": "التاريخ",
-        "datePlaceholder": "يوم/شهر/سنة",
+      "uploadStatus": {
+        "uploading": "جاري الرفع...",
+        "uploaded": "تم الرفع",
+        "failed": "فشل الرفع"
+      }
+    },
+    "step6": {
+      "stepNumber": "الخطوة 6",
+      "title": "الموافقة والإرسال",
+      "shortDescription": "الحصول على التفويض القانوني وإرسال البلاغ.",
+      "consentText": "أوافق على تفويض المركز الفلسطيني لحقوق الإنسان لمتابعة القضية قانونياً...",
+      "legalDocTitle": "المستند القانوني",
+      "download": "تحميل المستند",
+      "signatureTitle": "توقيعك",
+      "upload": "رفع",
+      "clear": "مسح",
+      "submit": "إرسال",
+      "signatureSaved": "تم حفظ التوقيع",
+      "alerts": {
+        "submitted": "تم إرسال التقرير بنجاح!",
+        "missingSignature": "يرجى الموافقة على الشروط وتوقيع المستند"
+      }
+    },
+    "submitModals": {
+      "confirm": {
+        "title": "هل أنت متأكد أنك تريد إرسال الحالة",
         "yes": "نعم",
-        "no": "لا",
-        "errors": {
-          "required": "هذا الحقل مطلوب"
-        }
+        "no": "لا"
       },
-      "step5": {
-        "stepNumber": "الخطوة 5",
-        "title": "رفع المستندات",
-        "shortDescription": "التأكد من صحة الهوية وإدارة المستندات.",
-        "detaineeIdTitle": "هوية المعتقل",
-        "clientIdTitle": "هوية العميل",
-        "additionalDocsTitle": "مستندات إضافية",
-        "dropzone": {
-          "text": "قم بسحب الملفات هنا أو اختر من الجهاز",
-          "hint": "PDF, JPG, JPEG, BMP, PNG, حتى 1.5 ميجابايت"
-        },
-        "uploadStatus": {
-          "uploading": "جاري الرفع...",
-          "uploaded": "تم الرفع",
-          "failed": "فشل الرفع"
-        }
+      "loading": {
+        "title": "جاري إرسال الحالة..."
       },
-      "step6": {
-        "stepNumber": "الخطوة 6",
-        "title": "الموافقة والإرسال",
-        "shortDescription": "الحصول على التفويض القانوني وإرسال البلاغ.",
-        "consentText": "أوافق على تفويض المركز الفلسطيني لحقوق الإنسان لمتابعة القضية قانونياً...",
-        "legalDocTitle": "المستند القانوني",
-        "download": "تحميل المستند",
-        "signatureTitle": "توقيعك",
-        "upload": "رفع",
-        "clear": "مسح",
-        "submit": "إرسال",
-        "signatureSaved": "تم حفظ التوقيع",
-        "alerts": {
-          "submitted": "تم إرسال التقرير بنجاح!",
-          "missingSignature": "يرجى الموافقة على الشروط وتوقيع المستند"
-        }
+      "success": {
+        "title": "تم إرسال حالتك بنجاح.",
+        "caseRef": "رقم الحالة:",
+        "copy": "نسخ",
+        "cta": "تتبع طلبك"
       },
-      "submitModals": {
-        "confirm": {
-          "title": "هل أنت متأكد أنك تريد إرسال الحالة",
-          "yes": "نعم",
-          "no": "لا"
-        },
-        "loading": {
-          "title": "جاري إرسال الحالة..."
-        },
-        "success": {
-          "title": "تم إرسال حالتك بنجاح.",
-          "caseRef": "رقم الحالة:",
-          "copy": "نسخ",
-          "cta": "تتبع طلبك"
-        },
-        "error": {
-          "title": "فشل الإرسال",
-          "message": "حدث خطأ أثناء إرسال الحالة. يرجى المحاولة مرة أخرى.",
-          "retry": "حاول مرة أخرى",
-          "close": "إغلاق"
-        }
-      },
-      "address": {
-        "title": "العنوان",
-        "governorate": "المحافظة",
-        "city": "المدينة",
-        "district": "المنطقة",
-        "streetName": "اسم الشارع",
-        "streetNamePlaceholder": "اسم الشارع"
-      },
-      "validation": {
-        "palestinianIdInvalid": "رقم الهوية غير صالح"
+      "error": {
+        "title": "فشل الإرسال",
+        "message": "حدث خطأ أثناء إرسال الحالة. يرجى المحاولة مرة أخرى.",
+        "retry": "حاول مرة أخرى",
+        "close": "إغلاق"
       }
     },
-    "tabs": {
-      "overview": "نظرة عامة",
-      "info": "معلومات الاختفاء"
+    "address": {
+      "title": "العنوان",
+      "governorate": "المحافظة",
+      "city": "المدينة",
+      "district": "المنطقة",
+      "streetName": "اسم الشارع",
+      "streetNamePlaceholder": "اسم الشارع"
     },
-    "trackCase": {
-      "overview": {
-        "title": "نظرة عامة",
-        "basicInfo": "معلومات أساسية",
-        "dateOfDisappearance": "تاريخ الاختفاء:",
-        "details": "تفاصيل الاختفاء:",
-        "files": "الملفات",
-        "lawyer": "المحامي",
-        "updateTitle": "تحديث هام للقضية",
-        "message": "رسالة",
-        "messagePlaceholder": "اكتب رسالتك",
-        "next": "ارسال",
-        "detainee": "المعتقل",
-        "readMore": "اقرأ المزيد",
-        "status": { "underReview": "قيد المراجعة" }
-      },
-      "info": {
-        "title": "معلومات تقرير الاختفاء",
-        "detainee": "معلومات المعتقل",
-        "fullName": "الاسم الكامل",
-        "job": "الوظيفة",
-        "dob": "تاريخ الميلاد",
-        "id": "رقم الهوية",
-        "health": "الحالة الصحية",
-        "marital": "الحالة الاجتماعية",
-        "location": "الموقع",
-        "street": "الشارع",
-        "detention": "معلومات الاعتقال/الاختفاء",
-        "disappearanceDate": "تاريخ الاختفاء",
-        "disappearanceStatus": "حالة الاختفاء",
-        "describe": "وصف الاختفاء",
-        "client": "معلومات العميل",
-        "phone": "رقم الهاتف",
-        "relationship": "العلاقة",
-        "documents": "رفع المستندات",
-        "signature": "توقيعك",
-        "terms": "شروط وأحكام .PDF",
-        "noDocuments": "لا توجد مستندات متاحة",
-        "signaturePdfMessage": "لا يمكن عرض التوقيع هنا ولكن يمكنك تنزيله من الملفات أعلاه"
-      }
+    "validation": {
+      "palestinianIdInvalid": "رقم الهوية غير صالح"
+    }
+  },
+  "tabs": {
+    "overview": "نظرة عامة",
+    "info": "معلومات الاختفاء"
+  },
+  "trackCase": {
+    "overview": {
+      "title": "نظرة عامة",
+      "basicInfo": "معلومات أساسية",
+      "dateOfDisappearance": "تاريخ الاختفاء:",
+      "details": "تفاصيل الاختفاء:",
+      "files": "الملفات",
+      "lawyer": "المحامي",
+      "updateTitle": "تحديث هام للقضية",
+      "message": "رسالة",
+      "messagePlaceholder": "اكتب رسالتك",
+      "next": "ارسال",
+      "detainee": "المعتقل",
+      "readMore": "اقرأ المزيد",
+      "status": { "underReview": "قيد المراجعة" }
+    },
+    "info": {
+      "title": "معلومات تقرير الاختفاء",
+      "detainee": "معلومات المعتقل",
+      "fullName": "الاسم الكامل",
+      "job": "الوظيفة",
+      "dob": "تاريخ الميلاد",
+      "id": "رقم الهوية",
+      "health": "الحالة الصحية",
+      "marital": "الحالة الاجتماعية",
+      "location": "الموقع",
+      "street": "الشارع",
+      "detention": "معلومات الاعتقال/الاختفاء",
+      "disappearanceDate": "تاريخ الاختفاء",
+      "disappearanceStatus": "حالة الاختفاء",
+      "describe": "وصف الاختفاء",
+      "client": "معلومات العميل",
+      "phone": "رقم الهاتف",
+      "relationship": "العلاقة",
+      "documents": "رفع المستندات",
+      "signature": "توقيعك",
+      "terms": "شروط وأحكام .PDF",
+      "noDocuments": "لا توجد مستندات متاحة",
+      "signaturePdfMessage": "لا يمكن عرض التوقيع هنا ولكن يمكنك تنزيله من الملفات أعلاه"
+    }
   },
   "lawyerLogin": {
     "title": "تسجيل دخول المحامي",
@@ -394,6 +403,14 @@
         "messages": "الرسائل",
         "files": "الملفات"
       },
+      "caseInfo": {
+        "title": "معلومات القضية",
+        "caseNumber": "رقم القضية",
+        "status": "الحالة",
+        "isUrgent": "قضية عاجلة",
+        "created": "تاريخ الإنشاء",
+        "updated": "آخر تحديث"
+      },
       "detaineeInfo": {
         "title": "معلومات المعتقل",
         "fullName": "الاسم الكامل",
@@ -401,21 +418,19 @@
         "dateOfBirth": "تاريخ الميلاد",
         "idNumber": "رقم الهوية",
         "healthyStatus": "الحالة الصحية",
-        "maritalStatus": "الحالة الاجتماعية",
-        "location": "الموقع"
+        "city": "المدينة",
+        "governorate": "المحافظة"
       },
       "detentionInfo": {
         "title": "معلومات الاعتقال/الاختفاء",
-        "disappearanceDate": "تاريخ الاختفاء",
-        "disappearanceStatus": "حالة الاختفاء",
-        "location": "الموقع",
-        "describeDisappearance": "وصف الاختفاء"
+        "detentionDate": "تاريخ الاعتقال",
+        "status": "الحالة",
+        "circumstances": "ظروف الاعتقال"
       },
       "clientInfo": {
         "title": "معلومات العميل",
         "fullName": "الاسم الكامل",
-        "idNumber": "رقم الهوية",
-        "phoneNumber": "رقم الهاتف",
+        "phoneNumber": "رقم الهواتف",
         "relationship": "صلة القرابة"
       },
       "documentsUpload": {
@@ -451,6 +466,10 @@
         "actions": "الإجراءات"
       },
       "statusOptions": {
+        "todo": "قائمة المهام",
+        "in_progress": "قيد التنفيذ",
+        "completed": "مكتمل",
+        "cancelled": "ملغي",
         "pending": "قيد الانتظار",
         "approved": "موافق عليها",
         "rejected": "مرفوض"
@@ -466,6 +485,38 @@
         "previous": "السابق",
         "next": "التالي",
         "showing": "عرض {start} إلى {end} من {total} زيارة"
+      },
+      "filters": {
+        "allStatuses": "جميع الحالات",
+        "urgentOnly": "العاجل فقط",
+        "allVisits": "جميع الزيارات",
+        "timePeriod": "الفترة الزمنية",
+        "status": "الحالة",
+        "selectTimePeriod": "اختر الفترة الزمنية",
+        "selectStatus": "اختر الحالة",
+        "daysFilter": {
+          "label": "الفترة الزمنية",
+          "today": "اليوم",
+          "thisWeek": "هذا الأسبوع (7 أيام)",
+          "thisMonth": "هذا الشهر (30 يوماً)",
+          "next3Months": "الأشهر الثلاثة القادمة (90 يوماً)"
+        }
+      },
+      "visitTypes": {
+        "initial_consultation": "استشارة أولية",
+        "follow_up": "متابعة",
+        "court_visit": "زيارة محكمة",
+        "client_meeting": "لقاء عميل",
+        "document_review": "مراجعة وثائق"
+      },
+      "table": {
+        "visitDate": "تاريخ الزيارة",
+        "detaineeName": "اسم المعتقل",
+        "caseNumber": "رقم القضية",
+        "prisonName": "اسم السجن",
+        "visitType": "نوع الزيارة",
+        "status": "الحالة",
+        "actions": "الإجراءات"
       }
     },
     "modals": {
@@ -542,5 +593,25 @@
         "general": "حدث خطأ أثناء تغيير كلمة المرور"
       }
     }
+  },
+  "common": {
+    "yes": "نعم",
+    "no": "لا",
+    "noDocuments": "لا توجد مستندات متاحة",
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ",
+    "retry": "إعادة المحاولة",
+    "choose": "اختر",
+    "search": "البحث...",
+    "all": "جميع",
+    "today": "اليوم",
+    "thisWeek": "هذا الأسبوع",
+    "thisMonth": "هذا الشهر",
+    "next3Months": "الأشهر الثلاثة القادمة",
+    "next": "التالي",
+    "prev": "السابق",
+    "notFound": "غير موجود",
+    "caseNotFound": "القضية غير موجودة",
+    "noDescription": "لا يوجد وصف"
   }
 }

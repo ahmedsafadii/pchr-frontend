@@ -158,8 +158,43 @@ export async function getLawyerCases(lang: string = 'en') {
   return apiWithAuth.get<ApiResponse>('/lawyer/cases/', { lang });
 }
 
-export async function getLawyerVisits(lang: string = 'en') {
-  return apiWithAuth.get<ApiResponse>('/lawyer/visits/', { lang });
+export async function getLawyerVisits(
+  lang: string = 'en', 
+  caseId?: string, 
+  params?: {
+    page?: number;
+    page_size?: number;
+    days?: number;
+    status?: string;
+    [key: string]: any;
+  }
+) {
+  let path = caseId ? '/lawyer/dashboard/upcoming-visits/' : '/lawyer/visits/';
+  
+  // Build query parameters
+  const queryParams = new URLSearchParams();
+  
+  // Add case_id if provided
+  if (caseId) {
+    queryParams.append('case_id', caseId);
+  }
+  
+  // Add other parameters if provided
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        queryParams.append(key, String(value));
+      }
+    });
+  }
+  
+  // Construct final URL
+  const queryString = queryParams.toString();
+  if (queryString) {
+    path = `${path}?${queryString}`;
+  }
+  
+  return apiWithAuth.get<ApiResponse>(path, { lang });
 }
 
 export async function getLawyerCaseDetails(caseId: string, lang: string = 'en') {
@@ -168,4 +203,17 @@ export async function getLawyerCaseDetails(caseId: string, lang: string = 'en') 
 
 export async function getLawyerDashboard(lang: string = 'en') {
   return apiWithAuth.get<ApiResponse>('/lawyer/dashboard/', { lang });
+}
+
+export async function requestCaseVisit(
+  caseId: string,
+  payload: {
+    title: string;
+    prison_id: string;
+    visit_date: string; // yyyy-mm-dd
+    visit_type: string; // e.g., 'legal' | 'follow_up' etc.
+  },
+  lang: string = 'en'
+) {
+  return apiWithAuth.post<ApiResponse>(`/lawyer/cases/${caseId}/visits/request/`, payload, { lang });
 }

@@ -235,4 +235,51 @@ export async function getLawyerCases(
   });
 }
 
+// Lawyer visits API functions
+export async function getLawyerVisits(
+  token: string, 
+  params: {
+    days?: number;
+    status?: string;
+    page?: number;
+    page_size?: number;
+    urgent_only?: boolean;
+    case_id?: string;
+  }, 
+  lang: string
+) {
+  const searchParams = new URLSearchParams();
+  
+  if (params.days) searchParams.append('days', params.days.toString());
+  if (params.status) searchParams.append('status', params.status);
+  if (params.page) searchParams.append('page', params.page.toString());
+  if (params.page_size) searchParams.append('page_size', params.page_size.toString());
+  if (params.urgent_only !== undefined) searchParams.append('urgent_only', params.urgent_only.toString());
+  if (params.case_id) searchParams.append('case_id', params.case_id);
+
+  const queryString = searchParams.toString();
+  const path = `/lawyer/dashboard/upcoming-visits/${queryString ? `?${queryString}` : ''}`;
+
+  return api.get<ApiResponse>(path, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    lang
+  });
+}
+
+
+// Lawyer visits form options (prisons, visit types)
+export async function getVisitFormOptions(
+  token: string,
+  lang: string
+) {
+  return api.get<ApiResponse>("/lawyer/visits/form-options/", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    lang
+  });
+}
+
 
