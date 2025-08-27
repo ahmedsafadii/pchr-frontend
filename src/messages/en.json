@@ -535,7 +535,14 @@
         "choosePrison": "Choose Type",
         "visitDate": "Visit Date",
         "chooseDate": "Choose Date",
-        "send": "Send"
+        "send": "Send",
+        "errors": {
+          "title": "Title is required",
+          "prison": "Prison selection is required",
+          "visitType": "Visit type is required",
+          "visitDate": "Visit date is required",
+          "general": ""
+        }
       },
       "visitOutcome": {
         "title": "Visit Outcome",

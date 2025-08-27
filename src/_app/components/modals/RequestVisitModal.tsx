@@ -12,7 +12,7 @@ import { LawyerAuth } from "@/_app/utils/auth";
 interface RequestVisitModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: RequestVisitData) => void;
+  onSubmit: (data: RequestVisitData) => Promise<any>;
 }
 
 interface RequestVisitData {
@@ -22,11 +22,21 @@ interface RequestVisitData {
   visitDate: Date | null;
 }
 
+interface FieldErrors {
+  title?: string[];
+  prison_id?: string[];
+  visit_type?: string[];
+  visit_date?: string[];
+  [key: string]: string[] | undefined; // Allow for additional field names
+}
+
 export default function RequestVisitModal({ isOpen, onClose, onSubmit }: RequestVisitModalProps) {
   const t = useTranslations();
   const locale = useLocale();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [prisons, setPrisons] = useState<any[]>([]);
   const [visitTypes, setVisitTypes] = useState<any[]>([]);
   const [formData, setFormData] = useState<RequestVisitData>({
@@ -42,6 +52,7 @@ export default function RequestVisitModal({ isOpen, onClose, onSubmit }: Request
       if (!isOpen) return;
       setIsLoading(true);
       setError(null);
+      setFieldErrors({});
       try {
         const token = LawyerAuth.getAccessToken();
         if (!token) throw new Error("NOT_AUTHENTICATED");
@@ -59,22 +70,104 @@ export default function RequestVisitModal({ isOpen, onClose, onSubmit }: Request
     loadOptions();
   }, [isOpen, locale]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+
+  const clearErrors = () => {
+    setError(null);
+    setFieldErrors({});
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.title && formData.prison_id && formData.visit_type && formData.visitDate) {
-      const payload = {
-        title: formData.title,
-        prison_id: formData.prison_id,
-        visit_type: formData.visit_type,
-        visit_date: formData.visitDate.toISOString().split("T")[0],
-      };
-      onSubmit(payload as any);
+    clearErrors();
+    
+    // Client-side validation
+    const validationErrors: FieldErrors = {};
+    if (!formData.title.trim()) {
+      validationErrors.title = [t("lawyer.modals.requestVisit.errors.title")];
+    }
+    if (!formData.prison_id) {
+      validationErrors.prison_id = [t("lawyer.modals.requestVisit.errors.prison")];
+    }
+    if (!formData.visit_type) {
+      validationErrors.visit_type = [t("lawyer.modals.requestVisit.errors.visitType")];
+    }
+    if (!formData.visitDate) {
+      validationErrors.visit_date = [t("lawyer.modals.requestVisit.errors.visitDate")];
+    }
+    
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
+      setError(t("lawyer.modals.requestVisit.errors.general"));
+      return;
+    }
+    
+        const payload = {
+      title: formData.title,
+      prison_id: formData.prison_id,
+      visit_type: formData.visit_type,
+      visit_date: formData.visitDate!.toISOString().split("T")[0],
+    };
+    
+    setIsSubmitting(true);
+    try {
+      const result = await onSubmit(payload as any);
+      
+      // If successful, close modal
+      if (result?.status === "success") {
+        handleClose();
+        return;
+      } else {
+        // Handle any non-success response as an error
+        handleApiError(result);
+      }
+    } catch (error: any) {
+      // Handle API errors
+      handleApiError(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleClose = () => {
     setFormData({ title: "", prison_id: "", visit_type: "", visitDate: null });
+    clearErrors();
     onClose();
+  };
+
+  // Function to handle API errors and set field-specific errors
+  const handleApiError = (errorResponse: any) => {
+    // Handle validation errors with field details
+    if (errorResponse?.error?.type === "validation_error" && errorResponse?.error?.details) {
+      // Use the exact field names from the API response
+      setFieldErrors(errorResponse.error.details);
+      const generalError = t("lawyer.modals.requestVisit.errors.general");
+      if (generalError) {
+        setError(generalError);
+      }
+    } 
+    // Handle other API errors
+    else if (errorResponse?.error?.message) {
+      setError(errorResponse.error.message);
+    } 
+    // Handle generic errors
+    else if (errorResponse?.message) {
+      setError(errorResponse.message);
+    } 
+    // Fallback
+    else {
+      setError("An error occurred while processing your request");
+    }
+  };
+
+  // Check if a field has errors
+  const hasFieldError = (fieldName: string) => {
+    return fieldErrors[fieldName] && fieldErrors[fieldName]!.length > 0;
+  };
+
+  // Get error message for a field
+  const getFieldError = (fieldName: string) => {
+    return fieldErrors[fieldName]?.[0] || "";
   };
 
   if (!isOpen) return null;
@@ -96,48 +189,82 @@ export default function RequestVisitModal({ isOpen, onClose, onSubmit }: Request
             </label>
             <input
               type="text"
-              className="modal-input"
+              className={`modal-input ${hasFieldError('title') ? 'modal-input--error' : ''}`}
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, title: e.target.value });
+                if (hasFieldError('title')) {
+                  setFieldErrors(prev => ({ ...prev, title: undefined }));
+                }
+              }}
               placeholder={t("lawyer.modals.requestVisit.titlePlaceholder")?.toString()}
               required
             />
+            {hasFieldError('title') && (
+              <div className="modal-field-error">
+                {getFieldError('title')}
+              </div>
+            )}
           </div>
 
           <div className="modal-field">
             <label className="modal-label">
               {t("lawyer.modals.requestVisit.prisonName")}*
             </label>
-            <CustomSelect
-              value={formData.prison_id}
-              onChange={(value) => setFormData({ ...formData, prison_id: value })}
-              placeholder={t("lawyer.modals.requestVisit.choosePrison")?.toString() || "Choose"}
-              options={prisons}
-              labelKey="name"
-              valueKey="id"
-              includeNullOption={false}
-              isSearchable={true}
-              instanceId="request-visit-prison-select"
-              fullWidth
-            />
+            <div className={hasFieldError('prison_id') ? 'modal-select--error' : ''}>
+              <CustomSelect
+                value={formData.prison_id}
+                onChange={(value) => {
+                  setFormData({ ...formData, prison_id: value });
+                  if (hasFieldError('prison_id')) {
+                    setFieldErrors(prev => ({ ...prev, prison_id: undefined }));
+                  }
+                }}
+                placeholder={t("lawyer.modals.requestVisit.choosePrison")?.toString() || "Choose"}
+                options={prisons}
+                labelKey="name"
+                valueKey="id"
+                includeNullOption={false}
+                isSearchable={true}
+                instanceId="request-visit-prison-select"
+                fullWidth
+              />
+            </div>
+            {hasFieldError('prison_id') && (
+              <div className="modal-field-error">
+                {getFieldError('prison_id')}
+              </div>
+            )}
           </div>
 
           <div className="modal-field">
             <label className="modal-label">
               {t("lawyer.visits.table.visitType")}*
             </label>
-            <CustomSelect
-              value={formData.visit_type}
-              onChange={(value) => setFormData({ ...formData, visit_type: value })}
-              placeholder={`${t("newCase.common.choose")} ${t("lawyer.visits.table.visitType")}`}
-              options={visitTypes}
-              labelKey="name"
-              valueKey="value"
-              includeNullOption={false}
-              isSearchable={true}
-              instanceId="request-visit-type-select"
-              fullWidth
-            />
+            <div className={hasFieldError('visit_type') ? 'modal-select--error' : ''}>
+              <CustomSelect
+                value={formData.visit_type}
+                onChange={(value) => {
+                  setFormData({ ...formData, visit_type: value });
+                  if (hasFieldError('visit_type')) {
+                    setFieldErrors(prev => ({ ...prev, visit_type: undefined }));
+                  }
+                }}
+                placeholder={`${t("newCase.common.choose")} ${t("lawyer.visits.table.visitType")}`}
+                options={visitTypes}
+                labelKey="name"
+                valueKey="value"
+                includeNullOption={false}
+                isSearchable={true}
+                instanceId="request-visit-type-select"
+                fullWidth
+              />
+            </div>
+            {hasFieldError('visit_type') && (
+              <div className="modal-field-error">
+                {getFieldError('visit_type')}
+              </div>
+            )}
           </div>
 
           <div className="modal-field">
@@ -147,10 +274,15 @@ export default function RequestVisitModal({ isOpen, onClose, onSubmit }: Request
             <div className="modal-date-picker-wrapper">
               <DatePicker
                 selected={formData.visitDate}
-                onChange={(date) => setFormData({ ...formData, visitDate: date })}
+                onChange={(date) => {
+                  setFormData({ ...formData, visitDate: date });
+                  if (hasFieldError('visit_date')) {
+                    setFieldErrors(prev => ({ ...prev, visit_date: undefined }));
+                  }
+                }}
                 dateFormat="dd/MM/yyyy"
                 placeholderText={t("lawyer.modals.requestVisit.chooseDate")?.toString() || "Choose Date"}
-                className="modal-date-input"
+                className={`modal-date-input ${hasFieldError('visit_date') ? 'modal-date-input--error' : ''}`}
                 minDate={new Date()}
                 showYearDropdown
                 scrollableYearDropdown
@@ -158,16 +290,15 @@ export default function RequestVisitModal({ isOpen, onClose, onSubmit }: Request
                 required
               />
             </div>
+            {hasFieldError('visit_date') && (
+              <div className="modal-field-error">
+                {getFieldError('visit_date')}
+              </div>
+            )}
           </div>
 
-          {error && (
-            <div className="modal-error" role="alert">
-              {error}
-            </div>
-          )}
-
-          <button type="submit" className="modal-submit-btn">
-            {isLoading ? t("newCase.common.loading") : t("lawyer.modals.requestVisit.send")}
+          <button type="submit" className="modal-submit-btn" disabled={isSubmitting || isLoading}>
+            {isSubmitting || isLoading ? t("newCase.common.loading") : t("lawyer.modals.requestVisit.send")}
           </button>
         </form>
       </div>

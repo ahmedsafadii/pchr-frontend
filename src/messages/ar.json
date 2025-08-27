@@ -533,7 +533,14 @@
         "choosePrison": "اختر النوع",
         "visitDate": "تاريخ الزيارة",
         "chooseDate": "اختر التاريخ",
-        "send": "إرسال"
+        "send": "إرسال",
+        "errors": {
+          "title": "العنوان مطلوب",
+          "prison": "اختيار السجن مطلوب",
+          "visitType": "نوع الزيارة مطلوب",
+          "visitDate": "تاريخ الزيارة مطلوب",
+          "general": ""
+        }
       },
       "visitOutcome": {
         "title": "نتيجة الزيارة",

@@ -206,15 +206,28 @@ function LawyerCaseVisitsInner() {
       const res = await requestCaseVisit(caseId, payload, locale);
       if (res.status === "success") {
         toast.success(t("newCase.submitModals.success.title").toString());
-        setShowRequestVisitModal(false);
         await fetchVisits();
+        return res; // Return success response
       } else {
+        // Show toast error and return error response for modal to handle
         toast.error(res.message || t("lawyerProfile.errors.general").toString());
+        return res;
       }
     } catch (error: any) {
       console.error('Visit request error:', error);
+      
+      // Show toast error and return error response for modal to handle
       const apiMessage = error.payload?.error?.message || error.message || t("lawyerProfile.errors.general").toString();
       toast.error(apiMessage);
+      
+      // Return a properly structured error object for the modal
+      return {
+        status: "error",
+        error: error.payload?.error || {
+          type: "api_error",
+          message: error.message
+        }
+      };
     }
   };
 
