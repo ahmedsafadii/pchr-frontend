@@ -278,11 +278,13 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #fff7ed;
-  color: #b45309;
   border-radius: 9999px;
   padding: 8px 16px;
   font-weight: 700;
+}
+.case-overview__badge--sm {
+  padding: 4px 16px;
+  font-size: 14px;
 }
 
 .case-overview__divider {

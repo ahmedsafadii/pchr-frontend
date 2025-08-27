@@ -11,11 +11,42 @@ interface DisappearanceInfoProps {
   documentsData?: CaseDocumentsData | null; // Optional for now
 }
 
-export default function DisappearanceInfo({ caseData, documentsData }: DisappearanceInfoProps) {
+export default function DisappearanceInfo({
+  caseData,
+  documentsData,
+}: DisappearanceInfoProps) {
   const t = useTranslations();
   return (
     <div className="case-info">
       <h2 className="case-info__title">{(t as any)("trackCase.info.title")}</h2>
+
+      <div className="case-info__block">
+        <h3 className="case-info__subtitle">
+          {(t as any)("trackCase.info.caseInfo")}
+        </h3>
+        <dl className="case-info__dl">
+          <div className="case-info__row">
+            <dt>{(t as any)("trackCase.info.caseNumber")}</dt>
+            <dd>{caseData?.case_number || "Not available"}</dd>
+          </div>
+          <div className="case-info__row">
+            <dt>{(t as any)("trackCase.info.status")}</dt>
+            <dd>
+              <div
+                className={`case-overview__badge case-overview__badge--sm ${
+                  caseData?.status_display
+                    ? `case__status--${caseData.status_display
+                        .toLowerCase()
+                        .replace(/\s+/g, "-")}`
+                    : ""
+                }`}
+              >
+                {caseData?.status_display || "Not available"}
+              </div>
+            </dd>
+          </div>
+        </dl>
+      </div>
 
       <div className="case-info__grid">
         <div className="case-info__block">
@@ -29,11 +60,17 @@ export default function DisappearanceInfo({ caseData, documentsData }: Disappear
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.dob")}</dt>
-              <dd>{caseData?.detainee_date_of_birth ? new Date(caseData.detainee_date_of_birth).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric'
-              }) : "Not available"}</dd>
+              <dd>
+                {caseData?.detainee_date_of_birth
+                  ? new Date(
+                      caseData.detainee_date_of_birth
+                    ).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })
+                  : "Not available"}
+              </dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.id")}</dt>
@@ -41,7 +78,9 @@ export default function DisappearanceInfo({ caseData, documentsData }: Disappear
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.health")}</dt>
-              <dd>{caseData?.detainee_health_status_display || "Not available"}</dd>
+              <dd>
+                {caseData?.detainee_health_status_display || "Not available"}
+              </dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.job")}</dt>
@@ -49,11 +88,23 @@ export default function DisappearanceInfo({ caseData, documentsData }: Disappear
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.marital")}</dt>
-              <dd>{caseData?.detainee_marital_status_display || "Not available"}</dd>
+              <dd>
+                {caseData?.detainee_marital_status_display || "Not available"}
+              </dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.location")}</dt>
-              <dd>{caseData ? `${caseData.detainee_street || ""}, ${caseData.detainee_district?.name || ""}, ${caseData.detainee_city?.name || ""}, ${caseData.detainee_governorate?.name || ""}`.replace(/^,\s*|,\s*$/g, '').replace(/,\s*,/g, ',') : "Not available"}</dd>
+              <dd>
+                {caseData
+                  ? `${caseData.detainee_street || ""}, ${
+                      caseData.detainee_district?.name || ""
+                    }, ${caseData.detainee_city?.name || ""}, ${
+                      caseData.detainee_governorate?.name || ""
+                    }`
+                      .replace(/^,\s*|,\s*$/g, "")
+                      .replace(/,\s*,/g, ",")
+                  : "Not available"}
+              </dd>
             </div>
           </dl>
         </div>
@@ -65,30 +116,46 @@ export default function DisappearanceInfo({ caseData, documentsData }: Disappear
           <dl className="case-info__dl">
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.disappearanceDate")}</dt>
-              <dd>{caseData?.detention_date ? new Date(caseData.detention_date).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric'
-              }) : "Not available"}</dd>
+              <dd>
+                {caseData?.detention_date
+                  ? new Date(caseData.detention_date).toLocaleDateString(
+                      "en-GB",
+                      {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      }
+                    )
+                  : "Not available"}
+              </dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.disappearanceStatus")}</dt>
-              <dd>{caseData?.disappearance_status_display || "Not available"}</dd>
-            </div>
-            <div className="case-info__row">
-              <dt>{(t as any)("trackCase.info.street")}</dt>
-              <dd>{caseData?.detention_street || "Not available"}</dd>
+              <dd>
+                {caseData?.disappearance_status_display || "Not available"}
+              </dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.location")}</dt>
-              <dd>{caseData ? `${caseData.detention_district?.name || ""}, ${caseData.detention_city?.name || ""}, ${caseData.detention_governorate?.name || ""}`.replace(/^,\s*|,\s*$/g, '').replace(/,\s*,/g, ',') : "Not available"}</dd>
+              <dd>
+                {caseData
+                  ? `${caseData?.detention_street || ""}, ${
+                      caseData?.detention_district?.name || ""
+                    }, ${caseData?.detention_city?.name || ""}, ${
+                      caseData?.detention_governorate?.name || ""
+                    }`
+                      .replace(/^,\s*|,\s*$/g, "")
+                      .replace(/,\s*,/g, ",")
+                  : "Not available"}
+              </dd>
             </div>
             <div className="case-info__row case-info__row--full">
-            <dt>{(t as any)("trackCase.info.describe")}</dt>
-            <dd>
-              {caseData?.detention_circumstances || "No description available"}
-            </dd>
-          </div>
+              <dt>{(t as any)("trackCase.info.describe")}</dt>
+              <dd>
+                {caseData?.detention_circumstances ||
+                  "No description available"}
+              </dd>
+            </div>
           </dl>
         </div>
       </div>
@@ -126,14 +193,22 @@ export default function DisappearanceInfo({ caseData, documentsData }: Disappear
             documentsData.data.map((document) => (
               <li key={document.id} className="case-overview__file">
                 <span className="case-overview__file-left">
-                  <IconFileText size={18} /> {document.document_type_display} ({document.file_size_mb}MB)
+                  <IconFileText size={18} />{" "}
+                  {(document as any).file_name ||
+                    document.document_type_display}{" "}
+                  ({document.file_size_mb}MB)
                 </span>
                 <button
                   className="case-overview__file-download"
                   aria-label="download"
                   onClick={() => {
-                    // Handle download - will need to implement download functionality
-                    console.log('Download document:', document.id);
+                    if (document.download_url) {
+                      window.open(
+                        document.download_url,
+                        "_blank",
+                        "noopener,noreferrer"
+                      );
+                    }
                   }}
                 >
                   <IconDownload size={18} />
@@ -143,7 +218,8 @@ export default function DisappearanceInfo({ caseData, documentsData }: Disappear
           ) : (
             <li className="case-overview__file">
               <span className="case-overview__file-left">
-                <IconFileText size={18} /> {(t as any)("trackCase.info.noDocuments")}
+                <IconFileText size={18} />{" "}
+                {(t as any)("trackCase.info.noDocuments")}
               </span>
             </li>
           )}
@@ -157,17 +233,20 @@ export default function DisappearanceInfo({ caseData, documentsData }: Disappear
         <div className="case-info__signature">
           {(() => {
             // Find signature document from the documents data
-            const signatureDoc = documentsData?.data?.find(doc => doc.document_type === 'signature');
-            console.log('Signature document found:', signatureDoc);
-            
+            const signatureDoc = documentsData?.data?.find(
+              (doc) => doc.document_type === "signature"
+            );
+            console.log("Signature document found:", signatureDoc);
+
             if (signatureDoc) {
               // Check if it's an image file
-              const isImage = signatureDoc.mime_type?.startsWith('image/');
-              
+              const isImage = signatureDoc.mime_type?.startsWith("image/");
+
               if (isImage) {
                 // Use preview_url if available, otherwise try download_url
-                const imageUrl = signatureDoc.preview_url || signatureDoc.download_url;
-                
+                const imageUrl =
+                  signatureDoc.preview_url || signatureDoc.download_url;
+
                 if (imageUrl) {
                   // Display image signature
                   return (

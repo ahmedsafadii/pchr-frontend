@@ -71,11 +71,12 @@ export default function CustomSelect({
     return `custom-select-${placeholder.replace(/\s+/g, '-').toLowerCase()}`;
   }, [instanceId, placeholder]);
 
-  // Calculate dynamic width based on the longest option
+  // Calculate dynamic width based on the longest option (SSR-safe)
   const dynamicWidth = useMemo(() => {
+    if (fullWidth) return '100%';
     if (!normalizedOptions.length) return 'auto';
-    
-    // Create a temporary span to measure text width
+    if (typeof document === 'undefined') return 'auto';
+
     const tempSpan = document.createElement('span');
     tempSpan.style.visibility = 'hidden';
     tempSpan.style.position = 'absolute';
@@ -83,21 +84,22 @@ export default function CustomSelect({
     tempSpan.style.fontSize = '14px';
     tempSpan.style.fontFamily = 'inherit';
     tempSpan.style.fontWeight = '500';
-    
-    // Find the longest label
+
     let maxWidth = 0;
-    normalizedOptions.forEach(option => {
-      tempSpan.textContent = option.label;
-      document.body.appendChild(tempSpan);
-      const width = tempSpan.offsetWidth;
-      maxWidth = Math.max(maxWidth, width);
+    document.body.appendChild(tempSpan);
+    try {
+      for (const option of normalizedOptions) {
+        tempSpan.textContent = option.label;
+        const width = tempSpan.offsetWidth;
+        if (width > maxWidth) maxWidth = width;
+      }
+    } finally {
       document.body.removeChild(tempSpan);
-    });
-    
-    // Add padding for the select control (left + right padding + dropdown arrow + some buffer)
-    const totalWidth = Math.max(maxWidth + 80, 120); // Minimum width of 120px
+    }
+
+    const totalWidth = Math.max(maxWidth + 80, 120);
     return `${totalWidth}px`;
-  }, [normalizedOptions]);
+  }, [normalizedOptions, fullWidth]);
 
   // Let react-select manage its own menu open/close state
 

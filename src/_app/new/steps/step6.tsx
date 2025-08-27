@@ -218,12 +218,23 @@ This document is legally binding and constitutes your formal consent for legal a
     };
     updateData("consent", { ...data.consent, ...consentData });
 
+    // Only include the required document ID fields in the payload
+    const sanitizedDocuments = {
+      detainee_document_id: data.documents?.detainee_document_id ?? null,
+      client_document_id: data.documents?.client_document_id ?? null,
+      additional_document_ids: Array.isArray(
+        data.documents?.additional_document_ids
+      )
+        ? data.documents.additional_document_ids
+        : [],
+    } as const;
+
     const payload = {
       ...data.detaineeInfo,
       ...data.detentionInfo,
       ...data.clientInfo,
       ...data.delegationInfo,
-      ...data.documents,
+      ...sanitizedDocuments,
       ...consentData,
     } as Record<string, any>;
 

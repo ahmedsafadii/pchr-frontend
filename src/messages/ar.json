@@ -254,6 +254,9 @@
     },
     "info": {
       "title": "معلومات تقرير الاختفاء",
+      "caseInfo": "معلومات القضية",
+      "caseNumber": "رقم القضية",
+      "status": "الحالة",
       "detainee": "معلومات المعتقل",
       "fullName": "الاسم الكامل",
       "job": "الوظيفة",
@@ -414,24 +417,26 @@
       "detaineeInfo": {
         "title": "معلومات المعتقل",
         "fullName": "الاسم الكامل",
-        "job": "المهنة",
         "dateOfBirth": "تاريخ الميلاد",
         "idNumber": "رقم الهوية",
         "healthyStatus": "الحالة الصحية",
-        "city": "المدينة",
-        "governorate": "المحافظة"
+        "job": "المهنة",
+        "maritalStatus": "الحالة الاجتماعية",
+        "location": "الموقع"
       },
       "detentionInfo": {
         "title": "معلومات الاعتقال/الاختفاء",
         "detentionDate": "تاريخ الاعتقال",
         "status": "الحالة",
-        "circumstances": "ظروف الاعتقال"
+        "circumstances": "ظروف الاعتقال",
+        "location": "الموقع"
       },
       "clientInfo": {
         "title": "معلومات العميل",
         "fullName": "الاسم الكامل",
-        "phoneNumber": "رقم الهواتف",
-        "relationship": "صلة القرابة"
+        "idNumber": "رقم الهوية",
+        "phoneNumber": "رقم الهاتف",
+        "relationship": "العلاقة"
       },
       "documentsUpload": {
         "title": "تحميل المستندات"

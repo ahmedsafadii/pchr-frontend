@@ -140,6 +140,7 @@ export default function Step4({
                 placeholder={`${t("newCase.common.choose")} ${t("newCase.step4.authorizedAnotherParty")}`}
                 isError={!!errors.authorizedAnotherParty}
                 instanceId="step4-authorized-party-select"
+                fullWidth
               />
               {errors.authorizedAnotherParty && (
                 <span className="steps__error">{errors.authorizedAnotherParty}</span>
@@ -174,6 +175,7 @@ export default function Step4({
                     placeholder={`${t("newCase.common.choose")} ${t("newCase.step4.previousDelegation")}`}
                     isError={!!errors.previousDelegation}
                     instanceId="step4-previous-delegation-select"
+                    fullWidth
                   />
                   {errors.previousDelegation && (
                     <span className="steps__error">{errors.previousDelegation}</span>

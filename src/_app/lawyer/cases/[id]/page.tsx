@@ -14,6 +14,7 @@ interface CaseData {
   detainee_id: string;
   detainee_date_of_birth: string;
   client_name: string;
+  client_id?: string;
   client_phone: string;
   client_relationship: string;
   status: string;
@@ -25,8 +26,21 @@ interface CaseData {
   updated: string;
   detainee_job: string;
   detainee_health_status: string;
-  detainee_city: string;
-  detainee_governorate: string;
+  detainee_street?: string;
+  detainee_district?: { name?: string } | null;
+  detainee_city?: string | { name?: string } | null;
+  detainee_governorate?: string | { name?: string } | null;
+  detainee_marital_status_display?: string;
+  // Disappearance-specific fields (optional to be resilient to API variations)
+  disappearance_status?: string;
+  disappearance_status_display?: string;
+  detention_street?: string;
+  detention_district?: { name?: string } | null;
+  detention_city?: { name?: string } | null;
+  detention_governorate?: { name?: string } | null;
+  detainee_marital_status: string | null;
+  detention_full_address?: string;
+  detainee_full_address?: string;
 }
 
 export default function LawyerCaseDetailsPage() {
@@ -92,10 +106,10 @@ export default function LawyerCaseDetailsPage() {
   const formatDate = (dateString: string) => {
     if (!dateString) return '-';
     try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+      return new Date(dateString).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
       });
     } catch {
       return dateString;
@@ -199,33 +213,40 @@ export default function LawyerCaseDetailsPage() {
       <section className="lawyer__info-section">
         <h2 className="lawyer__info-title">{t("lawyer.caseDetails.detaineeInfo.title")}</h2>
         <div className="lawyer__info-grid">
+          {/* Full Name */}
           <div className="lawyer__info-item">
             <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.fullName")}</div>
             <div className="lawyer__info-value">{caseData.detainee_name}</div>
           </div>
-          <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.job")}</div>
-            <div className="lawyer__info-value">{caseData.detainee_job || '-'}</div>
-          </div>
+          {/* DOB */}
           <div className="lawyer__info-item">
             <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.dateOfBirth")}</div>
             <div className="lawyer__info-value">{formatDate(caseData.detainee_date_of_birth)}</div>
           </div>
+          {/* ID Number */}
           <div className="lawyer__info-item">
             <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.idNumber")}</div>
             <div className="lawyer__info-value">{caseData.detainee_id}</div>
           </div>
+          {/* Healthy Status */}
           <div className="lawyer__info-item">
             <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.healthyStatus")}</div>
             <div className="lawyer__info-value">{caseData.detainee_health_status || '-'}</div>
           </div>
+          {/* Job */}
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.city")}</div>
-            <div className="lawyer__info-value">{caseData.detainee_city || '-'}</div>
+            <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.job")}</div>
+            <div className="lawyer__info-value">{caseData.detainee_job || '-'}</div>
           </div>
+          {/* Marital Status */}
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.governorate")}</div>
-            <div className="lawyer__info-value">{caseData.detainee_governorate || '-'}</div>
+            <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.maritalStatus")}</div>
+            <div className="lawyer__info-value">{caseData.detainee_marital_status || '-'}</div>
+          </div>
+          {/* Location */}
+          <div className="lawyer__info-item">
+            <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.location")}</div>
+            <div className="lawyer__info-value">{caseData.detainee_full_address || '-' }</div>
           </div>
         </div>
       </section>
@@ -240,10 +261,12 @@ export default function LawyerCaseDetailsPage() {
           </div>
           <div className="lawyer__info-item">
             <div className="lawyer__info-label">{t("lawyer.caseDetails.detentionInfo.status")}</div>
+            <div className="lawyer__info-value">{caseData.disappearance_status_display || caseData.disappearance_status || '-'}</div>
+          </div>
+          <div className="lawyer__info-item">
+            <div className="lawyer__info-label">{t("lawyer.caseDetails.detentionInfo.location")}</div>
             <div className="lawyer__info-value">
-              <span className={`lawyer__status case__status--${caseData.status}`}>
-                {caseData.status_display}
-              </span>
+              {caseData.detention_full_address || '-' }
             </div>
           </div>
           <div className="lawyer__info-description">
@@ -264,6 +287,10 @@ export default function LawyerCaseDetailsPage() {
             <div className="lawyer__info-value">{caseData.client_name}</div>
           </div>
           <div className="lawyer__info-item">
+            <div className="lawyer__info-label">{t("lawyer.caseDetails.clientInfo.idNumber")}</div>
+            <div className="lawyer__info-value">{caseData.client_id || '-'}</div>
+          </div>
+          <div className="lawyer__info-item">
             <div className="lawyer__info-label">{t("lawyer.caseDetails.clientInfo.phoneNumber")}</div>
             <div className="lawyer__info-value">{caseData.client_phone}</div>
           </div>
@@ -274,13 +301,7 @@ export default function LawyerCaseDetailsPage() {
         </div>
       </section>
 
-      {/* Documents Upload */}
-      <section className="lawyer__info-section">
-        <h2 className="lawyer__info-title">{t("lawyer.caseDetails.documentsUpload.title")}</h2>
-        <div className="lawyer__documents">
-          <p className="lawyer__no-documents">{t("common.noDocuments")}</p>
-        </div>
-      </section>
+      {/* Documents upload section removed as it has its own page */}
     </>
   );
 }

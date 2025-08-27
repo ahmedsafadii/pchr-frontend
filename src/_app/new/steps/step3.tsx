@@ -222,6 +222,7 @@ export default function Step3({
                 isError={!!errors.client_relationship}
                 isDisabled={isConstantsLoading || !constants}
                 instanceId="step3-relationship-select"
+                fullWidth
               />
               {errors.client_relationship && (
                 <span className="steps__error">{errors.client_relationship}</span>

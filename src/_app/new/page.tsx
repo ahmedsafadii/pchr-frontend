@@ -166,6 +166,19 @@ export default function NewCasePage({ locale = "en" }) {
   const t = useTranslations();
   const tt = t as any;
 
+  // shallow compare helper to avoid unnecessary state updates
+  function shallowEqual(objA: any, objB: any) {
+    if (objA === objB) return true;
+    if (!objA || !objB) return false;
+    const aKeys = Object.keys(objA);
+    const bKeys = Object.keys(objB);
+    if (aKeys.length !== bKeys.length) return false;
+    for (const key of aKeys) {
+      if (objA[key] !== objB[key]) return false;
+    }
+    return true;
+  }
+
   const steps = [
     {
       id: 1,
@@ -275,12 +288,16 @@ export default function NewCasePage({ locale = "en" }) {
   }, [caseData, currentStep, completedSteps]);
 
   const updateCaseData = useCallback((section: keyof CaseData, data: any) => {
-    setCaseData((prev) => {
-      const updated = {
-        ...prev,
-        [section]: { ...prev[section], ...data },
-      };
-      return updated;
+    setCaseData((previous) => {
+      const nextSection = { ...(previous as any)[section], ...data };
+      const hasChanged = !shallowEqual((previous as any)[section], nextSection);
+      if (!hasChanged) {
+        return previous; // prevent re-render loop when nothing actually changed
+      }
+      return {
+        ...previous,
+        [section]: nextSection,
+      } as CaseData;
     });
   }, []);
 

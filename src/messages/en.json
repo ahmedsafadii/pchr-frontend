@@ -80,6 +80,9 @@
     },
     "info": {
       "title": "Disappearance Report Info.",
+      "caseInfo": "Case Information",
+      "caseNumber": "Case Number",
+      "status": "Status",
       "detainee": "Detainee information",
       "fullName": "Full Name",
       "job": "Job",
@@ -416,22 +419,24 @@
       "detaineeInfo": {
         "title": "Detainee information",
         "fullName": "Full Name",
-        "job": "Job",
-        "dateOfBirth": "Date Of Birth",
+        "dateOfBirth": "DOB",
         "idNumber": "ID Number",
         "healthyStatus": "Health Status",
-        "city": "City",
-        "governorate": "Governorate"
+        "job": "Job",
+        "maritalStatus": "Marital Status",
+        "location": "Location"
       },
       "detentionInfo": {
         "title": "Detention/Disappearance Info",
-        "detentionDate": "Detention Date",
-        "status": "Status",
-        "circumstances": "Detention Circumstances"
+        "detentionDate": "Disappearance Date",
+        "status": "Disappearance Status",
+        "location": "Location",
+        "circumstances": "Disappearance Circumstances"
       },
       "clientInfo": {
         "title": "Client info",
         "fullName": "Full Name",
+        "idNumber": "ID Number",
         "phoneNumber": "Phone Number",
         "relationship": "Relationship"
       },

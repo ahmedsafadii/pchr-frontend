@@ -108,10 +108,11 @@ export default function Step5({
 
       // Also update the document_id if it's missing
       if (!docs.detainee_document_id && detaineeMeta?.id) {
-        updateData("documents", {
-          ...data.documents,
-          detainee_document_id: detaineeMeta.id,
-        });
+        if (data.documents?.detainee_document_id !== detaineeMeta.id) {
+          updateData("documents", {
+            detainee_document_id: detaineeMeta.id,
+          });
+        }
       }
     } else {
     }
@@ -137,10 +138,11 @@ export default function Step5({
 
       // Also update the document_id if it's missing
       if (!docs.client_document_id && clientMeta?.id) {
-        updateData("documents", {
-          ...data.documents,
-          client_document_id: clientMeta.id,
-        });
+        if (data.documents?.client_document_id !== clientMeta.id) {
+          updateData("documents", {
+            client_document_id: clientMeta.id,
+          });
+        }
       }
     } else {
     }
@@ -181,10 +183,15 @@ export default function Step5({
         docs.additional_document_ids.length === 0 &&
         additionalMetas.length > 0
       ) {
-        updateData("documents", {
-          ...data.documents,
-          additional_document_ids: additionalMetas.map((m) => m.id),
-        });
+        const nextIds = additionalMetas.map((m) => m.id);
+        const prevIds = data.documents?.additional_document_ids || [];
+        const sameLen = prevIds.length === nextIds.length;
+        const sameVals = sameLen && prevIds.every((id, i) => id === nextIds[i]);
+        if (!sameVals) {
+          updateData("documents", {
+            additional_document_ids: nextIds,
+          });
+        }
       }
     } else {
     }
@@ -198,7 +205,24 @@ export default function Step5({
 
   // Update documents when file states change
   useEffect(() => {
-    updateDocuments(detaineeIdFiles, clientIdFiles, additionalFiles);
+    // Only push ids when they truly changed compared to data.documents
+    const nextDetaineeId = getUploadedIds(detaineeIdFiles)[0] ?? null;
+    const nextClientId = getUploadedIds(clientIdFiles)[0] ?? null;
+    const nextAdditionalIds = getUploadedIds(additionalFiles);
+
+    const prevDocs = data.documents || ({} as any);
+    const prevAdditional = prevDocs.additional_document_ids || [];
+    const addSameLen = prevAdditional.length === nextAdditionalIds.length;
+    const addSameVals = addSameLen && prevAdditional.every((id, i) => id === nextAdditionalIds[i]);
+
+    const idsChanged =
+      prevDocs.detainee_document_id !== nextDetaineeId ||
+      prevDocs.client_document_id !== nextClientId ||
+      !addSameVals;
+
+    if (idsChanged) {
+      updateDocuments(detaineeIdFiles, clientIdFiles, additionalFiles);
+    }
 
     // Update display metadata for uploaded files
     const detaineeUploaded = detaineeIdFiles.find(
@@ -210,7 +234,7 @@ export default function Step5({
     );
 
     if (detaineeUploaded || clientUploaded || additionalUploaded.length > 0) {
-      const newDisplayMeta = {
+      const newDisplayMeta: any = {
         ...(data.documents?.display_meta || {}),
       };
 
@@ -244,10 +268,13 @@ export default function Step5({
         }));
       }
 
-      updateData("documents", {
-        ...data.documents,
-        display_meta: newDisplayMeta,
-      });
+      const prevDisplay = data.documents?.display_meta || {};
+      const changed = JSON.stringify(prevDisplay) !== JSON.stringify(newDisplayMeta);
+      if (changed) {
+        updateData("documents", {
+          display_meta: newDisplayMeta,
+        });
+      }
     }
   }, [
     detaineeIdFiles,

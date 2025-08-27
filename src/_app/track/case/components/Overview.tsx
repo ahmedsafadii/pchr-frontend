@@ -75,14 +75,15 @@ export default function Overview({ caseData, documentsData }: OverviewProps) {
                           documentsData.data.map((document) => (
                             <li key={document.id} className="case-overview__file">
                               <span className="case-overview__file-left">
-                                <IconFileText size={18} /> {document.document_type_display} ({document.file_size_mb}MB)
+                                <IconFileText size={18} /> {(document as any).file_name || document.document_type_display} ({document.file_size_mb}MB)
                               </span>
                               <button
                                 className="case-overview__file-download"
                                 aria-label="download"
                                 onClick={() => {
-                                  // Handle download - will need to implement download functionality
-                                  console.log('Download document:', document.id);
+                                  if (document.download_url) {
+                                    window.open(document.download_url, '_blank', 'noopener,noreferrer');
+                                  }
                                 }}
                               >
                                 <IconDownload size={18} />

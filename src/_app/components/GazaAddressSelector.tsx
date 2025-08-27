@@ -86,6 +86,7 @@ export default function GazaAddressSelector({
           isError={!!errors.governorate}
           isDisabled={isLoading}
           instanceId={`${idPrefix}-governorate-select`}
+          fullWidth
         />
         {errors.governorate && <span className="steps__error">{errors.governorate}</span>}
       </div>
@@ -105,6 +106,7 @@ export default function GazaAddressSelector({
           isError={!!errors.city}
           isDisabled={!governorate || isLoading}
           instanceId={`${idPrefix}-city-select`}
+          fullWidth
         />
         {errors.city && <span className="steps__error">{errors.city}</span>}
       </div>
@@ -124,6 +126,7 @@ export default function GazaAddressSelector({
           isError={!!errors.district}
           isDisabled={!governorate || !city || isLoading}
           instanceId={`${idPrefix}-district-select`}
+          fullWidth
         />
         {errors.district && <span className="steps__error">{errors.district}</span>}
       </div>

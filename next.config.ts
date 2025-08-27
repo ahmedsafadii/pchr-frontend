@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "www.morebusiness.com" },
+      { protocol: "https", hostname: "pchr-legal-documents-dev.s3.amazonaws.com" },
     ],
   },
 };

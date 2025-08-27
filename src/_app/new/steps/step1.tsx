@@ -58,6 +58,12 @@ export default function Step1({
           newErrors.fullName = errorMsg;
         } else if (lowerMsg.includes('detainee id') || lowerMsg.includes('detainee_id')) {
           newErrors.idNumber = errorMsg;
+        } else if (
+          // Handle backend messages that reference the detainee implicitly
+          lowerMsg.includes('case already exists for this detainee') ||
+          lowerMsg.includes('this detainee')
+        ) {
+          newErrors.idNumber = errorMsg;
         } else if (lowerMsg.includes('date of birth') || lowerMsg.includes('detainee_date_of_birth')) {
           newErrors.dateOfBirth = errorMsg;
         } else if (lowerMsg.includes('health') || lowerMsg.includes('detainee_health_status')) {
@@ -75,6 +81,13 @@ export default function Step1({
         }
       });
       
+      // If we received errors for this step but none matched a specific field,
+      // default to showing the first message under ID number since most backend
+      // validations for this step are about identification.
+      if (Object.keys(newErrors).length === 0 && externalErrors[0]) {
+        newErrors.idNumber = externalErrors[0];
+      }
+
       setErrors(prev => ({ ...prev, ...newErrors }));
     }
   }, [externalErrors]);
@@ -252,6 +265,7 @@ export default function Step1({
                 placeholder={`${t("newCase.common.choose")} ${t("newCase.step1.job")}`}
                 isDisabled={isConstantsLoading || !constants}
                 instanceId="step1-job-select"
+                fullWidth
               />
             </div>
 
@@ -270,6 +284,7 @@ export default function Step1({
                   isError={!!errors.healthStatus}
                   isDisabled={isConstantsLoading || !constants}
                   instanceId="step1-health-status-select"
+                  fullWidth
                 />
               {errors.healthStatus && (
                 <span className="steps__error">{errors.healthStatus}</span>
@@ -291,6 +306,7 @@ export default function Step1({
                 isError={!!errors.maritalStatus}
                 isDisabled={isConstantsLoading || !constants}
                 instanceId="step1-marital-status-select"
+                fullWidth
               />
               {errors.maritalStatus && (
                 <span className="steps__error">{errors.maritalStatus}</span>

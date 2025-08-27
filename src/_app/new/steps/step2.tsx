@@ -181,6 +181,7 @@ export default function Step2({
                 placeholder={`${t("newCase.common.choose")} ${t("newCase.step2.disappearanceStatus")}`}
                 isDisabled={isConstantsLoading || !constants}
                 instanceId="step2-disappearance-status-select"
+                fullWidth
               />
             </div>
           </div>
