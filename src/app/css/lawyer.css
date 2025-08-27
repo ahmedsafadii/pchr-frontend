@@ -2694,6 +2694,16 @@ html[lang="ar"] .lawyer__search + .lawyer__filter {
   background: var(--neutral-50);
 }
 
+.lawyer__dropdown-item--disabled {
+  cursor: not-allowed;
+  color: var(--neutral-400);
+  background: var(--neutral-50);
+}
+
+.lawyer__dropdown-item--disabled:hover {
+  background: var(--neutral-50);
+}
+
 .lawyer__dropdown-item:first-child {
   margin-top: 0;
 }
@@ -3742,6 +3752,11 @@ html[lang="ar"] .lawyer__dropdown-menu {
 }
 
 .lawyer__status--completed {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.lawyer__status--done {
   background: #d1fae5;
   color: #059669;
 }

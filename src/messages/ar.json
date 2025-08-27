@@ -516,7 +516,8 @@
         "reject": "رفض",
         "approved": "موافق عليها",
         "rejected": "مرفوض",
-        "outcome": "النتيجة"
+        "outcome": "النتيجة",
+        "completed": "مكتمل"
       },
       "pagination": {
         "previous": "السابق",
@@ -554,6 +555,18 @@
         "visitType": "نوع الزيارة",
         "status": "الحالة",
         "actions": "الإجراءات"
+      },
+      "expanded": {
+        "caseNumber": "رقم القضية",
+        "detainee": "المعتقل",
+        "prison": "السجن",
+        "visitType": "نوع الزيارة",
+        "urgent": "عاجل",
+        "duration": "المدة",
+        "title": "العنوان",
+        "notes": "ملاحظات",
+        "created": "تم الإنشاء",
+        "updated": "تم التحديث"
       }
     },
     "modals": {
@@ -585,6 +598,12 @@
         "rejectionReasonField": "سبب الرفض",
         "rejectionReasonPlaceholder": "أدخل سبب رفض هذه الزيارة...",
         "save": "حفظ"
+      },
+      "visitApprove": {
+        "title": "موافقة على الزيارة",
+        "notesField": "ملاحظات الموافقة",
+        "notesPlaceholder": "أدخل ملاحظات الموافقة وأي معلومات إضافية...",
+        "approve": "موافقة على الزيارة"
       }
     },
     "messages": {

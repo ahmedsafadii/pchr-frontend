@@ -340,4 +340,53 @@ export async function uploadLawyerCaseDocument(
   });
 }
 
+// Visit action API functions
+export async function approveVisit(
+  token: string,
+  visitId: string,
+  notes: string,
+  lang: string
+) {
+  return api.patch<ApiResponse>(`/lawyer/visits/${visitId}/approve/`, {
+    notes
+  }, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    lang
+  });
+}
+
+export async function rejectVisit(
+  token: string,
+  visitId: string,
+  reason: string,
+  lang: string
+) {
+  return api.patch<ApiResponse>(`/lawyer/visits/${visitId}/reject/`, {
+    rejection_reason: reason
+  }, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    lang
+  });
+}
+
+export async function completeVisit(
+  token: string,
+  visitId: string,
+  outcome: string,
+  lang: string
+) {
+  return api.patch<ApiResponse>(`/lawyer/visits/${visitId}/complete/`, {
+    outcome
+  }, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    lang
+  });
+}
+
 

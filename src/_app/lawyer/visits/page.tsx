@@ -19,9 +19,13 @@ import {
   IconDots,
   IconFileText,
 } from "@tabler/icons-react";
-import { getLawyerVisits } from "../../services/api";
+import { getLawyerVisits, approveVisit, rejectVisit, completeVisit } from "../../services/api";
 import { LawyerAuth } from "../../utils/auth";
 import React from "react";
+import toast from "react-hot-toast";
+import VisitApproveModal from "../../components/modals/VisitApproveModal";
+import VisitOutcomeModal from "../../components/modals/VisitOutcomeModal";
+import VisitRejectionModal from "../../components/modals/VisitRejectionModal";
 
 interface Visit {
   id: string;
@@ -78,6 +82,12 @@ function LawyerVisitsInner() {
 
   // Dropdown state
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  // Modal states
+  const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showOutcomeModal, setShowOutcomeModal] = useState(false);
+  const [showRejectionModal, setShowRejectionModal] = useState(false);
+  const [selectedVisitId, setSelectedVisitId] = useState<string | null>(null);
 
   const statusOptions = [
     { value: "todo", label: t("lawyer.visits.statusOptions.todo") },
@@ -176,24 +186,129 @@ function LawyerVisitsInner() {
   };
 
   const handleApprove = (visitId: string) => {
-    // Handle approve action - replace with actual API call
-    console.log(`Approving visit ${visitId}`);
+    setSelectedVisitId(visitId);
+    setShowApproveModal(true);
     setOpenDropdown(null);
-    // In real app, make API call to approve visit
   };
 
   const handleReject = (visitId: string) => {
-    // Handle reject action - replace with actual API call
-    console.log(`Rejecting visit ${visitId}`);
+    setSelectedVisitId(visitId);
+    setShowRejectionModal(true);
     setOpenDropdown(null);
-    // In real app, make API call to reject visit
   };
 
   const handleOutcome = (visitId: string) => {
-    // Handle outcome action - replace with actual API call
-    console.log(`Recording outcome for visit ${visitId}`);
+    setSelectedVisitId(visitId);
+    setShowOutcomeModal(true);
     setOpenDropdown(null);
-    // In real app, make API call to record outcome
+  };
+
+  const handleApproveSubmit = async (notes: string) => {
+    try {
+      const token = LawyerAuth.getAccessToken();
+      if (!token) {
+        throw new Error("No authentication token");
+      }
+      
+      if (!selectedVisitId) {
+        throw new Error("No visit selected");
+      }
+
+      const response = await approveVisit(token, selectedVisitId, notes, locale);
+      
+      if (response.status === "success") {
+        // Refresh visits after successful submission
+        fetchVisits();
+        setShowApproveModal(false);
+      } else {
+        throw new Error(response.message || "Failed to approve visit");
+      }
+    } catch (error: any) {
+      console.error('Error approving visit:', error);
+      
+      // Extract error message from API response
+      let errorMessage = "Failed to approve visit";
+      if (error?.error?.message) {
+        errorMessage = error.error.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      // Show error toast
+      toast.error(errorMessage);
+    }
+  };
+
+  const handleRejectionSubmit = async (reason: string) => {
+    try {
+      const token = LawyerAuth.getAccessToken();
+      if (!token) {
+        throw new Error("No authentication token");
+      }
+      
+      if (!selectedVisitId) {
+        throw new Error("No visit selected");
+      }
+
+      const response = await rejectVisit(token, selectedVisitId, reason, locale);
+      
+      if (response.status === "success") {
+        // Refresh visits after successful submission
+        fetchVisits();
+        setShowRejectionModal(false);
+      } else {
+        throw new Error(response.message || "Failed to reject visit");
+      }
+    } catch (error: any) {
+      console.error('Error rejecting visit:', error);
+      
+      // Extract error message from API response
+      let errorMessage = "Failed to reject visit";
+      if (error?.error?.message) {
+        errorMessage = error.error.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      // Show error toast
+      toast.error(errorMessage);
+    }
+  };
+
+  const handleOutcomeSubmit = async (outcome: string) => {
+    try {
+      const token = LawyerAuth.getAccessToken();
+      if (!token) {
+        throw new Error("No authentication token");
+      }
+      
+      if (!selectedVisitId) {
+        throw new Error("No visit selected");
+      }
+
+      const response = await completeVisit(token, selectedVisitId, outcome, locale);
+      
+      if (response.status === "success") {
+        // Refresh visits after successful submission
+        fetchVisits();
+        setShowOutcomeModal(false);
+      } else {
+        throw new Error(response.message || "Failed to complete visit");
+      }
+    } catch (error: any) {
+      console.error('Error completing visit:', error);
+      
+      // Extract error message from API response
+      let errorMessage = "Failed to complete visit";
+      if (error?.error?.message) {
+        errorMessage = error.error.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      // Show error toast
+      toast.error(errorMessage);
+    }
   };
 
   const toggleDropdown = (visitId: string) => {
@@ -247,6 +362,10 @@ function LawyerVisitsInner() {
         return "lawyer__status--progress";
       case "completed":
         return "lawyer__status--completed";
+      case "done":
+        return "lawyer__status--done";
+      case "rejected":
+        return "lawyer__status--rejected";
       case "cancelled":
         return "lawyer__status--cancelled";
       default:
@@ -471,60 +590,68 @@ function LawyerVisitsInner() {
                         </td>
                         <td className="lawyer__table-cell" data-label="Actions">
                           <div className="lawyer__visit-actions">
-                            <div className="lawyer__dropdown-container">
-                              <button
-                                className="lawyer__dropdown-trigger"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleDropdown(visit.id);
-                                }}
-                              >
-                                <IconDots size={20} />
-                              </button>
-
-                              {openDropdown === visit.id && (
-                                <div 
-                                  data-dropdown={visit.id}
-                                  className="lawyer__dropdown-menu"
+                            {visit.status !== "done" && (
+                              <div className="lawyer__dropdown-container">
+                                <button
+                                  className="lawyer__dropdown-trigger"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleDropdown(visit.id);
+                                  }}
                                 >
-                                  {visit.status === "todo" ? (
-                                    <>
+                                  <IconDots size={20} />
+                                </button>
+
+                                {openDropdown === visit.id && (
+                                  <div 
+                                    data-dropdown={visit.id}
+                                    className="lawyer__dropdown-menu"
+                                  >
+                                    {visit.status === "todo" && (
+                                      <>
+                                        <button
+                                          className="lawyer__dropdown-item"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleApprove(visit.id);
+                                          }}
+                                        >
+                                          <IconCheck size={16} />
+                                          {t("lawyer.visits.actions.approve")}
+                                        </button>
+                                        <button
+                                          className="lawyer__dropdown-item"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleReject(visit.id);
+                                          }}
+                                        >
+                                          <IconX size={16} />
+                                          {t("lawyer.visits.actions.reject")}
+                                        </button>
+                                      </>
+                                    )}
+                                    {visit.status === "in_progress" && (
                                       <button
                                         className="lawyer__dropdown-item"
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          handleApprove(visit.id);
+                                          handleOutcome(visit.id);
                                         }}
                                       >
-                                        <IconCheck size={16} />
-                                        {t("lawyer.visits.actions.approve")}
+                                        <IconFileText size={16} />
+                                        {t("lawyer.visits.actions.outcome")}
                                       </button>
-                                      <button
-                                        className="lawyer__dropdown-item"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleReject(visit.id);
-                                        }}
-                                      >
-                                        <IconX size={16} />
-                                        {t("lawyer.visits.actions.reject")}
-                                      </button>
-                                    </>
-                                  ) : (
-                                    <button
-                                      className="lawyer__dropdown-item"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleOutcome(visit.id);
-                                      }}
-                                    >
-                                      <IconFileText size={16} />
-                                      {t("lawyer.visits.actions.outcome")}
-                                    </button>
-                                  )}
-                                </div>
-                              )}
-                            </div>
+                                    )}
+                                    {visit.status === "rejected" && (
+                                      <div className="lawyer__dropdown-item lawyer__dropdown-item--disabled">
+                                        {t("lawyer.visits.actions.rejected")}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -539,7 +666,7 @@ function LawyerVisitsInner() {
                                 <div className="lawyer__expanded-grid">
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Case Number:
+                                      {t("lawyer.visits.expanded.caseNumber")}:
                                     </span>
                                     <Link
                                       href={`/${locale}/lawyer/cases/${visit.case_id}`}
@@ -550,7 +677,7 @@ function LawyerVisitsInner() {
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Detainee:
+                                      {t("lawyer.visits.expanded.detainee")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {visit.detainee_name}
@@ -558,7 +685,7 @@ function LawyerVisitsInner() {
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Prison:
+                                      {t("lawyer.visits.expanded.prison")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {visit.prison_name}
@@ -566,7 +693,7 @@ function LawyerVisitsInner() {
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Visit Type:
+                                      {t("lawyer.visits.expanded.visitType")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {t(
@@ -576,7 +703,7 @@ function LawyerVisitsInner() {
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Urgent:
+                                      {t("lawyer.visits.expanded.urgent")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {visit.is_urgent ? "Yes" : "No"}
@@ -585,7 +712,7 @@ function LawyerVisitsInner() {
                                   {visit.notes && (
                                     <div className="lawyer__expanded-item lawyer__expanded-item--full">
                                       <span className="lawyer__expanded-label">
-                                        Notes:
+                                        {t("lawyer.visits.expanded.notes")}:
                                       </span>
                                       <span className="lawyer__expanded-value">
                                         {visit.notes}
@@ -639,6 +766,28 @@ function LawyerVisitsInner() {
               </button>
             </div>
           )}
+
+          {/* Modals */}
+          <VisitApproveModal
+            isOpen={showApproveModal}
+            onClose={() => setShowApproveModal(false)}
+            onSubmit={handleApproveSubmit}
+            visitId={selectedVisitId || undefined}
+          />
+          
+          <VisitOutcomeModal
+            isOpen={showOutcomeModal}
+            onClose={() => setShowOutcomeModal(false)}
+            onSubmit={handleOutcomeSubmit}
+            visitId={selectedVisitId || undefined}
+          />
+          
+          <VisitRejectionModal
+            isOpen={showRejectionModal}
+            onClose={() => setShowRejectionModal(false)}
+            onSubmit={handleRejectionSubmit}
+            visitId={selectedVisitId || undefined}
+          />
         </main>
       </div>
     </div>

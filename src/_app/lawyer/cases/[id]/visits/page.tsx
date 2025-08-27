@@ -14,11 +14,21 @@ import {
   IconDots,
   IconFileText,
 } from "@tabler/icons-react";
-import { getLawyerVisits, requestCaseVisit } from "../../../../utils/apiWithAuth";
+import {
+  getLawyerVisits,
+  requestCaseVisit,
+} from "../../../../utils/apiWithAuth";
+import {
+  approveVisit,
+  rejectVisit,
+  completeVisit,
+} from "../../../../services/api";
 import { useLawyerAuth } from "../../../../hooks/useLawyerAuth";
+import { LawyerAuth } from "../../../../utils/auth";
 import { useLocale } from "next-globe-gen";
 import toast from "react-hot-toast";
 import RequestVisitModal from "../../../../components/modals/RequestVisitModal";
+import VisitApproveModal from "../../../../components/modals/VisitApproveModal";
 import VisitOutcomeModal from "../../../../components/modals/VisitOutcomeModal";
 import VisitRejectionModal from "../../../../components/modals/VisitRejectionModal";
 import React from "react";
@@ -99,6 +109,7 @@ function LawyerCaseVisitsInner() {
 
   // Modal states
   const [showRequestVisitModal, setShowRequestVisitModal] = useState(false);
+  const [showApproveModal, setShowApproveModal] = useState(false);
   const [showOutcomeModal, setShowOutcomeModal] = useState(false);
   const [showRejectionModal, setShowRejectionModal] = useState(false);
   const [selectedVisitId, setSelectedVisitId] = useState<string | null>(null);
@@ -106,7 +117,7 @@ function LawyerCaseVisitsInner() {
   // Fetch visits from API
   const fetchVisits = useCallback(async () => {
     if (!caseId) return;
-    
+
     try {
       setLoading(true);
       setError(null);
@@ -116,11 +127,11 @@ function LawyerCaseVisitsInner() {
         page: currentPage,
         page_size: pageSize,
         days: daysFilter,
-        status: statusFilter || undefined
+        status: statusFilter || undefined,
       };
 
-      console.log('Fetching visits with params:', params);
-      const response = await getLawyerVisits('en', caseId, params);
+      console.log("Fetching visits with params:", params);
+      const response = await getLawyerVisits("en", caseId, params);
 
       if (response.status === "success" && response.data) {
         setVisits(response.data.visits || []);
@@ -146,16 +157,16 @@ function LawyerCaseVisitsInner() {
   // Filter change handlers
   const handleStatusChange = (value: string) => {
     if (!isFilterParamsReady) return;
-    console.log('Status filter changed to:', value);
-    console.log('Previous statusFilter was:', statusFilter);
+    console.log("Status filter changed to:", value);
+    console.log("Previous statusFilter was:", statusFilter);
     setStatusFilter(value);
     setCurrentPage(1);
   };
 
   const handleDaysChange = (value: number) => {
     if (!isFilterParamsReady) return;
-    console.log('Days filter changed to:', value);
-    console.log('Previous daysFilter was:', daysFilter);
+    console.log("Days filter changed to:", value);
+    console.log("Previous daysFilter was:", daysFilter);
     setDaysFilter(value);
     setCurrentPage(1);
   };
@@ -165,18 +176,24 @@ function LawyerCaseVisitsInner() {
     if (isFilterParamsReady && isAuthenticated && caseId) {
       fetchVisits();
     }
-  }, [isFilterParamsReady, isAuthenticated, caseId, daysFilter, statusFilter, fetchVisits]);
+  }, [
+    isFilterParamsReady,
+    isAuthenticated,
+    caseId,
+    daysFilter,
+    statusFilter,
+    fetchVisits,
+  ]);
 
   // Debug: Log filter state changes
   useEffect(() => {
-    console.log('Filter states updated:', { daysFilter, statusFilter });
+    console.log("Filter states updated:", { daysFilter, statusFilter });
   }, [daysFilter, statusFilter]);
 
   const handleApprove = (visitId: string) => {
-    // Handle approve action - replace with actual API call
-    console.log(`Approving visit ${visitId}`);
+    setSelectedVisitId(visitId);
+    setShowApproveModal(true);
     setOpenDropdown(null);
-    // In real app, make API call to approve visit
   };
 
   const handleReject = (visitId: string) => {
@@ -210,41 +227,123 @@ function LawyerCaseVisitsInner() {
         return res; // Return success response
       } else {
         // Show toast error and return error response for modal to handle
-        toast.error(res.message || t("lawyerProfile.errors.general").toString());
+        toast.error(
+          res.message || t("lawyerProfile.errors.general").toString()
+        );
         return res;
       }
     } catch (error: any) {
-      console.error('Visit request error:', error);
-      
+      console.error("Visit request error:", error);
+
       // Show toast error and return error response for modal to handle
-      const apiMessage = error.payload?.error?.message || error.message || t("lawyerProfile.errors.general").toString();
+      const apiMessage =
+        error.payload?.error?.message ||
+        error.message ||
+        t("lawyerProfile.errors.general").toString();
       toast.error(apiMessage);
-      
+
       // Return a properly structured error object for the modal
       return {
         status: "error",
         error: error.payload?.error || {
           type: "api_error",
-          message: error.message
-        }
+          message: error.message,
+        },
       };
     }
   };
 
-  const handleOutcomeSubmit = (outcome: string) => {
-    // Handle outcome submission - replace with actual API call
-    console.log(`Visit ${selectedVisitId} outcome:`, outcome);
-    setShowOutcomeModal(false);
-    // Refresh visits after successful submission
-    fetchVisits();
+  const handleOutcomeSubmit = async (outcome: string) => {
+    try {
+      const token = LawyerAuth.getAccessToken();
+      if (!token) {
+        throw new Error("No authentication token");
+      }
+
+      if (!selectedVisitId) {
+        throw new Error("No visit selected");
+      }
+
+      const response = await completeVisit(
+        token,
+        selectedVisitId,
+        outcome,
+        locale
+      );
+
+      if (response.status === "success") {
+        // Refresh visits after successful submission
+        fetchVisits();
+        setShowOutcomeModal(false);
+      } else {
+        throw new Error(response.message || "Failed to complete visit");
+      }
+    } catch (error) {
+      console.error("Error completing visit:", error);
+      // TODO: Show error toast to user
+    }
   };
 
-  const handleRejectionSubmit = (reason: string) => {
-    // Handle rejection submission - replace with actual API call
-    console.log(`Visit ${selectedVisitId} rejection reason:`, reason);
-    setShowRejectionModal(false);
-    // Refresh visits after successful submission
-    fetchVisits();
+  const handleRejectionSubmit = async (reason: string) => {
+    try {
+      const token = LawyerAuth.getAccessToken();
+      if (!token) {
+        throw new Error("No authentication token");
+      }
+
+      if (!selectedVisitId) {
+        throw new Error("No visit selected");
+      }
+
+      const response = await rejectVisit(
+        token,
+        selectedVisitId,
+        reason,
+        locale
+      );
+
+      if (response.status === "success") {
+        // Refresh visits after successful submission
+        fetchVisits();
+        setShowRejectionModal(false);
+      } else {
+        throw new Error(response.message || "Failed to reject visit");
+      }
+    } catch (error) {
+      console.error("Error rejecting visit:", error);
+      // TODO: Show error toast to user
+    }
+  };
+
+  const handleApproveSubmit = async (notes: string) => {
+    try {
+      const token = LawyerAuth.getAccessToken();
+      if (!token) {
+        throw new Error("No authentication token");
+      }
+
+      if (!selectedVisitId) {
+        throw new Error("No visit selected");
+      }
+
+      const response = await approveVisit(
+        token,
+        selectedVisitId,
+        notes,
+        locale
+      );
+
+      if (response.status === "success") {
+        // Refresh visits after successful submission
+        fetchVisits();
+        setShowApproveModal(false);
+      } else {
+        throw new Error(response.message || "Failed to approve visit");
+      }
+    } catch (error) {
+      console.error("Error approving visit:", error);
+      // TODO: Show error toast to user
+    }
   };
 
   const toggleDropdown = (visitId: string) => {
@@ -255,7 +354,7 @@ function LawyerCaseVisitsInner() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      if (!target.closest('.lawyer__dropdown-container')) {
+      if (!target.closest(".lawyer__dropdown-container")) {
         setOpenDropdown(null);
       }
     };
@@ -270,8 +369,6 @@ function LawyerCaseVisitsInner() {
     if (!isFilterParamsReady || loading) return;
     setCurrentPage(page);
   };
-
-
 
   const toggleRowExpansion = (visitId: string) => {
     const newExpandedRows = new Set(expandedRows);
@@ -288,20 +385,24 @@ function LawyerCaseVisitsInner() {
   const getStatusClass = (status: string) => {
     switch (status.toLowerCase()) {
       case "todo":
-        return "case__status--pending";
+        return "lawyer__status--pending";
       case "in_progress":
-        return "case__status--progress";
+        return "lawyer__status--progress";
       case "completed":
-        return "case__status--completed";
+        return "lawyer__status--completed";
+      case "done":
+        return "lawyer__status--done";
+      case "rejected":
+        return "lawyer__status--rejected";
       case "cancelled":
-        return "case__status--cancelled";
+        return "lawyer__status--cancelled";
       default:
-        return "case__status--default";
+        return "lawyer__status--default";
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -310,7 +411,7 @@ function LawyerCaseVisitsInner() {
 
   const formatTime = (timeString: string | null) => {
     if (!timeString) return "—";
-    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString('en-US', {
+    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
@@ -332,7 +433,10 @@ function LawyerCaseVisitsInner() {
         <IconAlertCircle size={48} className="lawyer__error-icon" />
         <h2>{(t as any)("common.error")}</h2>
         <p>{error}</p>
-        <button onClick={fetchVisits} className="lawyer__btn lawyer__btn--primary">
+        <button
+          onClick={fetchVisits}
+          className="lawyer__btn lawyer__btn--primary"
+        >
           {(t as any)("common.retry")}
         </button>
       </div>
@@ -345,7 +449,10 @@ function LawyerCaseVisitsInner() {
       <div className="lawyer__visits-header">
         <h1 className="lawyer__visits-title">{t("lawyer.visits.title")}</h1>
         <div className="lawyer__visits-header-actions">
-          <button className="lawyer__start-visit-btn" onClick={handleStartVisit}>
+          <button
+            className="lawyer__start-visit-btn"
+            onClick={handleStartVisit}
+          >
             {t("lawyer.visits.startVisit")}
           </button>
         </div>
@@ -387,67 +494,74 @@ function LawyerCaseVisitsInner() {
         </div>
       </div>
 
-
       {/* Visits Table */}
       <div className="lawyer__table-wrapper">
         <table className="lawyer__table">
-                     <thead className="lawyer__table-header">
-             <tr>
-               <th style={{ width: "50px" }}></th>
-               <th>{t("lawyer.visits.table.visitDate")}</th>
-               <th>{t("lawyer.visits.table.prisonName")}</th>
-               <th>{t("lawyer.visits.table.visitType")}</th>
-               <th>{t("lawyer.visits.table.status")}</th>
-               <th style={{ width: "60px" }}>
-                 {t("lawyer.visits.table.actions")}
-               </th>
-             </tr>
-           </thead>
+          <thead className="lawyer__table-header">
+            <tr>
+              <th style={{ width: "50px" }}></th>
+              <th>{t("lawyer.visits.table.visitDate")}</th>
+              <th>{t("lawyer.visits.table.prisonName")}</th>
+              <th>{t("lawyer.visits.table.visitType")}</th>
+              <th>{t("lawyer.visits.table.status")}</th>
+              <th style={{ width: "60px" }}>
+                {t("lawyer.visits.table.actions")}
+              </th>
+            </tr>
+          </thead>
           <tbody className="lawyer__table-body">
-                         {visits.map((visit) => (
-               <React.Fragment key={visit.id}>
-                 <tr className="lawyer__table-row">
-                   <td className="lawyer__table-cell" data-label="">
-                     <button
-                       className="lawyer__expand-button"
-                       onClick={() => toggleRowExpansion(visit.id)}
-                       aria-label={isRowExpanded(visit.id) ? "Collapse row" : "Expand row"}
-                     >
-                       {isRowExpanded(visit.id) ? (
-                         <IconChevronDown size={16} />
-                       ) : (
-                         <IconChevronRight size={16} />
-                       )}
-                     </button>
-                   </td>
-                   <td className="lawyer__table-cell" data-label="Visit Date">
-                     <div className="lawyer__visit-date-time">
-                       <span className="lawyer__visit-date">
-                         {formatDate(visit.visit_date)}
-                       </span>
-                       {visit.visit_time && (
-                         <span className="lawyer__visit-time">
-                           {formatTime(visit.visit_time)}
-                         </span>
-                       )}
-                     </div>
-                   </td>
-                   <td className="lawyer__table-cell" data-label="Prison">
-                     <span className="lawyer__prison-name">
-                       {visit.prison_name}
-                     </span>
-                   </td>
-                   <td className="lawyer__table-cell" data-label="Type">
-                     <span className="lawyer__visit-type">
-                       {(t as any)(`lawyer.visits.visitTypes.${visit.visit_type}`) || visit.visit_type}
-                     </span>
-                   </td>
-                   <td className="lawyer__table-cell" data-label="Status">
-                     <span className={`lawyer__status ${getStatusClass(visit.status)}`}>
-                       {visit.status_display}
-                     </span>
-                   </td>
-                   <td className="lawyer__table-cell" data-label="Actions">
+            {visits.map((visit) => (
+              <React.Fragment key={visit.id}>
+                <tr className="lawyer__table-row">
+                  <td className="lawyer__table-cell" data-label="">
+                    <button
+                      className="lawyer__expand-button"
+                      onClick={() => toggleRowExpansion(visit.id)}
+                      aria-label={
+                        isRowExpanded(visit.id) ? "Collapse row" : "Expand row"
+                      }
+                    >
+                      {isRowExpanded(visit.id) ? (
+                        <IconChevronDown size={16} />
+                      ) : (
+                        <IconChevronRight size={16} />
+                      )}
+                    </button>
+                  </td>
+                  <td className="lawyer__table-cell" data-label="Visit Date">
+                    <div className="lawyer__visit-date-time">
+                      <span className="lawyer__visit-date">
+                        {formatDate(visit.visit_date)}
+                      </span>
+                      {visit.visit_time && (
+                        <span className="lawyer__visit-time">
+                          {formatTime(visit.visit_time)}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="lawyer__table-cell" data-label="Prison">
+                    <span className="lawyer__prison-name">
+                      {visit.prison_name}
+                    </span>
+                  </td>
+                  <td className="lawyer__table-cell" data-label="Type">
+                    <span className="lawyer__visit-type">
+                      {(t as any)(
+                        `lawyer.visits.visitTypes.${visit.visit_type}`
+                      ) || visit.visit_type}
+                    </span>
+                  </td>
+                  <td className="lawyer__table-cell" data-label="Status">
+                    <span
+                      className={`lawyer__status ${getStatusClass(
+                        visit.status
+                      )}`}
+                    >
+                      {visit.status_display}
+                    </span>
+                  </td>
+                  <td className="lawyer__table-cell" data-label="Actions">
                     <div className="lawyer__visit-actions">
                       <div className="lawyer__dropdown-container">
                         <button
@@ -459,13 +573,13 @@ function LawyerCaseVisitsInner() {
                         >
                           <IconDots size={20} />
                         </button>
-                        
+
                         {openDropdown === visit.id && (
-                          <div 
+                          <div
                             data-dropdown={visit.id}
                             className="lawyer__dropdown-menu"
                           >
-                            {visit.status === "todo" ? (
+                            {visit.status === "todo" && (
                               <>
                                 <button
                                   className="lawyer__dropdown-item"
@@ -488,7 +602,8 @@ function LawyerCaseVisitsInner() {
                                   {t("lawyer.visits.actions.reject")}
                                 </button>
                               </>
-                            ) : (
+                            )}
+                            {visit.status === "in_progress" && (
                               <button
                                 className="lawyer__dropdown-item"
                                 onClick={(e) => {
@@ -500,79 +615,86 @@ function LawyerCaseVisitsInner() {
                                 {t("lawyer.visits.actions.outcome")}
                               </button>
                             )}
+                            {(visit.status === "rejected" ||
+                              visit.status === "done") && (
+                              <div className="lawyer__dropdown-item lawyer__dropdown-item--disabled">
+                                {visit.status === "rejected"
+                                  ? t("lawyer.visits.actions.rejected")
+                                  : t("lawyer.visits.actions.completed")}
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
                     </div>
                   </td>
                 </tr>
-                
-                                 {/* Expanded row for additional details */}
-                 {isRowExpanded(visit.id) && (
-                   <tr className="lawyer__table-expanded-row">
-                     <td
-                       colSpan={6}
-                       className="lawyer__table-expanded-cell"
-                     >
-                       <div className="lawyer__expanded-content">
-                         <div className="lawyer__expanded-section">
-                           <div className="lawyer__expanded-grid">
-                             <div className="lawyer__expanded-item">
-                               <span className="lawyer__expanded-label">
-                                 Title:
-                               </span>
-                               <span className="lawyer__expanded-value">
-                                 {visit.title}
-                               </span>
-                             </div>
-                             <div className="lawyer__expanded-item">
-                               <span className="lawyer__expanded-label">
-                                 Duration:
-                               </span>
-                               <span className="lawyer__expanded-value">
-                                 {visit.duration_minutes ? `${visit.duration_minutes} minutes` : '—'}
-                               </span>
-                             </div>
-                             <div className="lawyer__expanded-item">
-                               <span className="lawyer__expanded-label">
-                                 Urgent:
-                               </span>
-                               <span className="lawyer__expanded-value">
-                                 {visit.is_urgent ? "Yes" : "No"}
-                               </span>
-                             </div>
-                             {visit.notes && (
-                               <div className="lawyer__expanded-item lawyer__expanded-item--full">
-                                 <span className="lawyer__expanded-label">
-                                   Notes:
-                                 </span>
-                                 <span className="lawyer__expanded-value">
-                                   {visit.notes}
-                                 </span>
-                               </div>
-                             )}
-                             <div className="lawyer__expanded-item">
-                               <span className="lawyer__expanded-label">
-                                 Created:
-                               </span>
-                               <span className="lawyer__expanded-value">
-                                 {formatDate(visit.created)}
-                               </span>
-                             </div>
-                             <div className="lawyer__expanded-item">
-                               <span className="lawyer__expanded-label">
-                                 Updated:
-                               </span>
-                               <span className="lawyer__expanded-value">
-                                 {formatDate(visit.updated)}
-                               </span>
-                             </div>
-                           </div>
-                         </div>
-                       </div>
-                     </td>
-                   </tr>
-                 )}
+
+                {/* Expanded row for additional details */}
+                {isRowExpanded(visit.id) && (
+                  <tr className="lawyer__table-expanded-row">
+                    <td colSpan={6} className="lawyer__table-expanded-cell">
+                      <div className="lawyer__expanded-content">
+                        <div className="lawyer__expanded-section">
+                          <div className="lawyer__expanded-grid">
+                            <div className="lawyer__expanded-item">
+                              <span className="lawyer__expanded-label">
+                                {t("lawyer.visits.expanded.title")}:
+                              </span>
+                              <span className="lawyer__expanded-value">
+                                {visit.title}
+                              </span>
+                            </div>
+                            <div className="lawyer__expanded-item">
+                              <span className="lawyer__expanded-label">
+                                {t("lawyer.visits.expanded.duration")}:
+                              </span>
+                              <span className="lawyer__expanded-value">
+                                {visit.duration_minutes
+                                  ? `${visit.duration_minutes} minutes`
+                                  : "—"}
+                              </span>
+                            </div>
+                            <div className="lawyer__expanded-item">
+                              <span className="lawyer__expanded-label">
+                                {t("lawyer.visits.expanded.urgent")}:
+                              </span>
+                              <span className="lawyer__expanded-value">
+                                {visit.is_urgent ? "Yes" : "No"}
+                              </span>
+                            </div>
+                            {visit.notes && (
+                              <div className="lawyer__expanded-item lawyer__expanded-item--full">
+                                <span className="lawyer__expanded-label">
+                                  {t("lawyer.visits.expanded.notes")}:
+                                </span>
+                                <span className="lawyer__expanded-value">
+                                  {visit.notes}
+                                </span>
+                              </div>
+                            )}
+                            <div className="lawyer__expanded-item">
+                              <span className="lawyer__expanded-label">
+                                {t("lawyer.visits.expanded.created")}:
+                              </span>
+                              <span className="lawyer__expanded-value">
+                                {formatDate(visit.created)}
+                              </span>
+                            </div>
+                            <div className="lawyer__expanded-item">
+                              <span className="lawyer__expanded-label">
+                                {t("lawyer.visits.expanded.updated")}:
+                              </span>
+                              <span className="lawyer__expanded-value">
+                                {formatDate(visit.updated)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                )}
               </React.Fragment>
             ))}
           </tbody>
@@ -592,8 +714,15 @@ function LawyerCaseVisitsInner() {
 
           <div className="lawyer__pagination-info">
             {t("lawyer.visits.pagination.showing", {
-              start: String((pagination.current_page - 1) * pagination.page_size + 1),
-              end: String(Math.min(pagination.current_page * pagination.page_size, pagination.total_items)),
+              start: String(
+                (pagination.current_page - 1) * pagination.page_size + 1
+              ),
+              end: String(
+                Math.min(
+                  pagination.current_page * pagination.page_size,
+                  pagination.total_items
+                )
+              ),
               total: String(pagination.total_items),
             })}
           </div>
@@ -614,14 +743,21 @@ function LawyerCaseVisitsInner() {
         onClose={() => setShowRequestVisitModal(false)}
         onSubmit={handleRequestVisitSubmit}
       />
-      
+
+      <VisitApproveModal
+        isOpen={showApproveModal}
+        onClose={() => setShowApproveModal(false)}
+        onSubmit={handleApproveSubmit}
+        visitId={selectedVisitId || undefined}
+      />
+
       <VisitOutcomeModal
         isOpen={showOutcomeModal}
         onClose={() => setShowOutcomeModal(false)}
         onSubmit={handleOutcomeSubmit}
         visitId={selectedVisitId || undefined}
       />
-      
+
       <VisitRejectionModal
         isOpen={showRejectionModal}
         onClose={() => setShowRejectionModal(false)}

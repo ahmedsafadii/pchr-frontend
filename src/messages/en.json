@@ -518,7 +518,8 @@
         "reject": "Reject",
         "approved": "Approved",
         "rejected": "Rejected",
-        "outcome": "Outcome"
+        "outcome": "Outcome",
+        "completed": "Completed"
       },
       "pagination": {
         "previous": "Previous",
@@ -556,6 +557,18 @@
         "visitType": "Visit Type",
         "status": "Status",
         "actions": "Actions"
+      },
+      "expanded": {
+        "caseNumber": "Case Number",
+        "detainee": "Detainee",
+        "prison": "Prison",
+        "visitType": "Visit Type",
+        "urgent": "Urgent",
+        "duration": "Duration",
+        "title": "Title",
+        "notes": "Notes",
+        "created": "Created",
+        "updated": "Updated"
       }
     },
     "modals": {
@@ -587,6 +600,12 @@
         "rejectionReasonField": "Rejection Reason",
         "rejectionReasonPlaceholder": "Enter the reason for rejecting this visit...",
         "save": "Save"
+      },
+      "visitApprove": {
+        "title": "Approve Visit",
+        "notesField": "Approval Notes",
+        "notesPlaceholder": "Enter approval notes and any additional information...",
+        "approve": "Approve Visit"
       }
     },
     "messages": {
