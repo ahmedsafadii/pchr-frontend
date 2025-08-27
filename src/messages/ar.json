@@ -69,6 +69,7 @@
       "next": "التالي",
       "prev": "السابق",
       "loading": "جاري التحميل...",
+      "updating": "جاري التحديث...",
       "error": "خطأ",
       "retry": "إعادة المحاولة",
       "notFound": "غير موجود",
@@ -171,6 +172,10 @@
       "detaineeIdTitle": "هوية المعتقل",
       "clientIdTitle": "هوية العميل",
       "additionalDocsTitle": "مستندات إضافية",
+      "documentType": "نوع المستند",
+      "chooseDocumentType": "اختر نوع المستند",
+      "files": "الملفات",
+      "uploading": "جاري الرفع...",
       "dropzone": {
         "text": "قم بسحب الملفات هنا أو اختر من الجهاز",
         "hint": "PDF, JPG, JPEG, BMP, PNG, حتى 1.5 ميجابايت"
@@ -179,6 +184,20 @@
         "uploading": "جاري الرفع...",
         "uploaded": "تم الرفع",
         "failed": "فشل الرفع"
+      },
+      "documentTypes": {
+        "clientId": "هوية العميل",
+        "detaineeId": "هوية المعتقل",
+        "signature": "التوقيع",
+        "medicalReport": "التقرير الطبي",
+        "legalDocument": "المستند القانوني",
+        "other": "أخرى"
+      },
+      "errors": {
+        "documentTypeRequired": "نوع المستند مطلوب",
+        "filesRequired": "يرجى اختيار ملف واحد على الأقل",
+        "uploadFailed": "فشل رفع الملف. يرجى المحاولة مرة أخرى.",
+        "uploadInProgress": "يرجى الانتظار حتى ينتهي رفع جميع الملفات"
       }
     },
     "step6": {
@@ -383,7 +402,8 @@
         "detentionConfirmed": "تأكيد الاعتقال",
         "released": "محرر",
         "deceased": "متوفى",
-        "enforcedDisappearance": "اختفاء قسري"
+        "enforcedDisappearance": "اختفاء قسري",
+        "reOpen": "إعادة فتح"
       },
       "pagination": {
         "previous": "السابق",
@@ -399,7 +419,7 @@
       "casePrefix": "القضية",
       "backToCases": "العودة للقضايا",
       "lastUpdate": "آخر تحديث",
-      "startCase": "بدء القضية",
+      "updateCase": "تحديث القضية",
       "navigation": {
         "allDetails": "جميع التفاصيل",
         "visits": "الزيارات",
@@ -440,6 +460,18 @@
       },
       "documentsUpload": {
         "title": "تحميل المستندات"
+      },
+      "updateCaseModal": {
+        "title": "تحديث القضية",
+        "status": "الحالة",
+        "details": "التفاصيل",
+        "detailsPlaceholder": "أدخل تفاصيل القضية...",
+        "upload": "رفع الملفات (اختياري)",
+        "updateCase": "تحديث القضية",
+        "errors": {
+          "statusRequired": "الحالة مطلوبة",
+          "detailsRequired": "التفاصيل مطلوبة"
+        }
       }
     },
     "visits": {
@@ -567,7 +599,44 @@
       "uploadFiles": "تحميل الملفات",
       "caseFiles": "ملفات القضية",
       "uploadedFiles": "الملفات المحملة",
-      "fileName": "اسم الملف"
+      "fileName": "اسم الملف",
+      "uploadModal": {
+        "title": "تحميل ملف",
+        "fileName": "اسم الملف",
+        "fileNamePlaceholder": "أدخل اسم الملف",
+        "documentType": "نوع المستند",
+        "documentTypePlaceholder": "اختر نوع المستند",
+        "description": "الوصف",
+        "descriptionPlaceholder": "أدخل وصف الملف",
+        "accessLevel": "مستوى الوصول",
+        "accessLevelPlaceholder": "اختر مستوى الوصول",
+        "uploadFile": "تحميل ملف",
+        "dragDropText": "اسحب وأفلت اختر من الملفات",
+        "dragDropHint": "DOCS, PDF, EXL, حتى 1.5 ميجابايت",
+        "send": "إرسال",
+        "uploading": "جاري التحميل...",
+        "errors": {
+          "fileNameRequired": "اسم الملف مطلوب",
+          "documentTypeRequired": "نوع المستند مطلوب",
+          "descriptionRequired": "الوصف مطلوب",
+          "accessLevelRequired": "مستوى الوصول مطلوب",
+          "fileRequired": "يرجى اختيار ملف للتحميل",
+          "uploadFailed": "فشل في تحميل الملف. يرجى المحاولة مرة أخرى.",
+          "general": "حدث خطأ. يرجى المحاولة مرة أخرى."
+        }
+      },
+      "documentTypes": {
+        "evidence": "دليل",
+        "legalDocument": "مستند قانوني",
+        "correspondence": "مراسلة",
+        "other": "أخرى"
+      },
+      "accessLevels": {
+        "private": "خاص",
+        "caseOnly": "القضية فقط",
+        "lawyerOnly": "المحامي فقط",
+        "public": "عام"
+      }
     }
   },
   "lawyerProfile": {
@@ -624,6 +693,7 @@
     "prev": "السابق",
     "notFound": "غير موجود",
     "caseNotFound": "القضية غير موجودة",
-    "noDescription": "لا يوجد وصف"
+    "noDescription": "لا يوجد وصف",
+    "cancel": "إلغاء"
   }
 }

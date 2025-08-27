@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getLawyerCaseDetails } from "../../../utils/apiWithAuth";
 import { useLawyerAuth } from "../../../hooks/useLawyerAuth";
+import UpdateCaseModal from "../../../components/modals/UpdateCaseModal";
 
 interface CaseData {
   id: string;
@@ -51,6 +52,7 @@ export default function LawyerCaseDetailsPage() {
   const [caseData, setCaseData] = useState<CaseData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const caseId = params.id as string;
 
@@ -91,6 +93,17 @@ export default function LawyerCaseDetailsPage() {
       setLoading(false);
     }
   }, [caseId]);
+
+  const handleUpdateCase = async (updateData: any) => {
+    try {
+      // Refresh case details to get the updated status
+      await fetchCaseDetails();
+      
+      return { success: true };
+    } catch (err: any) {
+      throw new Error(err.message || 'Failed to refresh case details');
+    }
+  };
 
   useEffect(() => {
     if (!isAuthenticated && !isLoading) {
@@ -167,8 +180,11 @@ export default function LawyerCaseDetailsPage() {
       {/* Header */}
       <div className="lawyer__case-details-header">
         <h1 className="lawyer__case-details-title">{t("lawyer.caseDetails.navigation.allDetails")}</h1>
-        <button className="lawyer__start-case-btn">
-          {t("lawyer.caseDetails.startCase")}
+        <button 
+          className="lawyer__start-case-btn"
+          onClick={() => setIsUpdateModalOpen(true)}
+        >
+          {t("lawyer.caseDetails.updateCase")}
         </button>
       </div>
 
@@ -302,6 +318,15 @@ export default function LawyerCaseDetailsPage() {
       </section>
 
       {/* Documents upload section removed as it has its own page */}
+      
+      {/* Update Case Modal */}
+      <UpdateCaseModal
+        isOpen={isUpdateModalOpen}
+        onClose={() => setIsUpdateModalOpen(false)}
+        onSubmit={handleUpdateCase}
+        currentStatus={caseData?.status}
+        caseId={caseId}
+      />
     </>
   );
 }

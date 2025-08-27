@@ -117,6 +117,7 @@
       "next": "Next",
       "prev": "Prev",
       "loading": "Loading...",
+      "updating": "Updating...",
       "error": "Error",
       "retry": "Retry",
       "notFound": "Not Found",
@@ -221,6 +222,10 @@
       "detaineeIdTitle": "Detainee ID",
       "clientIdTitle": "Client ID",
       "additionalDocsTitle": "Additional documents",
+      "documentType": "Document Type",
+      "chooseDocumentType": "Choose document type",
+      "files": "Files",
+      "uploading": "Uploading...",
       "dropzone": {
         "text": "Drag & Drop Choose from files",
         "hint": "PDF, JPG, JPEG, BMP, PNG, Up To 1.5 MB"
@@ -229,6 +234,20 @@
         "uploading": "Uploading...",
         "uploaded": "Uploaded",
         "failed": "Failed"
+      },
+      "documentTypes": {
+        "clientId": "Client ID",
+        "detaineeId": "Detainee ID",
+        "signature": "Signature",
+        "medicalReport": "Medical Report",
+        "legalDocument": "Legal Document",
+        "other": "Other"
+      },
+      "errors": {
+        "documentTypeRequired": "Document type is required",
+        "filesRequired": "Please select at least one file",
+        "uploadFailed": "File upload failed. Please try again.",
+        "uploadInProgress": "Please wait for all files to finish uploading"
       }
     },
     "step6": {
@@ -385,7 +404,8 @@
         "detentionConfirmed": "Detention Confirmed",
         "released": "Released",
         "deceased": "Deceased",
-        "enforcedDisappearance": "Enforced Disappearance"
+        "enforcedDisappearance": "Enforced Disappearance",
+        "reOpen": "Re-open"
       },
       "pagination": {
         "previous": "Previous",
@@ -401,7 +421,7 @@
       "casePrefix": "Case",
       "backToCases": "Back to Cases",
       "lastUpdate": "Latest update",
-      "startCase": "Start case",
+      "updateCase": "Update Case",
       "navigation": {
         "allDetails": "All the Details",
         "visits": "Visits",
@@ -442,6 +462,18 @@
       },
       "documentsUpload": {
         "title": "Documents upload"
+      },
+      "updateCaseModal": {
+        "title": "Update Case",
+        "status": "Status",
+        "details": "Details",
+        "detailsPlaceholder": "Enter case details...",
+        "upload": "Upload Files (Optional)",
+        "updateCase": "Update Case",
+        "errors": {
+          "statusRequired": "Status is required",
+          "detailsRequired": "Details are required"
+        }
       }
     },
     "visits": {
@@ -569,7 +601,44 @@
       "uploadFiles": "Upload Files",
       "caseFiles": "Case Files",
       "uploadedFiles": "Uploaded Files",
-      "fileName": "File Name"
+      "fileName": "File Name",
+      "uploadModal": {
+        "title": "Upload File",
+        "fileName": "File Name",
+        "fileNamePlaceholder": "Enter file name",
+        "documentType": "Document Type",
+        "documentTypePlaceholder": "Choose document type",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter file description",
+        "accessLevel": "Access Level",
+        "accessLevelPlaceholder": "Choose access level",
+        "uploadFile": "Upload File",
+        "dragDropText": "Drag & Drop Choose from files",
+        "dragDropHint": "DOCS, PDF, EXL, Up To 1.5 MB",
+        "send": "Send",
+        "uploading": "Uploading...",
+        "errors": {
+          "fileNameRequired": "File name is required",
+          "documentTypeRequired": "Document type is required",
+          "descriptionRequired": "Description is required",
+          "accessLevelRequired": "Access level is required",
+          "fileRequired": "Please select a file to upload",
+          "uploadFailed": "Failed to upload file. Please try again.",
+          "general": "An error occurred. Please try again."
+        }
+      },
+      "documentTypes": {
+        "evidence": "Evidence",
+        "legalDocument": "Legal Document",
+        "correspondence": "Correspondence",
+        "other": "Other"
+      },
+      "accessLevels": {
+        "private": "Private",
+        "caseOnly": "Case Only",
+        "lawyerOnly": "Lawyer Only",
+        "public": "Public"
+      }
     }
   },
   "lawyerProfile": {
@@ -627,6 +696,7 @@
     "prev": "Prev",
     "notFound": "Not Found",
     "caseNotFound": "Case not found",
-    "noDescription": "No description provided"
+    "noDescription": "No description provided",
+    "cancel": "Cancel"
   }
 }

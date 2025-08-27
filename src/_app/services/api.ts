@@ -76,7 +76,19 @@ export type ApiResponse = {
   debug?: any;
 };
 
+// Request throttling for constants
+let lastConstantsRequest = 0;
+const CONSTANTS_REQUEST_THROTTLE = 2000; // 2 seconds minimum between requests
+
 export async function fetchPublicConstants(lang: string) {
+  const now = Date.now();
+  if (now - lastConstantsRequest < CONSTANTS_REQUEST_THROTTLE) {
+    const waitTime = CONSTANTS_REQUEST_THROTTLE - (now - lastConstantsRequest);
+    console.log(`Constants request throttled. Waiting ${waitTime}ms`);
+    await new Promise(resolve => setTimeout(resolve, waitTime));
+  }
+  
+  lastConstantsRequest = now;
   return api.get<ApiResponse>("/public/constants/", { lang });
 }
 
@@ -91,6 +103,24 @@ export async function uploadDocumentFile(documentTypeId: string, file: File, lan
 
 export async function submitCase(payload: Record<string, any>, lang: string) {
   return api.post<ApiResponse>("/public/cases/submit/", payload, { lang });
+}
+
+export async function updateCaseStatus(
+  caseId: string, 
+  status: string, 
+  notes: string, 
+  token: string,
+  lang: string = "en"
+) {
+  return api.put<ApiResponse>(`/lawyer/cases/${caseId}/status/`, {
+    status,
+    notes
+  }, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    lang
+  });
 }
 
 // Tracking API functions
@@ -275,6 +305,34 @@ export async function getVisitFormOptions(
   lang: string
 ) {
   return api.get<ApiResponse>("/lawyer/visits/form-options/", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    lang
+  });
+}
+
+// Lawyer case documents API functions
+export async function getLawyerCaseDocuments(
+  token: string,
+  caseId: string,
+  lang: string
+) {
+  return api.get<ApiResponse>(`/lawyer/cases/${caseId}/documents/`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    lang
+  });
+}
+
+export async function uploadLawyerCaseDocument(
+  token: string,
+  caseId: string,
+  formData: FormData,
+  lang: string
+) {
+  return api.post<ApiResponse>(`/lawyer/cases/${caseId}/documents/upload/`, formData, {
     headers: {
       Authorization: `Bearer ${token}`
     },

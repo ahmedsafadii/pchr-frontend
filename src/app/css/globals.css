@@ -107,7 +107,7 @@ body {
   background: #f3e8ff;
   color: #7c3aed;
 }
-
+.case__status--awaiting_documents,
 .case__status--awaiting-documents,
 .case__status--cancelled {
   background: #fef2f2;
@@ -128,8 +128,18 @@ body {
   background: #f9fafb;
   color: #374151;
 }
-
+.case__status--enforced_disappearance,
 .case__status--enforced-disappearance {
   background: #fef2f2;
   color: #991b1b;
+}
+
+.case__status--detention_confirmed {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.case__status--under_review {
+  background: #f1f5f9;
+  color: #475569;
 }

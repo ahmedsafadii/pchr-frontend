@@ -12,7 +12,7 @@ interface CustomSelectProps {
   options?: any[]; // Can be Option[] or raw array of objects
   labelKey?: string; // Used when options are raw objects
   valueKey?: string; // Used when options are raw objects
-  value: string | number;
+  value: string | number | null; // Allow null for empty state
   onChange: (value: string) => void;
   placeholder?: string;
   includeNullOption?: boolean; // Prepend a null/empty option using placeholder
@@ -62,7 +62,10 @@ export default function CustomSelect({
     return mapped;
   }, [options, labelKey, valueKey, includeNullOption, placeholder]);
 
-  const selectedOption = normalizedOptions.find(option => option.value === String(value)) || null;
+  const selectedOption = useMemo(() => {
+    if (value === null || value === '') return null;
+    return normalizedOptions.find(option => option.value === String(value)) || null;
+  }, [value, normalizedOptions]);
   
   // Generate a stable instanceId to prevent hydration mismatches
   const stableInstanceId = useMemo(() => {

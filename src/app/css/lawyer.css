@@ -1922,6 +1922,11 @@
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.lawyer__start-case-btn:hover {
+  background: var(--neutral-800);
 }
 
 .lawyer__info-section {
@@ -2395,6 +2400,61 @@
   color: var(--neutral-900);
 }
 
+.lawyer__file-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lawyer__file-details {
+  font-size: 12px;
+  color: var(--neutral-600);
+  margin: 4px 0 0 0;
+}
+
+.lawyer__file-description {
+  font-size: 12px;
+  color: var(--neutral-500);
+  margin: 4px 0 0 0;
+  font-style: italic;
+}
+
+
+
+.lawyer__no-files {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--neutral-500);
+  font-style: italic;
+}
+
+.lawyer__files-loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--neutral-600);
+}
+
+.lawyer__files-error {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--error-600);
+}
+
+.lawyer__retry-btn {
+  background: var(--error-600);
+  color: var(--white);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: all 0.2s ease;
+}
+
+.lawyer__retry-btn:hover {
+  background: var(--error-700);
+}
+
 /* ==========================================================================
    Responsive Design
    ========================================================================== */
@@ -2861,9 +2921,309 @@ html[lang="ar"] .lawyer__dropdown-menu {
   cursor: not-allowed;
 }
 
+.modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 24px 0 24px;
+  border-bottom: 1px solid var(--neutral-200);
+  margin-bottom: 24px;
+}
+
+.modal__title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--neutral-900);
+  margin: 0;
+}
+
+.modal__close {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: var(--neutral-500);
+  transition: all 0.2s ease;
+}
+
+.modal__close:hover {
+  background: var(--neutral-100);
+  color: var(--neutral-700);
+}
+
+.modal__form {
+  padding: 0 24px 24px 24px;
+}
+
+.modal__field {
+  margin-bottom: 24px;
+}
+
+.modal__label {
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--neutral-700);
+  margin-bottom: 8px;
+}
+
+.modal__select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--neutral-300);
+  border-radius: 8px;
+  font-size: 16px;
+  color: var(--neutral-900);
+  background: white;
+  transition: border-color 0.2s ease;
+}
+
+.modal__select:focus {
+  outline: none;
+  border-color: var(--secondary-800);
+  box-shadow: 0 0 0 3px rgba(218, 147, 5, 0.1);
+}
+
+.modal__error {
+  background: var(--danger-50);
+  color: var(--danger-700);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid var(--danger-200);
+}
+
+.modal__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 32px;
+}
+
+.modal__btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal__btn--primary {
+  background: var(--neutral-900);
+  color: white;
+}
+
+.modal__btn--primary:hover:not(:disabled) {
+  background: var(--neutral-800);
+}
+
+.modal__btn--primary:disabled {
+  background: var(--neutral-400);
+  cursor: not-allowed;
+}
+
+.modal__btn--secondary {
+  background: var(--neutral-100);
+  color: var(--neutral-700);
+  border: 1px solid var(--neutral-300);
+}
+
+.modal__btn--secondary:hover:not(:disabled) {
+  background: var(--neutral-200);
+}
+
+/* Modal Input Styles */
+.modal__input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--neutral-300);
+  border-radius: 8px;
+  font-size: 16px;
+  color: var(--neutral-900);
+  background: white;
+  transition: border-color 0.2s ease;
+}
+
+.modal__input:focus {
+  outline: none;
+  border-color: var(--secondary-800);
+  box-shadow: 0 0 0 3px rgba(218, 147, 5, 0.1);
+}
+
+.modal__input::placeholder {
+  color: var(--neutral-500);
+}
+
+/* Modal Dropzone Styles */
+.modal__dropzone {
+  position: relative;
+  cursor: pointer;
+  background: #fafafa;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.modal__dropzone:hover {
+  border-color: var(--secondary-800);
+  background: #f8f8f8;
+}
+
+.modal__file-input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.modal__dropzone-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.modal__dropzone-label span {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+.modal__dropzone-label small {
+  font-size: 14px;
+  color: #666;
+}
+
+.modal__selected-file {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: var(--neutral-100);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--neutral-700);
+}
+
+.modal__selected-file small {
+  color: var(--neutral-500);
+}
+
 /* Profile Page Styles */
 .lawyer__profile {
   padding: 24px;
+}
+
+/* File Upload Styles for Modal - Matching step5 styling */
+.modal-uploader {
+  margin-bottom: 20px;
+}
+
+.modal-uploader .steps__dropzone {
+  cursor: pointer;
+  background: #fafafa;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  padding: 20px 70px;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.modal-uploader .steps__dropzone:hover {
+  border-color: #d2691e;
+  background: #f8f8f8;
+}
+
+.modal-uploader .steps__dropzone--active {
+  border-color: #d2691e;
+  background: #fff3e0;
+}
+
+.modal-uploader .steps__dropzone-icon {
+  color: #666;
+  position: absolute;
+  top: 28px;
+  left: 24px;
+  background: #fff;
+  box-shadow: 0 0 0 8px #fff;
+  border-radius: 4px;
+}
+
+.modal-uploader .steps__dropzone-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 5px 0;
+}
+
+.modal-uploader .steps__dropzone-hint {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+.modal-uploader .steps__uploaded-files {
+  margin-bottom: 20px;
+}
+
+.modal-uploader .steps__uploaded-file {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.modal-uploader .steps__file-name {
+  font-weight: 500;
+  color: #333;
+  flex: 1;
+}
+
+.modal-uploader .steps__file-size {
+  font-size: 12px;
+  color: #666;
+  margin: 0 15px;
+}
+
+.modal-uploader .steps__file-remove {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.modal-uploader .steps__file-remove:hover {
+  background: #ffe6e6;
 }
 
 /* .lawyer__profile-form has no styling - removed background, border-radius, padding, box-shadow */
