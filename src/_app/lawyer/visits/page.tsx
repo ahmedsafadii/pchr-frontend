@@ -202,8 +202,11 @@ function LawyerVisitsInner() {
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = () => {
-      setOpenDropdown(null);
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.lawyer__dropdown-container')) {
+        setOpenDropdown(null);
+      }
     };
 
     if (openDropdown) {
@@ -362,8 +365,8 @@ function LawyerVisitsInner() {
                   <th>{t("lawyer.visits.table.visitDate")}</th>
                   <th>{t("lawyer.visits.table.detaineeName")}</th>
                   <th>{t("lawyer.visits.table.prisonName")}</th>
-                  <th>{t("lawyer.visits.table.visitType")}</th>
-                  <th>{t("lawyer.visits.table.status")}</th>
+                  <th style={{ width: "180px" }}>{t("lawyer.visits.table.visitType")}</th>
+                  <th style={{ width: "80px" }}>{t("lawyer.visits.table.status")}</th>
                   <th style={{ width: "80px" }}>
                     {t("lawyer.visits.table.actions")}
                   </th>
@@ -405,7 +408,7 @@ function LawyerVisitsInner() {
                   visits.map((visit) => (
                     <React.Fragment key={visit.id}>
                       <tr className="lawyer__table-row">
-                        <td className="lawyer__table-cell lawyer__table-expand-cell">
+                        <td className="lawyer__table-cell lawyer__table-expand-cell" data-label="">
                           <button
                             className="lawyer__expand-button"
                             onClick={() => toggleRowExpansion(visit.id)}
@@ -422,7 +425,7 @@ function LawyerVisitsInner() {
                             )}
                           </button>
                         </td>
-                        <td className="lawyer__table-cell">
+                        <td className="lawyer__table-cell" data-label="Visit Date">
                           <div className="lawyer__visit-date-wrapper">
                             <span className="lawyer__visit-date">
                               {formatDate(visit.visit_date)}
@@ -440,24 +443,24 @@ function LawyerVisitsInner() {
                             )}
                           </div>
                         </td>
-                        <td className="lawyer__table-cell">
+                        <td className="lawyer__table-cell" data-label="Detainee">
                           <span className="lawyer__detainee-name">
                             {visit.detainee_name}
                           </span>
                         </td>
-                        <td className="lawyer__table-cell">
+                        <td className="lawyer__table-cell" data-label="Prison">
                           <span className="lawyer__prison-name">
                             {visit.prison_name}
                           </span>
                         </td>
-                        <td className="lawyer__table-cell">
+                        <td className="lawyer__table-cell" data-label="Type">
                           <span className="lawyer__visit-type">
                             {t(
                               `lawyer.visits.visitTypes.${visit.visit_type}` as any
                             ) || visit.visit_type}
                           </span>
                         </td>
-                        <td className="lawyer__table-cell">
+                        <td className="lawyer__table-cell" data-label="Status">
                           <span
                             className={`lawyer__status ${getStatusClass(
                               visit.status
@@ -466,7 +469,7 @@ function LawyerVisitsInner() {
                             {visit.status_display}
                           </span>
                         </td>
-                        <td className="lawyer__table-cell">
+                        <td className="lawyer__table-cell" data-label="Actions">
                           <div className="lawyer__visit-actions">
                             <div className="lawyer__dropdown-container">
                               <button
@@ -480,7 +483,10 @@ function LawyerVisitsInner() {
                               </button>
 
                               {openDropdown === visit.id && (
-                                <div className="lawyer__dropdown-menu">
+                                <div 
+                                  data-dropdown={visit.id}
+                                  className="lawyer__dropdown-menu"
+                                >
                                   {visit.status === "todo" ? (
                                     <>
                                       <button

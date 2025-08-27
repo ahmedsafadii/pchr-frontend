@@ -1247,39 +1247,20 @@
 
 .lawyer__table-wrapper {
   width: 100%;
-  overflow-x: auto;
   margin-bottom: 24px;
   border: 1px solid var(--neutral-100);
   border-radius: 8px;
   background: var(--white);
-}
-
-/* Custom scrollbar for table wrapper */
-.lawyer__table-wrapper::-webkit-scrollbar {
-  height: 8px;
-}
-
-.lawyer__table-wrapper::-webkit-scrollbar-track {
-  background: var(--neutral-50);
-  border-radius: 4px;
-}
-
-.lawyer__table-wrapper::-webkit-scrollbar-thumb {
-  background: var(--neutral-300);
-  border-radius: 4px;
-}
-
-.lawyer__table-wrapper::-webkit-scrollbar-thumb:hover {
-  background: var(--neutral-400);
+  position: relative; /* For dropdown positioning context */
 }
 
 .lawyer__table {
   width: 100%;
-  min-width: 800px; /* Minimum width to maintain readability */
   border-collapse: collapse;
   margin-bottom: 0;
   border: none;
   color: var(--neutral-800);
+  table-layout: auto; /* Allow natural column sizing */
 }
 
 .lawyer__table-header {
@@ -1312,142 +1293,366 @@
   background: var(--neutral-10);
 }
 
-/* Table responsive utilities */
-.lawyer__table-cell--nowrap {
-  white-space: nowrap;
+/* Actions column specific styling */
+.lawyer__table td:nth-child(7) {
+  position: relative;
+  text-align: center;
 }
 
-.lawyer__table-cell--ellipsis {
-  max-width: 200px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+/* Better dropdown positioning */
+.lawyer__dropdown-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
 }
 
-.lawyer__table-cell--priority {
-  min-width: 120px; /* Ensure important columns have minimum width */
-}
-
-.lawyer__case-number {
-  font-weight: 600;
-  color: var(--primary-700);
-}
-
-.lawyer__case-id-link {
-  font-weight: 600;
-  color: var(--primary-600);
-  text-decoration: none;
-  transition: color 0.2s ease;
-  display: inline-flex;
+.lawyer__dropdown-trigger {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  color: var(--neutral-600);
+  transition: all 0.2s ease;
 }
 
-.lawyer__case-id-link:hover {
-  color: var(--primary-700);
-  text-decoration: underline;
-}
-
-.lawyer__case-name {
-  font-weight: 600;
-  color: var(--neutral-900);
-}
-
-/* Status Classes */
-.lawyer__status {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.lawyer__status--pending {
-  background: #fef3c7;
-  color: #d97706;
-}
-.lawyer__status--approved {
-  background: var(--success-200);
-  color: var(--success-500);
-}
-
-.lawyer__status--review {
-  background: var(--info-200);
-  color: var(--info-500);
-}
-
-.lawyer__status--progress {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-.lawyer__status--completed {
-  background: #d1fae5;
-  color: #059669;
-}
-
-.lawyer__status--rejected {
-  background: var(--danger-200);
-  color: var(--danger-500);
-}
-
-.lawyer__status--confirmed {
-  background: #e0e7ff;
-  color: #3730a3;
-}
-
-.lawyer__status--deceased {
-  background: #f3e8ff;
-  color: #7c3aed;
-}
-
-.lawyer__status--awaiting {
-  background: #fef3c7;
-  color: #d97706;
-}
-
-.lawyer__status--released {
-  background: #d1fae5;
-  color: #059669;
-}
-
-.lawyer__status--disappearance {
-  background: #fecaca;
-  color: #dc2626;
-}
-
-.lawyer__status--default {
+.lawyer__dropdown-trigger:hover {
   background: var(--neutral-100);
   color: var(--neutral-800);
 }
 
-/* Urgent Filter */
-.lawyer__urgent-filter {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  user-select: none;
+.lawyer__dropdown-menu {
+  position: absolute;
+  top: 90%;
+  right: 0;
+  transform: none;
+  max-width: 90vw;
+  width: 180px;
+  z-index: 1001;
+  background: var(--white);
+  border: 1px solid var(--neutral-200);
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  padding: 8px 0;
+}
+
+/* Remove all complex positioning classes */
+.lawyer__dropdown-menu--upward,
+.lawyer__dropdown-menu--left-aligned,
+.lawyer__dropdown-menu--right-aligned {
+  /* No special positioning needed */
+}
+
+/* Responsive table adjustments */
+@media (max-width: 1024px) {
+  .lawyer__case-sidebar {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .lawyer__table {
+    display: flex;
+    flex-direction: column;
+    border: none;
+    background: transparent;
+  }
+
+  .lawyer__table-header {
+    display: none; /* Hide header on mobile */
+  }
+
+  .lawyer__table-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .lawyer__table-row {
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+    border: 1px solid var(--neutral-200);
+    border-radius: 12px;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .lawyer__table-cell {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    border: none;
+    gap: 4px;
+  }
+
+  /* Add labels for mobile table cells */
+  .lawyer__table-cell::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--neutral-600);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Specific mobile styling for different columns */
+  .lawyer__table-cell:nth-child(1)::before {
+    content: ""; /* No label for expand button */
+  }
+
+  .lawyer__table-cell:nth-child(2)::before {
+    content: "Visit Date";
+  }
+
+  .lawyer__table-cell:nth-child(3)::before {
+    content: "Detainee";
+  }
+
+  .lawyer__table-cell:nth-child(4)::before {
+    content: "Prison";
+  }
+
+  .lawyer__table-cell:nth-child(5)::before {
+    content: "Type";
+  }
+
+  .lawyer__table-cell:nth-child(6)::before {
+    content: "Status";
+  }
+
+  .lawyer__table-cell:nth-child(7)::before {
+    content: "Actions";
+  }
+
+  /* Mobile-specific cell layouts */
+  .lawyer__table-cell:nth-child(2) {
+    /* Visit date column */
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .lawyer__table-cell:nth-child(7) {
+    /* Actions column */
+    align-items: flex-end;
+    margin-top: 8px;
+  }
+
+  /* Mobile expand button styling */
+  .lawyer__expand-button {
+    align-self: flex-start;
+    margin-bottom: 8px;
+  }
+
+  /* Mobile status badge styling */
+  .lawyer__status {
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+
+  /* Mobile urgent badge styling */
+  .lawyer__case-urgent-badge {
+    align-self: flex-end;
+    margin-top: 4px;
+  }
+
+  /* Mobile visit date wrapper */
+  .lawyer__visit-date-wrapper,
+  .lawyer__visit-date-time {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .lawyer__visit-date {
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .lawyer__visit-time {
+    font-size: 14px;
+    color: var(--neutral-600);
+  }
+
+  /* Mobile detainee and prison names */
+  .lawyer__detainee-name,
+  .lawyer__prison-name {
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  /* Mobile visit type */
+  .lawyer__visit-type {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--neutral-700);
+  }
+
+  /* Better dropdown positioning for mobile */
+  .lawyer__dropdown-container {
+    position: relative;
+  }
+
+  .lawyer__dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    transform: none;
+    max-width: 90vw;
+    width: 280px;
+    z-index: 1001;
+    background: var(--white);
+    border: 1px solid var(--neutral-200);
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+  }
+
+  .lawyer__dropdown-menu--upward,
+  .lawyer__dropdown-menu--left-aligned,
+  .lawyer__dropdown-menu--right-aligned {
+    /* No special positioning needed */
+  }
+
+  .lawyer__dropdown-item {
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 0;
+  }
+
+  .lawyer__dropdown-item:first-child {
+    border-radius: 12px 12px 0 0;
+  }
+
+  .lawyer__dropdown-item:last-child {
+    border-radius: 0 0 12px 12px;
+  }
+}
+
+/* Mobile-first card layout for very small screens */
+@media (max-width: 640px) {
+  .lawyer__table-wrapper {
+    overflow-x: visible;
+    border: none;
+    background: transparent;
+  }
+
+  /* Show card layout instead */
+  .lawyer__visits-cards {
+    display: block;
+  }
+}
+
+/* Card layout for mobile */
+.lawyer__visits-cards {
+  display: none;
+  gap: 16px;
+}
+
+.lawyer__visit-card-date {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--neutral-900);
+  margin-bottom: 4px;
+}
+
+.lawyer__visit-card-time {
+  display: block;
   font-size: 14px;
+  color: var(--neutral-600);
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.lawyer__visit-card {
+  background: var(--white);
+  border: 1px solid var(--neutral-200);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.lawyer__visit-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.lawyer__visit-card-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.lawyer__visit-card-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.lawyer__visit-card-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lawyer__visit-card-label {
+  font-size: 11px;
+  color: var(--neutral-600);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.lawyer__visit-card-value {
+  font-size: 14px;
+  color: var(--neutral-900);
   font-weight: 500;
-  color: var(--neutral-700);
 }
 
-.lawyer__urgent-checkbox {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--primary-600);
+.lawyer__visit-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.lawyer__visit-card-action {
+  padding: 6px 12px;
+  border: 1px solid var(--primary-600);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--primary-600);
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.lawyer__urgent-icon {
-  color: var(--warning-500);
+.lawyer__visit-card-action:hover {
+  background: var(--primary-600);
+  color: white;
 }
 
+/* Show cards on mobile, hide table */
+@media (max-width: 640px) {
+  .lawyer__visits-cards {
+    display: block;
+  }
+}
 
+/* ==========================================================================
+   Error Display
+   ========================================================================== */
 
-/* Error Display */
 .lawyer__error {
   display: flex;
   align-items: center;
@@ -1521,8 +1726,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .lawyer__table-empty-content span {
@@ -2251,7 +2460,7 @@
     gap: 16px;
     align-items: stretch;
   }
-  
+
   .lawyer__header-right {
     gap: 4px;
   }
@@ -2286,11 +2495,6 @@
   /* Responsive table adjustments for mobile */
   .lawyer__table-wrapper {
     border-radius: 4px;
-  }
-
-  .lawyer__table {
-    font-size: 12px;
-    min-width: 600px; /* Reduced minimum width for mobile */
   }
 
   .lawyer__table-header-cell,
@@ -2413,46 +2617,11 @@ html[lang="ar"] .lawyer__search + .lawyer__filter {
   margin: 8px 0 0 0;
 }
 
-/* Dropdown Menu */
-.lawyer__dropdown-container {
-  position: relative;
-  display: inline-block;
-}
-
-.lawyer__dropdown-trigger {
-  background: none;
-  border: none;
-  padding: 8px;
-  cursor: pointer;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--neutral-600);
-  transition: all 0.2s ease;
-}
-
-.lawyer__dropdown-trigger:hover {
-  background: var(--neutral-100);
-  color: var(--neutral-800);
-}
-
-.lawyer__dropdown-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: white;
-  border: 1px solid var(--neutral-200);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  min-width: 150px;
-  padding: 4px 0;
-}
+/* Dropdown Menu - Responsive positioning handled in table styles above */
 
 .lawyer__dropdown-item {
   width: 100%;
-  padding: 12px 16px;
+  padding: 8px 16px;
   background: none;
   border: none;
   text-align: left;
@@ -3100,21 +3269,21 @@ html[lang="ar"] .lawyer__dropdown-menu {
     padding: 16px;
     margin: 4px;
   }
-  
+
   .lawyer__expanded-grid {
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  
+
   .lawyer__expanded-section h4 {
     font-size: 14px;
     margin-bottom: 12px;
   }
-  
+
   .lawyer__expanded-label {
     font-size: 11px;
   }
-  
+
   .lawyer__expanded-value {
     font-size: 13px;
   }
@@ -3130,14 +3299,211 @@ html[lang="ar"] .lawyer__dropdown-menu {
 /* Fixed column widths for last two columns only */
 .lawyer__table th:nth-child(4), /* Creation Date column */
 .lawyer__table td:nth-child(4) {
-  width: 140px;
-  min-width: 140px;
-  max-width: 140px;
+  width: 180px;
+  min-width: 180px;
+  max-width: 180px;
 }
 
 .lawyer__table th:nth-child(5), /* Status column */
 .lawyer__table td:nth-child(5) {
-  width: 140px;
-  min-width: 140px;
-  max-width: 140px;
+  width: 180px;
+  min-width: 180px;
+  max-width: 180px;
+}
+
+/* ==========================================================================
+   Status Classes
+   ========================================================================== */
+
+.lawyer__status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.lawyer__status--pending {
+  background: #fef3c7;
+  color: #d97706;
+}
+.lawyer__status--approved {
+  background: var(--success-200);
+  color: var(--success-500);
+}
+
+.lawyer__status--review {
+  background: var(--info-200);
+  color: var(--info-500);
+}
+
+.lawyer__status--progress {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.lawyer__status--completed {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.lawyer__status--cancelled {
+  background: var(--danger-200);
+  color: var(--danger-500);
+}
+
+.lawyer__status--rejected {
+  background: var(--danger-200);
+  color: var(--danger-500);
+}
+
+.lawyer__status--confirmed {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.lawyer__status--deceased {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+.lawyer__status--awaiting {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.lawyer__status--released {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.lawyer__status--disappearance {
+  background: #fecaca;
+  color: #dc2626;
+}
+
+.lawyer__status--default {
+  background: var(--neutral-100);
+  color: var(--neutral-800);
+}
+
+/* ==========================================================================
+   Case Styles
+   ========================================================================== */
+
+.lawyer__case-number {
+  font-weight: 600;
+  color: var(--primary-700);
+}
+
+.lawyer__case-id-link {
+  font-weight: 600;
+  color: var(--primary-600);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.lawyer__case-id-link:hover {
+  color: var(--primary-700);
+  text-decoration: underline;
+}
+
+.lawyer__case-name {
+  font-weight: 600;
+  color: var(--neutral-900);
+}
+
+/* ==========================================================================
+   Urgent Filter
+   ========================================================================== */
+
+.lawyer__urgent-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--neutral-700);
+}
+
+.lawyer__urgent-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-600);
+  cursor: pointer;
+}
+
+.lawyer__urgent-icon {
+  color: var(--warning-500);
+}
+
+/* Mobile-specific cell layouts */
+.lawyer__table-cell:nth-child(2) {
+  /* Visit date column */
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lawyer__table-cell:nth-child(7) {
+  /* Actions column */
+  align-items: flex-end;
+  margin-top: 8px;
+}
+
+/* Mobile expand button styling */
+.lawyer__expand-button {
+  align-self: flex-start;
+  margin-bottom: 8px;
+}
+
+/* Mobile status badge styling */
+.lawyer__status {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+/* Mobile urgent badge styling */
+.lawyer__case-urgent-badge {
+  align-self: flex-end;
+  margin-top: 4px;
+}
+
+/* Mobile visit date wrapper */
+.lawyer__visit-date-wrapper,
+.lawyer__visit-date-time {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.lawyer__visit-date {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.lawyer__visit-time {
+  font-size: 14px;
+  color: var(--neutral-600);
+}
+
+/* Mobile detainee and prison names */
+.lawyer__detainee-name,
+.lawyer__prison-name {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Mobile visit type */
+.lawyer__visit-type {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--neutral-700);
 }

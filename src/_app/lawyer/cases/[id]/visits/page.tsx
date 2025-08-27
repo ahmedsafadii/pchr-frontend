@@ -103,8 +103,6 @@ function LawyerCaseVisitsInner() {
   const [showRejectionModal, setShowRejectionModal] = useState(false);
   const [selectedVisitId, setSelectedVisitId] = useState<string | null>(null);
 
-
-
   // Fetch visits from API
   const fetchVisits = useCallback(async () => {
     if (!caseId) return;
@@ -174,7 +172,6 @@ function LawyerCaseVisitsInner() {
     console.log('Filter states updated:', { daysFilter, statusFilter });
   }, [daysFilter, statusFilter]);
 
-
   const handleApprove = (visitId: string) => {
     // Handle approve action - replace with actual API call
     console.log(`Approving visit ${visitId}`);
@@ -243,8 +240,11 @@ function LawyerCaseVisitsInner() {
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = () => {
-      setOpenDropdown(null);
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.lawyer__dropdown-container')) {
+        setOpenDropdown(null);
+      }
     };
 
     if (openDropdown) {
@@ -385,7 +385,7 @@ function LawyerCaseVisitsInner() {
                <th>{t("lawyer.visits.table.prisonName")}</th>
                <th>{t("lawyer.visits.table.visitType")}</th>
                <th>{t("lawyer.visits.table.status")}</th>
-               <th style={{ width: "100px" }}>
+               <th style={{ width: "60px" }}>
                  {t("lawyer.visits.table.actions")}
                </th>
              </tr>
@@ -394,7 +394,7 @@ function LawyerCaseVisitsInner() {
                          {visits.map((visit) => (
                <React.Fragment key={visit.id}>
                  <tr className="lawyer__table-row">
-                   <td className="lawyer__table-cell">
+                   <td className="lawyer__table-cell" data-label="">
                      <button
                        className="lawyer__expand-button"
                        onClick={() => toggleRowExpansion(visit.id)}
@@ -407,7 +407,7 @@ function LawyerCaseVisitsInner() {
                        )}
                      </button>
                    </td>
-                                      <td className="lawyer__table-cell">
+                   <td className="lawyer__table-cell" data-label="Visit Date">
                      <div className="lawyer__visit-date-time">
                        <span className="lawyer__visit-date">
                          {formatDate(visit.visit_date)}
@@ -419,22 +419,22 @@ function LawyerCaseVisitsInner() {
                        )}
                      </div>
                    </td>
-                  <td className="lawyer__table-cell">
-                    <span className="lawyer__prison-name">
-                      {visit.prison_name}
-                    </span>
-                  </td>
-                  <td className="lawyer__table-cell">
-                    <span className="lawyer__visit-type">
-                      {(t as any)(`lawyer.visits.visitTypes.${visit.visit_type}`) || visit.visit_type}
-                    </span>
-                  </td>
-                  <td className="lawyer__table-cell">
-                    <span className={`lawyer__status ${getStatusClass(visit.status)}`}>
-                      {visit.status_display}
-                    </span>
-                  </td>
-                  <td className="lawyer__table-cell">
+                   <td className="lawyer__table-cell" data-label="Prison">
+                     <span className="lawyer__prison-name">
+                       {visit.prison_name}
+                     </span>
+                   </td>
+                   <td className="lawyer__table-cell" data-label="Type">
+                     <span className="lawyer__visit-type">
+                       {(t as any)(`lawyer.visits.visitTypes.${visit.visit_type}`) || visit.visit_type}
+                     </span>
+                   </td>
+                   <td className="lawyer__table-cell" data-label="Status">
+                     <span className={`lawyer__status ${getStatusClass(visit.status)}`}>
+                       {visit.status_display}
+                     </span>
+                   </td>
+                   <td className="lawyer__table-cell" data-label="Actions">
                     <div className="lawyer__visit-actions">
                       <div className="lawyer__dropdown-container">
                         <button
@@ -448,7 +448,10 @@ function LawyerCaseVisitsInner() {
                         </button>
                         
                         {openDropdown === visit.id && (
-                          <div className="lawyer__dropdown-menu">
+                          <div 
+                            data-dropdown={visit.id}
+                            className="lawyer__dropdown-menu"
+                          >
                             {visit.status === "todo" ? (
                               <>
                                 <button
