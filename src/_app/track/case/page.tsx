@@ -31,6 +31,7 @@ interface DistrictData extends LocationData {
 }
 
 export interface CaseDetailsData {
+  id: string; // Internal GUID case ID
   case_number: string;
   detainee_name: string;
   detainee_id: string;
@@ -89,6 +90,67 @@ export interface CaseDocumentsData {
   message: string;
 }
 
+export interface CaseMessageData {
+  id: string;
+  case_info: {
+    id: string;
+    case_number: string;
+    detainee_name: string;
+    client_name: string;
+    client_phone: string;
+    status: string;
+    status_display: string;
+    assigned_lawyer_name: string;
+    created: string;
+  };
+  sender: string | null;
+  recipient: string | null;
+  content: string;
+  message_type: 'notification' | 'system' | 'lawyer' | 'client';
+  message_type_display: string;
+  is_read: boolean;
+  is_archived: boolean;
+  attachments: any[];
+  has_attachments: boolean;
+  created: string;
+  updated: string;
+  read_at: string | null;
+  read_by: string | null;
+  case_timeline: {
+    case_number: string;
+    detainee_name: string;
+    client_name: string;
+    status: string;
+    assigned_lawyer: string;
+    created_date: string;
+    visits_count: number;
+    documents_count: number;
+    messages_count: number;
+  };
+}
+
+export interface CaseMessagesResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: {
+    case_info: {
+      id: string;
+      case_number: string;
+      detainee_name: string;
+      client_name: string;
+      status: string;
+      assigned_lawyer: string;
+      created: string;
+      visits_count: number;
+      documents_count: number;
+      messages_count: number;
+    };
+    messages: CaseMessageData[];
+    can_client_reply: boolean;
+  };
+}
+
 export default function CaseDetailsPage() {
   const t = useTranslations();
   const locale = useLocale();
@@ -99,6 +161,7 @@ export default function CaseDetailsPage() {
   const [documentsData, setDocumentsData] = useState<CaseDocumentsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [trackAccessToken, setTrackAccessToken] = useState<string>("");
 
   useEffect(() => {
     const fetchCaseData = async () => {
@@ -128,6 +191,9 @@ export default function CaseDetailsPage() {
         setError(null);
         
         try {
+          // Set the token
+          setTrackAccessToken(token);
+          
           // Fetch case details and documents in parallel
           const [caseResponse, documentsResponse] = await Promise.all([
             getCaseDetails(token, locale),
@@ -248,7 +314,11 @@ export default function CaseDetailsPage() {
 
                 <div className="tabs__content">
                   {activeTab === "overview" ? (
-                    <Overview caseData={caseData} documentsData={documentsData} />
+                    <Overview 
+                      caseData={caseData} 
+                      documentsData={documentsData}
+                      caseTrackingToken={trackAccessToken}
+                    />
                   ) : (
                     <DisappearanceInfo caseData={caseData} documentsData={documentsData} />
                   )}

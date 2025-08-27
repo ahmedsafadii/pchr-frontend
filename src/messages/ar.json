@@ -271,6 +271,19 @@
       "readMore": "اقرأ المزيد",
       "status": { "underReview": "قيد المراجعة" }
     },
+    "chat": {
+      "loadMore": "تحميل المزيد من الرسائل",
+      "noMessages": "لا توجد رسائل بعد",
+      "systemMessage": "رسالة النظام",
+      "notification": "إشعار",
+      "lawyer": "المحامي",
+      "client": "العميل",
+      "unread": "غير مقروء",
+      "read": "مقروء",
+      "download": "تحميل",
+      "attachments": "المرفقات",
+      "noAttachments": "لا توجد مرفقات"
+    },
     "info": {
       "title": "معلومات تقرير الاختفاء",
       "caseInfo": "معلومات القضية",

@@ -2343,38 +2343,60 @@
   margin-top: 16px;
 }
 
+.lawyer__message-attachment svg {
+  color: var(--info-900);
+}
+.lawyer__message-attachment-name {
+  font-weight: 600;
+  color: var(--neutral-800);
+}
+
 .lawyer__message-attachment {
-  display: flex;
+  background: var(--white);
+  color: var(--primary-800);
+  border-radius: 8px;
+  padding: 12px;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  background: var(--white);
-  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.lawyer__message-attachment-size {
   font-size: 12px;
-  font-weight: 600;
-  color: var(--primary-800);
+  color: var(--neutral-600);
+  font-weight: 400;
+}
+
+.lawyer__message-attachment-download svg {
+  color: var(--primary-800) !important;
 }
 
 .lawyer__message-form {
   border-top: 1px solid var(--neutral-200);
   padding-top: 20px;
+  position: relative;
 }
 
 .lawyer__message-input {
   width: 100%;
-  min-height: 100px;
+  min-height: 80px;
   border: 1px solid var(--neutral-300);
   border-radius: 8px;
   padding: 16px;
   font-size: 14px;
   resize: vertical;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
+  padding-right: 60px;
 }
 
 .lawyer__message-toolbar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: self-start;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .lawyer__message-counter {
@@ -2383,13 +2405,14 @@
 }
 
 .lawyer__message-send {
-  background: var(--neutral-900);
-  color: var(--white);
+  background: var(--primary-900);
+  color: #fff;
   border: none;
-  padding: 12px 24px;
   border-radius: 8px;
-  font-weight: 600;
+  padding: 10px 16px;
   cursor: pointer;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* ==========================================================================
@@ -2510,8 +2533,6 @@
   margin: 4px 0 0 0;
   font-style: italic;
 }
-
-
 
 .lawyer__no-files {
   text-align: center;
@@ -4006,4 +4027,205 @@ html[lang="ar"] .lawyer__dropdown-menu {
   font-weight: 500;
   font-size: 14px;
   color: var(--neutral-700);
+}
+
+/* ==========================================================================
+   Lawyer Messages Load More Button
+   ========================================================================== */
+
+.lawyer__messages-load-more {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.lawyer__messages-load-more-btn {
+  background: var(--white);
+  color: var(--neutral-700);
+  border: 1px solid var(--neutral-300);
+  border-radius: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  width: 100%;
+  max-width: 100%;
+}
+
+.lawyer__messages-load-more-btn:hover:not(:disabled) {
+  background: var(--neutral-50);
+  border-color: var(--neutral-400);
+  color: var(--neutral-800);
+}
+
+.lawyer__messages-load-more-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--neutral-100);
+}
+
+/* ==========================================================================
+   Lawyer Message Type and Avatar Styles (copied from client)
+   ========================================================================== */
+
+.lawyer__message-type {
+  background: var(--primary-100);
+  color: var(--primary-800);
+  padding: 4px 0px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lawyer__message-type svg {
+  flex-shrink: 0;
+}
+
+.lawyer__message-lawyer-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  background: var(--primary-900);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.lawyer__message-lawyer-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-800);
+}
+
+.lawyer__message-lawyer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.lawyer__message-attach {
+  cursor: pointer;
+  background: var(--primary-900);
+  color: var(--white);
+  border-radius: 11px;
+  align-items: center;
+  padding: 6px 8px;
+  display: inline-flex;
+  position: absolute;
+  top: 37px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.lawyer__message-attach:hover:not(:disabled) {
+  background: var(--primary-800);
+  transform: translateY(-1px);
+}
+
+.lawyer__message-attach:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Uploaded files display */
+.lawyer__uploaded-files {
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lawyer__uploaded-file {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--neutral-50);
+  border: 1px solid var(--neutral-200);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.lawyer__uploaded-file-name {
+  font-weight: 500;
+  color: var(--neutral-800);
+  flex: 1;
+}
+
+.lawyer__uploaded-file-size {
+  color: var(--neutral-600);
+  font-size: 12px;
+}
+
+.lawyer__uploaded-file-remove {
+  background: var(--danger-100);
+  color: var(--danger-700);
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.lawyer__uploaded-file-remove:hover {
+  background: var(--danger-200);
+}
+
+/* ==========================================================================
+   Lawyer Message Toolbar (matching client chat__toolbar)
+   ========================================================================== */
+
+.lawyer__message-counter {
+  font-size: 12px;
+  color: var(--neutral-800);
+}
+
+.lawyer__message-send:hover:not(:disabled) {
+  background: var(--primary-800);
+  transform: translateY(-1px);
+}
+
+.lawyer__message-send:disabled {
+  cursor: not-allowed;
+}
+
+.lawyer__message-date {
+  font-size: 12px;
+  color: var(--neutral-600);
+}
+
+.lawyer__message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lawyer__messages-no-messages {
+  text-align: center;
+  color: var(--neutral-600);
+  font-style: italic;
+  padding: 32px 16px;
+  background: var(--white);
+  border: 1px solid var(--neutral-200);
+  border-radius: 8px;
+  margin: 16px 0;
 }

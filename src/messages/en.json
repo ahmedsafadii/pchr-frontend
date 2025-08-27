@@ -78,6 +78,19 @@
       "readMore": "Read More",
       "status": { "underReview": "Under Review" }
     },
+    "chat": {
+      "loadMore": "Load More Messages",
+      "noMessages": "No messages yet",
+      "systemMessage": "System Message",
+      "notification": "Notification",
+      "lawyer": "Lawyer",
+      "client": "Client",
+      "unread": "Unread",
+      "read": "Read",
+      "download": "Download",
+      "attachments": "Attachments",
+      "noAttachments": "No attachments"
+    },
     "info": {
       "title": "Disappearance Report Info.",
       "caseInfo": "Case Information",

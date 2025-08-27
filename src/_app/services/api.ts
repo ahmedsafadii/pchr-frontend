@@ -92,6 +92,56 @@ export async function fetchPublicConstants(lang: string) {
   return api.get<ApiResponse>("/public/constants/", { lang });
 }
 
+export async function getCaseMessages(caseId: string, caseTrackingToken: string, page: number = 1, pageSize: number = 20) {
+  // caseId should be the internal GUID case ID
+  return api.get<any>(`/public/cases/${caseId}/messages/?page=${page}&page_size=${pageSize}`, {
+    headers: {
+      Authorization: `Bearer ${caseTrackingToken}`
+    }
+  });
+}
+
+export async function uploadDocument(file: File) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('document_type', 'other');
+  
+  return api.post<any>('/public/documents/upload/', formData);
+}
+
+export async function sendMessage(caseId: string, content: string, attachmentIds: string[], caseTrackingToken: string) {
+  return api.post<any>('/public/messages/reply/', {
+    case: caseId,
+    content: content,
+    attachment_ids: attachmentIds
+  }, {
+    headers: {
+      Authorization: `Bearer ${caseTrackingToken}`
+    }
+  });
+}
+
+export async function getLawyerConversation(caseId: string, page: number = 1, pageSize: number = 20, accessToken: string) {
+  return api.get<any>(`/lawyer/cases/${caseId}/conversation/?page=${page}&page_size=${pageSize}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+}
+
+export async function sendLawyerMessage(caseId: string, content: string, messageType: string, attachmentIds: string[], accessToken: string) {
+  return api.post<any>('/lawyer/messages/send/', {
+    case: caseId,
+    content: content,
+    message_type: messageType,
+    attachment_ids: attachmentIds
+  }, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+}
+
 export async function uploadDocumentFile(documentTypeId: string, file: File, lang: string) {
   const formData = new FormData();
   // Some backends expect the type id under different keys; include common variants
