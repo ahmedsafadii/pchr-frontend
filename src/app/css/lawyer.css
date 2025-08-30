@@ -3961,6 +3961,13 @@ html[lang="ar"] .lawyer__expand-button {
   white-space: nowrap;
 }
 
+.lawyer__table-cell .lawyer__status {
+  margin: 0;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 /* ==========================================================================
    Case Styles
    ========================================================================== */

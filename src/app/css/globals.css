@@ -175,3 +175,7 @@ body {
 input::placeholder {
   color: var(--primary-800);
 }
+
+html[lang="ar"] .react-datepicker__day-name {
+  font-size: 10px;
+}

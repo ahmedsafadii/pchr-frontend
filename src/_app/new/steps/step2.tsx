@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import LocalizedDatePicker from "../../components/LocalizedDatePicker";
 import { CaseData } from "../page";
 import CustomSelect from "../../components/CustomSelect";
 import GazaAddressSelector from "../../components/GazaAddressSelector";
@@ -145,9 +144,9 @@ export default function Step2({
                 <span className="steps__required">*</span>
               </label>
               <div className="steps__input-wrapper">
-                <DatePicker
+                <LocalizedDatePicker
                   selected={formData.detention_date ? new Date(formData.detention_date) : null}
-                  onChange={(date) => {
+                  onChange={(date: Date | null) => {
                     const formattedDate = date
                       ? date.toISOString().split("T")[0]
                       : "";

@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-globe-gen";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import LocalizedDatePicker from "../LocalizedDatePicker";
 import CustomSelect from "../CustomSelect";
 import { IconX } from "@tabler/icons-react";
 import { getVisitFormOptions } from "@/_app/services/api";
@@ -263,9 +262,9 @@ export default function RequestVisitModal({ isOpen, onClose, onSubmit }: Request
               {t("lawyer.modals.requestVisit.visitDate")}
             </label>
             <div className="modal-date-picker-wrapper">
-              <DatePicker
+              <LocalizedDatePicker
                 selected={formData.visitDate}
-                onChange={(date) => {
+                onChange={(date: Date | null) => {
                   setFormData({ ...formData, visitDate: date });
                   if (hasFieldError('visit_date')) {
                     setFieldErrors(prev => ({ ...prev, visit_date: undefined }));

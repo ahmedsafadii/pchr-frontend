@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import LocalizedDatePicker from "../../components/LocalizedDatePicker";
 import { Tooltip } from "react-tooltip";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { CaseData } from "../page";
@@ -228,11 +227,11 @@ export default function Step1({
                 <span className="steps__required">*</span>
               </label>
               <div className="steps__input-wrapper">
-                <DatePicker
+                <LocalizedDatePicker
                   selected={
                     formData.detainee_date_of_birth ? new Date(formData.detainee_date_of_birth) : null
                   }
-                  onChange={(date) => {
+                  onChange={(date: Date | null) => {
                     const formattedDate = date
                       ? date.toISOString().split("T")[0]
                       : "";
