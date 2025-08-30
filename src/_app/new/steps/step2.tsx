@@ -97,6 +97,9 @@ export default function Step2({
         "newCase.step2.errors.disappearanceDateRequired"
       );
 
+    if (!formData.detention_location.trim())
+      newErrors.location = t("newCase.step2.errors.locationRequired");
+
     if (!formData.detention_city.trim())
       newErrors.city = t("newCase.step2.errors.cityRequired");
 
@@ -194,20 +197,24 @@ export default function Step2({
           </h3>
           <div className="steps__form-groups">
             <GazaAddressSelector
+              location={formData.detention_location}
               governorate={formData.detention_governorate}
               city={formData.detention_city}
               district={formData.detention_district}
+              onLocationChange={(value) => handleInputChange("detention_location", value)}
               onGovernorateChange={(value) =>
                 handleInputChange("detention_governorate", value)
               }
               onCityChange={(value) => handleInputChange("detention_city", value)}
               onDistrictChange={(value) => handleInputChange("detention_district", value)}
               errors={{
+                location: errors.location,
                 governorate: errors.governorate,
                 city: errors.city,
                 district: errors.district,
               }}
               required={{
+                location: true,
                 governorate: true,
                 city: true,
                 district: true,
@@ -215,7 +222,7 @@ export default function Step2({
               idPrefix="step2-location"
             />
 
-            <div className="steps__form-group">
+            <div className="steps__form-group steps__form-group--full-width">
               <label className="steps__label">
                 {t("newCase.address.streetName")}
               </label>

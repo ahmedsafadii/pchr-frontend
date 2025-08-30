@@ -301,6 +301,15 @@
   gap: 20px;
 }
 
+.steps__form-group--full-width {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.steps__form-group--full-width .steps__input {
+  width: 100%;
+}
+
 .steps__label {
   display: block;
   font-size: 14px;

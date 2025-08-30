@@ -15,7 +15,7 @@ interface CustomSelectProps {
   valueKey?: string; // Used when options are raw objects
   value: string | number | null; // Allow null for empty state
   onChange: (value: string) => void;
-  placeholder?: string;
+  placeholder?: string | undefined;
   includeNullOption?: boolean; // Prepend a null/empty option using placeholder
   isSearchable?: boolean;
   isMulti?: boolean;
@@ -32,7 +32,7 @@ export default function CustomSelect({
   valueKey = 'value',
   value,
   onChange,
-  placeholder = "Choose",
+  placeholder,
   includeNullOption = true,
   isSearchable = true,
   isMulti = false,
@@ -43,6 +43,7 @@ export default function CustomSelect({
   fullWidth = false,
 }: CustomSelectProps) {
   const t = useTranslations();
+  const finalPlaceholder = placeholder || t("common.choose");
   const selectRef = useRef<any>(null);
 
   const normalizedOptions: Option[] = useMemo(() => {
@@ -58,11 +59,12 @@ export default function CustomSelect({
     }).filter((opt: Option) => opt.label !== '');
 
     const hasNullOption = mapped.some((opt) => opt.value === '');
-    if (includeNullOption && !hasNullOption) {
-      return [{ value: '', label: placeholder }, ...mapped];
+    // Only add null option if placeholder is provided and includeNullOption is true
+    if (includeNullOption && placeholder && !hasNullOption) {
+      return [{ value: '', label: finalPlaceholder }, ...mapped];
     }
     return mapped;
-  }, [options, labelKey, valueKey, includeNullOption, placeholder]);
+  }, [options, labelKey, valueKey, includeNullOption, placeholder, finalPlaceholder]);
 
   const selectedOption = useMemo(() => {
     if (value === null || value === '') return null;
@@ -73,8 +75,8 @@ export default function CustomSelect({
   const stableInstanceId = useMemo(() => {
     if (instanceId) return instanceId;
     // Use a stable fallback ID
-    return `custom-select-${placeholder.replace(/\s+/g, '-').toLowerCase()}`;
-  }, [instanceId, placeholder]);
+    return `custom-select-${finalPlaceholder.replace(/\s+/g, '-').toLowerCase()}`;
+  }, [instanceId, finalPlaceholder]);
 
   // Calculate dynamic width based on the longest option (SSR-safe)
   const dynamicWidth = useMemo(() => {
@@ -217,7 +219,7 @@ export default function CustomSelect({
       options={normalizedOptions}
       value={selectedOption}
       onChange={handleChange}
-      placeholder={placeholder}
+      placeholder={finalPlaceholder}
       isSearchable={isSearchable}
       isMulti={isMulti}
       isDisabled={isDisabled}

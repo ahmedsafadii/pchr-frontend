@@ -126,6 +126,8 @@ export default function Step1({
 
     if (!formData.detainee_marital_status.trim()) newErrors.maritalStatus = t("newCase.step1.errors.maritalStatusRequired");
 
+    if (!formData.detainee_location.trim()) newErrors.location = t("newCase.step1.errors.locationRequired");
+
     if (!formData.detainee_city.trim()) newErrors.city = t("newCase.step1.errors.cityRequired");
 
     if (!formData.detainee_governorate.trim()) newErrors.governorate = t("newCase.step1.errors.governorateRequired");
@@ -322,18 +324,22 @@ export default function Step1({
           </h3>
           <div className="steps__form-groups">
             <GazaAddressSelector
+              location={formData.detainee_location}
               governorate={formData.detainee_governorate}
               city={formData.detainee_city}
               district={formData.detainee_district}
+              onLocationChange={(value) => handleInputChange("detainee_location", value)}
               onGovernorateChange={(value) => handleInputChange("detainee_governorate", value)}
               onCityChange={(value) => handleInputChange("detainee_city", value)}
               onDistrictChange={(value) => handleInputChange("detainee_district", value)}
               errors={{
+                location: errors.location,
                 governorate: errors.governorate,
                 city: errors.city,
                 district: errors.district,
               }}
               required={{
+                location: true,
                 governorate: true,
                 city: true,
                 district: true,
@@ -341,7 +347,7 @@ export default function Step1({
               idPrefix="step1-address"
             />
 
-            <div className="steps__form-group">
+            <div className="steps__form-group steps__form-group--full-width">
               <label className="steps__label">
                 {t("newCase.address.streetName")}
               </label>

@@ -161,6 +161,7 @@
         "dateOfBirthRequired": "Date of birth is required",
         "healthStatusRequired": "Health status is required",
         "maritalStatusRequired": "Marital status is required",
+        "locationRequired": "Location is required",
         "cityRequired": "City is required",
         "governorateRequired": "Governorate is required",
         "districtRequired": "District is required",
@@ -304,6 +305,7 @@
     },
     "address": {
       "title": "Address",
+      "location": "Location",
       "governorate": "Governorate",
       "city": "City",
       "district": "District",

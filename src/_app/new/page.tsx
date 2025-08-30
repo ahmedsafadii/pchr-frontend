@@ -30,6 +30,7 @@ export interface CaseData {
     detainee_job: string; // store job id
     detainee_health_status: string;
     detainee_marital_status: string;
+    detainee_location: string;
     detainee_city: string;
     detainee_governorate: string;
     detainee_district: string;
@@ -40,6 +41,7 @@ export interface CaseData {
   detentionInfo: {
     detention_date: string;
     disappearance_status: string;
+    detention_location: string;
     detention_city: string;
     detention_governorate: string;
     detention_district: string;
@@ -113,6 +115,7 @@ const initialCaseData: CaseData = {
     detainee_job: "",
     detainee_health_status: "",
     detainee_marital_status: "",
+    detainee_location: "gaza_strip",
     detainee_city: "",
     detainee_governorate: "",
     detainee_district: "",
@@ -120,6 +123,7 @@ const initialCaseData: CaseData = {
   },
   detentionInfo: {
     detention_date: "",
+    detention_location: "gaza_strip",
     disappearance_status: "",
     detention_city: "",
     detention_governorate: "",

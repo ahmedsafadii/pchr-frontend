@@ -100,9 +100,10 @@
         "dateOfBirthRequired": "تاريخ الميلاد مطلوب",
         "healthStatusRequired": "الحالة الصحية مطلوبة",
         "maritalStatusRequired": "الحالة الاجتماعية مطلوبة",
+        "locationRequired": "الموقع مطلوب",
         "cityRequired": "المدينة مطلوبة",
         "governorateRequired": "المحافظة مطلوبة",
-        "districtRequired": "المنطقة مطلوبة",
+        "districtRequired": "المنطقة مطلوب",
         "age18": "يجب أن يكون عمر المعتقل 18 سنة أو أكثر."
       }
     },
@@ -241,6 +242,7 @@
     },
     "address": {
       "title": "العنوان",
+      "location": "الموقع",
       "governorate": "المحافظة",
       "city": "المدينة",
       "district": "المنطقة",

@@ -6,18 +6,22 @@ import { useMemo, useRef, useEffect } from "react";
 import { useTranslations } from "next-globe-gen";
 
 interface GazaAddressSelectorProps {
+  location?: string; // Add location prop to specify which location's governorates to use
   governorate: string;
   city: string;
   district: string;
+  onLocationChange?: (location: string) => void; // Add callback for location changes
   onGovernorateChange: (governorate: string) => void;
   onCityChange: (city: string) => void;
   onDistrictChange: (district: string) => void;
   errors?: {
+    location?: string;
     governorate?: string;
     city?: string;
     district?: string;
   };
   required?: {
+    location?: boolean;
     governorate?: boolean;
     city?: boolean;
     district?: boolean;
@@ -26,9 +30,11 @@ interface GazaAddressSelectorProps {
 }
 
 export default function GazaAddressSelector({
+  location = "gaza_strip", // Default to Gaza Strip for backward compatibility
   governorate,
   city,
   district,
+  onLocationChange,
   onGovernorateChange,
   onCityChange,
   onDistrictChange,
@@ -39,8 +45,31 @@ export default function GazaAddressSelector({
   const t = useTranslations();
   const { constants, isLoading } = useConstantsStore();
 
-  const gazaStrip = constants?.data?.locations?.gaza_strip;
-  const governorates = useMemo(() => (gazaStrip?.governorates as any[]) || [], [gazaStrip]);
+  // Get the top-level locations from constants
+  const locations = useMemo(() => {
+    if (!constants?.data?.locations) return [];
+    
+    return Object.entries(constants.data.locations).map(([, locationData]: [string, any]) => ({
+      id: locationData.value,
+      name: locationData.name,
+      value: locationData.value
+    }));
+  }, [constants]);
+
+  // Set default to Gaza Strip if no location is selected
+  useEffect(() => {
+    if (!location && locations.length > 0) {
+      const gazaStrip = locations.find(loc => loc.value === 'gaza_strip');
+      if (gazaStrip && onLocationChange) {
+        onLocationChange(gazaStrip.value);
+      }
+    }
+  }, [location, locations, onLocationChange]);
+
+  // Get governorates from the specified location
+  const selectedLocation = constants?.data?.locations?.[location as keyof typeof constants.data.locations];
+  const governorates = useMemo(() => (selectedLocation?.governorates as any[]) || [], [selectedLocation]);
+  
   const selectedGovernorate = useMemo(
     () => governorates.find((g: any) => String(g.id) === String(governorate)),
     [governorates, governorate]
@@ -48,6 +77,17 @@ export default function GazaAddressSelector({
   const cities = useMemo(() => (selectedGovernorate?.cities as any[]) || [], [selectedGovernorate]);
   const selectedCity = useMemo(() => cities.find((c: any) => String(c.id) === String(city)), [cities, city]);
   const districts = useMemo(() => (selectedCity?.districts as any[]) || [], [selectedCity]);
+
+  // Reset dependent fields when location changes
+  const prevLocationRef = useRef(location);
+  useEffect(() => {
+    if (prevLocationRef.current !== location && prevLocationRef.current !== "") {
+      if (governorate) onGovernorateChange("");
+      if (city) onCityChange("");
+      if (district) onDistrictChange("");
+    }
+    prevLocationRef.current = location;
+  }, [location, governorate, city, district, onGovernorateChange, onCityChange, onDistrictChange]);
 
   // Reset dependent fields when parent changes
   const prevGovernorateRef = useRef(governorate);
@@ -71,6 +111,32 @@ export default function GazaAddressSelector({
 
   return (
     <>
+      {/* Location Selection */}
+      {onLocationChange && (
+        <div className="steps__form-group">
+          <label className="steps__label">
+            {t("newCase.address.location")} {required.location && <span className="steps__required">*</span>}
+          </label>
+          <CustomSelect
+            options={locations}
+            labelKey="name"
+            valueKey="value"
+            value={location}
+            onChange={(value) => {
+              // Prevent empty location selection
+              if (value && value.trim() !== "") {
+                onLocationChange(value);
+              }
+            }}
+            isError={!!errors.location}
+            isDisabled={isLoading}
+            instanceId={`${idPrefix}-location-select`}
+            fullWidth
+          />
+          {errors.location && <span className="steps__error">{errors.location}</span>}
+        </div>
+      )}
+
       {/* Governorate */}
       <div className="steps__form-group">
         <label className="steps__label">
