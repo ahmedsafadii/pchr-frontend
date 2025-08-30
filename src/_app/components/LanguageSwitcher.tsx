@@ -1,29 +1,35 @@
 "use client";
 
-import { Link, useRoute, useLocale } from "next-globe-gen";
-import { useParams } from "next/navigation";
+import { useLocale } from "next-globe-gen";
+import { usePathname } from "next/navigation";
 
-/**
- * If there is dynamic route segments in some of the application routes (i.e. "/images/[id]"),
- * the params provided by Next.js useParams function have to be passed as a prop to
- * Link components for language switching to work properly.
- */
 export default function LanguageSwitcher() {
-  const route = useRoute();
   const currentLocale = useLocale();
-  const params = useParams();
+  const pathname = usePathname();
+  
+  // Function to construct the URL for the other language
+  const getLanguageUrl = (targetLocale: string) => {
+    // Replace the first segment (language) with the target locale
+    const pathSegments = pathname.split('/');
+    if (pathSegments.length > 1) {
+      pathSegments[1] = targetLocale;
+      return pathSegments.join('/');
+    }
+    // Fallback if pathname is just "/"
+    return `/${targetLocale}`;
+  };
   
   return (
     <span>
       {currentLocale !== "en" && (
-        <Link href={route} locale="en" params={params as any}>
+        <a href={getLanguageUrl("en")}>
           English
-        </Link>
+        </a>
       )}
       {currentLocale !== "ar" && (
-        <Link href={route} locale="ar" params={params as any}>
+        <a href={getLanguageUrl("ar")}>
           عربي
-        </Link>
+        </a>
       )}
     </span>
   );
