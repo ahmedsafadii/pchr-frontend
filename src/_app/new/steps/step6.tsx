@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-globe-gen";
 import SignatureCanvas from "react-signature-canvas";
 import { submitCase, uploadDocumentFile } from "../../services/api";
+import { formatDateWithLocale } from "../../utils/dateUtils";
 import ConfirmSubmitModal from "../modals/ConfirmSubmitModal";
 import LoadingModal from "../modals/LoadingModal";
 import SuccessModal from "../modals/SuccessModal";
@@ -122,7 +123,7 @@ By signing this document, you acknowledge and agree to the following terms:
 5. You acknowledge that this report will be handled in accordance with international human rights standards.
 
 Case Reference: ${Date.now()}
-Date: ${new Date().toLocaleDateString()}
+Date: ${formatDateWithLocale(new Date(), locale)}
 
 This document is legally binding and constitutes your formal consent for legal action.`;
 
@@ -444,7 +445,7 @@ By signing this document, you acknowledge and agree to the following terms:
 5. You acknowledge that this report will be handled in accordance with international human rights standards.
 
 Case Reference: ${Date.now()}
-Date: ${new Date().toLocaleDateString()}
+Date: ${formatDateWithLocale(new Date(), locale)}
 
 This document is legally binding and constitutes your formal consent for legal action.`}
             />

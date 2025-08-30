@@ -10,6 +10,7 @@ import { IconFileText, IconCalendar, IconMessage, IconFiles } from "@tabler/icon
 import { useEffect, useState, useCallback } from "react";
 import { getLawyerCaseDetails } from "../../../utils/apiWithAuth";
 import { useLawyerAuth } from "../../../hooks/useLawyerAuth";
+import { formatDateWithLocale } from "../../../utils/dateUtils";
 
 interface CaseData {
   id: string;
@@ -100,22 +101,6 @@ function LawyerCaseLayoutInner({ children }: LawyerCaseLayoutProps) {
     }
   }, [isAuthenticated, caseId, fetchCaseDetails]);
 
-  const formatDateTime = (dateString: string) => {
-    if (!dateString) return '-';
-    try {
-      const date = new Date(dateString);
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const year = date.getFullYear();
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-      
-      return `${day}.${month}.${year} ${hours}:${minutes}`;
-    } catch {
-      return dateString;
-    }
-  };
-
   const isActiveRoute = (route: string) => {
     if (route === 'details') {
       return pathname === `/${locale}/lawyer/cases/${caseId}`;
@@ -190,7 +175,7 @@ function LawyerCaseLayoutInner({ children }: LawyerCaseLayoutProps) {
                 {t("lawyer.caseDetails.casePrefix")}: {caseData.detainee_name}
               </h1>
               <p className="lawyer__case-last-update">
-                {t("lawyer.caseDetails.lastUpdate")}: {formatDateTime(caseData.updated)}
+                {t("lawyer.caseDetails.lastUpdate")}: {formatDateWithLocale(caseData.updated, locale)}
               </p>
             </div>
             

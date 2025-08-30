@@ -601,22 +601,23 @@
   gap: 32px;
   flex: 2;
   min-width: 600px;
+  justify-content: space-between;
 }
 
-.lawyer__case-detail {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
+.lawyer__case-detail:first-child {
+  min-width: 200px;
 }
 
 .lawyer__case-detail-label {
   font-size: 12px;
   color: var(--neutral-400);
   text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
 }
 
 .lawyer__case-detail-value {
+  padding: 4px 0;
   font-size: 12px;
 }
 
@@ -684,11 +685,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  padding: 4px 8px;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 /* Header Layout */
@@ -1198,6 +1200,106 @@
   font-size: 12px;
 }
 
+/* RTL Support for Arabic Calendar */
+html[lang="ar"] .react-calendar__navigation {
+  flex-direction: row-reverse;
+}
+
+html[lang="ar"] .react-calendar__navigation__label {
+  text-align: right;
+}
+
+html[lang="ar"] .react-calendar__navigation__arrow {
+  transform: scaleX(-1);
+}
+
+html[lang="ar"] .react-calendar__month-view__weekdays {
+  direction: rtl;
+}
+
+html[lang="ar"] .react-calendar__month-view__weekdays__weekday {
+  text-align: center;
+}
+
+html[lang="ar"] .react-calendar__tile {
+  text-align: center;
+}
+
+/* Arabic-specific calendar styling */
+html[lang="ar"] .react-calendar {
+  direction: rtl;
+}
+
+/* Arabic calendar month/year formatting */
+html[lang="ar"] .react-calendar__navigation__label {
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Arabic calendar weekday headers */
+html[lang="ar"] .react-calendar__month-view__weekdays__weekday {
+  font-weight: 600;
+  color: var(--neutral-600);
+}
+
+/* Arabic calendar tile styling */
+html[lang="ar"] .react-calendar__tile {
+  font-family: "IBM Plex Sans Arabic", "IBM Plex Sans Arabic Fallback", sans-serif;
+}
+
+/* Arabic calendar navigation buttons */
+html[lang="ar"] .react-calendar__navigation button {
+  font-family: "IBM Plex Sans Arabic", "IBM Plex Sans Arabic Fallback", sans-serif;
+  font-weight: 600;
+}
+
+/* Arabic calendar navigation label */
+html[lang="ar"] .react-calendar__navigation__label {
+  font-family: "IBM Plex Sans Arabic", "IBM Plex Sans Arabic Fallback", sans-serif;
+}
+
+/* Default navigation icons styling */
+.react-calendar__navigation button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  color: var(--neutral-900);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.react-calendar__navigation button:hover {
+  background: var(--neutral-100);
+}
+
+.react-calendar__navigation button:active {
+  background: var(--neutral-200);
+}
+
+.react-calendar__navigation button:focus {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+/* Navigation icon sizing */
+.react-calendar__navigation button svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* Arabic navigation icon adjustments */
+html[lang="ar"] .react-calendar__navigation button svg {
+  transform: scaleX(-1); /* Flip icons horizontally for RTL */
+}
+
 .lawyer__calendar-legend-item {
   display: flex;
   align-items: center;
@@ -1264,6 +1366,10 @@
   font-weight: 500;
 }
 
+html[lang="ar"] .lawyer__search-input {
+  padding: 10px 44px 10px 16px;
+}
+
 .lawyer__search-input:focus {
   outline: none;
   border-color: var(--secondary-800);
@@ -1276,6 +1382,15 @@
   top: 50%;
   transform: translateY(-50%);
   color: var(--neutral-500);
+}
+
+html[lang="ar"] .lawyer__search-icon {
+  right: 16px;
+  left: auto;
+}
+
+html[lang="ar"] .lawyer__search-input::placeholder {
+  text-align: right;
 }
 
 .lawyer__filter {
@@ -1365,6 +1480,9 @@
   padding: 16px;
   text-align: left;
 }
+html[lang="ar"] .lawyer__table-header th {
+  text-align: right;
+}
 
 .lawyer__table-header-cell {
   padding: 16px;
@@ -1431,13 +1549,6 @@
   border-radius: 12px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   padding: 8px 0;
-}
-
-/* Remove all complex positioning classes */
-.lawyer__dropdown-menu--upward,
-.lawyer__dropdown-menu--left-aligned,
-.lawyer__dropdown-menu--right-aligned {
-  /* No special positioning needed */
 }
 
 /* Responsive table adjustments */
@@ -1539,13 +1650,12 @@
   /* Mobile expand button styling */
   .lawyer__expand-button {
     align-self: flex-start;
-    margin-bottom: 8px;
   }
-
   /* Mobile status badge styling */
   .lawyer__status {
     align-self: flex-start;
     margin-top: 4px;
+    white-space: nowrap;
   }
 
   /* Mobile urgent badge styling */
@@ -1600,12 +1710,6 @@
     border-radius: 12px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     padding: 8px 0;
-  }
-
-  .lawyer__dropdown-menu--upward,
-  .lawyer__dropdown-menu--left-aligned,
-  .lawyer__dropdown-menu--right-aligned {
-    /* No special positioning needed */
   }
 
   .lawyer__dropdown-item {
@@ -1929,7 +2033,7 @@
 .lawyer__case-title {
   font-size: 20px;
   font-weight: 700;
-  margin: 0 0 4px 0;
+  margin: 0 0 8px 0;
   color: var(--neutral-900);
 }
 
@@ -1972,9 +2076,11 @@
   color: var(--neutral-900);
 }
 
-.lawyer__case-nav-item--active {
-  background: var(--primary-900);
-  color: var(--white);
+.lawyer__case-nav-item--active,
+.lawyer__case-nav-item--active:hover,
+.lawyer__case-nav-item--active:active {
+  background: var(--primary-900) !important;
+  color: var(--white) !important;
 }
 
 .lawyer__case-nav-icon {
@@ -3716,6 +3822,10 @@ html[lang="ar"] .lawyer__dropdown-menu {
   justify-content: center;
 }
 
+html[lang="ar"] .lawyer__expand-button {
+  transform: scaleX(-1);
+}
+
 .lawyer__expand-button:hover {
   background: var(--neutral-100);
   color: var(--neutral-800);
@@ -3827,9 +3937,9 @@ html[lang="ar"] .lawyer__dropdown-menu {
 
 .lawyer__table th:nth-child(5), /* Status column */
 .lawyer__table td:nth-child(5) {
-  width: 180px;
-  min-width: 180px;
-  max-width: 180px;
+  width: 220px;
+  min-width: 220px;
+  max-width: 220px;
 }
 
 /* ==========================================================================
@@ -3844,75 +3954,7 @@ html[lang="ar"] .lawyer__dropdown-menu {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-}
-
-.lawyer__status--pending {
-  background: #fef3c7;
-  color: #d97706;
-}
-.lawyer__status--approved {
-  background: var(--success-200);
-  color: var(--success-500);
-}
-
-.lawyer__status--review {
-  background: var(--info-200);
-  color: var(--info-500);
-}
-
-.lawyer__status--progress {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-.lawyer__status--completed {
-  background: #d1fae5;
-  color: #059669;
-}
-
-.lawyer__status--done {
-  background: #d1fae5;
-  color: #059669;
-}
-
-.lawyer__status--cancelled {
-  background: var(--danger-200);
-  color: var(--danger-500);
-}
-
-.lawyer__status--rejected {
-  background: var(--danger-200);
-  color: var(--danger-500);
-}
-
-.lawyer__status--confirmed {
-  background: #e0e7ff;
-  color: #3730a3;
-}
-
-.lawyer__status--deceased {
-  background: #f3e8ff;
-  color: #7c3aed;
-}
-
-.lawyer__status--awaiting {
-  background: #fef3c7;
-  color: #d97706;
-}
-
-.lawyer__status--released {
-  background: #d1fae5;
-  color: #059669;
-}
-
-.lawyer__status--disappearance {
-  background: #fecaca;
-  color: #dc2626;
-}
-
-.lawyer__status--default {
-  background: var(--neutral-100);
-  color: var(--neutral-800);
+  white-space: nowrap;
 }
 
 /* ==========================================================================
@@ -3986,7 +4028,6 @@ html[lang="ar"] .lawyer__dropdown-menu {
 /* Mobile expand button styling */
 .lawyer__expand-button {
   align-self: flex-start;
-  margin-bottom: 8px;
 }
 
 /* Mobile status badge styling */

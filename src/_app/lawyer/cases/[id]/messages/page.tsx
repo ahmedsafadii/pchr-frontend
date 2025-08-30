@@ -1,14 +1,25 @@
 "use client";
 
-import { useTranslations } from "next-globe-gen";
+import { useTranslations, useLocale } from "next-globe-gen";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
-import { IconFile, IconDownload, IconFileText, IconPaperclip, IconBell, IconSettings, IconUser } from "@tabler/icons-react";
+import {
+  IconFile,
+  IconDownload,
+  IconFileText,
+  IconPaperclip,
+  IconBell,
+  IconSettings,
+  IconUser,
+} from "@tabler/icons-react";
 import toast from "react-hot-toast";
-import { getLawyerConversation, sendLawyerMessage, uploadDocument } from "@/_app/services/api";
+import {
+  getLawyerConversation,
+  sendLawyerMessage,
+  uploadDocument,
+} from "@/_app/services/api";
 import { LawyerAuth } from "@/_app/utils/auth";
-
-
+import { formatDateWithLocale } from "../../../../utils/dateUtils";
 
 interface LawyerMessageData {
   id: string;
@@ -36,7 +47,7 @@ interface LawyerMessageData {
     role: string;
   } | null;
   content: string;
-  message_type: 'notification' | 'system' | 'lawyer' | 'client';
+  message_type: "notification" | "system" | "lawyer" | "client";
   message_type_display: string;
   is_read: boolean;
   is_archived: boolean;
@@ -70,12 +81,15 @@ interface LawyerMessageData {
 export default function LawyerCaseMessagesPage() {
   const t = useTranslations();
   const params = useParams();
+  const locale = useLocale();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<LawyerMessageData[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [uploadedFiles, setUploadedFiles] = useState<Array<{id: string, fileName: string, fileSize: number}>>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<
+    Array<{ id: string; fileName: string; fileSize: number }>
+  >([]);
   const [uploading, setUploading] = useState(false);
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -98,46 +112,61 @@ export default function LawyerCaseMessagesPage() {
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      messagesEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
     }
-    const messagesContainer = document.querySelector('.lawyer__messages-list');
+    const messagesContainer = document.querySelector(".lawyer__messages-list");
     if (messagesContainer) {
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
   };
 
-  const loadMessages = useCallback(async (page: number = 1) => {
-    if (loadingRef.current) return;
-    
-    const accessToken = LawyerAuth.getAccessToken();
-    if (!accessToken) {
-      toast.error('Authentication required. Please login again.');
-      return;
-    }
-    
-    loadingRef.current = true;
-    setLoading(true);
-    try {
-      const response = await getLawyerConversation(caseId, page, PAGE_SIZE, accessToken);
-      const newMessages = response.results.messages;
-      
-      if (page === 1) {
-        setMessages(newMessages);
-      } else {
-        setMessages(prev => [...newMessages, ...prev]);
+  const loadMessages = useCallback(
+    async (page: number = 1) => {
+      if (loadingRef.current) return;
+
+      const accessToken = LawyerAuth.getAccessToken();
+      if (!accessToken) {
+        toast.error("Authentication required. Please login again.");
+        return;
       }
-      
-      setHasMore(!!response.next);
-      setCurrentPage(page);
-    } catch (error: any) {
-      console.error('Failed to load messages:', error);
-      const errorMessage = error.payload?.error?.message || error.payload?.message || error.message || 'Failed to load messages. Please try again.';
-      toast.error(errorMessage);
-    } finally {
-      loadingRef.current = false;
-      setLoading(false);
-    }
-  }, [caseId]);
+
+      loadingRef.current = true;
+      setLoading(true);
+      try {
+        const response = await getLawyerConversation(
+          caseId,
+          page,
+          PAGE_SIZE,
+          accessToken
+        );
+        const newMessages = response.results.messages;
+
+        if (page === 1) {
+          setMessages(newMessages);
+        } else {
+          setMessages((prev) => [...newMessages, ...prev]);
+        }
+
+        setHasMore(!!response.next);
+        setCurrentPage(page);
+      } catch (error: any) {
+        console.error("Failed to load messages:", error);
+        const errorMessage =
+          error.payload?.error?.message ||
+          error.payload?.message ||
+          error.message ||
+          "Failed to load messages. Please try again.";
+        toast.error(errorMessage);
+      } finally {
+        loadingRef.current = false;
+        setLoading(false);
+      }
+    },
+    [caseId]
+  );
 
   const loadMoreMessages = () => {
     if (hasMore && !loading) {
@@ -152,30 +181,15 @@ export default function LawyerCaseMessagesPage() {
     }
   }, [caseId, loadMessages]);
 
-  const formatMessageDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const dateStr = date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    });
-    const timeStr = date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-    return `${dateStr} ${timeStr}`;
-  };
-
   const getMessageTypeLabel = (messageType: string) => {
     switch (messageType) {
-      case 'system':
+      case "system":
         return t("trackCase.chat.systemMessage");
-      case 'notification':
+      case "notification":
         return t("trackCase.chat.notification");
-      case 'lawyer':
+      case "lawyer":
         return t("trackCase.chat.lawyer");
-      case 'client':
+      case "client":
         return t("trackCase.chat.client");
       default:
         return messageType;
@@ -184,13 +198,13 @@ export default function LawyerCaseMessagesPage() {
 
   const getMessageTypeIcon = (messageType: string) => {
     switch (messageType) {
-      case 'system':
+      case "system":
         return <IconSettings size={16} />;
-      case 'notification':
+      case "notification":
         return <IconBell size={16} />;
-      case 'lawyer':
+      case "lawyer":
         return <IconUser size={16} />;
-      case 'client':
+      case "client":
         return <IconUser size={16} />;
       default:
         return <IconFile size={16} />;
@@ -201,21 +215,28 @@ export default function LawyerCaseMessagesPage() {
     setUploading(true);
     try {
       const response = await uploadDocument(file);
-      if (response.status === 'success') {
+      if (response.status === "success") {
         const newFile = {
           id: response.data.document_id,
           fileName: response.data.file_name,
-          fileSize: response.data.file_size_mb
+          fileSize: response.data.file_size_mb,
         };
-        setUploadedFiles(prev => [...prev, newFile]);
-        toast.success('File uploaded successfully!');
+        setUploadedFiles((prev) => [...prev, newFile]);
+        toast.success("File uploaded successfully!");
       } else {
-        const errorMessage = response.error?.message || response.message || 'Failed to upload file';
+        const errorMessage =
+          response.error?.message ||
+          response.message ||
+          "Failed to upload file";
         toast.error(errorMessage);
       }
     } catch (error: any) {
-      console.error('Failed to upload file:', error);
-      const errorMessage = error.payload?.error?.message || error.payload?.message || error.message || 'Failed to upload file. Please try again.';
+      console.error("Failed to upload file:", error);
+      const errorMessage =
+        error.payload?.error?.message ||
+        error.payload?.message ||
+        error.message ||
+        "Failed to upload file. Please try again.";
       toast.error(errorMessage);
     } finally {
       setUploading(false);
@@ -223,7 +244,7 @@ export default function LawyerCaseMessagesPage() {
   };
 
   const removeFile = (fileId: string) => {
-    setUploadedFiles(prev => prev.filter(file => file.id !== fileId));
+    setUploadedFiles((prev) => prev.filter((file) => file.id !== fileId));
   };
 
   const handleSendMessage = async () => {
@@ -231,29 +252,33 @@ export default function LawyerCaseMessagesPage() {
 
     const accessToken = LawyerAuth.getAccessToken();
     if (!accessToken) {
-      toast.error('Authentication required. Please login again.');
+      toast.error("Authentication required. Please login again.");
       return;
     }
 
     setSending(true);
     try {
-      const attachmentIds = uploadedFiles.map(file => file.id);
+      const attachmentIds = uploadedFiles.map((file) => file.id);
       await sendLawyerMessage(
         caseId,
         message.trim(),
-        'lawyer',
+        "lawyer",
         attachmentIds,
         accessToken
       );
-      
+
       // Clear form and refresh messages
-      setMessage('');
+      setMessage("");
       setUploadedFiles([]);
       await loadMessages(); // Refresh messages
-      toast.success('Message sent successfully!');
+      toast.success("Message sent successfully!");
     } catch (error: any) {
-      console.error('Failed to send message:', error);
-      const errorMessage = error.payload?.error?.message || error.payload?.message || error.message || 'Failed to send message. Please try again.';
+      console.error("Failed to send message:", error);
+      const errorMessage =
+        error.payload?.error?.message ||
+        error.payload?.message ||
+        error.message ||
+        "Failed to send message. Please try again.";
       toast.error(errorMessage);
     } finally {
       setSending(false);
@@ -265,18 +290,16 @@ export default function LawyerCaseMessagesPage() {
       {/* Header - Client Avatar */}
       <div className="lawyer__messages-header">
         <div className="lawyer__messages-avatar">
-          {messages.length > 0 && messages[0].case_info.client_name 
+          {messages.length > 0 && messages[0].case_info.client_name
             ? messages[0].case_info.client_name.substring(0, 2).toUpperCase()
-            : 'CL'
-          }
+            : "CL"}
         </div>
         <div className="lawyer__messages-info">
           <div className="lawyer__messages-role">Client</div>
           <h1 className="lawyer__messages-name">
-            {messages.length > 0 && messages[0].case_info.client_name 
+            {messages.length > 0 && messages[0].case_info.client_name
               ? messages[0].case_info.client_name
-              : 'Client'
-            }
+              : "Client"}
           </h1>
         </div>
       </div>
@@ -286,8 +309,8 @@ export default function LawyerCaseMessagesPage() {
         {/* Load more button */}
         {hasMore && (
           <div className="lawyer__messages-load-more">
-            <button 
-              className="lawyer__messages-load-more-btn" 
+            <button
+              className="lawyer__messages-load-more-btn"
               onClick={loadMoreMessages}
               disabled={loading}
             >
@@ -306,22 +329,28 @@ export default function LawyerCaseMessagesPage() {
             <div key={msg.id} className="lawyer__message">
               {/* Message Header */}
               <div className="lawyer__message-header">
-                {msg.message_type === 'lawyer' ? (
+                {msg.message_type === "lawyer" ? (
                   <div className="lawyer__message-lawyer">
                     <div className="lawyer__message-lawyer-avatar">
-                      {msg.sender?.full_name ? msg.sender.full_name.substring(0, 2).toUpperCase() : 'LA'}
+                      {msg.sender?.full_name
+                        ? msg.sender.full_name.substring(0, 2).toUpperCase()
+                        : "LA"}
                     </div>
                     <span className="lawyer__message-lawyer-name">
-                      {msg.sender?.full_name || 'Lawyer'}
+                      {msg.sender?.full_name || "Lawyer"}
                     </span>
                   </div>
-                ) : msg.message_type === 'client' ? (
+                ) : msg.message_type === "client" ? (
                   <div className="lawyer__message-lawyer">
                     <div className="lawyer__message-lawyer-avatar">
-                      {msg.case_info.client_name ? msg.case_info.client_name.substring(0, 2).toUpperCase() : 'CL'}
+                      {msg.case_info.client_name
+                        ? msg.case_info.client_name
+                            .substring(0, 2)
+                            .toUpperCase()
+                        : "CL"}
                     </div>
                     <span className="lawyer__message-lawyer-name">
-                      {msg.case_info.client_name || 'Client'}
+                      {msg.case_info.client_name || "Client"}
                     </span>
                   </div>
                 ) : (
@@ -333,53 +362,69 @@ export default function LawyerCaseMessagesPage() {
 
                 {/* Message Date */}
                 <div className="lawyer__message-date">
-                  {formatMessageDate(msg.created)}
+                  {formatDateWithLocale(msg.created, locale)}
                 </div>
               </div>
 
               {/* Message Content */}
               <div className="lawyer__message-content">
                 <p className="lawyer__message-text">{msg.content}</p>
-                
+
                 {/* Attachments */}
-                {msg.has_attachments && msg.attachments && msg.attachments.length > 0 && (
-                  <div className="lawyer__message-attachments">
-                    {msg.attachments.map((attachment, index) => {
-                      const downloadUrl = attachment.file_url;
-                      const fileName = attachment.file_name || `Attachment ${index + 1}`;
-                      const fileSize = attachment.file_size_formatted || '';
-                      
-                      return (
-                        <div key={index} className="lawyer__message-attachment">
-                          <IconFileText size={18} />
-                          <span className="lawyer__message-attachment-name">{fileName}</span>
-                          {fileSize && <span className="lawyer__message-attachment-size">({fileSize})</span>}
-                          {downloadUrl && (
-                            <button
-                              className="lawyer__message-attachment-download"
-                              aria-label="download"
-                              onClick={() => {
-                                try {
-                                  window.open(downloadUrl, '_blank', 'noopener,noreferrer');
-                                } catch {
-                                  const link = document.createElement('a');
-                                  link.href = downloadUrl;
-                                  link.download = fileName;
-                                  link.target = '_blank';
-                                  document.body.appendChild(link);
-                                  link.click();
-                                  document.body.removeChild(link);
-                                }
-                              }}
-                            >
-                              <IconDownload size={18} />
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+                {msg.has_attachments &&
+                  msg.attachments &&
+                  msg.attachments.length > 0 && (
+                    <div className="lawyer__message-attachments">
+                      {msg.attachments.map((attachment, index) => {
+                        const downloadUrl = attachment.file_url;
+                        const fileName =
+                          attachment.file_name || `Attachment ${index + 1}`;
+                        const fileSize = attachment.file_size_formatted || "";
+
+                        return (
+                          <div
+                            key={index}
+                            className="lawyer__message-attachment"
+                          >
+                            <IconFileText size={18} />
+                            <span className="lawyer__message-attachment-name">
+                              {fileName}
+                            </span>
+                            {fileSize && (
+                              <span className="lawyer__message-attachment-size">
+                                ({fileSize})
+                              </span>
+                            )}
+                            {downloadUrl && (
+                              <button
+                                className="lawyer__message-attachment-download"
+                                aria-label="download"
+                                onClick={() => {
+                                  try {
+                                    window.open(
+                                      downloadUrl,
+                                      "_blank",
+                                      "noopener,noreferrer"
+                                    );
+                                  } catch {
+                                    const link = document.createElement("a");
+                                    link.href = downloadUrl;
+                                    link.download = fileName;
+                                    link.target = "_blank";
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                  }
+                                }}
+                              >
+                                <IconDownload size={18} />
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
               </div>
             </div>
           ))
@@ -387,9 +432,7 @@ export default function LawyerCaseMessagesPage() {
 
         {/* Loading indicator */}
         {loading && (
-          <div className="lawyer__messages-loading">
-            Loading messages...
-          </div>
+          <div className="lawyer__messages-loading">Loading messages...</div>
         )}
 
         {/* Scroll to bottom reference */}
@@ -405,15 +448,19 @@ export default function LawyerCaseMessagesPage() {
           onChange={(e) => setMessage(e.target.value.slice(0, maxLength))}
           maxLength={maxLength}
         />
-        
+
         {/* Uploaded files display */}
         {uploadedFiles.length > 0 && (
           <div className="lawyer__uploaded-files">
             {uploadedFiles.map((file) => (
               <div key={file.id} className="lawyer__uploaded-file">
                 <IconFileText size={16} />
-                <span className="lawyer__uploaded-file-name">{file.fileName}</span>
-                <span className="lawyer__uploaded-file-size">({file.fileSize}MB)</span>
+                <span className="lawyer__uploaded-file-name">
+                  {file.fileName}
+                </span>
+                <span className="lawyer__uploaded-file-size">
+                  ({file.fileSize}MB)
+                </span>
                 <button
                   type="button"
                   className="lawyer__uploaded-file-remove"
@@ -426,7 +473,7 @@ export default function LawyerCaseMessagesPage() {
             ))}
           </div>
         )}
-        
+
         <div className="lawyer__message-toolbar">
           <input
             ref={fileInputRef}
@@ -435,28 +482,30 @@ export default function LawyerCaseMessagesPage() {
             onChange={(e) => {
               const files = Array.from(e.target.files || []);
               files.forEach(handleFileUpload);
-              e.target.value = ''; // Reset input
+              e.target.value = ""; // Reset input
             }}
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
           />
-          <button 
-            type="button" 
-            className="lawyer__message-attach" 
+          <button
+            type="button"
+            className="lawyer__message-attach"
             aria-label="attach"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
           >
-            {uploading ? '...' : <IconPaperclip size={18} />}
+            {uploading ? "..." : <IconPaperclip size={18} />}
           </button>
           <div className="lawyer__message-counter">
             {message.length}/{maxLength}
           </div>
-          <button 
+          <button
             className="lawyer__message-send"
             onClick={handleSendMessage}
-            disabled={sending || (message.trim() === '' && uploadedFiles.length === 0)}
+            disabled={
+              sending || (message.trim() === "" && uploadedFiles.length === 0)
+            }
           >
-            {sending ? 'Sending...' : 'Send'}
+            {sending ? "Sending..." : "Send"}
           </button>
         </div>
       </div>

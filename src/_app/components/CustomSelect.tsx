@@ -131,12 +131,13 @@ export default function CustomSelect({
     }),
     placeholder: (provided) => ({
       ...provided,
-      color: '#999',
+      color: '#1f2021',
       fontSize: '14px',
+      fontWeight: '500',
     }),
     singleValue: (provided) => ({
       ...provided,
-      color: '#333',
+      color: '#1f2021',
       fontSize: '14px',
       fontWeight: '500',
     }),

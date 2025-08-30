@@ -1,8 +1,9 @@
 "use client";
 
-import { useTranslations } from "next-globe-gen";
+import { useTranslations, useLocale } from "next-globe-gen";
 import Image from "next/image";
 import { IconFileText, IconDownload } from "@tabler/icons-react";
+import { formatDateWithLocale } from "../../../utils/dateUtils";
 
 import { CaseDetailsData, CaseDocumentsData } from "../page";
 
@@ -16,6 +17,7 @@ export default function DisappearanceInfo({
   documentsData,
 }: DisappearanceInfoProps) {
   const t = useTranslations();
+  const locale = useLocale();
   return (
     <div className="case-info">
       <h2 className="case-info__title">{(t as any)("trackCase.info.title")}</h2>
@@ -62,13 +64,7 @@ export default function DisappearanceInfo({
               <dt>{(t as any)("trackCase.info.dob")}</dt>
               <dd>
                 {caseData?.detainee_date_of_birth
-                  ? new Date(
-                      caseData.detainee_date_of_birth
-                    ).toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })
+                  ? formatDateWithLocale(caseData.detainee_date_of_birth, locale)
                   : "Not available"}
               </dd>
             </div>
@@ -118,14 +114,7 @@ export default function DisappearanceInfo({
               <dt>{(t as any)("trackCase.info.disappearanceDate")}</dt>
               <dd>
                 {caseData?.detention_date
-                  ? new Date(caseData.detention_date).toLocaleDateString(
-                      "en-GB",
-                      {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      }
-                    )
+                  ? formatDateWithLocale(caseData.detention_date, locale)
                   : "Not available"}
               </dd>
             </div>

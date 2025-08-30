@@ -17,6 +17,7 @@ import {
 import { useState, useEffect } from "react";
 import { getLawyerDashboard } from "@/_app/utils/apiWithAuth";
 import { LawyerAuth } from "@/_app/utils/auth";
+import { formatDateWithLocale } from "../utils/dateUtils";
 
 // TypeScript interfaces for dashboard data
 interface CaseStatistics {
@@ -111,17 +112,6 @@ function LawyerDashboardInner() {
   const handleCaseClick = (caseId: string) => {
     router.push(`/${locale}/lawyer/cases/${caseId}`);
   };
-
-  // Format date helper
-  const formatDate = (dateString: string) => {
-    try {
-      return new Date(dateString).toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en-US');
-    } catch {
-      return dateString;
-    }
-  };
-
-
 
   if (loading) {
     return (
@@ -326,14 +316,6 @@ function LawyerDashboardInner() {
                         </div>
                         <div className="lawyer__case-detail">
                           <span className="lawyer__case-detail-label">
-                            {t("lawyer.cases.table.clientPhone")}
-                          </span>
-                          <span className="lawyer__case-detail-value">
-                            {caseItem.client_phone}
-                          </span>
-                        </div>
-                        <div className="lawyer__case-detail">
-                          <span className="lawyer__case-detail-label">
                             {t("lawyer.cases.table.clientName")}
                           </span>
                           <span className="lawyer__case-detail-value">
@@ -345,7 +327,7 @@ function LawyerDashboardInner() {
                             {t("lawyer.cases.columns.creationDate")}
                           </span>
                           <span className="lawyer__case-detail-value">
-                            {formatDate(caseItem.created)}
+                            {formatDateWithLocale(caseItem.created, locale)}
                           </span>
                         </div>
                       </div>

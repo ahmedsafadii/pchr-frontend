@@ -32,6 +32,7 @@ import VisitApproveModal from "../../../../components/modals/VisitApproveModal";
 import VisitOutcomeModal from "../../../../components/modals/VisitOutcomeModal";
 import VisitRejectionModal from "../../../../components/modals/VisitRejectionModal";
 import React from "react";
+import { formatDateWithLocale } from "../../../../utils/dateUtils";
 
 interface Visit {
   id: string;
@@ -401,14 +402,6 @@ function LawyerCaseVisitsInner() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
   const formatTime = (timeString: string | null) => {
     if (!timeString) return "—";
     return new Date(`2000-01-01T${timeString}`).toLocaleTimeString("en-US", {
@@ -531,7 +524,7 @@ function LawyerCaseVisitsInner() {
                   <td className="lawyer__table-cell" data-label="Visit Date">
                     <div className="lawyer__visit-date-time">
                       <span className="lawyer__visit-date">
-                        {formatDate(visit.visit_date)}
+                        {formatDateWithLocale(visit.visit_date, locale)}
                       </span>
                       {visit.visit_time && (
                         <span className="lawyer__visit-time">
@@ -678,7 +671,7 @@ function LawyerCaseVisitsInner() {
                                 {t("lawyer.visits.expanded.created")}:
                               </span>
                               <span className="lawyer__expanded-value">
-                                {formatDate(visit.created)}
+                                {formatDateWithLocale(visit.created, locale)}
                               </span>
                             </div>
                             <div className="lawyer__expanded-item">
@@ -686,7 +679,7 @@ function LawyerCaseVisitsInner() {
                                 {t("lawyer.visits.expanded.updated")}:
                               </span>
                               <span className="lawyer__expanded-value">
-                                {formatDate(visit.updated)}
+                                {formatDateWithLocale(visit.updated, locale)}
                               </span>
                             </div>
                           </div>

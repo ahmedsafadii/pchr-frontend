@@ -26,6 +26,7 @@ import toast from "react-hot-toast";
 import VisitApproveModal from "../../components/modals/VisitApproveModal";
 import VisitOutcomeModal from "../../components/modals/VisitOutcomeModal";
 import VisitRejectionModal from "../../components/modals/VisitRejectionModal";
+import { formatDateWithLocale } from "../../utils/dateUtils";
 
 interface Visit {
   id: string;
@@ -373,17 +374,6 @@ function LawyerVisitsInner() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(
-      locale === "ar" ? "ar-SA" : "en-US",
-      {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }
-    );
-  };
-
   const formatTime = (timeString: string | null) => {
     if (!timeString) return "—";
     return new Date(`2000-01-01T${timeString}`).toLocaleTimeString(
@@ -547,7 +537,7 @@ function LawyerVisitsInner() {
                         <td className="lawyer__table-cell" data-label="Visit Date">
                           <div className="lawyer__visit-date-wrapper">
                             <span className="lawyer__visit-date">
-                              {formatDate(visit.visit_date)}
+                              {formatDateWithLocale(visit.visit_date, locale)}
                             </span>
                             {visit.visit_time && (
                               <span className="lawyer__visit-time">

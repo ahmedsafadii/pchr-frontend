@@ -1,12 +1,25 @@
 "use client";
 
-import { useTranslations } from "next-globe-gen";
+import { useTranslations, useLocale } from "next-globe-gen";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { IconTag, IconFileText, IconDownload, IconPaperclip, IconBell, IconSettings, IconInfoCircle, IconUser } from "@tabler/icons-react";
+import {
+  IconTag,
+  IconFileText,
+  IconDownload,
+  IconPaperclip,
+  IconBell,
+  IconSettings,
+  IconInfoCircle,
+  IconUser,
+} from "@tabler/icons-react";
 import toast from "react-hot-toast";
-
+import { formatDateWithLocale } from "../../../utils/dateUtils";
 import { CaseDetailsData, CaseDocumentsData, CaseMessageData } from "../page";
-import { getCaseMessages, uploadDocument, sendMessage } from "@/_app/services/api";
+import {
+  getCaseMessages,
+  uploadDocument,
+  sendMessage,
+} from "@/_app/services/api";
 
 interface OverviewProps {
   caseData: CaseDetailsData | null;
@@ -14,64 +27,85 @@ interface OverviewProps {
   caseTrackingToken: string;
 }
 
-export default function Overview({ caseData, documentsData, caseTrackingToken }: OverviewProps) {
+export default function Overview({
+  caseData,
+  documentsData,
+  caseTrackingToken,
+}: OverviewProps) {
   const t = useTranslations();
   const tt = t as any;
+  const locale = useLocale();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<CaseMessageData[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
-  const [uploadedFiles, setUploadedFiles] = useState<Array<{id: string, fileName: string, fileSize: number}>>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<
+    Array<{ id: string; fileName: string; fileSize: number }>
+  >([]);
   const [uploading, setUploading] = useState(false);
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const loadingRef = useRef(false);
   const PAGE_SIZE = 5; // Changed from 20 to 5
-  
-  console.log('Overview - documentsData:', documentsData);
 
-  const loadMessages = useCallback(async (page: number = 1) => {
-    if (loadingRef.current) return;
-    
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await getCaseMessages(caseData?.id || "", caseTrackingToken, page, PAGE_SIZE);
-      const newMessages = response.results.messages;
-      
-      if (page === 1) {
-        setMessages(newMessages);
-      } else {
-        setMessages(prev => [...newMessages, ...prev]);
+  console.log("Overview - documentsData:", documentsData);
+
+  const loadMessages = useCallback(
+    async (page: number = 1) => {
+      if (loadingRef.current) return;
+
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await getCaseMessages(
+          caseData?.id || "",
+          caseTrackingToken,
+          page,
+          PAGE_SIZE
+        );
+        const newMessages = response.results.messages;
+
+        if (page === 1) {
+          setMessages(newMessages);
+        } else {
+          setMessages((prev) => [...newMessages, ...prev]);
+        }
+
+        setHasMore(!!response.next);
+        setCurrentPage(page);
+      } catch (error) {
+        console.error("Failed to load messages:", error);
+        setError("Failed to load messages. Please try again.");
+      } finally {
+        loadingRef.current = false;
+        setLoading(false);
       }
-      
-      setHasMore(!!response.next);
-      setCurrentPage(page);
-    } catch (error) {
-      console.error('Failed to load messages:', error);
-      setError('Failed to load messages. Please try again.');
-    } finally {
-      loadingRef.current = false;
-      setLoading(false);
-    }
-  }, [caseData?.id, caseTrackingToken]);
+    },
+    [caseData?.id, caseTrackingToken]
+  );
 
   // Load messages on component mount
   useEffect(() => {
-    if ((caseData?.id || "e627cf96-390a-4fe8-b152-8e86975bd096") && caseTrackingToken) {
+    if (
+      (caseData?.id || "e627cf96-390a-4fe8-b152-8e86975bd096") &&
+      caseTrackingToken
+    ) {
       loadMessages();
     }
   }, [caseData?.id, caseTrackingToken, loadMessages]);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      messagesEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
     }
     // Alternative method if scrollIntoView doesn't work
-    const messagesContainer = document.querySelector('.chat__messages');
+    const messagesContainer = document.querySelector(".chat__messages");
     if (messagesContainer) {
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
@@ -91,23 +125,30 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
     setUploading(true);
     try {
       const response = await uploadDocument(file);
-      if (response.status === 'success') {
+      if (response.status === "success") {
         const newFile = {
           id: response.data.document_id,
           fileName: response.data.file_name,
-          fileSize: response.data.file_size_mb
+          fileSize: response.data.file_size_mb,
         };
-        setUploadedFiles(prev => [...prev, newFile]);
-        toast.success('File uploaded successfully!');
+        setUploadedFiles((prev) => [...prev, newFile]);
+        toast.success("File uploaded successfully!");
       } else {
         // Handle API error response
-        const errorMessage = response.error?.message || response.message || 'Failed to upload file';
+        const errorMessage =
+          response.error?.message ||
+          response.message ||
+          "Failed to upload file";
         toast.error(errorMessage);
       }
     } catch (error: any) {
-      console.error('Failed to upload file:', error);
+      console.error("Failed to upload file:", error);
       // Extract error message from API response if available
-      const errorMessage = error.payload?.error?.message || error.payload?.message || error.message || 'Failed to upload file. Please try again.';
+      const errorMessage =
+        error.payload?.error?.message ||
+        error.payload?.message ||
+        error.message ||
+        "Failed to upload file. Please try again.";
       toast.error(errorMessage);
     } finally {
       setUploading(false);
@@ -115,7 +156,7 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
   };
 
   const removeFile = (fileId: string) => {
-    setUploadedFiles(prev => prev.filter(file => file.id !== fileId));
+    setUploadedFiles((prev) => prev.filter((file) => file.id !== fileId));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -124,23 +165,27 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
 
     setSending(true);
     try {
-      const attachmentIds = uploadedFiles.map(file => file.id);
+      const attachmentIds = uploadedFiles.map((file) => file.id);
       await sendMessage(
         caseData?.id || "e627cf96-390a-4fe8-b152-8e86975bd096",
         message.trim(),
         attachmentIds,
         caseTrackingToken
       );
-      
+
       // Clear form and refresh messages
-      setMessage('');
+      setMessage("");
       setUploadedFiles([]);
       await loadMessages(); // Refresh messages
-      toast.success('Message sent successfully!');
+      toast.success("Message sent successfully!");
     } catch (error: any) {
-      console.error('Failed to send message:', error);
+      console.error("Failed to send message:", error);
       // Extract error message from API response if available
-      const errorMessage = error.payload?.error?.message || error.payload?.message || error.message || 'Failed to send message. Please try again.';
+      const errorMessage =
+        error.payload?.error?.message ||
+        error.payload?.message ||
+        error.message ||
+        "Failed to send message. Please try again.";
       toast.error(errorMessage);
     } finally {
       setSending(false);
@@ -153,30 +198,15 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
     }
   };
 
-  const formatMessageDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const dateStr = date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    });
-    const timeStr = date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-    return `${dateStr} ${timeStr}`;
-  };
-
   const getMessageTypeLabel = (messageType: string) => {
     switch (messageType) {
-      case 'system':
+      case "system":
         return tt("trackCase.chat.systemMessage");
-      case 'notification':
+      case "notification":
         return tt("trackCase.chat.notification");
-      case 'lawyer':
+      case "lawyer":
         return tt("trackCase.chat.lawyer");
-      case 'client':
+      case "client":
         return tt("trackCase.chat.client");
       default:
         return messageType;
@@ -185,13 +215,13 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
 
   const getMessageTypeIcon = (messageType: string) => {
     switch (messageType) {
-      case 'system':
+      case "system":
         return <IconSettings size={16} />;
-      case 'notification':
+      case "notification":
         return <IconBell size={16} />;
-      case 'lawyer':
+      case "lawyer":
         return <IconUser size={16} />;
-      case 'client':
+      case "client":
         return <IconUser size={16} />;
       default:
         return <IconInfoCircle size={16} />;
@@ -205,18 +235,24 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
         <section className="case-overview__left">
           <div className="case-overview__card">
             <div className="case-overview__date">
-              {caseData?.created ? new Date(caseData.created).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric'
-              }).toUpperCase() : "Loading..."}
+              {caseData?.created
+                ? formatDateWithLocale(caseData.created, locale).toUpperCase()
+                : "Loading..."}
             </div>
             <h1 className="case-overview__main-title">
-              {tt("trackCase.overview.detainee")}: {caseData?.detainee_name || "Loading..."}
+              {tt("trackCase.overview.detainee")}:{" "}
+              {caseData?.detainee_name || "Loading..."}
             </h1>
-            <span className={`case-overview__badge ${caseData?.status_display ? `case__status--${caseData.status_display.toLowerCase().replace(/\s+/g, '-')}` : ""}`}>
-              <IconTag size={18} />{" "}
-              {caseData?.status_display || "Loading..."}
+            <span
+              className={`case-overview__badge ${
+                caseData?.status_display
+                  ? `case__status--${caseData.status_display
+                      .toLowerCase()
+                      .replace(/\s+/g, "-")}`
+                  : ""
+              }`}
+            >
+              <IconTag size={18} /> {caseData?.status_display || "Loading..."}
             </span>
             <hr className="case-overview__divider" />
 
@@ -231,11 +267,9 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
                       {tt("trackCase.overview.dateOfDisappearance")}
                     </dt>
                     <dd className="case-overview__dd">
-                      {caseData?.detention_date ? new Date(caseData.detention_date).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric'
-                      }) : "Not available"}
+                      {caseData?.detention_date
+                        ? formatDateWithLocale(caseData.detention_date, locale)
+                        : "Not available"}
                     </dd>
                   </div>
                   <div className="case-overview__row">
@@ -243,7 +277,8 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
                       {tt("trackCase.overview.details")}
                     </dt>
                     <dd className="case-overview__dd">
-                      {caseData?.detention_circumstances || "No details available"}
+                      {caseData?.detention_circumstances ||
+                        "No details available"}
                     </dd>
                   </div>
                   <div className="case-overview__row">
@@ -252,18 +287,29 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
                     </dt>
                     <dd className="case-overview__dd">
                       <ul className="case-overview__files">
-                        {documentsData?.data && documentsData.data.length > 0 ? (
+                        {documentsData?.data &&
+                        documentsData.data.length > 0 ? (
                           documentsData.data.map((document) => (
-                            <li key={document.id} className="case-overview__file">
+                            <li
+                              key={document.id}
+                              className="case-overview__file"
+                            >
                               <span className="case-overview__file-left">
-                                <IconFileText size={18} /> {(document as any).file_name || document.document_type_display} ({document.file_size_mb}MB)
+                                <IconFileText size={18} />{" "}
+                                {(document as any).file_name ||
+                                  document.document_type_display}{" "}
+                                ({document.file_size_mb}MB)
                               </span>
                               <button
                                 className="case-overview__file-download"
                                 aria-label="download"
                                 onClick={() => {
                                   if (document.download_url) {
-                                    window.open(document.download_url, '_blank', 'noopener,noreferrer');
+                                    window.open(
+                                      document.download_url,
+                                      "_blank",
+                                      "noopener,noreferrer"
+                                    );
                                   }
                                 }}
                               >
@@ -272,11 +318,12 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
                             </li>
                           ))
                         ) : (
-                                      <li className="case-overview__file">
-              <span className="case-overview__file-left">
-                <IconFileText size={18} /> {tt("trackCase.info.noDocuments")}
-              </span>
-            </li>
+                          <li className="case-overview__file">
+                            <span className="case-overview__file-left">
+                              <IconFileText size={18} />{" "}
+                              {tt("trackCase.info.noDocuments")}
+                            </span>
+                          </li>
                         )}
                       </ul>
                     </dd>
@@ -292,20 +339,22 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
           <div className="chat">
             <div className="chat__header">
               <div className="chat__avatar">
-                {messages.length > 0 && messages[0].case_info.assigned_lawyer_name 
-                  ? messages[0].case_info.assigned_lawyer_name.substring(0, 2).toUpperCase()
-                  : 'PCHR'
-                }
+                {messages.length > 0 &&
+                messages[0].case_info.assigned_lawyer_name
+                  ? messages[0].case_info.assigned_lawyer_name
+                      .substring(0, 2)
+                      .toUpperCase()
+                  : "PCHR"}
               </div>
               <div className="chat__meta">
                 <span className="chat__role">
                   {tt("trackCase.overview.lawyer")}
                 </span>
                 <span className="chat__name">
-                  {messages.length > 0 && messages[0].case_info.assigned_lawyer_name 
+                  {messages.length > 0 &&
+                  messages[0].case_info.assigned_lawyer_name
                     ? messages[0].case_info.assigned_lawyer_name
-                    : tt("trackCase.overview.lawyer")
-                  }
+                    : tt("trackCase.overview.lawyer")}
                 </span>
               </div>
             </div>
@@ -314,8 +363,8 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
               {/* Load more button */}
               {hasMore && (
                 <div className="chat__load-more">
-                  <button 
-                    className="chat__load-more-btn" 
+                  <button
+                    className="chat__load-more-btn"
                     onClick={loadMoreMessages}
                     disabled={loading}
                   >
@@ -333,22 +382,30 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
                 [...messages].reverse().map((msg) => (
                   <article key={msg.id} className="chat__message">
                     <div className="chat__message-header">
-                      {msg.message_type === 'lawyer' ? (
+                      {msg.message_type === "lawyer" ? (
                         <div className="chat__message-lawyer">
                           <div className="chat__message-lawyer-avatar">
-                            {msg.case_info.assigned_lawyer_name ? msg.case_info.assigned_lawyer_name.substring(0, 2).toUpperCase() : 'LA'}
+                            {msg.case_info.assigned_lawyer_name
+                              ? msg.case_info.assigned_lawyer_name
+                                  .substring(0, 2)
+                                  .toUpperCase()
+                              : "LA"}
                           </div>
                           <span className="chat__message-lawyer-name">
-                            {msg.case_info.assigned_lawyer_name || 'Lawyer'}
+                            {msg.case_info.assigned_lawyer_name || "Lawyer"}
                           </span>
                         </div>
-                      ) : msg.message_type === 'client' ? (
+                      ) : msg.message_type === "client" ? (
                         <div className="chat__message-lawyer">
                           <div className="chat__message-lawyer-avatar">
-                            {msg.case_info.client_name ? msg.case_info.client_name.substring(0, 2).toUpperCase() : 'CL'}
+                            {msg.case_info.client_name
+                              ? msg.case_info.client_name
+                                  .substring(0, 2)
+                                  .toUpperCase()
+                              : "CL"}
                           </div>
                           <span className="chat__message-lawyer-name">
-                            {msg.case_info.client_name || 'Client'}
+                            {msg.case_info.client_name || "Client"}
                           </span>
                         </div>
                       ) : (
@@ -358,64 +415,90 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
                         </span>
                       )}
                       <span className="chat__message-date">
-                        {formatMessageDate(msg.created)}
+                        {formatDateWithLocale(msg.created, locale)}
                       </span>
                     </div>
-                    
+
                     <div className="chat__message-content">
                       <p className="chat__text">{msg.content}</p>
-                      
+
                       {/* Attachments */}
-                      {msg.has_attachments && msg.attachments && msg.attachments.length > 0 && (
-                        <div className="chat__attachments">
-                          {msg.attachments.map((attachment, index) => {
-                            // Check for various possible download URL fields
-                            const downloadUrl = attachment.download_url || attachment.file_url || attachment.url || attachment.upload_path;
-                            const fileName = attachment.file_name || attachment.name || `Attachment ${index + 1}`;
-                            
-                            // Handle file size - prefer file_size_mb, fallback to converting bytes
-                            let fileSizeDisplay = '';
-                            if (attachment.file_size_mb !== undefined) {
-                              fileSizeDisplay = `${attachment.file_size_mb}MB`;
-                            } else if (attachment.file_size) {
-                              // Convert bytes to MB with 2 decimal places
-                              const sizeInMB = (attachment.file_size / (1024 * 1024)).toFixed(2);
-                              fileSizeDisplay = `${sizeInMB}MB`;
-                            }
-                            
-                            return (
-                              <div key={index} className="chat__attachments__file">
-                                <IconFileText size={18} /> 
-                                <span className="chat__attachments__file-name">{fileName}</span>
-                                {fileSizeDisplay && <span className="chat__attachments__file-size">({fileSizeDisplay})</span>}
-                                {downloadUrl && (
-                                  <button
-                                    className="chat__attachments__file-download"
-                                    aria-label="download"
-                                    onClick={() => {
-                                                                             // Try to open in new tab, fallback to direct download
-                                       try {
-                                         window.open(downloadUrl, '_blank', 'noopener,noreferrer');
-                                       } catch {
-                                         // Fallback: create a temporary link and trigger download
-                                         const link = document.createElement('a');
-                                         link.href = downloadUrl;
-                                         link.download = fileName;
-                                         link.target = '_blank';
-                                         document.body.appendChild(link);
-                                         link.click();
-                                         document.body.removeChild(link);
-                                       }
-                                    }}
-                                  >
-                                    <IconDownload size={18} />
-                                  </button>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
+                      {msg.has_attachments &&
+                        msg.attachments &&
+                        msg.attachments.length > 0 && (
+                          <div className="chat__attachments">
+                            {msg.attachments.map((attachment, index) => {
+                              // Check for various possible download URL fields
+                              const downloadUrl =
+                                attachment.download_url ||
+                                attachment.file_url ||
+                                attachment.url ||
+                                attachment.upload_path;
+                              const fileName =
+                                attachment.file_name ||
+                                attachment.name ||
+                                `Attachment ${index + 1}`;
+
+                              // Handle file size - prefer file_size_mb, fallback to converting bytes
+                              let fileSizeDisplay = "";
+                              if (attachment.file_size_mb !== undefined) {
+                                fileSizeDisplay = `${attachment.file_size_mb}MB`;
+                              } else if (attachment.file_size) {
+                                // Convert bytes to MB with 2 decimal places
+                                const sizeInMB = (
+                                  attachment.file_size /
+                                  (1024 * 1024)
+                                ).toFixed(2);
+                                fileSizeDisplay = `${sizeInMB}MB`;
+                              }
+
+                              return (
+                                <div
+                                  key={index}
+                                  className="chat__attachments__file"
+                                >
+                                  <IconFileText size={18} />
+                                  <span className="chat__attachments__file-name">
+                                    {fileName}
+                                  </span>
+                                  {fileSizeDisplay && (
+                                    <span className="chat__attachments__file-size">
+                                      ({fileSizeDisplay})
+                                    </span>
+                                  )}
+                                  {downloadUrl && (
+                                    <button
+                                      className="chat__attachments__file-download"
+                                      aria-label="download"
+                                      onClick={() => {
+                                        // Try to open in new tab, fallback to direct download
+                                        try {
+                                          window.open(
+                                            downloadUrl,
+                                            "_blank",
+                                            "noopener,noreferrer"
+                                          );
+                                        } catch {
+                                          // Fallback: create a temporary link and trigger download
+                                          const link =
+                                            document.createElement("a");
+                                          link.href = downloadUrl;
+                                          link.download = fileName;
+                                          link.target = "_blank";
+                                          document.body.appendChild(link);
+                                          link.click();
+                                          document.body.removeChild(link);
+                                        }
+                                      }}
+                                    >
+                                      <IconDownload size={18} />
+                                    </button>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                     </div>
                   </article>
                 ))
@@ -425,8 +508,8 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
               {error && (
                 <div className="chat__error">
                   <p>{error}</p>
-                  <button 
-                    onClick={() => loadMessages()} 
+                  <button
+                    onClick={() => loadMessages()}
                     className="chat__retry-btn"
                   >
                     Retry
@@ -436,16 +519,12 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
 
               {/* Loading indicator */}
               {loading && (
-                <div className="chat__loading">
-                  Loading messages...
-                </div>
+                <div className="chat__loading">Loading messages...</div>
               )}
 
               {/* Scroll to bottom reference */}
               <div ref={messagesEndRef} />
             </div>
-
-
 
             {/* Message form */}
             <form className="chat__form" onSubmit={handleSubmit}>
@@ -462,15 +541,19 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
               />
-              
+
               {/* Uploaded files display */}
               {uploadedFiles.length > 0 && (
                 <div className="chat__uploaded-files">
                   {uploadedFiles.map((file) => (
                     <div key={file.id} className="chat__uploaded-file">
                       <IconFileText size={16} />
-                      <span className="chat__uploaded-file-name">{file.fileName}</span>
-                      <span className="chat__uploaded-file-size">({file.fileSize}MB)</span>
+                      <span className="chat__uploaded-file-name">
+                        {file.fileName}
+                      </span>
+                      <span className="chat__uploaded-file-size">
+                        ({file.fileSize}MB)
+                      </span>
                       <button
                         type="button"
                         className="chat__uploaded-file-remove"
@@ -483,7 +566,7 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
                   ))}
                 </div>
               )}
-              
+
               <div className="chat__toolbar">
                 <input
                   ref={fileInputRef}
@@ -492,28 +575,31 @@ export default function Overview({ caseData, documentsData, caseTrackingToken }:
                   onChange={(e) => {
                     const files = Array.from(e.target.files || []);
                     files.forEach(handleFileUpload);
-                    e.target.value = ''; // Reset input
+                    e.target.value = ""; // Reset input
                   }}
-                  style={{ display: 'none' }}
+                  style={{ display: "none" }}
                 />
-                <button 
-                  type="button" 
-                  className="chat__attach" 
+                <button
+                  type="button"
+                  className="chat__attach"
                   aria-label="attach"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
                 >
-                  {uploading ? '...' : <IconPaperclip size={18} />}
+                  {uploading ? "..." : <IconPaperclip size={18} />}
                 </button>
                 <span className="chat__counter">{`${message.length}/500`}</span>
               </div>
               <div className="chat__actions">
-                <button 
-                  className="chat__btn" 
+                <button
+                  className="chat__btn"
                   type="submit"
-                  disabled={sending || (message.trim() === '' && uploadedFiles.length === 0)}
+                  disabled={
+                    sending ||
+                    (message.trim() === "" && uploadedFiles.length === 0)
+                  }
                 >
-                  {sending ? 'Sending...' : tt("trackCase.overview.next")}
+                  {sending ? "Sending..." : tt("trackCase.overview.next")}
                 </button>
               </div>
             </form>

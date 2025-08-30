@@ -1,12 +1,14 @@
 "use client";
 
-import { useTranslations } from "next-globe-gen";
+import { useTranslations, useLocale } from "next-globe-gen";
 import { IconAlertTriangle } from "@tabler/icons-react";
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getLawyerCaseDetails } from "../../../utils/apiWithAuth";
 import { useLawyerAuth } from "../../../hooks/useLawyerAuth";
 import UpdateCaseModal from "../../../components/modals/UpdateCaseModal";
+import { formatDateWithLocale } from "../../../utils/dateUtils";
+
 
 interface CaseData {
   id: string;
@@ -49,6 +51,7 @@ export default function LawyerCaseDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const { isAuthenticated, isLoading } = useLawyerAuth();
+  const locale = useLocale();
   const [caseData, setCaseData] = useState<CaseData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -115,34 +118,6 @@ export default function LawyerCaseDetailsPage() {
       fetchCaseDetails();
     }
   }, [isAuthenticated, isLoading, caseId, router, fetchCaseDetails]);
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '-';
-    try {
-      return new Date(dateString).toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      });
-    } catch {
-      return dateString;
-    }
-  };
-
-  const formatDateTime = (dateString: string) => {
-    if (!dateString) return '-';
-    try {
-      return new Date(dateString).toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    } catch {
-      return dateString;
-    }
-  };
 
   if (isLoading || loading) {
     return (
@@ -216,11 +191,11 @@ export default function LawyerCaseDetailsPage() {
           </div>
           <div className="lawyer__info-item">
             <div className="lawyer__info-label">{t("lawyer.caseDetails.caseInfo.created")}</div>
-            <div className="lawyer__info-value">{formatDateTime(caseData.created)}</div>
+            <div className="lawyer__info-value">{formatDateWithLocale(caseData.created, locale)}</div>
           </div>
           <div className="lawyer__info-item">
             <div className="lawyer__info-label">{t("lawyer.caseDetails.caseInfo.updated")}</div>
-            <div className="lawyer__info-value">{formatDateTime(caseData.updated)}</div>
+            <div className="lawyer__info-value">{formatDateWithLocale(caseData.updated, locale)}</div>
           </div>
         </div>
       </section>
@@ -237,7 +212,7 @@ export default function LawyerCaseDetailsPage() {
           {/* DOB */}
           <div className="lawyer__info-item">
             <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.dateOfBirth")}</div>
-            <div className="lawyer__info-value">{formatDate(caseData.detainee_date_of_birth)}</div>
+                            <div className="lawyer__info-value">{formatDateWithLocale(caseData.detainee_date_of_birth, locale)}</div>
           </div>
           {/* ID Number */}
           <div className="lawyer__info-item">
@@ -273,7 +248,7 @@ export default function LawyerCaseDetailsPage() {
         <div className="lawyer__info-grid">
           <div className="lawyer__info-item">
             <div className="lawyer__info-label">{t("lawyer.caseDetails.detentionInfo.detentionDate")}</div>
-            <div className="lawyer__info-value">{formatDate(caseData.detention_date)}</div>
+                            <div className="lawyer__info-value">{formatDateWithLocale(caseData.detention_date, locale)}</div>
           </div>
           <div className="lawyer__info-item">
             <div className="lawyer__info-label">{t("lawyer.caseDetails.detentionInfo.status")}</div>

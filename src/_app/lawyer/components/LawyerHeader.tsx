@@ -20,6 +20,7 @@ import {
   IconCalendarEvent,
   IconRefresh,
 } from "@tabler/icons-react";
+import { formatDateWithLocale } from "../../utils/dateUtils";
 
 interface LawyerHeaderProps {
   activeTab?: "overview" | "cases" | "profile" | "visits";
@@ -138,27 +139,6 @@ export default function LawyerHeader({
   const handleLoadMore = () => {
     if (hasMore && !notificationsLoading) {
       fetchNotifications(currentPage + 1, true);
-    }
-  };
-
-
-
-  // Format date helper
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      const now = new Date();
-      const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-      
-      if (diffInHours < 1) return 'Just now';
-      if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
-      
-      const diffInDays = Math.floor(diffInHours / 24);
-      if (diffInDays < 7) return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
-      
-      return date.toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en-US');
-    } catch {
-      return dateString;
     }
   };
 
@@ -318,7 +298,7 @@ export default function LawyerHeader({
                               {notification.case.case_number} - {notification.case.detainee_name}
                             </div>
                             <div className="lawyer__notification-date">
-                              {formatDate(notification.created)}
+                              {formatDateWithLocale(notification.created, locale)}
                             </div>
                           </div>
                           {!notification.is_read && (

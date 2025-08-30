@@ -60,6 +60,20 @@
 html[lang="ar"] body {
   direction: rtl;
 }
+
+a,
+a:link,
+a:visited {
+  color: var(--primary-900);
+  text-decoration: none;
+}
+
+a:hover,
+a:active {
+  color: var(--secondary-900);
+  text-decoration: none;
+}
+
 body {
   color: var(--primary-900);
   font-family: "IBM Plex Sans Arabic", "IBM Plex Sans Arabic Fallback";
@@ -84,7 +98,6 @@ body {
   align-items: center;
   opacity: 0.5;
 }
-
 
 .case__status--pending {
   background: #fff7ed;
@@ -142,4 +155,8 @@ body {
 .case__status--under_review {
   background: #f1f5f9;
   color: #475569;
+}
+
+input::placeholder {
+  color: var(--primary-800);
 }

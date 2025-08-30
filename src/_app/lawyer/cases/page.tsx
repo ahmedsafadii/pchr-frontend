@@ -19,6 +19,8 @@ import {
 import { getLawyerCases } from "../../services/api";
 import { LawyerAuth } from "../../utils/auth";
 import React from "react";
+import { formatDateWithLocale } from "../../utils/dateUtils";
+
 
 interface Case {
   id: string;
@@ -284,35 +286,24 @@ function LawyerCasesInner() {
       case "pending":
         return "case__status--pending";
       case "in_progress":
-        return "case__status--progress";
+        return "case__status--in-progress";
       case "completed":
         return "case__status--completed";
       case "under_review":
-        return "case__status--review";
+        return "case__status--under-review";
       case "detention_confirmed":
-        return "case__status--confirmed";
+        return "case__status--detention-confirmed";
       case "deceased":
         return "case__status--deceased";
       case "awaiting_documents":
-        return "case__status--awaiting";
+        return "case__status--awaiting-documents";
       case "released":
         return "case__status--released";
       case "enforced_disappearance":
-        return "case__status--disappearance";
+        return "case__status--enforced-disappearance";
       default:
         return "case__status--default";
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(
-      locale === "ar" ? "ar-SA" : "en-US",
-      {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }
-    );
   };
 
   return (
@@ -459,7 +450,7 @@ function LawyerCasesInner() {
                       </td>
                       <td className="lawyer__table-cell">
                         <span className="lawyer__creation-date">
-                          {formatDate(caseItem.created)}
+                          {formatDateWithLocale(caseItem.created, locale)}
                         </span>
                       </td>
                       <td className="lawyer__table-cell">
@@ -489,7 +480,7 @@ function LawyerCasesInner() {
                                 </div>
                                 <div className="lawyer__expanded-item">
                                   <span className="lawyer__expanded-label">Date of Birth:</span>
-                                  <span className="lawyer__expanded-value">{formatDate(caseItem.detainee_date_of_birth)}</span>
+                                  <span className="lawyer__expanded-value">{formatDateWithLocale(caseItem.detainee_date_of_birth, locale)}</span>
                                 </div>
                                 <div className="lawyer__expanded-item">
                                   <span className="lawyer__expanded-label">Job:</span>
@@ -531,7 +522,7 @@ function LawyerCasesInner() {
                               <div className="lawyer__expanded-grid">
                                 <div className="lawyer__expanded-item">
                                   <span className="lawyer__expanded-label">Detention Date:</span>
-                                  <span className="lawyer__expanded-value">{formatDate(caseItem.detention_date)}</span>
+                                  <span className="lawyer__expanded-value">{formatDateWithLocale(caseItem.detention_date, locale)}</span>
                                 </div>
                                 <div className="lawyer__expanded-item lawyer__expanded-item--full">
                                   <span className="lawyer__expanded-label">Circumstances:</span>
@@ -556,11 +547,11 @@ function LawyerCasesInner() {
                                 </div>
                                 <div className="lawyer__expanded-item">
                                   <span className="lawyer__expanded-label">Created:</span>
-                                  <span className="lawyer__expanded-value">{formatDate(caseItem.created)}</span>
+                                  <span className="lawyer__expanded-value">{formatDateWithLocale(caseItem.created, locale)}</span>
                                 </div>
                                 <div className="lawyer__expanded-item">
                                   <span className="lawyer__expanded-label">Last Updated:</span>
-                                  <span className="lawyer__expanded-value">{formatDate(caseItem.updated)}</span>
+                                  <span className="lawyer__expanded-value">{formatDateWithLocale(caseItem.updated, locale)}</span>
                                 </div>
                               </div>
                             </div>
