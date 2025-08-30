@@ -296,8 +296,9 @@ export default function Overview({
                             >
                               <span className="case-overview__file-left">
                                 <IconFileText size={18} />{" "}
-                                {(document as any).file_name ||
-                                  document.document_type_display}{" "}
+                                {document.document_type_display === "other" 
+                                  ? document.file_name 
+                                  : document.document_type_display}{" "}
                                 ({document.file_size_mb}MB)
                               </span>
                               <button
