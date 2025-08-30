@@ -4149,6 +4149,14 @@ html[lang="ar"] .lawyer__expand-button {
   font-weight: 700;
   font-size: 12px;
 }
+.lawyer__message-lawyer-avatar--pchr {
+  justify-content: flex-start;
+}
+.lawyer__message-lawyer-avatar--pchr img {
+  width: 54px;
+  max-width: inherit;
+  margin: 0 5px;
+}
 
 .lawyer__message-lawyer-name {
   font-size: 14px;

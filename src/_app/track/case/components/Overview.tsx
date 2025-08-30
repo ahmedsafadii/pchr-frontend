@@ -340,22 +340,14 @@ export default function Overview({
           <div className="chat">
             <div className="chat__header">
               <div className="chat__avatar">
-                {messages.length > 0 &&
-                messages[0].case_info.assigned_lawyer_name
-                  ? messages[0].case_info.assigned_lawyer_name
-                      .substring(0, 2)
-                      .toUpperCase()
-                  : tt("common.pchr")}
+                <img src="/img/pchr-white.svg" alt="PCHR" />
               </div>
               <div className="chat__meta">
                 <span className="chat__role">
-                  {tt("trackCase.overview.lawyer")}
+                  {tt("common.organizationName")}
                 </span>
                 <span className="chat__name">
-                  {messages.length > 0 &&
-                  messages[0].case_info.assigned_lawyer_name
-                    ? messages[0].case_info.assigned_lawyer_name
-                    : tt("trackCase.overview.lawyer")}
+                  {tt("common.organizationFullName")}
                 </span>
               </div>
             </div>
@@ -385,15 +377,12 @@ export default function Overview({
                     <div className="chat__message-header">
                       {msg.message_type === "lawyer" ? (
                         <div className="chat__message-lawyer">
-                          <div className="chat__message-lawyer-avatar">
-                            {msg.case_info.assigned_lawyer_name
-                              ? msg.case_info.assigned_lawyer_name
-                                  .substring(0, 2)
-                                  .toUpperCase()
-                              : tt("common.lawyerAbbr")}
+                          <div className="chat__message-lawyer-avatar chat__message-lawyer-avatar--pchr">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/img/pchr-white.svg" alt="PCHR" />
                           </div>
                           <span className="chat__message-lawyer-name">
-                            {msg.case_info.assigned_lawyer_name || "Lawyer"}
+                            {tt("common.organizationFullName")}
                           </span>
                         </div>
                       ) : msg.message_type === "client" ? (

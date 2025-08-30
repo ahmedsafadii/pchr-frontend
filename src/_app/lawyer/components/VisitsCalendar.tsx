@@ -227,7 +227,7 @@ export default function VisitsCalendar({ onCaseClick, upcomingVisits = [] }: Vis
                   {visit.visit_time && <div>{visit.visit_time}</div>}
                 </div>
                 <div className="lawyer__calendar-tooltip-action">
-                  Show Case
+                  {t("lawyer.dashboard.showCase")}
                 </div>
               </div>
             ))}

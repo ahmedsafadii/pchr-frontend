@@ -331,13 +331,12 @@ export default function LawyerCaseMessagesPage() {
               <div className="lawyer__message-header">
                 {msg.message_type === "lawyer" ? (
                   <div className="lawyer__message-lawyer">
-                    <div className="lawyer__message-lawyer-avatar">
-                      {msg.sender?.full_name
-                        ? msg.sender.full_name.substring(0, 2).toUpperCase()
-                                                      : t("common.lawyerAbbr")}
+                    <div className="lawyer__message-lawyer-avatar lawyer__message-lawyer-avatar--pchr">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/img/pchr-white.svg" alt="PCHR" />
                     </div>
                     <span className="lawyer__message-lawyer-name">
-                      {msg.sender?.full_name || "Lawyer"}
+                      {t("common.organizationFullName")}
                     </span>
                   </div>
                 ) : msg.message_type === "client" ? (

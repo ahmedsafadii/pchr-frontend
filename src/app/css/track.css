@@ -453,8 +453,14 @@
   color: var(--white);
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   font-weight: 700;
+  overflow: hidden;
+}
+.chat__avatar img {
+ max-width: inherit;
+ width: 84px;
+ margin: 0 6px;
 }
 .chat__meta {
   display: flex;
@@ -703,6 +709,15 @@
   justify-content: center;
   font-weight: 700;
   font-size: 12px;
+  overflow: hidden;
+}
+.chat__message-lawyer-avatar--pchr {
+  justify-content: flex-start;
+}
+.chat__message-lawyer-avatar img {
+  max-width: inherit;
+  width: 54px;
+  margin: 0 5px;
 }
 
 .chat__message-lawyer-name {
