@@ -739,6 +739,48 @@
     "notFound": "Not Found",
     "caseNotFound": "Case not found",
     "noDescription": "No description provided",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "notAvailable": "Not available",
+    "noDetailsAvailable": "No details available",
+    "loadMoreMessages": "Load More Messages",
+    "urgent": "Urgent",
+    "pchr": "PCHR",
+    "lawyerAbbr": "LA",
+    "allCases": "all",
+    "urgentCases": "urgent"
+  },
+  "messages": {
+    "success": {
+      "fileUploaded": "File uploaded successfully!",
+      "messageSent": "Message sent successfully!"
+    },
+    "errors": {
+      "failedToLoadMessages": "Failed to load messages. Please try again.",
+      "failedToUploadFile": "Failed to upload file. Please try again.",
+      "failedToSendMessage": "Failed to send message. Please try again.",
+      "failedToFetchCases": "Failed to fetch cases",
+      "failedToFetchCaseDocuments": "Failed to fetch case documents",
+      "failedToFetchVisits": "Failed to fetch visits",
+      "failedToCompleteVisit": "Failed to complete visit",
+      "failedToRejectVisit": "Failed to reject visit",
+      "failedToApproveVisit": "Failed to approve visit",
+      "failedToUpdateCaseStatus": "Failed to update case status",
+      "failedToUploadSignature": "Failed to upload signature",
+      "unknownError": "Unknown error"
+    }
+  },
+  "legalDocument": {
+    "title": "LEGAL DOCUMENT - DISAPPEARANCE REPORT",
+    "description": "This document constitutes the legal authorization for the Palestinian Centre for Human Rights to pursue legal action regarding the reported disappearance case.",
+    "termsIntro": "By signing this document, you acknowledge and agree to the following terms:",
+    "term1": "You authorize the Palestinian Centre for Human Rights to legally pursue this case on your behalf.",
+    "term2": "You confirm that all information provided in this report is accurate to the best of your knowledge.",
+    "term3": "You understand that this case may be subject to legal proceedings and international human rights mechanisms.",
+    "term4": "You consent to the processing of personal data as outlined in our privacy policy.",
+    "term5": "You acknowledge that this report will be handled in accordance with international human rights standards.",
+    "caseReference": "Case Reference:",
+    "date": "Date:",
+    "binding": "This document is legally binding and constitutes your formal consent for legal action.",
+    "downloadFilename": "legal-document.txt"
   }
 }

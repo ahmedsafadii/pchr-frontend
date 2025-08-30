@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-globe-gen";
+import { useLocale, useTranslations } from "next-globe-gen";
 import { LawyerAuth, LawyerUser } from "@/_app/utils/auth";
 
 interface UseLawyerAuthReturn {
@@ -103,12 +103,13 @@ export function withLawyerAuth<P extends object>(
 ): React.ComponentType<P> {
   return function AuthenticatedComponent(props: P) {
     const { isAuthenticated, isLoading } = useLawyerAuth();
+    const t = useTranslations();
 
     if (isLoading) {
       return (
         <div className="auth-loading">
           <div className="auth-loading__spinner"></div>
-          <p>Loading...</p>
+          <p>{t("common.loading")}</p>
         </div>
       );
     }

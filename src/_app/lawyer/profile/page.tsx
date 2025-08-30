@@ -203,7 +203,7 @@ function LawyerProfileInner() {
     return (
       <div className="lawyer__loading">
         <div className="lawyer__loading-spinner"></div>
-        <p>Loading...</p>
+        <p>{t("common.loading")}</p>
       </div>
     );
   }

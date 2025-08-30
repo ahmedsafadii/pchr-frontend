@@ -78,13 +78,13 @@ export default function Overview({
         setCurrentPage(page);
       } catch (error) {
         console.error("Failed to load messages:", error);
-        setError("Failed to load messages. Please try again.");
+        setError(tt("messages.errors.failedToLoadMessages"));
       } finally {
         loadingRef.current = false;
         setLoading(false);
       }
     },
-    [caseData?.id, caseTrackingToken]
+    [caseData?.id, caseTrackingToken, tt]
   );
 
   // Load messages on component mount
@@ -132,13 +132,13 @@ export default function Overview({
           fileSize: response.data.file_size_mb,
         };
         setUploadedFiles((prev) => [...prev, newFile]);
-        toast.success("File uploaded successfully!");
+        toast.success(tt("messages.success.fileUploaded"));
       } else {
         // Handle API error response
         const errorMessage =
           response.error?.message ||
           response.message ||
-          "Failed to upload file";
+          tt("messages.errors.failedToUploadFile");
         toast.error(errorMessage);
       }
     } catch (error: any) {
@@ -148,7 +148,7 @@ export default function Overview({
         error.payload?.error?.message ||
         error.payload?.message ||
         error.message ||
-        "Failed to upload file. Please try again.";
+        tt("messages.errors.failedToUploadFile");
       toast.error(errorMessage);
     } finally {
       setUploading(false);
@@ -177,7 +177,7 @@ export default function Overview({
       setMessage("");
       setUploadedFiles([]);
       await loadMessages(); // Refresh messages
-      toast.success("Message sent successfully!");
+      toast.success(tt("messages.success.messageSent"));
     } catch (error: any) {
       console.error("Failed to send message:", error);
       // Extract error message from API response if available
@@ -185,7 +185,7 @@ export default function Overview({
         error.payload?.error?.message ||
         error.payload?.message ||
         error.message ||
-        "Failed to send message. Please try again.";
+        tt("messages.errors.failedToSendMessage");
       toast.error(errorMessage);
     } finally {
       setSending(false);
@@ -237,11 +237,11 @@ export default function Overview({
             <div className="case-overview__date">
               {caseData?.created
                 ? formatDateWithLocale(caseData.created, locale).toUpperCase()
-                : "Loading..."}
+                : tt("common.loading")}
             </div>
             <h1 className="case-overview__main-title">
               {tt("trackCase.overview.detainee")}:{" "}
-              {caseData?.detainee_name || "Loading..."}
+              {caseData?.detainee_name || tt("common.loading")}
             </h1>
             <span
               className={`case-overview__badge ${
@@ -252,7 +252,7 @@ export default function Overview({
                   : ""
               }`}
             >
-              <IconTag size={18} /> {caseData?.status_display || "Loading..."}
+              <IconTag size={18} /> {caseData?.status_display || tt("common.loading")}
             </span>
             <hr className="case-overview__divider" />
 
@@ -269,7 +269,7 @@ export default function Overview({
                     <dd className="case-overview__dd">
                       {caseData?.detention_date
                         ? formatDateWithLocale(caseData.detention_date, locale)
-                        : "Not available"}
+                        : tt("common.notAvailable")}
                     </dd>
                   </div>
                   <div className="case-overview__row">
@@ -278,7 +278,7 @@ export default function Overview({
                     </dt>
                     <dd className="case-overview__dd">
                       {caseData?.detention_circumstances ||
-                        "No details available"}
+                        tt("common.noDetailsAvailable")}
                     </dd>
                   </div>
                   <div className="case-overview__row">
@@ -344,7 +344,7 @@ export default function Overview({
                   ? messages[0].case_info.assigned_lawyer_name
                       .substring(0, 2)
                       .toUpperCase()
-                  : "PCHR"}
+                  : tt("common.pchr")}
               </div>
               <div className="chat__meta">
                 <span className="chat__role">
@@ -368,7 +368,7 @@ export default function Overview({
                     onClick={loadMoreMessages}
                     disabled={loading}
                   >
-                    {loading ? "Loading..." : tt("trackCase.chat.loadMore")}
+                    {loading ? tt("common.loading") : tt("trackCase.chat.loadMore")}
                   </button>
                 </div>
               )}
@@ -389,7 +389,7 @@ export default function Overview({
                               ? msg.case_info.assigned_lawyer_name
                                   .substring(0, 2)
                                   .toUpperCase()
-                              : "LA"}
+                              : tt("common.lawyerAbbr")}
                           </div>
                           <span className="chat__message-lawyer-name">
                             {msg.case_info.assigned_lawyer_name || "Lawyer"}

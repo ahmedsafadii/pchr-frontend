@@ -222,7 +222,7 @@ export default function LawyerCaseMessagesPage() {
           fileSize: response.data.file_size_mb,
         };
         setUploadedFiles((prev) => [...prev, newFile]);
-        toast.success("File uploaded successfully!");
+        toast.success(t("messages.success.fileUploaded"));
       } else {
         const errorMessage =
           response.error?.message ||
@@ -271,7 +271,7 @@ export default function LawyerCaseMessagesPage() {
       setMessage("");
       setUploadedFiles([]);
       await loadMessages(); // Refresh messages
-      toast.success("Message sent successfully!");
+      toast.success(t("messages.success.messageSent"));
     } catch (error: any) {
       console.error("Failed to send message:", error);
       const errorMessage =
@@ -314,7 +314,7 @@ export default function LawyerCaseMessagesPage() {
               onClick={loadMoreMessages}
               disabled={loading}
             >
-              {loading ? "Loading..." : "Load More Messages"}
+              {loading ? t("common.loading") : t("common.loadMoreMessages")}
             </button>
           </div>
         )}
@@ -334,7 +334,7 @@ export default function LawyerCaseMessagesPage() {
                     <div className="lawyer__message-lawyer-avatar">
                       {msg.sender?.full_name
                         ? msg.sender.full_name.substring(0, 2).toUpperCase()
-                        : "LA"}
+                                                      : t("common.lawyerAbbr")}
                     </div>
                     <span className="lawyer__message-lawyer-name">
                       {msg.sender?.full_name || "Lawyer"}

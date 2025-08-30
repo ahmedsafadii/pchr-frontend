@@ -138,15 +138,15 @@ function LawyerCaseVisitsInner() {
         setVisits(response.data.visits || []);
         setPagination(response.data.pagination || null);
       } else {
-        throw new Error(response.message || "Failed to fetch visits");
+        throw new Error(response.message || t("messages.errors.failedToFetchVisits"));
       }
     } catch (err: any) {
       console.error("Error fetching visits:", err);
-      setError(err.message || "Failed to fetch visits");
+              setError(err.message || t("messages.errors.failedToFetchVisits"));
     } finally {
       setLoading(false);
     }
-  }, [caseId, currentPage, pageSize, daysFilter, statusFilter]);
+  }, [caseId, currentPage, pageSize, daysFilter, statusFilter, t]);
 
   // Initialize page from URL params
   useEffect(() => {
@@ -277,7 +277,7 @@ function LawyerCaseVisitsInner() {
         fetchVisits();
         setShowOutcomeModal(false);
       } else {
-        throw new Error(response.message || "Failed to complete visit");
+        throw new Error(response.message || t("messages.errors.failedToCompleteVisit"));
       }
     } catch (error) {
       console.error("Error completing visit:", error);
@@ -308,7 +308,7 @@ function LawyerCaseVisitsInner() {
         fetchVisits();
         setShowRejectionModal(false);
       } else {
-        throw new Error(response.message || "Failed to reject visit");
+        throw new Error(response.message || t("messages.errors.failedToRejectVisit"));
       }
     } catch (error) {
       console.error("Error rejecting visit:", error);
@@ -339,7 +339,7 @@ function LawyerCaseVisitsInner() {
         fetchVisits();
         setShowApproveModal(false);
       } else {
-        throw new Error(response.message || "Failed to approve visit");
+        throw new Error(response.message || t("messages.errors.failedToApproveVisit"));
       }
     } catch (error) {
       console.error("Error approving visit:", error);

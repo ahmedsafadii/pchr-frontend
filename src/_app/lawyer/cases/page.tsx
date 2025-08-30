@@ -153,15 +153,15 @@ function LawyerCasesInner() {
         
 
       } else {
-        throw new Error(response.message || "Failed to fetch cases");
+        throw new Error(response.message || t("messages.errors.failedToFetchCases"));
       }
     } catch (err: any) {
       console.error("Error fetching cases:", err);
-      setError(err.message || "Failed to fetch cases");
+              setError(err.message || t("messages.errors.failedToFetchCases"));
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, debouncedSearchTerm, urgentOnly, currentPage, pageSize, locale]);
+  }, [statusFilter, debouncedSearchTerm, urgentOnly, currentPage, pageSize, locale, t]);
 
   // Initialize filters from URL params
   useEffect(() => {
@@ -350,12 +350,12 @@ function LawyerCasesInner() {
 
             <div className="lawyer__filter">
               <CustomSelect
-                value={urgentOnly ? "urgent" : "all"}
-                onChange={(value) => handleUrgentChange(value === "urgent")}
+                value={urgentOnly ? t("common.urgentCases") : t("common.allCases")}
+                onChange={(value) => handleUrgentChange(value === t("common.urgentCases"))}
                 placeholder="Filter by urgency"
                 options={[
-                  { value: "all", label: t("lawyer.cases.urgentFilter.allCases") },
-                  { value: "urgent", label: t("lawyer.cases.urgentFilter.onlyUrgent") }
+                  { value: t("common.allCases"), label: t("lawyer.cases.urgentFilter.allCases") },
+                  { value: t("common.urgentCases"), label: t("lawyer.cases.urgentFilter.onlyUrgent") }
                 ]}
                 includeNullOption={false}
                 isSearchable={false}

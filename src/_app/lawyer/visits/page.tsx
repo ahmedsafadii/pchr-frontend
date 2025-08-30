@@ -135,15 +135,15 @@ function LawyerVisitsInner() {
         setPagination(response.data.pagination || null);
 
       } else {
-        throw new Error(response.message || "Failed to fetch visits");
+        throw new Error(response.message || t("messages.errors.failedToFetchVisits"));
       }
     } catch (err: any) {
       console.error("Error fetching visits:", err);
-      setError(err.message || "Failed to fetch visits");
+              setError(err.message || t("messages.errors.failedToFetchVisits"));
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, urgentOnly, daysFilter, currentPage, pageSize, locale]);
+  }, [statusFilter, urgentOnly, daysFilter, currentPage, pageSize, locale, t]);
 
   // Initialize filters from URL params
   useEffect(() => {
@@ -222,13 +222,13 @@ function LawyerVisitsInner() {
         fetchVisits();
         setShowApproveModal(false);
       } else {
-        throw new Error(response.message || "Failed to approve visit");
+        throw new Error(response.message || t("messages.errors.failedToApproveVisit"));
       }
     } catch (error: any) {
       console.error('Error approving visit:', error);
       
       // Extract error message from API response
-      let errorMessage = "Failed to approve visit";
+              let errorMessage = t("messages.errors.failedToApproveVisit");
       if (error?.error?.message) {
         errorMessage = error.error.message;
       } else if (error?.message) {
@@ -258,13 +258,13 @@ function LawyerVisitsInner() {
         fetchVisits();
         setShowRejectionModal(false);
       } else {
-        throw new Error(response.message || "Failed to reject visit");
+        throw new Error(response.message || t("messages.errors.failedToRejectVisit"));
       }
     } catch (error: any) {
       console.error('Error rejecting visit:', error);
       
       // Extract error message from API response
-      let errorMessage = "Failed to reject visit";
+              let errorMessage = t("messages.errors.failedToRejectVisit");
       if (error?.error?.message) {
         errorMessage = error.error.message;
       } else if (error?.message) {
@@ -294,13 +294,13 @@ function LawyerVisitsInner() {
         fetchVisits();
         setShowOutcomeModal(false);
       } else {
-        throw new Error(response.message || "Failed to complete visit");
+        throw new Error(response.message || t("messages.errors.failedToCompleteVisit"));
       }
     } catch (error: any) {
       console.error('Error completing visit:', error);
       
       // Extract error message from API response
-      let errorMessage = "Failed to complete visit";
+              let errorMessage = t("messages.errors.failedToCompleteVisit");
       if (error?.error?.message) {
         errorMessage = error.error.message;
       } else if (error?.message) {
@@ -438,13 +438,13 @@ function LawyerVisitsInner() {
 
             <div className="lawyer__filter">
               <CustomSelect
-                value={urgentOnly ? "urgent" : "all"}
-                onChange={(value) => handleUrgentChange(value === "urgent")}
+                value={urgentOnly ? t("common.urgentCases") : t("common.allCases")}
+                onChange={(value) => handleUrgentChange(value === t("common.urgentCases"))}
                 placeholder="Filter by urgency"
                 options={[
-                  { value: "all", label: t("lawyer.visits.filters.allVisits") },
+                  { value: t("common.allCases"), label: t("lawyer.visits.filters.allVisits") },
                   {
-                    value: "urgent",
+                    value: t("common.urgentCases"),
                     label: t("lawyer.visits.filters.urgentOnly"),
                   },
                 ]}

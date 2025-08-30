@@ -2,6 +2,7 @@
 
 import { useMemo, useRef } from 'react';
 import Select, { StylesConfig, GroupBase, SingleValue, MultiValue, ActionMeta } from 'react-select';
+import { useTranslations } from 'next-globe-gen';
 
 interface Option {
   value: string;
@@ -41,6 +42,7 @@ export default function CustomSelect({
   instanceId,
   fullWidth = false,
 }: CustomSelectProps) {
+  const t = useTranslations();
   const selectRef = useRef<any>(null);
 
   const normalizedOptions: Option[] = useMemo(() => {
@@ -222,7 +224,7 @@ export default function CustomSelect({
       className={className}
       styles={customStyles}
       noOptionsMessage={() => "No options found"}
-      loadingMessage={() => "Loading..."}
+              loadingMessage={() => t("common.loading")}
       isClearable={false}
       menuPlacement="auto"
       menuPosition="fixed"

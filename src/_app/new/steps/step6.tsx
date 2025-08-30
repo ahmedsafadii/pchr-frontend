@@ -110,28 +110,28 @@ export default function Step6({
 
   const downloadDocument = () => {
     // Create a simple text document for download
-    const legalText = `LEGAL DOCUMENT - DISAPPEARANCE REPORT
+    const legalText = `${t("legalDocument.title")}
 
-This document constitutes the legal authorization for the Palestinian Centre for Human Rights to pursue legal action regarding the reported disappearance case.
+${t("legalDocument.description")}
 
-By signing this document, you acknowledge and agree to the following terms:
+${t("legalDocument.termsIntro")}
 
-1. You authorize the Palestinian Centre for Human Rights to legally pursue this case on your behalf.
-2. You confirm that all information provided in this report is accurate to the best of your knowledge.
-3. You understand that this case may be subject to legal proceedings and international human rights mechanisms.
-4. You consent to the processing of personal data as outlined in our privacy policy.
-5. You acknowledge that this report will be handled in accordance with international human rights standards.
+1. ${t("legalDocument.term1")}
+2. ${t("legalDocument.term2")}
+3. ${t("legalDocument.term3")}
+4. ${t("legalDocument.term4")}
+5. ${t("legalDocument.term5")}
 
-Case Reference: ${Date.now()}
-Date: ${formatDateWithLocale(new Date(), locale)}
+${t("legalDocument.caseReference")} ${Date.now()}
+${t("legalDocument.date")} ${formatDateWithLocale(new Date(), locale)}
 
-This document is legally binding and constitutes your formal consent for legal action.`;
+${t("legalDocument.binding")}`;
 
     const blob = new Blob([legalText], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "legal-document.txt";
+    a.download = t("legalDocument.downloadFilename");
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -205,7 +205,7 @@ This document is legally binding and constitutes your formal consent for legal a
       } catch (error: any) {
 
         alert(
-          "Failed to upload signature: " + (error?.message || "Unknown error")
+          t("messages.errors.failedToUploadSignature") + ": " + (error?.message || t("messages.errors.unknownError"))
         );
         setIsSubmitting(false);
         return;

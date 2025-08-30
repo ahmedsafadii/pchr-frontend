@@ -35,11 +35,11 @@ export default function LawyerCaseFilesPage() {
         if (response.status === "success") {
           setCaseData(response.data);
         } else {
-          setError("Failed to fetch case documents");
+          setError(t("messages.errors.failedToFetchCaseDocuments"));
         }
       } catch (err: any) {
         console.error("Error fetching case documents:", err);
-        setError(err.message || "Failed to fetch case documents");
+        setError(err.message || t("messages.errors.failedToFetchCaseDocuments"));
       } finally {
         setLoading(false);
       }
@@ -48,7 +48,7 @@ export default function LawyerCaseFilesPage() {
     if (params.id) {
       fetchCaseDocuments();
     }
-  }, [params.id]);
+  }, [params.id, t]);
 
   const handleFileUpload = () => {
     setIsUploadModalOpen(true);
@@ -75,11 +75,11 @@ export default function LawyerCaseFilesPage() {
           if (response.status === "success") {
             setCaseData(response.data);
           } else {
-            setError("Failed to fetch case documents");
+            setError(t("messages.errors.failedToFetchCaseDocuments"));
           }
         } catch (err: any) {
           console.error("Error fetching case documents:", err);
-          setError(err.message || "Failed to fetch case documents");
+          setError(err.message || t("messages.errors.failedToFetchCaseDocuments"));
         } finally {
           setLoading(false);
         }

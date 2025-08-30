@@ -126,13 +126,13 @@ export default function UpdateCaseModal({
         
         onClose();
       } else {
-        throw new Error(response.message || "Failed to update case status");
+        throw new Error(response.message || t("messages.errors.failedToUpdateCaseStatus"));
       }
     } catch (err: any) {
       console.error("Error updating case status:", err);
       
       // Show error toast
-      const errorMessage = err.message || "Failed to update case status";
+              const errorMessage = err.message || t("messages.errors.failedToUpdateCaseStatus");
       toast.error(errorMessage);
       
       // Set error in modal for additional context

@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-globe-gen";
-import Image from "next/image";
 import { IconFileText, IconDownload } from "@tabler/icons-react";
 import { formatDateWithLocale } from "../../../utils/dateUtils";
 
@@ -29,7 +28,7 @@ export default function DisappearanceInfo({
         <dl className="case-info__dl">
           <div className="case-info__row">
             <dt>{(t as any)("trackCase.info.caseNumber")}</dt>
-            <dd>{caseData?.case_number || "Not available"}</dd>
+            <dd>{caseData?.case_number || t("common.notAvailable")}</dd>
           </div>
           <div className="case-info__row">
             <dt>{(t as any)("trackCase.info.status")}</dt>
@@ -43,7 +42,7 @@ export default function DisappearanceInfo({
                     : ""
                 }`}
               >
-                {caseData?.status_display || "Not available"}
+                {caseData?.status_display || t("common.notAvailable")}
               </div>
             </dd>
           </div>
@@ -58,34 +57,34 @@ export default function DisappearanceInfo({
           <dl className="case-info__dl">
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.fullName")}</dt>
-              <dd>{caseData?.detainee_name || "Loading..."}</dd>
+              <dd>{caseData?.detainee_name || t("common.loading")}</dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.dob")}</dt>
               <dd>
                 {caseData?.detainee_date_of_birth
                   ? formatDateWithLocale(caseData.detainee_date_of_birth, locale)
-                  : "Not available"}
+                  : t("common.notAvailable")}
               </dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.id")}</dt>
-              <dd>{caseData?.detainee_id || "Not available"}</dd>
+              <dd>{caseData?.detainee_id || t("common.notAvailable")}</dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.health")}</dt>
               <dd>
-                {caseData?.detainee_health_status_display || "Not available"}
+                {caseData?.detainee_health_status_display || t("common.notAvailable")}
               </dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.job")}</dt>
-              <dd>{caseData?.detainee_job_display || "Not available"}</dd>
+              <dd>{caseData?.detainee_job_display || t("common.notAvailable")}</dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.marital")}</dt>
               <dd>
-                {caseData?.detainee_marital_status_display || "Not available"}
+                {caseData?.detainee_marital_status_display || t("common.notAvailable")}
               </dd>
             </div>
             <div className="case-info__row">
@@ -94,12 +93,12 @@ export default function DisappearanceInfo({
                 {caseData
                   ? `${caseData.detainee_street || ""}, ${
                       caseData.detainee_district?.name || ""
-                    }, ${caseData.detainee_city?.name || ""}, ${
+                    }, ${caseData.detainee_city?.name || ""                    }, ${
                       caseData.detainee_governorate?.name || ""
                     }`
                       .replace(/^,\s*|,\s*$/g, "")
                       .replace(/,\s*,/g, ",")
-                  : "Not available"}
+                  : t("common.notAvailable")}
               </dd>
             </div>
           </dl>
@@ -115,13 +114,13 @@ export default function DisappearanceInfo({
               <dd>
                 {caseData?.detention_date
                   ? formatDateWithLocale(caseData.detention_date, locale)
-                  : "Not available"}
+                  : t("common.notAvailable")}
               </dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.disappearanceStatus")}</dt>
               <dd>
-                {caseData?.disappearance_status_display || "Not available"}
+                {caseData?.disappearance_status_display || t("common.notAvailable")}
               </dd>
             </div>
             <div className="case-info__row">
@@ -130,19 +129,19 @@ export default function DisappearanceInfo({
                 {caseData
                   ? `${caseData?.detention_street || ""}, ${
                       caseData?.detention_district?.name || ""
-                    }, ${caseData?.detention_city?.name || ""}, ${
+                    }, ${caseData?.detention_city?.name || ""                    }, ${
                       caseData?.detention_governorate?.name || ""
                     }`
                       .replace(/^,\s*|,\s*$/g, "")
                       .replace(/,\s*,/g, ",")
-                  : "Not available"}
+                  : t("common.notAvailable")}
               </dd>
             </div>
             <div className="case-info__row case-info__row--full">
               <dt>{(t as any)("trackCase.info.describe")}</dt>
               <dd>
                 {caseData?.detention_circumstances ||
-                  "No description available"}
+                  t("common.noDescription")}
               </dd>
             </div>
           </dl>
@@ -156,19 +155,19 @@ export default function DisappearanceInfo({
         <dl className="case-info__dl">
           <div className="case-info__row">
             <dt>{(t as any)("trackCase.info.fullName")}</dt>
-            <dd>{caseData?.client_name || "Not available"}</dd>
+            <dd>{caseData?.client_name || t("common.notAvailable")}</dd>
           </div>
           <div className="case-info__row">
             <dt>{(t as any)("trackCase.info.id")}</dt>
-            <dd>{caseData?.client_id || "Not available"}</dd>
+            <dd>{caseData?.client_id || t("common.notAvailable")}</dd>
           </div>
           <div className="case-info__row">
             <dt>{(t as any)("trackCase.info.phone")}</dt>
-            <dd>{caseData?.client_phone || "Not available"}</dd>
+            <dd>{caseData?.client_phone || t("common.notAvailable")}</dd>
           </div>
           <div className="case-info__row">
             <dt>{(t as any)("trackCase.info.relationship")}</dt>
-            <dd>{caseData?.client_relationship_display || "Not available"}</dd>
+            <dd>{caseData?.client_relationship_display || t("common.notAvailable")}</dd>
           </div>
         </dl>
       </div>
@@ -239,12 +238,11 @@ export default function DisappearanceInfo({
                 if (imageUrl) {
                   // Display image signature
                   return (
-                    <Image
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
                       src={imageUrl}
                       alt="signature"
-                      width={600}
-                      height={160}
-                      style={{ width: "100%", height: "auto" }}
+                      style={{ width: "100%", height: "auto", maxWidth: "600px" }}
                     />
                   );
                 }

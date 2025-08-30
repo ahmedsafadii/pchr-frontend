@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { useLocale } from "next-globe-gen";
+import { useLocale, useTranslations } from "next-globe-gen";
 
 // Interface for upcoming visit data
 interface UpcomingVisit {
@@ -26,6 +26,7 @@ interface VisitsCalendarProps {
 
 export default function VisitsCalendar({ onCaseClick, upcomingVisits = [] }: VisitsCalendarProps) {
   const locale = useLocale();
+  const t = useTranslations();
   const [date, setDate] = useState(new Date()); // Current date
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
@@ -217,7 +218,7 @@ export default function VisitsCalendar({ onCaseClick, upcomingVisits = [] }: Vis
                 <div className="lawyer__calendar-tooltip-case">
                   {visit.case_number}: {visit.detainee_name}
                   {visit.is_urgent && (
-                    <span className="lawyer__calendar-urgent-badge">Urgent</span>
+                                            <span className="lawyer__calendar-urgent-badge">{t("common.urgent")}</span>
                   )}
                 </div>
                 <div className="lawyer__calendar-tooltip-details">
