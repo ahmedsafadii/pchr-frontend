@@ -78,36 +78,114 @@ export default function GazaAddressSelector({
   const selectedCity = useMemo(() => cities.find((c: any) => String(c.id) === String(city)), [cities, city]);
   const districts = useMemo(() => (selectedCity?.districts as any[]) || [], [selectedCity]);
 
-  // Reset dependent fields when location changes
+  // Track if component has been initialized to prevent resetting on first load
+  const isInitializedRef = useRef(false);
   const prevLocationRef = useRef(location);
+  const prevGovernorateRef = useRef(governorate);
+  const prevCityRef = useRef(city);
+  
+  // Only reset dependent fields when user actually changes a selection
+  // Don't reset on component initialization
   useEffect(() => {
-    if (prevLocationRef.current !== location && prevLocationRef.current !== "") {
-      if (governorate) onGovernorateChange("");
-      if (city) onCityChange("");
-      if (district) onDistrictChange("");
+    if (!isInitializedRef.current) {
+      isInitializedRef.current = true;
+      return;
+    }
+    
+    // Only reset if we had a previous value and it's different
+    if (prevLocationRef.current && prevLocationRef.current !== location) {
+      // Check if the new location still contains the current governorate
+      const newLocationData = constants?.data?.locations?.[location as keyof typeof constants.data.locations];
+      const currentGovInNewLocation = newLocationData?.governorates?.find((g: any) => String(g.id) === String(governorate));
+      
+      if (!currentGovInNewLocation && governorate) {
+        onGovernorateChange("");
+      }
+      if (!currentGovInNewLocation && city) {
+        onCityChange("");
+      }
+      if (!currentGovInNewLocation && district) {
+        onDistrictChange("");
+      }
     }
     prevLocationRef.current = location;
-  }, [location, governorate, city, district, onGovernorateChange, onCityChange, onDistrictChange]);
+  }, [location, governorate, city, district, onGovernorateChange, onCityChange, onDistrictChange, constants]);
 
-  // Reset dependent fields when parent changes
-  const prevGovernorateRef = useRef(governorate);
+  // Only reset dependent fields when governorate actually changes
   useEffect(() => {
-    if (prevGovernorateRef.current !== governorate && prevGovernorateRef.current !== "") {
-      if (city) onCityChange("");
-      if (district) onDistrictChange("");
+    if (!isInitializedRef.current) {
+      return;
+    }
+    
+    if (prevGovernorateRef.current && prevGovernorateRef.current !== governorate) {
+      // Check if the new governorate still contains the current city
+      const newGovData = governorates.find((g: any) => String(g.id) === String(governorate));
+      const currentCityInNewGov = newGovData?.cities?.find((c: any) => String(c.id) === String(city));
+      
+      if (!currentCityInNewGov && city) {
+        onCityChange("");
+      }
+      if (!currentCityInNewGov && district) {
+        onDistrictChange("");
+      }
     }
     prevGovernorateRef.current = governorate;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [governorate]);
+  }, [governorate, city, district, onCityChange, onDistrictChange, governorates]);
 
-  const prevCityRef = useRef(city);
+  // Only reset dependent fields when city actually changes
   useEffect(() => {
-    if (prevCityRef.current !== city && prevCityRef.current !== "") {
-      if (district) onDistrictChange("");
+    if (!isInitializedRef.current) {
+      return;
+    }
+    
+    if (prevCityRef.current && prevCityRef.current !== city) {
+      // Check if the new city still contains the current district
+      const newCityData = cities.find((c: any) => String(c.id) === String(city));
+      const currentDistrictInNewCity = newCityData?.districts?.find((d: any) => String(d.id) === String(district));
+      
+      if (!currentDistrictInNewCity && district) {
+        onDistrictChange("");
+      }
     }
     prevCityRef.current = city;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city]);
+  }, [city, district, onDistrictChange, cities]);
+
+  // Validate saved values after initialization to ensure they're still valid
+  useEffect(() => {
+    if (!isInitializedRef.current || isLoading || !constants) {
+      return;
+    }
+    
+    // Check if current governorate is valid in current location
+    if (governorate && location) {
+      const locationData = constants.data.locations?.[location as keyof typeof constants.data.locations];
+      const isValidGovernorate = locationData?.governorates?.find((g: any) => String(g.id) === String(governorate));
+      
+      if (!isValidGovernorate && governorate) {
+        onGovernorateChange("");
+      }
+    }
+    
+    // Check if current city is valid in current governorate
+    if (city && governorate) {
+      const governorateData = governorates.find((g: any) => String(g.id) === String(governorate));
+      const isValidCity = governorateData?.cities?.find((c: any) => String(c.id) === String(city));
+      
+      if (!isValidCity && city) {
+        onCityChange("");
+      }
+    }
+    
+    // Check if current district is valid in current city
+    if (district && city) {
+      const cityData = cities.find((c: any) => String(c.id) === String(city));
+      const isValidDistrict = cityData?.districts?.find((d: any) => String(d.id) === String(district));
+      
+      if (!isValidDistrict && district) {
+        onDistrictChange("");
+      }
+    }
+  }, [isLoading, constants, location, governorate, city, district, governorates, cities, onGovernorateChange, onCityChange, onDistrictChange]);
 
   return (
     <>

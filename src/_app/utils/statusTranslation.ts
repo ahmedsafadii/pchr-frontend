@@ -1,5 +1,3 @@
-import { useTranslations } from "next-globe-gen";
-
 export const getCaseStatusTranslation = (status: string, t: any) => {
   const statusOptions = [
     { value: "pending", label: t("lawyer.cases.statusOptions.pending") },

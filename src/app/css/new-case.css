@@ -195,6 +195,20 @@
   background: var(--primary-900);
 }
 
+.new-case__step-circle--clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.new-case__step-circle--clickable:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+
+
+
 .new-case__step-circle--error {
   background: #dc3545;
 }
@@ -251,6 +265,19 @@
   font-size: 12px;
   color: #666;
   line-height: 1.4;
+}
+
+.new-case__step-content--clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.new-case__step-content--clickable:hover {
+  opacity: 0.8;
+}
+
+.new-case__step-content--clickable:hover .new-case__step-title {
+  color: var(--primary-900);
 }
 
 /* Form Section */

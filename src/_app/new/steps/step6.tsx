@@ -261,6 +261,7 @@ ${t("legalDocument.binding")}`;
             "detainee_job",
             "detainee_health_status",
             "detainee_marital_status",
+            "detainee_location",
             "detainee_city",
             "detainee_governorate",
             "detainee_district",
@@ -269,6 +270,7 @@ ${t("legalDocument.binding")}`;
           const step2 = new Set([
             "detention_date",
             "disappearance_status",
+            "detention_location",
             "detention_city",
             "detention_governorate",
             "detention_district",

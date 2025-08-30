@@ -329,6 +329,7 @@ export default function NewCasePage({ locale = "ar" }) {
         detaineeInfo?.detainee_date_of_birth?.trim() !== '' &&
         detaineeInfo?.detainee_health_status?.trim() !== '' &&
         detaineeInfo?.detainee_marital_status?.trim() !== '' &&
+        detaineeInfo?.detainee_location?.trim() !== '' &&
         detaineeInfo?.detainee_city?.trim() !== '' &&
         detaineeInfo?.detainee_governorate?.trim() !== '' &&
         detaineeInfo?.detainee_district?.trim() !== ''
@@ -341,6 +342,7 @@ export default function NewCasePage({ locale = "ar" }) {
       const detentionInfo = caseData.detentionInfo;
       const isValid = (
         detentionInfo?.detention_date?.trim() !== '' &&
+        detentionInfo?.detention_location?.trim() !== '' &&
         detentionInfo?.detention_city?.trim() !== '' &&
         detentionInfo?.detention_governorate?.trim() !== '' &&
         detentionInfo?.detention_district?.trim() !== ''
@@ -393,6 +395,18 @@ export default function NewCasePage({ locale = "ar" }) {
   const goToPrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const goToStep = (stepNumber: number) => {
+    // Allow navigation to completed steps, current step, or the next step after a completed step
+    if (stepNumber >= 1 && stepNumber <= steps.length) {
+      if (completedSteps.includes(stepNumber) || stepNumber === currentStep) {
+        setCurrentStep(stepNumber);
+      } else if (stepNumber === currentStep + 1 && canGoToNext(currentStep)) {
+        // Allow going to next step if current step can proceed
+        setCurrentStep(stepNumber);
+      }
     }
   };
 
@@ -455,7 +469,26 @@ export default function NewCasePage({ locale = "ar" }) {
                         <div
                           className={`new-case__step-circle new-case__step-circle--${getStepStatus(
                             step.id
-                          )}`}
+                          )} ${(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? "new-case__step-circle--clickable" : ""}`}
+                          onClick={() => {
+                            if (getStepStatus(step.id) === "completed") {
+                              goToStep(step.id);
+                            } else if (step.id === currentStep + 1 && canGoToNext(currentStep)) {
+                              goToStep(step.id);
+                            }
+                          }}
+                          style={{ 
+                            cursor: (getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? "pointer" : "default" 
+                          }}
+                          role={(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? "button" : undefined}
+                          tabIndex={(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? 0 : undefined}
+                          aria-label={(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? `Go to step ${step.id}: ${step.title}` : undefined}
+                          onKeyDown={(e) => {
+                            if ((getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) && (e.key === "Enter" || e.key === " ")) {
+                              e.preventDefault();
+                              goToStep(step.id);
+                            }
+                          }}
                         >
                           {getStepStatus(step.id) === "error" && (
                             <IconExclamationMark size={18} />
@@ -467,6 +500,7 @@ export default function NewCasePage({ locale = "ar" }) {
                             <StepIcon size={18} />
                           )}
                           {getStepStatus(step.id) === "pending" && step.id}
+
                         </div>
                         {index < steps.length - 1 && (
                           <div
@@ -476,7 +510,28 @@ export default function NewCasePage({ locale = "ar" }) {
                           ></div>
                         )}
                       </div>
-                      <div className="new-case__step-content">
+                      <div 
+                        className={`new-case__step-content ${(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? "new-case__step-content--clickable" : ""}`}
+                        onClick={() => {
+                          if (getStepStatus(step.id) === "completed") {
+                            goToStep(step.id);
+                          } else if (step.id === currentStep + 1 && canGoToNext(currentStep)) {
+                            goToStep(step.id);
+                          }
+                        }}
+                        style={{ 
+                          cursor: (getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? "pointer" : "default" 
+                        }}
+                        role={(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? "button" : undefined}
+                        tabIndex={(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? 0 : undefined}
+                        aria-label={(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? `Go to step ${step.id}: ${step.title}` : undefined}
+                        onKeyDown={(e) => {
+                          if ((getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) && (e.key === "Enter" || e.key === " ")) {
+                            e.preventDefault();
+                            goToStep(step.id);
+                          }
+                        }}
+                      >
                         <h3 className="new-case__step-title">{step.title}</h3>
                         <p className="new-case__step-description">
                           {step.description}

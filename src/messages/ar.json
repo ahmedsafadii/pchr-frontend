@@ -126,6 +126,7 @@
       },
       "errors": {
         "disappearanceDateRequired": "تاريخ الاختفاء مطلوب",
+        "locationRequired": "الموقع مطلوب",
         "cityRequired": "المدينة مطلوبة",
         "governorateRequired": "المحافظة مطلوبة",
         "districtRequired": "المنطقة مطلوبة",

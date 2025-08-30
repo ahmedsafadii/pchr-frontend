@@ -33,13 +33,13 @@ export default function Step2({
   canGoNext,
   externalErrors = [],
 }: Step2Props) {
-  const [formData, setFormData] = useState(data.detentionInfo);
+  const [formData, setFormData] = useState(data.detentionInfo || {});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const t = useTranslations();
   const { constants, isLoading: isConstantsLoading } = useConstantsStore();
 
   useEffect(() => {
-    setFormData(data.detentionInfo);
+    setFormData(data.detentionInfo || {});
   }, [data.detentionInfo]);
 
   // Handle external errors from API validation
@@ -92,21 +92,21 @@ export default function Step2({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.detention_date.trim())
+    if (!formData.detention_date || !formData.detention_date.trim())
       newErrors.disappearanceDate = t(
         "newCase.step2.errors.disappearanceDateRequired"
       );
 
-    if (!formData.detention_location.trim())
+    if (!formData.detention_location || !formData.detention_location.trim())
       newErrors.location = t("newCase.step2.errors.locationRequired");
 
-    if (!formData.detention_city.trim())
+    if (!formData.detention_city || !formData.detention_city.trim())
       newErrors.city = t("newCase.step2.errors.cityRequired");
 
-    if (!formData.detention_governorate.trim())
+    if (!formData.detention_governorate || !formData.detention_governorate.trim())
       newErrors.governorate = t("newCase.step2.errors.governorateRequired");
 
-    if (!formData.detention_district.trim())
+    if (!formData.detention_district || !formData.detention_district.trim())
       newErrors.district = t("newCase.step2.errors.districtRequired");
 
     setErrors(newErrors);

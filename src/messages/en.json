@@ -188,6 +188,7 @@
       },
       "errors": {
         "disappearanceDateRequired": "Disappearance date is required",
+        "locationRequired": "Location is required",
         "cityRequired": "City is required",
         "governorateRequired": "Governorate is required",
         "districtRequired": "District is required",
