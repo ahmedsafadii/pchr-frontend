@@ -34,7 +34,7 @@ export default function Step1({
   onNext,
   currentStep,
   canGoNext,
-  locale = "en",
+  locale = "ar",
   externalErrors = [],
 }: Step1Props) {
   const [formData, setFormData] = useState(data.detaineeInfo);

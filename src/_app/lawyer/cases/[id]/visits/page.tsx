@@ -404,11 +404,14 @@ function LawyerCaseVisitsInner() {
 
   const formatTime = (timeString: string | null) => {
     if (!timeString) return "—";
-    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
+    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString(
+      locale === "ar" ? "ar-SA" : "en-US",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      }
+    );
   };
 
   if (isLoading) {

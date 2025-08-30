@@ -39,7 +39,7 @@ export default function Step3({
   onPrevious,
   currentStep,
   canGoNext,
-  locale = "en",
+  locale = "ar",
   externalErrors = [],
 }: Step3Props) {
   const [formData, setFormData] = useState(data.clientInfo);

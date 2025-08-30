@@ -155,7 +155,7 @@ const initialCaseData: CaseData = {
 
 // Steps will be defined inside the component to access translations and locale
 
-export default function NewCasePage({ locale = "en" }) {
+export default function NewCasePage({ locale = "ar" }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [caseData, setCaseData] = useState<CaseData>(initialCaseData);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
@@ -428,7 +428,7 @@ export default function NewCasePage({ locale = "en" }) {
             <Logo />
           </div>
           <div className="new-case__header-controls">
-            <Link href="/" className="new-case__back-button">
+            <Link href={`/${locale}`} className="new-case__back-button">
               <span>{t("newCase.back")}</span>
             </Link>
             <LanguageSwitcher />

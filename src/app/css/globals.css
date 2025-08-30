@@ -74,6 +74,16 @@ a:active {
   text-decoration: none;
 }
 
+/* Logo Link Styles */
+.logo-link {
+  display: inline-block;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.language-switcher {
+  display: none !important;
+}
+
 body {
   color: var(--primary-900);
   font-family: "IBM Plex Sans Arabic", "IBM Plex Sans Arabic Fallback";

@@ -3,6 +3,6 @@ import { redirect } from "next/navigation";
 
 export default async function Home() {
   const cookieStore = await cookies();
-  const locale = cookieStore.get("NEXT_LOCALE")?.value || "en";
+  const locale = cookieStore.get("NEXT_LOCALE")?.value || "ar";
   redirect(`/${locale}`);
 } 

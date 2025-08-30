@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useLocale } from 'next-globe-gen';
 
 interface LogoProps {
@@ -20,13 +21,15 @@ export default function Logo({
   const logoSrc = locale === 'ar' ? '/img/logo_ar.svg' : '/img/logo_en.svg';
   
   return (
-    <Image
-      src={logoSrc}
-      alt={alt}
-      width={width}
-      height={height}
-      className={className}
-      priority
-    />
+    <Link href={`/${locale}`} className="logo-link">
+      <Image
+        src={logoSrc}
+        alt={alt}
+        width={width}
+        height={height}
+        className={className}
+        priority
+      />
+    </Link>
   );
 } 

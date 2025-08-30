@@ -20,15 +20,15 @@ export default function LanguageSwitcher() {
   };
   
   return (
-    <span>
-      {currentLocale !== "en" && (
-        <a href={getLanguageUrl("en")}>
-          English
-        </a>
-      )}
+    <span className="language-switcher">
       {currentLocale !== "ar" && (
         <a href={getLanguageUrl("ar")}>
           عربي
+        </a>
+      )}
+      {currentLocale !== "en" && (
+        <a href={getLanguageUrl("en")}>
+          English
         </a>
       )}
     </span>
