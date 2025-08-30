@@ -102,6 +102,7 @@ export default function LawyerCaseFilesPage() {
     is_pdf: boolean;
     is_word_document: boolean;
     is_image: boolean;
+    file_extension?: string;
   }) => {
     const getFileIcon = () => {
       if (file.is_pdf) return <IconPdf size={20} />;
@@ -128,7 +129,11 @@ export default function LawyerCaseFilesPage() {
           {getFileIcon()}
         </div>
         <div className="lawyer__file-info">
-          <h3 className="lawyer__file-name">{file.file_name}</h3>
+          <h3 className="lawyer__file-name">
+            {file.document_type_display?.toLowerCase() === "other" 
+              ? file.file_name 
+              : `${file.document_type_display}${file.file_extension || ''}`}
+          </h3>
           <p className="lawyer__file-details">
             {file.document_type_display} • {formatFileSize(file.file_size)} • {file.is_verified ? "Verified" : "Not Verified"}
           </p>

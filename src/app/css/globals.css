@@ -109,6 +109,7 @@ body {
   opacity: 0.5;
 }
 
+.case__status--todo,
 .case__status--pending {
   background: #fff7ed;
   color: #b45309;
@@ -130,6 +131,7 @@ body {
   background: #f3e8ff;
   color: #7c3aed;
 }
+.case__status--rejected,
 .case__status--awaiting_documents,
 .case__status--awaiting-documents,
 .case__status--cancelled {

@@ -182,9 +182,9 @@ export default function DisappearanceInfo({
               <li key={document.id} className="case-overview__file">
                 <span className="case-overview__file-left">
                   <IconFileText size={18} />{" "}
-                  {document.document_type_display === "other" 
+                  {document.document_type_display.toLowerCase() === "other" 
                     ? document.file_name 
-                    : document.document_type_display}{" "}
+                    : `${document.document_type_display}${document.file_extension}`}{" "}
                   ({document.file_size_mb}MB)
                 </span>
                 <button

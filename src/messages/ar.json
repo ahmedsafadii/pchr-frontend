@@ -529,7 +529,7 @@
         "actions": "الإجراءات"
       },
       "statusOptions": {
-        "todo": "قائمة المهام",
+        "todo": "قيد الطلب",
         "in_progress": "قيد التنفيذ",
         "completed": "مكتمل",
         "cancelled": "ملغي",

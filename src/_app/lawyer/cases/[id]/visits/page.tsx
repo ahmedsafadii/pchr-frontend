@@ -538,7 +538,7 @@ function LawyerCaseVisitsInner() {
                   </td>
                   <td className="lawyer__table-cell" data-label="Status">
                     <span
-                      className={`lawyer__status lawyer__status--${visit.status}`}
+                      className={`lawyer__status case__status--${visit.status}`}
                     >
                       {getVisitStatusTranslation(visit.status, t)}
                     </span>
