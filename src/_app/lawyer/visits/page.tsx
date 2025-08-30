@@ -27,6 +27,7 @@ import VisitApproveModal from "../../components/modals/VisitApproveModal";
 import VisitOutcomeModal from "../../components/modals/VisitOutcomeModal";
 import VisitRejectionModal from "../../components/modals/VisitRejectionModal";
 import { formatDateWithLocale } from "../../utils/dateUtils";
+import { getVisitStatusTranslation } from "../../utils/statusTranslation";
 
 interface Visit {
   id: string;
@@ -98,6 +99,8 @@ function LawyerVisitsInner() {
     },
     { value: "completed", label: t("lawyer.visits.statusOptions.completed") },
     { value: "cancelled", label: t("lawyer.visits.statusOptions.cancelled") },
+    { value: "done", label: t("lawyer.visits.statusOptions.done") },
+    { value: "rejected", label: t("lawyer.visits.statusOptions.rejected") },
   ];
 
   const daysOptions = [
@@ -122,7 +125,7 @@ function LawyerVisitsInner() {
         token,
         {
           days: daysFilter,
-          status: statusFilter || undefined,
+          status: statusFilter && statusFilter.trim() !== "" ? statusFilter : undefined,
           page: currentPage,
           page_size: pageSize,
           urgent_only: urgentOnly,
@@ -374,6 +377,8 @@ function LawyerVisitsInner() {
     }
   };
 
+
+
   const formatTime = (timeString: string | null) => {
     if (!timeString) return "—";
     return new Date(`2000-01-01T${timeString}`).toLocaleTimeString(
@@ -440,9 +445,9 @@ function LawyerVisitsInner() {
               <CustomSelect
                 value={urgentOnly ? t("common.urgentCases") : t("common.allCases")}
                 onChange={(value) => handleUrgentChange(value === t("common.urgentCases"))}
-                placeholder="Filter by urgency"
+                placeholder={t("lawyer.visits.filters.allVisits")}
                 options={[
-                  { value: t("common.allCases"), label: t("lawyer.visits.filters.allVisits") },
+                  { value: '', label: t("lawyer.visits.filters.allVisits") },
                   {
                     value: t("common.urgentCases"),
                     label: t("lawyer.visits.filters.urgentOnly"),
@@ -575,7 +580,7 @@ function LawyerVisitsInner() {
                               visit.status
                             )}`}
                           >
-                            {visit.status_display}
+                            {getVisitStatusTranslation(visit.status, t)}
                           </span>
                         </td>
                         <td className="lawyer__table-cell" data-label="Actions">

@@ -133,7 +133,7 @@ export default function CustomSelect({
     }),
     placeholder: (provided) => ({
       ...provided,
-      color: '#1f2021',
+      color: '#a9aab1',
       fontSize: '14px',
       fontWeight: '500',
     }),

@@ -83,17 +83,13 @@
 
 .new-case__back-button {
   padding: 10px 20px;
-  background: #333;
-  color: white;
+  background: var(--white);
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s;
-}
-
-.new-case__back-button:hover {
-  background: #555;
+  font-weight: 600;
 }
 
 .new-case__font-controls {
@@ -334,6 +330,20 @@
   outline: none;
   border-color: #d2691e;
   box-shadow: 0 0 0 3px rgba(210, 105, 30, 0.1);
+}
+
+.steps__input::placeholder,
+.steps__select::placeholder {
+  color: var(--neutral-400);
+}
+
+.react-datepicker__input-container input::placeholder {
+  color: var(--neutral-400);
+}
+
+.steps__input[disabled],
+.steps__select[disabled] {
+  background: var(--neutral-100);
 }
 
 .steps__input--error,

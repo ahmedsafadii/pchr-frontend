@@ -20,6 +20,7 @@ import { getLawyerCases } from "../../services/api";
 import { LawyerAuth } from "../../utils/auth";
 import React from "react";
 import { formatDateWithLocale } from "../../utils/dateUtils";
+import { getCaseStatusTranslation } from "../../utils/statusTranslation";
 
 
 interface Case {
@@ -99,6 +100,10 @@ function LawyerCasesInner() {
       value: "enforced_disappearance",
       label: t("lawyer.cases.statusOptions.enforcedDisappearance"),
     },
+    {
+      value: "re-open",
+      label: t("lawyer.cases.statusOptions.reOpen"),
+    },
   ];
 
 
@@ -136,8 +141,8 @@ function LawyerCasesInner() {
       const response = await getLawyerCases(
         token,
         {
-          status: statusFilter || undefined,
-          search: debouncedSearchTerm || undefined,
+          status: statusFilter && statusFilter.trim() !== "" ? statusFilter : undefined,
+          search: debouncedSearchTerm && debouncedSearchTerm.trim() !== "" ? debouncedSearchTerm : undefined,
           page: currentPage,
           page_size: pageSize,
           urgent_only: urgentOnly,
@@ -301,10 +306,14 @@ function LawyerCasesInner() {
         return "case__status--released";
       case "enforced_disappearance":
         return "case__status--enforced-disappearance";
+      case "re-open":
+        return "case__status--re-open";
       default:
         return "case__status--default";
     }
   };
+
+
 
   return (
     <div className="lawyer">
@@ -352,9 +361,11 @@ function LawyerCasesInner() {
               <CustomSelect
                 value={urgentOnly ? t("common.urgentCases") : t("common.allCases")}
                 onChange={(value) => handleUrgentChange(value === t("common.urgentCases"))}
-                placeholder="Filter by urgency"
+                placeholder={
+                  t("lawyer.cases.urgentFilter.allCases")?.toString() || "All Cases"
+                }
                 options={[
-                  { value: t("common.allCases"), label: t("lawyer.cases.urgentFilter.allCases") },
+                  { value: '', label: t("lawyer.cases.urgentFilter.allCases") },
                   { value: t("common.urgentCases"), label: t("lawyer.cases.urgentFilter.onlyUrgent") }
                 ]}
                 includeNullOption={false}
@@ -459,7 +470,7 @@ function LawyerCasesInner() {
                             caseItem.status
                           )}`}
                         >
-                          {caseItem.status_display}
+                          {getCaseStatusTranslation(caseItem.status, t)}
                         </span>
                       </td>
                     </tr>
@@ -539,7 +550,7 @@ function LawyerCasesInner() {
                                 </div>
                                 <div className="lawyer__expanded-item">
                                   <span className="lawyer__expanded-label">Status:</span>
-                                  <span className="lawyer__expanded-value">{caseItem.status_display}</span>
+                                  <span className="lawyer__expanded-value">{getCaseStatusTranslation(caseItem.status, t)}</span>
                                 </div>
                                 <div className="lawyer__expanded-item">
                                   <span className="lawyer__expanded-label">Urgent:</span>

@@ -1384,6 +1384,10 @@ html[lang="ar"] .lawyer__search-input {
   color: var(--neutral-500);
 }
 
+.lawyer__search-input::placeholder {
+  color: var(--neutral-400);
+}
+
 html[lang="ar"] .lawyer__search-icon {
   right: 16px;
   left: auto;
@@ -1423,7 +1427,7 @@ html[lang="ar"] .lawyer__search-input::placeholder {
 }
 
 .lawyer__date-picker-input::placeholder {
-  color: var(--neutral-500);
+  color: var(--neutral-400);
   font-weight: 500;
 }
 
@@ -3038,7 +3042,7 @@ html[lang="ar"] .lawyer__dropdown-menu {
 }
 
 .modal-input::placeholder {
-  color: var(--neutral-500);
+  color: var(--neutral-400);
 }
 
 .modal-textarea {
@@ -3062,7 +3066,7 @@ html[lang="ar"] .lawyer__dropdown-menu {
 }
 
 .modal-textarea::placeholder {
-  color: var(--neutral-500);
+  color: var(--neutral-400);
 }
 
 .modal-date-picker-wrapper {
@@ -3098,7 +3102,7 @@ html[lang="ar"] .lawyer__dropdown-menu {
 }
 
 .modal-date-input::placeholder {
-  color: var(--neutral-500);
+  color: var(--neutral-400);
 }
 
 .modal-date-picker-wrapper .react-datepicker-wrapper,
@@ -3298,7 +3302,7 @@ html[lang="ar"] .lawyer__dropdown-menu {
 }
 
 .modal__input::placeholder {
-  color: var(--neutral-500);
+  color: var(--neutral-400);
 }
 
 /* Modal Dropzone Styles */

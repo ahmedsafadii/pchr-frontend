@@ -18,6 +18,7 @@ import { useState, useEffect } from "react";
 import { getLawyerDashboard } from "@/_app/utils/apiWithAuth";
 import { LawyerAuth } from "@/_app/utils/auth";
 import { formatDateWithLocale } from "../utils/dateUtils";
+import { getCaseStatusTranslation } from "../utils/statusTranslation";
 
 // TypeScript interfaces for dashboard data
 interface CaseStatistics {
@@ -302,8 +303,8 @@ function LawyerDashboardInner() {
                           <span className="lawyer__case-detail-label">
                             {t("lawyer.cases.table.status")}
                           </span>
-                          <span className={`lawyer__case-status-badge case__status--${caseItem.status_display.toLowerCase().replace(/\s+/g, '-')}`}>
-                            {caseItem.status_display}
+                          <span className={`lawyer__case-status-badge case__status--${caseItem.status.toLowerCase().replace(/\s+/g, '-')}`}>
+                            {getCaseStatusTranslation(caseItem.status, t)}
                           </span>
                         </div>
                         <div className="lawyer__case-detail">

@@ -33,6 +33,7 @@ import VisitOutcomeModal from "../../../../components/modals/VisitOutcomeModal";
 import VisitRejectionModal from "../../../../components/modals/VisitRejectionModal";
 import React from "react";
 import { formatDateWithLocale } from "../../../../utils/dateUtils";
+import { getVisitStatusTranslation } from "../../../../utils/statusTranslation";
 
 interface Visit {
   id: string;
@@ -92,6 +93,8 @@ function LawyerCaseVisitsInner() {
     },
     { value: "completed", label: t("lawyer.visits.statusOptions.completed") },
     { value: "cancelled", label: t("lawyer.visits.statusOptions.cancelled") },
+    { value: "done", label: t("lawyer.visits.statusOptions.done") },
+    { value: "rejected", label: t("lawyer.visits.statusOptions.rejected") },
   ];
 
   const daysOptions = [
@@ -100,6 +103,8 @@ function LawyerCaseVisitsInner() {
     { value: 30, label: t("lawyer.visits.filters.daysFilter.thisMonth") },
     { value: 90, label: t("lawyer.visits.filters.daysFilter.next3Months") },
   ];
+
+
 
   // Expanded rows state
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
@@ -128,7 +133,7 @@ function LawyerCaseVisitsInner() {
         page: currentPage,
         page_size: pageSize,
         days: daysFilter,
-        status: statusFilter || undefined,
+        status: statusFilter && statusFilter.trim() !== "" ? statusFilter : undefined,
       };
 
       console.log("Fetching visits with params:", params);
@@ -383,24 +388,7 @@ function LawyerCaseVisitsInner() {
 
   const isRowExpanded = (visitId: string) => expandedRows.has(visitId);
 
-  const getStatusClass = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "todo":
-        return "lawyer__status--pending";
-      case "in_progress":
-        return "lawyer__status--progress";
-      case "completed":
-        return "lawyer__status--completed";
-      case "done":
-        return "lawyer__status--done";
-      case "rejected":
-        return "lawyer__status--rejected";
-      case "cancelled":
-        return "lawyer__status--cancelled";
-      default:
-        return "lawyer__status--default";
-    }
-  };
+
 
   const formatTime = (timeString: string | null) => {
     if (!timeString) return "—";
@@ -550,11 +538,9 @@ function LawyerCaseVisitsInner() {
                   </td>
                   <td className="lawyer__table-cell" data-label="Status">
                     <span
-                      className={`lawyer__status ${getStatusClass(
-                        visit.status
-                      )}`}
+                      className={`lawyer__status lawyer__status--${visit.status}`}
                     >
-                      {visit.status_display}
+                      {getVisitStatusTranslation(visit.status, t)}
                     </span>
                   </td>
                   <td className="lawyer__table-cell" data-label="Actions">

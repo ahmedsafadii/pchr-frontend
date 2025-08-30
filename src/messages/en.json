@@ -532,6 +532,7 @@
         "in_progress": "In Progress", 
         "completed": "Completed",
         "cancelled": "Cancelled",
+        "done": "Done",
         "pending": "Pending",
         "approved": "Approved",
         "rejected": "Rejected"
