@@ -41,7 +41,6 @@ export default function Home() {
             className="landing__title"
             dangerouslySetInnerHTML={{ __html: t("landing.header.title") }}
           />
-          <p className="landing__desc">{t("landing.header.description")}</p>
         </section>
 
         {/* Cards */}
@@ -54,10 +53,7 @@ export default function Home() {
             <p className="landing__card-desc">
               {t("landing.newcase.description")}
             </p>
-            <Link
-              href={`${currentLocale}/new`}
-              className="landing__card-btn"
-            >
+            <Link href={`${currentLocale}/new`} className="landing__card-btn">
               {t("landing.newcase.action")}
             </Link>
           </article>
@@ -67,10 +63,7 @@ export default function Home() {
             <p className="landing__card-desc">
               {t("landing.status.description")}
             </p>
-            <Link
-              href={`${currentLocale}/track`}
-              className="landing__card-btn"
-            >
+            <Link href={`${currentLocale}/track`} className="landing__card-btn">
               {t("landing.status.action")}
             </Link>
           </article>

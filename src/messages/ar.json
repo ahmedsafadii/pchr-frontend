@@ -61,8 +61,8 @@
   "newCase": {
     "back": "العودة للرئيسية",
     "sidebar": {
-      "title": "منصة الإبلاغ عن حالات الاختفاء",
-      "description": "أبلغ بأمان عن شخص مفقود أو محتجز. سيتابع فريقنا القانوني قضيتك."
+      "title": "المنصة الإلكترونية للتبليغ عن المعتقلين والمختفين قسراً",
+      "description": "في حال واجهتكم أي صعوبة في تعبئة الطلب ، بإمكانكم التواصل مع طاقم المركز عبر رقم الواتساب https://wa.me/970597167306"
     },
     "common": {
       "choose": "اختر",
@@ -81,9 +81,9 @@
     },
     "step1": {
       "stepNumber": "الخطوة 1",
-      "title": "معلومات المعتقل",
+      "title": "البيانات الشخصية لـ المعتقل / المُختفي",
       "shortDescription": "جمع المعلومات الأساسية والهوية وحالة الشخص المفقود.",
-      "fullName": "الاسم الكامل",
+      "fullName": "إسم المعتقل / المختفي رباعي",
       "fullNamePlaceholder": "مثال: محمد علي",
       "idNumber": "رقم الهوية",
       "idNumberPlaceholder": "123456789",
@@ -95,7 +95,7 @@
       "healthStatus": "الحالة الصحية",
       "maritalStatus": "الحالة الاجتماعية",
       "errors": {
-        "fullNameRequired": "الاسم الكامل مطلوب",
+        "fullNameRequired": "مطلوب إسم المعتقل / المختفي رباعي",
         "idNumberRequired": "رقم الهوية مطلوب",
         "dateOfBirthRequired": "تاريخ الميلاد مطلوب",
         "healthStatusRequired": "الحالة الصحية مطلوبة",
@@ -109,11 +109,11 @@
     },
     "step2": {
       "stepNumber": "الخطوة 2",
-      "title": "معلومات الاعتقال/الاختفاء",
+      "title": "تفاصيل الإعتقال / الإختفاء",
       "shortDescription": "تسجيل مكان وزمان وكيفية الاختفاء.",
-      "disappearanceDate": "تاريخ الاختفاء",
+      "disappearanceDate": "تاريخ الإعتقال / الإختفاء",
       "disappearanceDatePlaceholder": "يوم/شهر/سنة",
-      "disappearanceStatus": "حالة الاختفاء",
+      "disappearanceStatus": "حالة الإعتقال / الإختفاء",
       "placeTitle": "مكان الاعتقال/الاختفاء",
       "circumstancesLabel": "ظروف الاعتقال/الاختفاء",
       "circumstancesPlaceholder": "اكتب هنا...",
@@ -125,7 +125,7 @@
         "other": "أخرى"
       },
       "errors": {
-        "disappearanceDateRequired": "تاريخ الاختفاء مطلوب",
+        "disappearanceDateRequired": "مطلوب تاريخ الإعتقال / الإختفاء",
         "locationRequired": "الموقع مطلوب",
         "cityRequired": "المدينة مطلوبة",
         "governorateRequired": "المحافظة مطلوبة",
@@ -135,30 +135,30 @@
     },
     "step3": {
       "stepNumber": "الخطوة 3",
-      "title": "معلومات العميل",
+      "title": "البيانات الشخصية للوكيل القانوني ( مُقدم البلاغ )",
       "shortDescription": "تحديد هوية مقدم البلاغ ومعلومات التواصل.",
-      "fullName": "الاسم الكامل",
+      "fullName": "إسم مُقدم البلاغ رباعي",
       "fullNamePlaceholder": "مثال: محمد علي",
       "idNumber": "رقم الهوية",
       "idNumberPlaceholder": "مثال: 123456789",
       "phoneNumber": "رقم الهاتف",
       "phoneNumberPlaceholder": "0591234567",
-      "relationship": "العلاقة",
+      "relationship": "صلة القرابة",
       "errors": {
-        "client_name_required": "الاسم الكامل مطلوب",
+        "client_name_required": "مطلوب إسم مُقدم البلاغ رباعي",
         "client_id_required": "رقم الهوية مطلوب",
         "client_phone_required": "رقم الهاتف مطلوب",
-        "client_relationship_required": "العلاقة مطلوبة"
+        "client_relationship_required": "صلة القرابة مطلوبة"
       }
     },
     "step4": {
       "stepNumber": "الخطوة 4",
-      "title": "التفويض والتواصل",
+      "title": "الإجراءات القانونية",
       "shortDescription": "فهم أي إجراءات سابقة وتفضيلات التواصل.",
-      "authorizedAnotherParty": "هل فوضت طرف آخر من قبل؟",
-      "previousDelegation": "الزيارات السابقة؟",
-      "organisationName": "اسم المنظمة",
-      "organisationNamePlaceholder": "اسم المنظمة",
+      "authorizedAnotherParty": "هل تم توكيل أي جهة أخرى لمتابعة الملف ؟",
+      "previousDelegation": "هل تم زيارة المعتقل من قِبل أي مؤسسة؟",
+      "organisationName": "إسم المؤسسة التي تم توكيلها",
+      "organisationNamePlaceholder": "اسم المؤسسة",
       "date": "التاريخ",
       "datePlaceholder": "يوم/شهر/سنة",
       "yes": "نعم",
@@ -171,9 +171,9 @@
       "stepNumber": "الخطوة 5",
       "title": "رفع المستندات",
       "shortDescription": "التأكد من صحة الهوية وإدارة المستندات.",
-      "detaineeIdTitle": "هوية المعتقل",
-      "clientIdTitle": "هوية العميل",
-      "additionalDocsTitle": "مستندات إضافية",
+      "detaineeIdTitle": "هوية المعتقل / المُختفي قسراً",
+      "clientIdTitle": "هوية الوكيل القانوني ( مُقدم البلاغ )",
+      "additionalDocsTitle": "أي مستندات / وسائط توثق حالة الإعتقال / الإختفاء ( إن وُجدت )",
       "documentType": "نوع المستند",
       "chooseDocumentType": "اختر نوع المستند",
       "files": "الملفات",
@@ -188,8 +188,8 @@
         "failed": "فشل الرفع"
       },
       "documentTypes": {
-        "clientId": "هوية العميل",
-        "detaineeId": "هوية المعتقل",
+        "clientId": "هوية الوكيل القانوني ( مُقدم البلاغ )",
+        "detaineeId": "هوية المعتقل / المُختفي قسراً",
         "signature": "التوقيع",
         "medicalReport": "التقرير الطبي",
         "legalDocument": "المستند القانوني",
@@ -204,9 +204,9 @@
     },
     "step6": {
       "stepNumber": "الخطوة 6",
-      "title": "الموافقة والإرسال",
+      "title": "الوكالة القانونية",
       "shortDescription": "الحصول على التفويض القانوني وإرسال البلاغ.",
-      "consentText": "أوافق على تفويض المركز الفلسطيني لحقوق الإنسان لمتابعة القضية قانونياً...",
+      "consentText": "أوافق على توكيل المركز الفلسطيني لحقوق الإنسان، لمتابعة الملف وإتخاذ الإجراءات القانونية اللازمة.",
       "legalDocTitle": "المستند القانوني",
       "download": "تحميل المستند",
       "signatureTitle": "توقيعك",
@@ -243,7 +243,7 @@
     },
     "address": {
       "title": "العنوان",
-      "location": "الموقع",
+      "location": "الموقع ( عنوان محل الإقامة الدائم ) ",
       "governorate": "المحافظة",
       "city": "المدينة",
       "district": "المنطقة",
@@ -262,7 +262,7 @@
     "overview": {
       "title": "نظرة عامة",
       "basicInfo": "معلومات أساسية",
-      "dateOfDisappearance": "تاريخ الاختفاء:",
+      "dateOfDisappearance": "تاريخ الإعتقال / الإختفاء:",
       "details": "تفاصيل الاختفاء:",
       "files": "الملفات",
       "lawyer": "المحامي",
@@ -292,8 +292,8 @@
       "caseInfo": "معلومات القضية",
       "caseNumber": "رقم القضية",
       "status": "الحالة",
-      "detainee": "معلومات المعتقل",
-      "fullName": "الاسم الكامل",
+      "detainee": "البيانات الشخصية لـ المعتقل / المُختفي",
+      "fullName": "إسم المعتقل / المختفي رباعي",
       "job": "الوظيفة",
       "dob": "تاريخ الميلاد",
       "id": "رقم الهوية",
@@ -301,13 +301,13 @@
       "marital": "الحالة الاجتماعية",
       "location": "الموقع",
       "street": "الشارع",
-      "detention": "معلومات الاعتقال/الاختفاء",
-      "disappearanceDate": "تاريخ الاختفاء",
-      "disappearanceStatus": "حالة الاختفاء",
+      "detention": "تفاصيل الإعتقال / الإختفاء",
+      "disappearanceDate": "تاريخ الإعتقال / الإختفاء",
+      "disappearanceStatus": "حالة الإعتقال / الإختفاء",
       "describe": "وصف الاختفاء",
-      "client": "معلومات العميل",
+      "client": "البيانات الشخصية للوكيل القانوني ( مُقدم البلاغ )",
       "phone": "رقم الهاتف",
-      "relationship": "العلاقة",
+      "relationship": "صلة القرابة",
       "documents": "رفع المستندات",
       "signature": "توقيعك",
       "terms": "شروط وأحكام .PDF",
@@ -413,7 +413,7 @@
       "columns": {
         "caseNumber": "رقم القضية",
         "detaineeName": "اسم المعتقل",
-        "detaineeId": "رقم هوية المعتقل",
+        "detaineeId": "رقم هوية المعتقل / المُختفي قسراً ",
         "creationDate": "تاريخ الإنشاء",
         "clientName": "اسم العميل",
         "clientPhone": "هاتف العميل",
@@ -461,8 +461,8 @@
         "updated": "آخر تحديث"
       },
       "detaineeInfo": {
-        "title": "معلومات المعتقل",
-        "fullName": "الاسم الكامل",
+        "title": "البيانات الشخصية لـ المعتقل / المُختفي",
+        "fullName": "إسم المعتقل / المختفي رباعي",
         "dateOfBirth": "تاريخ الميلاد",
         "idNumber": "رقم الهوية",
         "healthyStatus": "الحالة الصحية",
@@ -471,18 +471,18 @@
         "location": "الموقع"
       },
       "detentionInfo": {
-        "title": "معلومات الاعتقال/الاختفاء",
+        "title": "تفاصيل الإعتقال / الإختفاء",
         "detentionDate": "تاريخ الاعتقال",
         "status": "الحالة",
         "circumstances": "ظروف الاعتقال",
         "location": "الموقع"
       },
       "clientInfo": {
-        "title": "معلومات العميل",
-        "fullName": "الاسم الكامل",
+        "title": "البيانات الشخصية للوكيل القانوني ( مُقدم البلاغ )",
+        "fullName": "إسم مُقدم البلاغ رباعي",
         "idNumber": "رقم الهوية",
         "phoneNumber": "رقم الهاتف",
-        "relationship": "العلاقة"
+        "relationship": "صلة القرابة"
       },
       "documentsUpload": {
         "title": "تحميل المستندات"
