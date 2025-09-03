@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-globe-gen";
 import SignatureCanvas from "react-signature-canvas";
 import { submitCase, uploadDocumentFile } from "../../services/api";
-import { formatDateWithLocale } from "../../utils/dateUtils";
+
 import ConfirmSubmitModal from "../modals/ConfirmSubmitModal";
 import LoadingModal from "../modals/LoadingModal";
 import SuccessModal from "../modals/SuccessModal";

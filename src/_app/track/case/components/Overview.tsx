@@ -2,6 +2,7 @@
 
 import { useTranslations, useLocale } from "next-globe-gen";
 import { useState, useEffect, useRef, useCallback } from "react";
+import Image from "next/image";
 import {
   IconTag,
   IconFileText,
@@ -342,7 +343,12 @@ export default function Overview({
           <div className="chat">
             <div className="chat__header">
               <div className="chat__avatar">
-                <img src="/img/pchr-white.svg" alt="PCHR" />
+                <Image
+                  src="/img/pchr-white.svg"
+                  alt="PCHR"
+                  width={32}
+                  height={32}
+                />
               </div>
               <div className="chat__meta">
                 <span className="chat__name">
@@ -389,8 +395,12 @@ export default function Overview({
                       {msg.message_type === "lawyer" ? (
                         <div className="chat__message-lawyer">
                           <div className="chat__message-lawyer-avatar chat__message-lawyer-avatar--pchr">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src="/img/pchr-white.svg" alt="PCHR" />
+                            <Image
+                              src="/img/pchr-white.svg"
+                              alt="PCHR"
+                              width={32}
+                              height={32}
+                            />
                           </div>
                           <span className="chat__message-lawyer-name">
                             {tt("common.organizationFullName")}
