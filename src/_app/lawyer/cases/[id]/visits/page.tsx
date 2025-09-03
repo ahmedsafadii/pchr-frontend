@@ -486,7 +486,7 @@ function LawyerCaseVisitsInner() {
               <th style={{ width: "50px" }}></th>
               <th>{t("lawyer.visits.table.visitDate")}</th>
               <th>{t("lawyer.visits.table.prisonName")}</th>
-              <th>{t("lawyer.visits.table.visitType")}</th>
+              <th>{(t as any)("lawyer.visits.table.visitType")}</th>
               <th>{t("lawyer.visits.table.status")}</th>
               <th style={{ width: "60px" }}>
                 {t("lawyer.visits.table.actions")}

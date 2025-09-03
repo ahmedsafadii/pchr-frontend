@@ -497,7 +497,7 @@ export default function NewCasePage({ locale = "ar" }) {
               <p className="new-case__description">
                 {tt("newCase.sidebar.description")
                   .split("https://wa.me/970597167306")
-                  .map((part, index, array) => {
+                  .map((part: string, index: number, array: string[]) => {
                     if (index === array.length - 1) {
                       return part;
                     }
