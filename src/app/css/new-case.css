@@ -154,6 +154,18 @@
   margin-bottom: 30px;
 }
 
+.whatsapp-link {
+  color: #25d366;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.whatsapp-link:hover {
+  color: #128c7e;
+  text-decoration: underline;
+}
+
 .new-case__steps {
   display: flex;
   flex-direction: column;
@@ -204,10 +216,6 @@
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-
-
-
-
 
 .new-case__step-circle--error {
   background: #dc3545;
@@ -1010,5 +1018,3 @@
     padding: 20px;
   }
 }
-
-

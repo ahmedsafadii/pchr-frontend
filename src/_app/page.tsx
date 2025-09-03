@@ -4,13 +4,25 @@ import "@/app/css/landing.css";
 import LanguageSwitcher from "./components/LanguageSwitcher";
 import { getTranslations, useTranslations, useLocale } from "next-globe-gen";
 import Link from "next/link";
+import { generatePageMetadata } from "./utils/metadata";
 
-export function generateMetadata(): Metadata {
-  const t = getTranslations();
-  return {
-    description: t("landing.description")?.toString(),
-    title: t("landing.title"),
-  };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations();
+  return generatePageMetadata(t("landing.title"), t("landing.description"), {
+    url: "/",
+    keywords: [
+      "PCHR",
+      "Palestinian Centre for Human Rights",
+      "missing persons",
+      "disappearance report",
+      "Gaza",
+      "human rights",
+      "legal assistance",
+      "case tracking",
+      "home",
+      "landing page",
+    ],
+  });
 }
 
 export default function Home() {
@@ -50,9 +62,6 @@ export default function Home() {
             <h2 className="landing__card-title">
               {t("landing.newcase.title")}
             </h2>
-            <p className="landing__card-desc">
-              {t("landing.newcase.description")}
-            </p>
             <Link href={`${currentLocale}/new`} className="landing__card-btn">
               {t("landing.newcase.action")}
             </Link>
@@ -60,9 +69,7 @@ export default function Home() {
           {/* Track Card */}
           <article className="landing__card">
             <h2 className="landing__card-title">{t("landing.status.title")}</h2>
-            <p className="landing__card-desc">
-              {t("landing.status.description")}
-            </p>
+
             <Link href={`${currentLocale}/track`} className="landing__card-btn">
               {t("landing.status.action")}
             </Link>

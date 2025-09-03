@@ -59,7 +59,6 @@ export default function Step6({
     const hasSignatureId = data.consent?.signature_document_id;
 
     if ((hasSignatureId || signatureMeta?.id) && !hasDrawn) {
-
       setHasDrawn(true); // Mark as drawn so upload button becomes available
 
       // If we have metadata but no consent ID, update consent
@@ -70,7 +69,7 @@ export default function Step6({
         });
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.documents, data.consent, hasDrawn]);
 
   const clearSignature = () => {
@@ -97,11 +96,7 @@ export default function Step6({
         display_meta: newDisplayMeta,
       });
     }
-
-
   };
-
-
 
   const removeUploadedSignature = () => {
     updateData("consent", { ...data.consent, signature_document_id: null });
@@ -109,33 +104,13 @@ export default function Step6({
   };
 
   const downloadDocument = () => {
-    // Create a simple text document for download
-    const legalText = `${t("legalDocument.title")}
-
-${t("legalDocument.description")}
-
-${t("legalDocument.termsIntro")}
-
-1. ${t("legalDocument.term1")}
-2. ${t("legalDocument.term2")}
-3. ${t("legalDocument.term3")}
-4. ${t("legalDocument.term4")}
-5. ${t("legalDocument.term5")}
-
-${t("legalDocument.caseReference")} ${Date.now()}
-${t("legalDocument.date")} ${formatDateWithLocale(new Date(), locale)}
-
-${t("legalDocument.binding")}`;
-
-    const blob = new Blob([legalText], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
+    // Download the PDF document from public folder
     const a = document.createElement("a");
-    a.href = url;
-    a.download = t("legalDocument.downloadFilename");
+    a.href = "/الوكالة القانونية 2025.pdf";
+    a.download = "الوكالة القانونية 2025.pdf";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   const validateForm = () => {
@@ -159,7 +134,6 @@ ${t("legalDocument.binding")}`;
       !signatureRef.current.isEmpty()
     ) {
       try {
-
         setIsSubmitting(true); // Show loading during upload
 
         // Get signature as blob
@@ -179,8 +153,6 @@ ${t("legalDocument.binding")}`;
 
         if (!finalSignatureId)
           throw new Error("Upload did not return document_id");
-
-
 
         // Update data with the new signature ID
         updateData("consent", {
@@ -203,9 +175,10 @@ ${t("legalDocument.binding")}`;
           },
         });
       } catch (error: any) {
-
         alert(
-          t("messages.errors.failedToUploadSignature") + ": " + (error?.message || t("messages.errors.unknownError"))
+          t("messages.errors.failedToUploadSignature") +
+            ": " +
+            (error?.message || t("messages.errors.unknownError"))
         );
         setIsSubmitting(false);
         return;
@@ -247,7 +220,6 @@ ${t("legalDocument.binding")}`;
       setShowSuccess(true);
       onComplete(currentStep);
     } catch (error: any) {
-
       // If 422, map backend error keys to steps
       const status = error?.status ?? error?.payload?.statusCode;
       const details = error?.payload?.error?.details as any;
@@ -434,22 +406,38 @@ ${t("legalDocument.binding")}`;
             <textarea
               className="steps__legal-textarea"
               readOnly
-              value={`LEGAL DOCUMENT - DISAPPEARANCE REPORT
+              value={`توكيل
 
-This document constitutes the legal authorization for the Palestinian Centre for Human Rights to pursue legal action regarding the reported disappearance case.
+أنا الموقع أدناه .
+ت"ز
+، هوية رقم .
+م-
+من
+قد وكلت عني المحامي
+و/ أو المحامي
+بعניין
+بخصوص
 
-By signing this document, you acknowledge and agree to the following terms:
+بموجب هذه الوكالة يحق للمحامي الوكيل القيام والتصرف باسمي ونيابة عني بالتصرفات الآتية منفردة أو مجتمعة، والمتعلقة
+والناشئة عن الموضوع المذكور أعلاه:
 
-1. You authorize the Palestinian Centre for Human Rights to legally pursue this case on your behalf.
-2. You confirm that all information provided in this report is accurate to the best of your knowledge.
-3. You understand that this case may be subject to legal proceedings and international human rights mechanisms.
-4. You consent to the processing of personal data as outlined in our privacy policy.
-5. You acknowledge that this report will be handled in accordance with international human rights standards.
+1) مراجعة كافة الجهات المختصة ذات الصلة بالموضوع ومباشرة كافة الإجراءات القانونية المتعقلة بالموضوع المذكور أعلاه.
+2) تقديم كافة الطلبات المتعقلة بالموضوع المذكور باسمي وبالنيابة عني والتوقيع عليها، بما فيها طلبات الزيارة والحصول على
+أي مستندات.
+3) مخاطبة كافة الجهات الرسمية وغير الرسمية والمتابعة أمامها.
+4) تمثيلي أمام المحاكم والهيئات القضائية بمختلف أنواعها ودرجاتها.
 
-Case Reference: ${Date.now()}
-Date: ${formatDateWithLocale(new Date(), locale)}
+اليوم
+الشهر
+2025
+2025
 
-This document is legally binding and constitutes your formal consent for legal action.`}
+التوقيع
+
+* تم التوقيع على الوكالة بشكل إلكتروني.
+
+عורך- דין
+المحامي`}
             />
             <button
               type="button"

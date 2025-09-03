@@ -5,6 +5,7 @@ import { useLocale } from "next-globe-gen";
 import { ReactNode } from "react";
 import "@/app/css/globals.css";
 import ClientProviders from "./components/ClientProviders";
+import { generateMetadata as generateDynamicMetadata } from "./utils/metadata";
 
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   weight: ["100", "200", "300", "400", "500", "600", "700"],
@@ -13,12 +14,12 @@ const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: { template: "%s | PCHR GAZA", default: "PCHR GAZA" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return generateDynamicMetadata();
+}
 
 export const viewport = {
-  width: 'device-width',
+  width: "device-width",
   initialScale: 1.0,
   maximumScale: 1.0,
   userScalable: false,

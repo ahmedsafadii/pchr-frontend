@@ -458,9 +458,9 @@
   overflow: hidden;
 }
 .chat__avatar img {
- max-width: inherit;
- width: 84px;
- margin: 0 6px;
+  max-width: inherit;
+  width: 84px;
+  margin: 0 6px;
 }
 .chat__meta {
   display: flex;
@@ -845,6 +845,7 @@
   justify-content: center;
   margin: 8px auto 12px auto;
   width: max-content;
+  direction: ltr; /* Force LTR for OTP inputs regardless of page language */
 }
 .track__code-input {
   height: 54px;
@@ -854,6 +855,7 @@
   font-size: 20px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
+  direction: ltr; /* Force LTR for individual input fields */
 }
 .track__code-input:focus {
   outline: none;

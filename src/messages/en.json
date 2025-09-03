@@ -33,7 +33,7 @@
     "resendMessage": "Didn't get the code?",
     "resendIn": "Resend in",
     "secondsSuffix": "s",
-    
+
     "sending": "Sending...",
     "verifying": "Verifying...",
     "logout": "Logout",
@@ -47,7 +47,7 @@
       "verificationFailed": "Verification failed. Please try again.",
       "invalidCode": "Invalid verification code",
       "expiredCode": "Verification code has expired",
-              "failedToLoadCase": "Failed to load case details. Please try again."
+      "failedToLoadCase": "Failed to load case details. Please try again."
     },
     "loading": "Loading case details...",
     "retry": "Try Again",
@@ -168,7 +168,7 @@
         "age18": "Detainee must be 18 years or older."
       }
     },
-    
+
     "step2": {
       "stepNumber": "STEP 2",
       "title": "Detention/Disappearance Info",
@@ -213,7 +213,7 @@
         "client_relationship_required": "Relationship is required"
       }
     },
-    
+
     "step4": {
       "stepNumber": "STEP 4",
       "title": "Delegation & Communication",
@@ -243,7 +243,7 @@
       "uploading": "Uploading...",
       "dropzone": {
         "text": "Drag & Drop Choose from files",
-        "hint": "PDF, JPG, JPEG, BMP, PNG, Up To 1.5 MB"
+        "hint": "PDF, JPG, JPEG, BMP, PNG, MP4, AVI, MOV, Up To 100 MB"
       },
       "uploadStatus": {
         "uploading": "Uploading...",
@@ -532,7 +532,7 @@
       },
       "statusOptions": {
         "todo": "To Do",
-        "in_progress": "In Progress", 
+        "in_progress": "In Progress",
         "completed": "Completed",
         "cancelled": "Cancelled",
         "done": "Done",
@@ -572,7 +572,7 @@
       "visitTypes": {
         "initial_consultation": "Initial Consultation",
         "follow_up": "Follow-up",
-        "court_visit": "Court Visit", 
+        "court_visit": "Court Visit",
         "client_meeting": "Client Meeting",
         "document_review": "Document Review"
       },
@@ -660,7 +660,7 @@
         "accessLevelPlaceholder": "Choose access level",
         "uploadFile": "Upload File",
         "dragDropText": "Drag & Drop Choose from files",
-        "dragDropHint": "DOCS, PDF, EXL, Up To 1.5 MB",
+        "dragDropHint": "DOCS, PDF, EXL, MP4, AVI, MOV, Up To 100 MB",
         "send": "Send",
         "uploading": "Uploading...",
         "errors": {
@@ -722,8 +722,7 @@
         "general": "An error occurred while changing password"
       }
     }
-  }
-  ,
+  },
   "common": {
     "yes": "Yes",
     "no": "No",

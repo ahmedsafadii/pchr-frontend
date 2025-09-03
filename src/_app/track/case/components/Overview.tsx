@@ -252,7 +252,8 @@ export default function Overview({
                   : ""
               }`}
             >
-              <IconTag size={18} /> {caseData?.status_display || tt("common.loading")}
+              <IconTag size={18} />{" "}
+              {caseData?.status_display || tt("common.loading")}
             </span>
             <hr className="case-overview__divider" />
 
@@ -296,8 +297,9 @@ export default function Overview({
                             >
                               <span className="case-overview__file-left">
                                 <IconFileText size={18} />{" "}
-                                {document.document_type_display.toLowerCase() === "other" 
-                                  ? document.file_name 
+                                {document.document_type_display.toLowerCase() ===
+                                "other"
+                                  ? document.file_name
                                   : `${document.document_type_display}${document.file_extension}`}{" "}
                                 ({document.file_size_mb}MB)
                               </span>
@@ -343,9 +345,6 @@ export default function Overview({
                 <img src="/img/pchr-white.svg" alt="PCHR" />
               </div>
               <div className="chat__meta">
-                <span className="chat__role">
-                  {tt("common.organizationName")}
-                </span>
                 <span className="chat__name">
                   {tt("common.organizationFullName")}
                 </span>
@@ -361,18 +360,30 @@ export default function Overview({
                     onClick={loadMoreMessages}
                     disabled={loading}
                   >
-                    {loading ? tt("common.loading") : tt("trackCase.chat.loadMore")}
+                    {loading
+                      ? tt("common.loading")
+                      : tt("trackCase.chat.loadMore")}
                   </button>
                 </div>
               )}
 
               {/* Messages list */}
-              {messages.length === 0 && !loading ? (
-                <div className="chat__no-messages">
-                  {tt("trackCase.chat.noMessages")}
-                </div>
-              ) : (
-                [...messages].reverse().map((msg) => (
+              {(() => {
+                const filteredMessages = messages.filter(
+                  (msg) =>
+                    msg.message_type === "client" ||
+                    msg.message_type === "lawyer"
+                );
+
+                if (filteredMessages.length === 0 && !loading) {
+                  return (
+                    <div className="chat__no-messages">
+                      {tt("trackCase.chat.noMessages")}
+                    </div>
+                  );
+                }
+
+                return [...filteredMessages].reverse().map((msg) => (
                   <article key={msg.id} className="chat__message">
                     <div className="chat__message-header">
                       {msg.message_type === "lawyer" ? (
@@ -491,8 +502,8 @@ export default function Overview({
                         )}
                     </div>
                   </article>
-                ))
-              )}
+                ));
+              })()}
 
               {/* Error display */}
               {error && (

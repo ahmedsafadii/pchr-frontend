@@ -65,10 +65,34 @@ export interface CaseData {
     display_meta?: {
       detainee?: { name: string; size: number };
       client?: { name: string; size: number };
-      additional?: Array<{ id: string; name: string; size: number; type: string; status: string }>;
-      detainee_id?: { id: string; name: string; size: number; type: string; status: string };
-      client_id?: { id: string; name: string; size: number; type: string; status: string };
-      signature?: { id: string; name: string; size: number; type: string; status: string };
+      additional?: Array<{
+        id: string;
+        name: string;
+        size: number;
+        type: string;
+        status: string;
+      }>;
+      detainee_id?: {
+        id: string;
+        name: string;
+        size: number;
+        type: string;
+        status: string;
+      };
+      client_id?: {
+        id: string;
+        name: string;
+        size: number;
+        type: string;
+        status: string;
+      };
+      signature?: {
+        id: string;
+        name: string;
+        size: number;
+        type: string;
+        status: string;
+      };
     };
   };
 
@@ -164,7 +188,9 @@ export default function NewCasePage({ locale = "ar" }) {
   const [caseData, setCaseData] = useState<CaseData>(initialCaseData);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [errorSteps, setErrorSteps] = useState<number[]>([]);
-  const [errorSummaries, setErrorSummaries] = useState<Record<number, string[]>>({});
+  const [errorSummaries, setErrorSummaries] = useState<
+    Record<number, string[]>
+  >({});
   // reserved for future per-field highlighting if needed
   // const [errorFieldMaps, setErrorFieldMaps] = useState<Record<number, Record<string, string>>>({});
   const t = useTranslations();
@@ -228,7 +254,6 @@ export default function NewCasePage({ locale = "ar" }) {
     },
   ];
 
-
   // Load saved data from localStorage on component mount
   useEffect(() => {
     try {
@@ -245,7 +270,12 @@ export default function NewCasePage({ locale = "ar" }) {
       if (savedData) {
         try {
           const parsed = JSON.parse(savedData);
-          if (parsed && typeof parsed === "object" && parsed.detaineeInfo && parsed.detentionInfo) {
+          if (
+            parsed &&
+            typeof parsed === "object" &&
+            parsed.detaineeInfo &&
+            parsed.detentionInfo
+          ) {
             setCaseData(parsed);
           } else {
             clearPersistedCaseState();
@@ -286,8 +316,14 @@ export default function NewCasePage({ locale = "ar" }) {
     try {
       localStorage.setItem(NEW_CASE_KEYS.data, JSON.stringify(caseData));
       localStorage.setItem(NEW_CASE_KEYS.step, currentStep.toString());
-      localStorage.setItem(NEW_CASE_KEYS.completed, JSON.stringify(completedSteps));
-      localStorage.setItem(NEW_CASE_KEYS.version, String(NEW_CASE_STATE_VERSION));
+      localStorage.setItem(
+        NEW_CASE_KEYS.completed,
+        JSON.stringify(completedSteps)
+      );
+      localStorage.setItem(
+        NEW_CASE_KEYS.version,
+        String(NEW_CASE_STATE_VERSION)
+      );
     } catch {}
   }, [caseData, currentStep, completedSteps]);
 
@@ -323,65 +359,65 @@ export default function NewCasePage({ locale = "ar" }) {
     // For step 1, check if all required fields are filled
     if (stepNumber === 1) {
       const detaineeInfo = caseData.detaineeInfo;
-      const isValid = (
-        detaineeInfo?.detainee_name?.trim() !== '' &&
-        detaineeInfo?.detainee_id?.trim() !== '' &&
-        detaineeInfo?.detainee_date_of_birth?.trim() !== '' &&
-        detaineeInfo?.detainee_health_status?.trim() !== '' &&
-        detaineeInfo?.detainee_marital_status?.trim() !== '' &&
-        detaineeInfo?.detainee_location?.trim() !== '' &&
-        detaineeInfo?.detainee_city?.trim() !== '' &&
-        detaineeInfo?.detainee_governorate?.trim() !== '' &&
-        detaineeInfo?.detainee_district?.trim() !== ''
-      );
+      const isValid =
+        detaineeInfo?.detainee_name?.trim() !== "" &&
+        detaineeInfo?.detainee_id?.trim() !== "" &&
+        detaineeInfo?.detainee_date_of_birth?.trim() !== "" &&
+        detaineeInfo?.detainee_health_status?.trim() !== "" &&
+        detaineeInfo?.detainee_marital_status?.trim() !== "" &&
+        detaineeInfo?.detainee_location?.trim() !== "" &&
+        detaineeInfo?.detainee_city?.trim() !== "" &&
+        detaineeInfo?.detainee_governorate?.trim() !== "" &&
+        detaineeInfo?.detainee_district?.trim() !== "";
       return isValid;
     }
-    
+
     // For step 2, check if all required fields are filled
     if (stepNumber === 2) {
       const detentionInfo = caseData.detentionInfo;
-      const isValid = (
-        detentionInfo?.detention_date?.trim() !== '' &&
-        detentionInfo?.detention_location?.trim() !== '' &&
-        detentionInfo?.detention_city?.trim() !== '' &&
-        detentionInfo?.detention_governorate?.trim() !== '' &&
-        detentionInfo?.detention_district?.trim() !== ''
-      );
+      const isValid =
+        detentionInfo?.detention_date?.trim() !== "" &&
+        detentionInfo?.detention_location?.trim() !== "" &&
+        detentionInfo?.detention_city?.trim() !== "" &&
+        detentionInfo?.detention_governorate?.trim() !== "" &&
+        detentionInfo?.detention_district?.trim() !== "";
       return isValid;
     }
-    
+
     // For step 3, check if all required fields are filled
     if (stepNumber === 3) {
       const clientInfo = caseData.clientInfo;
-      const isValid = (
-        clientInfo?.client_name?.trim() !== '' &&
-        clientInfo?.client_id?.trim() !== '' &&
-        clientInfo?.client_phone?.trim() !== '' &&
-        clientInfo?.client_relationship?.trim() !== ''
-      );
+      const isValid =
+        clientInfo?.client_name?.trim() !== "" &&
+        clientInfo?.client_id?.trim() !== "" &&
+        clientInfo?.client_phone?.trim() !== "" &&
+        clientInfo?.client_relationship?.trim() !== "";
       return isValid;
     }
-    
+
     // For step 4, check if all required fields are filled
     if (stepNumber === 4) {
       const delegationInfo = caseData.delegationInfo;
-      const isValid = (
-        typeof delegationInfo?.authorized_another_party === 'boolean' &&
-        typeof delegationInfo?.previous_delegation === 'boolean'
-      );
+      const isValid =
+        typeof delegationInfo?.authorized_another_party === "boolean" &&
+        typeof delegationInfo?.previous_delegation === "boolean";
       return isValid;
     }
-    
+
     // For step 5, require detainee and client ID documents to be uploaded
     if (stepNumber === 5) {
       const documents = caseData.documents;
       // Check both document IDs and metadata for uploaded files
-      const hasDetaineeId = !!documents?.detainee_document_id || !!documents?.display_meta?.detainee_id?.id;
-      const hasClientId = !!documents?.client_document_id || !!documents?.display_meta?.client_id?.id;
+      const hasDetaineeId =
+        !!documents?.detainee_document_id ||
+        !!documents?.display_meta?.detainee_id?.id;
+      const hasClientId =
+        !!documents?.client_document_id ||
+        !!documents?.display_meta?.client_id?.id;
 
       return hasDetaineeId && hasClientId;
     }
-    
+
     // For other steps, check if step is completed
     return completedSteps.includes(stepNumber);
   };
@@ -458,7 +494,28 @@ export default function NewCasePage({ locale = "ar" }) {
           <aside className="new-case__progress">
             <div className="new-case__progress-card">
               <h1 className="new-case__title">{tt("newCase.sidebar.title")}</h1>
-              <p className="new-case__description">{tt("newCase.sidebar.description")}</p>
+              <p className="new-case__description">
+                {tt("newCase.sidebar.description")
+                  .split("https://wa.me/970597167306")
+                  .map((part, index, array) => {
+                    if (index === array.length - 1) {
+                      return part;
+                    }
+                    return (
+                      <span key={index}>
+                        {part}
+                        <a
+                          href="https://wa.me/970597167306"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="whatsapp-link"
+                        >
+                          https://wa.me/970597167306
+                        </a>
+                      </span>
+                    );
+                  })}
+              </p>
 
               <div className="new-case__steps">
                 {steps.map((step, index) => {
@@ -469,22 +526,59 @@ export default function NewCasePage({ locale = "ar" }) {
                         <div
                           className={`new-case__step-circle new-case__step-circle--${getStepStatus(
                             step.id
-                          )} ${(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? "new-case__step-circle--clickable" : ""}`}
+                          )} ${
+                            getStepStatus(step.id) === "completed" ||
+                            (step.id === currentStep + 1 &&
+                              canGoToNext(currentStep))
+                              ? "new-case__step-circle--clickable"
+                              : ""
+                          }`}
                           onClick={() => {
                             if (getStepStatus(step.id) === "completed") {
                               goToStep(step.id);
-                            } else if (step.id === currentStep + 1 && canGoToNext(currentStep)) {
+                            } else if (
+                              step.id === currentStep + 1 &&
+                              canGoToNext(currentStep)
+                            ) {
                               goToStep(step.id);
                             }
                           }}
-                          style={{ 
-                            cursor: (getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? "pointer" : "default" 
+                          style={{
+                            cursor:
+                              getStepStatus(step.id) === "completed" ||
+                              (step.id === currentStep + 1 &&
+                                canGoToNext(currentStep))
+                                ? "pointer"
+                                : "default",
                           }}
-                          role={(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? "button" : undefined}
-                          tabIndex={(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? 0 : undefined}
-                          aria-label={(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? `Go to step ${step.id}: ${step.title}` : undefined}
+                          role={
+                            getStepStatus(step.id) === "completed" ||
+                            (step.id === currentStep + 1 &&
+                              canGoToNext(currentStep))
+                              ? "button"
+                              : undefined
+                          }
+                          tabIndex={
+                            getStepStatus(step.id) === "completed" ||
+                            (step.id === currentStep + 1 &&
+                              canGoToNext(currentStep))
+                              ? 0
+                              : undefined
+                          }
+                          aria-label={
+                            getStepStatus(step.id) === "completed" ||
+                            (step.id === currentStep + 1 &&
+                              canGoToNext(currentStep))
+                              ? `Go to step ${step.id}: ${step.title}`
+                              : undefined
+                          }
                           onKeyDown={(e) => {
-                            if ((getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) && (e.key === "Enter" || e.key === " ")) {
+                            if (
+                              (getStepStatus(step.id) === "completed" ||
+                                (step.id === currentStep + 1 &&
+                                  canGoToNext(currentStep))) &&
+                              (e.key === "Enter" || e.key === " ")
+                            ) {
                               e.preventDefault();
                               goToStep(step.id);
                             }
@@ -500,7 +594,6 @@ export default function NewCasePage({ locale = "ar" }) {
                             <StepIcon size={18} />
                           )}
                           {getStepStatus(step.id) === "pending" && step.id}
-
                         </div>
                         {index < steps.length - 1 && (
                           <div
@@ -510,23 +603,60 @@ export default function NewCasePage({ locale = "ar" }) {
                           ></div>
                         )}
                       </div>
-                      <div 
-                        className={`new-case__step-content ${(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? "new-case__step-content--clickable" : ""}`}
+                      <div
+                        className={`new-case__step-content ${
+                          getStepStatus(step.id) === "completed" ||
+                          (step.id === currentStep + 1 &&
+                            canGoToNext(currentStep))
+                            ? "new-case__step-content--clickable"
+                            : ""
+                        }`}
                         onClick={() => {
                           if (getStepStatus(step.id) === "completed") {
                             goToStep(step.id);
-                          } else if (step.id === currentStep + 1 && canGoToNext(currentStep)) {
+                          } else if (
+                            step.id === currentStep + 1 &&
+                            canGoToNext(currentStep)
+                          ) {
                             goToStep(step.id);
                           }
                         }}
-                        style={{ 
-                          cursor: (getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? "pointer" : "default" 
+                        style={{
+                          cursor:
+                            getStepStatus(step.id) === "completed" ||
+                            (step.id === currentStep + 1 &&
+                              canGoToNext(currentStep))
+                              ? "pointer"
+                              : "default",
                         }}
-                        role={(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? "button" : undefined}
-                        tabIndex={(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? 0 : undefined}
-                        aria-label={(getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) ? `Go to step ${step.id}: ${step.title}` : undefined}
+                        role={
+                          getStepStatus(step.id) === "completed" ||
+                          (step.id === currentStep + 1 &&
+                            canGoToNext(currentStep))
+                            ? "button"
+                            : undefined
+                        }
+                        tabIndex={
+                          getStepStatus(step.id) === "completed" ||
+                          (step.id === currentStep + 1 &&
+                            canGoToNext(currentStep))
+                            ? 0
+                            : undefined
+                        }
+                        aria-label={
+                          getStepStatus(step.id) === "completed" ||
+                          (step.id === currentStep + 1 &&
+                            canGoToNext(currentStep))
+                            ? `Go to step ${step.id}: ${step.title}`
+                            : undefined
+                        }
                         onKeyDown={(e) => {
-                          if ((getStepStatus(step.id) === "completed" || (step.id === currentStep + 1 && canGoToNext(currentStep))) && (e.key === "Enter" || e.key === " ")) {
+                          if (
+                            (getStepStatus(step.id) === "completed" ||
+                              (step.id === currentStep + 1 &&
+                                canGoToNext(currentStep))) &&
+                            (e.key === "Enter" || e.key === " ")
+                          ) {
                             e.preventDefault();
                             goToStep(step.id);
                           }
@@ -560,7 +690,10 @@ export default function NewCasePage({ locale = "ar" }) {
                 locale={locale}
                 onResetAll={resetAll}
                 externalErrors={errorSummaries[currentStep] || []}
-                onValidationErrors={(payload: { steps: number[]; summaries: Record<number, string[]> }) => {
+                onValidationErrors={(payload: {
+                  steps: number[];
+                  summaries: Record<number, string[]>;
+                }) => {
                   const { steps, summaries } = payload as any;
                   setErrorSteps(steps);
                   setErrorSummaries(summaries);
