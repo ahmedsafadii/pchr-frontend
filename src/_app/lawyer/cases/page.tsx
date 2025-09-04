@@ -22,7 +22,6 @@ import React from "react";
 import { formatDateWithLocale } from "../../utils/dateUtils";
 import { getCaseStatusTranslation } from "../../utils/statusTranslation";
 
-
 interface Case {
   id: string;
   case_number: string;
@@ -41,7 +40,7 @@ interface Case {
   updated: string;
   detainee_job: string;
   detainee_health_status: string;
-  detainee_city: string;
+  detainee_locality: string;
   detainee_governorate: string;
 }
 
@@ -106,8 +105,6 @@ function LawyerCasesInner() {
     },
   ];
 
-
-
   // Debounced search effect
   useEffect(() => {
     if (searchTimeoutRef.current) {
@@ -125,8 +122,6 @@ function LawyerCasesInner() {
     };
   }, [searchTerm]);
 
-
-
   // Fetch cases from API
   const fetchCases = useCallback(async () => {
     try {
@@ -141,8 +136,14 @@ function LawyerCasesInner() {
       const response = await getLawyerCases(
         token,
         {
-          status: statusFilter && statusFilter.trim() !== "" ? statusFilter : undefined,
-          search: debouncedSearchTerm && debouncedSearchTerm.trim() !== "" ? debouncedSearchTerm : undefined,
+          status:
+            statusFilter && statusFilter.trim() !== ""
+              ? statusFilter
+              : undefined,
+          search:
+            debouncedSearchTerm && debouncedSearchTerm.trim() !== ""
+              ? debouncedSearchTerm
+              : undefined,
           page: currentPage,
           page_size: pageSize,
           urgent_only: urgentOnly,
@@ -155,18 +156,26 @@ function LawyerCasesInner() {
       if (response.status === "success" && response.data) {
         setCases(response.data.cases || []);
         setPagination(response.data.pagination || null);
-        
-
       } else {
-        throw new Error(response.message || t("messages.errors.failedToFetchCases"));
+        throw new Error(
+          response.message || t("messages.errors.failedToFetchCases")
+        );
       }
     } catch (err: any) {
       console.error("Error fetching cases:", err);
-              setError(err.message || t("messages.errors.failedToFetchCases"));
+      setError(err.message || t("messages.errors.failedToFetchCases"));
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, debouncedSearchTerm, urgentOnly, currentPage, pageSize, locale, t]);
+  }, [
+    statusFilter,
+    debouncedSearchTerm,
+    urgentOnly,
+    currentPage,
+    pageSize,
+    locale,
+    t,
+  ]);
 
   // Initialize filters from URL params
   useEffect(() => {
@@ -180,7 +189,7 @@ function LawyerCasesInner() {
     setSearchTerm(search);
     setUrgentOnly(urgent);
     setCurrentPage(page);
-    
+
     // Set flag to true after all params are set
     setIsFilterParamsReady(true);
   }, [searchParams]);
@@ -210,7 +219,14 @@ function LawyerCasesInner() {
 
     // Fetch cases when filters change
     fetchCases();
-  }, [statusFilter, urgentOnly, currentPage, debouncedSearchTerm, fetchCases, isFilterParamsReady]);
+  }, [
+    statusFilter,
+    urgentOnly,
+    currentPage,
+    debouncedSearchTerm,
+    fetchCases,
+    isFilterParamsReady,
+  ]);
 
   // Mark initial load as complete after first fetch
   useEffect(() => {
@@ -225,7 +241,7 @@ function LawyerCasesInner() {
     if (!isFilterParamsReady || loading) {
       return;
     }
-    
+
     setStatusFilter(value);
     setCurrentPage(1);
     // Don't update URL immediately - let the API call handle it
@@ -236,7 +252,7 @@ function LawyerCasesInner() {
     if (!isFilterParamsReady || loading) {
       return;
     }
-    
+
     setSearchTerm(value);
     setCurrentPage(1);
     // Don't update URL immediately - wait for debounced search and successful API call
@@ -247,7 +263,7 @@ function LawyerCasesInner() {
     if (!isFilterParamsReady || loading) {
       return;
     }
-    
+
     setUrgentOnly(value);
     setCurrentPage(1);
     // Don't update URL immediately - let the API call handle it
@@ -258,7 +274,7 @@ function LawyerCasesInner() {
     if (!isFilterParamsReady || loading) {
       return;
     }
-    
+
     setCurrentPage(page);
     // Don't update URL immediately - let the API call handle it
   };
@@ -268,7 +284,7 @@ function LawyerCasesInner() {
     if (!isFilterParamsReady || loading) {
       return;
     }
-    
+
     setCurrentPage(1);
     setExpandedRows(new Set()); // Reset expanded rows
     fetchCases();
@@ -312,8 +328,6 @@ function LawyerCasesInner() {
         return "case__status--default";
     }
   };
-
-
 
   return (
     <div className="lawyer">
@@ -359,14 +373,22 @@ function LawyerCasesInner() {
 
             <div className="lawyer__filter">
               <CustomSelect
-                value={urgentOnly ? t("common.urgentCases") : t("common.allCases")}
-                onChange={(value) => handleUrgentChange(value === t("common.urgentCases"))}
+                value={
+                  urgentOnly ? t("common.urgentCases") : t("common.allCases")
+                }
+                onChange={(value) =>
+                  handleUrgentChange(value === t("common.urgentCases"))
+                }
                 placeholder={
-                  t("lawyer.cases.urgentFilter.allCases")?.toString() || "All Cases"
+                  t("lawyer.cases.urgentFilter.allCases")?.toString() ||
+                  "All Cases"
                 }
                 options={[
-                  { value: '', label: t("lawyer.cases.urgentFilter.allCases") },
-                  { value: t("common.urgentCases"), label: t("lawyer.cases.urgentFilter.onlyUrgent") }
+                  { value: "", label: t("lawyer.cases.urgentFilter.allCases") },
+                  {
+                    value: t("common.urgentCases"),
+                    label: t("lawyer.cases.urgentFilter.onlyUrgent"),
+                  },
                 ]}
                 includeNullOption={false}
                 isSearchable={false}
@@ -402,7 +424,10 @@ function LawyerCasesInner() {
                   <tr className="lawyer__table-loading-row">
                     <td colSpan={5} className="lawyer__table-loading-cell">
                       <div className="lawyer__table-loading-content">
-                        <IconLoader size={24} className="lawyer__loading-spinner" />
+                        <IconLoader
+                          size={24}
+                          className="lawyer__loading-spinner"
+                        />
                         <span>Loading cases...</span>
                       </div>
                     </td>
@@ -414,7 +439,10 @@ function LawyerCasesInner() {
                       <div className="lawyer__table-empty-content">
                         <span>No cases found</span>
                         {error && (
-                          <button onClick={fetchCases} className="lawyer__retry-button">
+                          <button
+                            onClick={fetchCases}
+                            className="lawyer__retry-button"
+                          >
                             Retry
                           </button>
                         )}
@@ -422,156 +450,248 @@ function LawyerCasesInner() {
                     </td>
                   </tr>
                 )}
-                {!loading && cases.length > 0 && cases.map((caseItem) => (
-                  <React.Fragment key={caseItem.id}>
-                    <tr className="lawyer__table-row">
-                      <td className="lawyer__table-cell lawyer__table-expand-cell">
-                        <button
-                          className="lawyer__expand-button"
-                          onClick={() => toggleRowExpansion(caseItem.id)}
-                          aria-label={isRowExpanded(caseItem.id) ? "Collapse row" : "Expand row"}
-                        >
-                          {isRowExpanded(caseItem.id) ? (
-                            <IconChevronDown size={20} />
-                          ) : (
-                            <IconChevronRight size={20} />
-                          )}
-                        </button>
-                      </td>
-                      <td className="lawyer__table-cell">
-                        <div className="lawyer__case-number-wrapper">
-                          <Link
-                            href={`/${locale}/lawyer/cases/${caseItem.id}`}
-                            className="lawyer__case-id-link"
+                {!loading &&
+                  cases.length > 0 &&
+                  cases.map((caseItem) => (
+                    <React.Fragment key={caseItem.id}>
+                      <tr className="lawyer__table-row">
+                        <td className="lawyer__table-cell lawyer__table-expand-cell">
+                          <button
+                            className="lawyer__expand-button"
+                            onClick={() => toggleRowExpansion(caseItem.id)}
+                            aria-label={
+                              isRowExpanded(caseItem.id)
+                                ? "Collapse row"
+                                : "Expand row"
+                            }
                           >
-                            {caseItem.case_number}
-                          </Link>
-                          {caseItem.is_urgent && (
-                            <span className="lawyer__case-urgent-badge">
-                              <IconAlertCircle size={16} stroke={1.5} />
-                              {t("lawyer.dashboard.stats.urgent")}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="lawyer__table-cell">
-                        <span className="lawyer__detainee-name">
-                          {caseItem.detainee_name}
-                        </span>
-                      </td>
-                      <td className="lawyer__table-cell">
-                        <span className="lawyer__creation-date">
-                          {formatDateWithLocale(caseItem.created, locale)}
-                        </span>
-                      </td>
-                      <td className="lawyer__table-cell">
-                        <span
-                          className={`lawyer__status ${getStatusClass(
-                            caseItem.status
-                          )}`}
-                        >
-                          {getCaseStatusTranslation(caseItem.status, t)}
-                        </span>
-                      </td>
-                    </tr>
-                    {isRowExpanded(caseItem.id) && (
-                      <tr className="lawyer__table-expanded-row">
-                        <td colSpan={5} className="lawyer__table-expanded-cell">
-                          <div className="lawyer__expanded-content">
-                            <div className="lawyer__expanded-section">
-                              <h4>Detainee Information</h4>
-                              <div className="lawyer__expanded-grid">
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">Full Name:</span>
-                                  <span className="lawyer__expanded-value">{caseItem.detainee_name}</span>
-                                </div>
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">ID Number:</span>
-                                  <span className="lawyer__expanded-value">{caseItem.detainee_id}</span>
-                                </div>
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">Date of Birth:</span>
-                                  <span className="lawyer__expanded-value">{formatDateWithLocale(caseItem.detainee_date_of_birth, locale)}</span>
-                                </div>
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">Job:</span>
-                                  <span className="lawyer__expanded-value">{caseItem.detainee_job}</span>
-                                </div>
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">Health Status:</span>
-                                  <span className="lawyer__expanded-value">{caseItem.detainee_health_status}</span>
-                                </div>
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">City:</span>
-                                  <span className="lawyer__expanded-value">{caseItem.detainee_city}</span>
-                                </div>
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">Governorate:</span>
-                                  <span className="lawyer__expanded-value">{caseItem.detainee_governorate}</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="lawyer__expanded-section">
-                              <h4>Client Information</h4>
-                              <div className="lawyer__expanded-grid">
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">Full Name:</span>
-                                  <span className="lawyer__expanded-value">{caseItem.client_name}</span>
-                                </div>
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">Phone Number:</span>
-                                  <span className="lawyer__expanded-value">{caseItem.client_phone}</span>
-                                </div>
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">Relationship:</span>
-                                  <span className="lawyer__expanded-value">{caseItem.client_relationship}</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="lawyer__expanded-section">
-                              <h4>Detention Information</h4>
-                              <div className="lawyer__expanded-grid">
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">Detention Date:</span>
-                                  <span className="lawyer__expanded-value">{formatDateWithLocale(caseItem.detention_date, locale)}</span>
-                                </div>
-                                <div className="lawyer__expanded-item lawyer__expanded-item--full">
-                                  <span className="lawyer__expanded-label">Circumstances:</span>
-                                  <span className="lawyer__expanded-value">{caseItem.detention_circumstances}</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="lawyer__expanded-section">
-                              <h4>Case Information</h4>
-                              <div className="lawyer__expanded-grid">
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">Case Number:</span>
-                                  <span className="lawyer__expanded-value">{caseItem.case_number}</span>
-                                </div>
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">Status:</span>
-                                  <span className="lawyer__expanded-value">{getCaseStatusTranslation(caseItem.status, t)}</span>
-                                </div>
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">Urgent:</span>
-                                  <span className="lawyer__expanded-value">{caseItem.is_urgent ? "Yes" : "No"}</span>
-                                </div>
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">Created:</span>
-                                  <span className="lawyer__expanded-value">{formatDateWithLocale(caseItem.created, locale)}</span>
-                                </div>
-                                <div className="lawyer__expanded-item">
-                                  <span className="lawyer__expanded-label">Last Updated:</span>
-                                  <span className="lawyer__expanded-value">{formatDateWithLocale(caseItem.updated, locale)}</span>
-                                </div>
-                              </div>
-                            </div>
+                            {isRowExpanded(caseItem.id) ? (
+                              <IconChevronDown size={20} />
+                            ) : (
+                              <IconChevronRight size={20} />
+                            )}
+                          </button>
+                        </td>
+                        <td className="lawyer__table-cell">
+                          <div className="lawyer__case-number-wrapper">
+                            <Link
+                              href={`/${locale}/lawyer/cases/${caseItem.id}`}
+                              className="lawyer__case-id-link"
+                            >
+                              {caseItem.case_number}
+                            </Link>
+                            {caseItem.is_urgent && (
+                              <span className="lawyer__case-urgent-badge">
+                                <IconAlertCircle size={16} stroke={1.5} />
+                                {t("lawyer.dashboard.stats.urgent")}
+                              </span>
+                            )}
                           </div>
                         </td>
+                        <td className="lawyer__table-cell">
+                          <span className="lawyer__detainee-name">
+                            {caseItem.detainee_name}
+                          </span>
+                        </td>
+                        <td className="lawyer__table-cell">
+                          <span className="lawyer__creation-date">
+                            {formatDateWithLocale(caseItem.created, locale)}
+                          </span>
+                        </td>
+                        <td className="lawyer__table-cell">
+                          <span
+                            className={`lawyer__status ${getStatusClass(
+                              caseItem.status
+                            )}`}
+                          >
+                            {getCaseStatusTranslation(caseItem.status, t)}
+                          </span>
+                        </td>
                       </tr>
-                    )}
-                  </React.Fragment>
-                ))}
+                      {isRowExpanded(caseItem.id) && (
+                        <tr className="lawyer__table-expanded-row">
+                          <td
+                            colSpan={5}
+                            className="lawyer__table-expanded-cell"
+                          >
+                            <div className="lawyer__expanded-content">
+                              <div className="lawyer__expanded-section">
+                                <h4>Detainee Information</h4>
+                                <div className="lawyer__expanded-grid">
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Full Name:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {caseItem.detainee_name}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      ID Number:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {caseItem.detainee_id}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Date of Birth:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {formatDateWithLocale(
+                                        caseItem.detainee_date_of_birth,
+                                        locale
+                                      )}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Job:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {caseItem.detainee_job}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Health Status:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {caseItem.detainee_health_status}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Locality:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {caseItem.detainee_locality}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Governorate:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {caseItem.detainee_governorate}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="lawyer__expanded-section">
+                                <h4>Client Information</h4>
+                                <div className="lawyer__expanded-grid">
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Full Name:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {caseItem.client_name}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Phone Number:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {caseItem.client_phone}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Relationship:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {caseItem.client_relationship}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="lawyer__expanded-section">
+                                <h4>Detention Information</h4>
+                                <div className="lawyer__expanded-grid">
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Detention Date:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {formatDateWithLocale(
+                                        caseItem.detention_date,
+                                        locale
+                                      )}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item lawyer__expanded-item--full">
+                                    <span className="lawyer__expanded-label">
+                                      Circumstances:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {caseItem.detention_circumstances}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="lawyer__expanded-section">
+                                <h4>Case Information</h4>
+                                <div className="lawyer__expanded-grid">
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Case Number:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {caseItem.case_number}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Status:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {getCaseStatusTranslation(
+                                        caseItem.status,
+                                        t
+                                      )}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Urgent:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {caseItem.is_urgent ? "Yes" : "No"}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Created:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {formatDateWithLocale(
+                                        caseItem.created,
+                                        locale
+                                      )}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      Last Updated:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {formatDateWithLocale(
+                                        caseItem.updated,
+                                        locale
+                                      )}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))}
               </tbody>
             </table>
           </div>

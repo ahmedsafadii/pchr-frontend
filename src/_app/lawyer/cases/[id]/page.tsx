@@ -9,7 +9,6 @@ import { useLawyerAuth } from "../../../hooks/useLawyerAuth";
 import UpdateCaseModal from "../../../components/modals/UpdateCaseModal";
 import { formatDateWithLocale } from "../../../utils/dateUtils";
 
-
 interface CaseData {
   id: string;
   case_number: string;
@@ -31,7 +30,7 @@ interface CaseData {
   detainee_health_status: string;
   detainee_street?: string;
   detainee_district?: { name?: string } | null;
-  detainee_city?: string | { name?: string } | null;
+  detainee_locality?: string | { name?: string } | null;
   detainee_governorate?: string | { name?: string } | null;
   detainee_marital_status_display?: string;
   // Disappearance-specific fields (optional to be resilient to API variations)
@@ -39,7 +38,7 @@ interface CaseData {
   disappearance_status_display?: string;
   detention_street?: string;
   detention_district?: { name?: string } | null;
-  detention_city?: { name?: string } | null;
+  detention_locality?: { name?: string } | null;
   detention_governorate?: { name?: string } | null;
   detainee_marital_status: string | null;
   detention_full_address?: string;
@@ -62,36 +61,38 @@ export default function LawyerCaseDetailsPage() {
   const fetchCaseDetails = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await getLawyerCaseDetails(caseId, 'en');
-      
-      console.log('API Response:', response); // Debug log
-      
-      if (response.status === 'success') {
+      const response = await getLawyerCaseDetails(caseId, "en");
+
+      console.log("API Response:", response); // Debug log
+
+      if (response.status === "success") {
         // Check different possible data structures
         if (response.data?.cases && response.data.cases.length > 0) {
           // If it's an array of cases, find the one matching the caseId
-          const caseItem = response.data.cases.find((caseItem: any) => caseItem.id === caseId);
+          const caseItem = response.data.cases.find(
+            (caseItem: any) => caseItem.id === caseId
+          );
           if (caseItem) {
             setCaseData(caseItem);
           } else {
-            setError('Case not found in response');
+            setError("Case not found in response");
           }
         } else if (response.data?.id === caseId) {
           // If it's a single case object
           setCaseData(response.data);
-        } else if (response.data && typeof response.data === 'object') {
+        } else if (response.data && typeof response.data === "object") {
           // If data is directly the case object
           setCaseData(response.data);
         } else {
-          console.log('Response data structure:', response.data);
-          setError('Unexpected data structure');
+          console.log("Response data structure:", response.data);
+          setError("Unexpected data structure");
         }
       } else {
-        setError(response.message || 'Case not found');
+        setError(response.message || "Case not found");
       }
     } catch (err) {
-      console.error('Error fetching case details:', err);
-      setError('Failed to load case details');
+      console.error("Error fetching case details:", err);
+      setError("Failed to load case details");
     } finally {
       setLoading(false);
     }
@@ -101,16 +102,16 @@ export default function LawyerCaseDetailsPage() {
     try {
       // Refresh case details to get the updated status
       await fetchCaseDetails();
-      
+
       return { success: true };
     } catch (err: any) {
-      throw new Error(err.message || 'Failed to refresh case details');
+      throw new Error(err.message || "Failed to refresh case details");
     }
   };
 
   useEffect(() => {
     if (!isAuthenticated && !isLoading) {
-      router.push('/lawyer-login');
+      router.push("/lawyer-login");
       return;
     }
 
@@ -134,7 +135,10 @@ export default function LawyerCaseDetailsPage() {
         <IconAlertTriangle size={48} className="lawyer__error-icon" />
         <h2>{t("common.error")}</h2>
         <p>{error}</p>
-        <button onClick={fetchCaseDetails} className="lawyer__btn lawyer__btn--primary">
+        <button
+          onClick={fetchCaseDetails}
+          className="lawyer__btn lawyer__btn--primary"
+        >
           {t("common.retry")}
         </button>
       </div>
@@ -154,8 +158,10 @@ export default function LawyerCaseDetailsPage() {
     <>
       {/* Header */}
       <div className="lawyer__case-details-header">
-        <h1 className="lawyer__case-details-title">{t("lawyer.caseDetails.navigation.allDetails")}</h1>
-        <button 
+        <h1 className="lawyer__case-details-title">
+          {t("lawyer.caseDetails.navigation.allDetails")}
+        </h1>
+        <button
           className="lawyer__start-case-btn"
           onClick={() => setIsUpdateModalOpen(true)}
         >
@@ -165,103 +171,165 @@ export default function LawyerCaseDetailsPage() {
 
       {/* Case Information */}
       <section className="lawyer__info-section">
-        <h2 className="lawyer__info-title">{t("lawyer.caseDetails.caseInfo.title")}</h2>
+        <h2 className="lawyer__info-title">
+          {t("lawyer.caseDetails.caseInfo.title")}
+        </h2>
         <div className="lawyer__info-grid">
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.caseInfo.caseNumber")}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.caseInfo.caseNumber")}
+            </div>
             <div className="lawyer__info-value">{caseData.case_number}</div>
           </div>
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.caseInfo.status")}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.caseInfo.status")}
+            </div>
             <div className="lawyer__info-value">
-              <span className={`lawyer__status case__status--${caseData.status}`}>
+              <span
+                className={`lawyer__status case__status--${caseData.status}`}
+              >
                 {caseData.status_display}
               </span>
             </div>
           </div>
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.caseInfo.isUrgent")}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.caseInfo.isUrgent")}
+            </div>
             <div className="lawyer__info-value">
               {caseData.is_urgent ? (
                 <span className="lawyer__urgent-badge">{t("common.yes")}</span>
               ) : (
-                <span className="lawyer__not-urgent-badge">{t("common.no")}</span>
+                <span className="lawyer__not-urgent-badge">
+                  {t("common.no")}
+                </span>
               )}
             </div>
           </div>
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.caseInfo.created")}</div>
-            <div className="lawyer__info-value">{formatDateWithLocale(caseData.created, locale)}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.caseInfo.created")}
+            </div>
+            <div className="lawyer__info-value">
+              {formatDateWithLocale(caseData.created, locale)}
+            </div>
           </div>
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.caseInfo.updated")}</div>
-            <div className="lawyer__info-value">{formatDateWithLocale(caseData.updated, locale)}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.caseInfo.updated")}
+            </div>
+            <div className="lawyer__info-value">
+              {formatDateWithLocale(caseData.updated, locale)}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Detainee Information */}
       <section className="lawyer__info-section">
-        <h2 className="lawyer__info-title">{t("lawyer.caseDetails.detaineeInfo.title")}</h2>
+        <h2 className="lawyer__info-title">
+          {t("lawyer.caseDetails.detaineeInfo.title")}
+        </h2>
         <div className="lawyer__info-grid">
           {/* Full Name */}
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.fullName")}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.detaineeInfo.fullName")}
+            </div>
             <div className="lawyer__info-value">{caseData.detainee_name}</div>
           </div>
           {/* DOB */}
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.dateOfBirth")}</div>
-                            <div className="lawyer__info-value">{formatDateWithLocale(caseData.detainee_date_of_birth, locale)}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.detaineeInfo.dateOfBirth")}
+            </div>
+            <div className="lawyer__info-value">
+              {formatDateWithLocale(caseData.detainee_date_of_birth, locale)}
+            </div>
           </div>
           {/* ID Number */}
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.idNumber")}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.detaineeInfo.idNumber")}
+            </div>
             <div className="lawyer__info-value">{caseData.detainee_id}</div>
           </div>
           {/* Healthy Status */}
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.healthyStatus")}</div>
-            <div className="lawyer__info-value">{caseData.detainee_health_status || '-'}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.detaineeInfo.healthyStatus")}
+            </div>
+            <div className="lawyer__info-value">
+              {caseData.detainee_health_status || "-"}
+            </div>
           </div>
           {/* Job */}
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.job")}</div>
-            <div className="lawyer__info-value">{caseData.detainee_job || '-'}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.detaineeInfo.job")}
+            </div>
+            <div className="lawyer__info-value">
+              {caseData.detainee_job || "-"}
+            </div>
           </div>
           {/* Marital Status */}
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.maritalStatus")}</div>
-            <div className="lawyer__info-value">{caseData.detainee_marital_status || '-'}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.detaineeInfo.maritalStatus")}
+            </div>
+            <div className="lawyer__info-value">
+              {caseData.detainee_marital_status || "-"}
+            </div>
           </div>
           {/* Location */}
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.detaineeInfo.location")}</div>
-            <div className="lawyer__info-value">{caseData.detainee_full_address || '-' }</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.detaineeInfo.location")}
+            </div>
+            <div className="lawyer__info-value">
+              {caseData.detainee_full_address || "-"}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Detention/Disappearance Info */}
       <section className="lawyer__info-section">
-        <h2 className="lawyer__info-title">{t("lawyer.caseDetails.detentionInfo.title")}</h2>
+        <h2 className="lawyer__info-title">
+          {t("lawyer.caseDetails.detentionInfo.title")}
+        </h2>
         <div className="lawyer__info-grid">
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.detentionInfo.detentionDate")}</div>
-                            <div className="lawyer__info-value">{formatDateWithLocale(caseData.detention_date, locale)}</div>
-          </div>
-          <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.detentionInfo.status")}</div>
-            <div className="lawyer__info-value">{caseData.disappearance_status_display || caseData.disappearance_status || '-'}</div>
-          </div>
-          <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.detentionInfo.location")}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.detentionInfo.detentionDate")}
+            </div>
             <div className="lawyer__info-value">
-              {caseData.detention_full_address || '-' }
+              {formatDateWithLocale(caseData.detention_date, locale)}
+            </div>
+          </div>
+          <div className="lawyer__info-item">
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.detentionInfo.status")}
+            </div>
+            <div className="lawyer__info-value">
+              {caseData.disappearance_status_display ||
+                caseData.disappearance_status ||
+                "-"}
+            </div>
+          </div>
+          <div className="lawyer__info-item">
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.detentionInfo.location")}
+            </div>
+            <div className="lawyer__info-value">
+              {caseData.detention_full_address || "-"}
             </div>
           </div>
           <div className="lawyer__info-description">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.detentionInfo.circumstances")}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.detentionInfo.circumstances")}
+            </div>
             <p className="lawyer__info-description-text">
               {caseData.detention_circumstances || t("common.noDescription")}
             </p>
@@ -271,29 +339,43 @@ export default function LawyerCaseDetailsPage() {
 
       {/* Client Info */}
       <section className="lawyer__info-section">
-        <h2 className="lawyer__info-title">{t("lawyer.caseDetails.clientInfo.title")}</h2>
+        <h2 className="lawyer__info-title">
+          {t("lawyer.caseDetails.clientInfo.title")}
+        </h2>
         <div className="lawyer__info-grid">
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.clientInfo.fullName")}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.clientInfo.fullName")}
+            </div>
             <div className="lawyer__info-value">{caseData.client_name}</div>
           </div>
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.clientInfo.idNumber")}</div>
-            <div className="lawyer__info-value">{caseData.client_id || '-'}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.clientInfo.idNumber")}
+            </div>
+            <div className="lawyer__info-value">
+              {caseData.client_id || "-"}
+            </div>
           </div>
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.clientInfo.phoneNumber")}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.clientInfo.phoneNumber")}
+            </div>
             <div className="lawyer__info-value">{caseData.client_phone}</div>
           </div>
           <div className="lawyer__info-item">
-            <div className="lawyer__info-label">{t("lawyer.caseDetails.clientInfo.relationship")}</div>
-            <div className="lawyer__info-value">{caseData.client_relationship}</div>
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.clientInfo.relationship")}
+            </div>
+            <div className="lawyer__info-value">
+              {caseData.client_relationship}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Documents upload section removed as it has its own page */}
-      
+
       {/* Update Case Modal */}
       <UpdateCaseModal
         isOpen={isUpdateModalOpen}

@@ -162,7 +162,7 @@
         "healthStatusRequired": "Health status is required",
         "maritalStatusRequired": "Marital status is required",
         "locationRequired": "Location is required",
-        "cityRequired": "City is required",
+        "localityRequired": "Locality is required",
         "governorateRequired": "Governorate is required",
         "districtRequired": "District is required",
         "age18": "Detainee must be 18 years or older."
@@ -189,7 +189,7 @@
       "errors": {
         "disappearanceDateRequired": "Disappearance date is required",
         "locationRequired": "Location is required",
-        "cityRequired": "City is required",
+        "localityRequired": "Locality is required",
         "governorateRequired": "Governorate is required",
         "districtRequired": "District is required",
         "circumstancesMax500": "Maximum 500 characters allowed."
@@ -308,7 +308,7 @@
       "title": "Address",
       "location": "Location",
       "governorate": "Governorate",
-      "city": "City",
+      "locality": "Locality",
       "district": "District",
       "streetName": "Street Name",
       "streetNamePlaceholder": "Street Name"

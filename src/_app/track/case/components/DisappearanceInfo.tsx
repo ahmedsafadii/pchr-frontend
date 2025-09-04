@@ -63,7 +63,10 @@ export default function DisappearanceInfo({
               <dt>{(t as any)("trackCase.info.dob")}</dt>
               <dd>
                 {caseData?.detainee_date_of_birth
-                  ? formatDateWithLocale(caseData.detainee_date_of_birth, locale)
+                  ? formatDateWithLocale(
+                      caseData.detainee_date_of_birth,
+                      locale
+                    )
                   : t("common.notAvailable")}
               </dd>
             </div>
@@ -74,17 +77,21 @@ export default function DisappearanceInfo({
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.health")}</dt>
               <dd>
-                {caseData?.detainee_health_status_display || t("common.notAvailable")}
+                {caseData?.detainee_health_status_display ||
+                  t("common.notAvailable")}
               </dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.job")}</dt>
-              <dd>{caseData?.detainee_job_display || t("common.notAvailable")}</dd>
+              <dd>
+                {caseData?.detainee_job_display || t("common.notAvailable")}
+              </dd>
             </div>
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.marital")}</dt>
               <dd>
-                {caseData?.detainee_marital_status_display || t("common.notAvailable")}
+                {caseData?.detainee_marital_status_display ||
+                  t("common.notAvailable")}
               </dd>
             </div>
             <div className="case-info__row">
@@ -93,7 +100,7 @@ export default function DisappearanceInfo({
                 {caseData
                   ? `${caseData.detainee_street || ""}, ${
                       caseData.detainee_district?.name || ""
-                    }, ${caseData.detainee_city?.name || ""                    }, ${
+                    }, ${caseData.detainee_locality?.name || ""}, ${
                       caseData.detainee_governorate?.name || ""
                     }`
                       .replace(/^,\s*|,\s*$/g, "")
@@ -120,7 +127,8 @@ export default function DisappearanceInfo({
             <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.disappearanceStatus")}</dt>
               <dd>
-                {caseData?.disappearance_status_display || t("common.notAvailable")}
+                {caseData?.disappearance_status_display ||
+                  t("common.notAvailable")}
               </dd>
             </div>
             <div className="case-info__row">
@@ -129,7 +137,7 @@ export default function DisappearanceInfo({
                 {caseData
                   ? `${caseData?.detention_street || ""}, ${
                       caseData?.detention_district?.name || ""
-                    }, ${caseData?.detention_city?.name || ""                    }, ${
+                    }, ${caseData?.detention_locality?.name || ""}, ${
                       caseData?.detention_governorate?.name || ""
                     }`
                       .replace(/^,\s*|,\s*$/g, "")
@@ -140,8 +148,7 @@ export default function DisappearanceInfo({
             <div className="case-info__row case-info__row--full">
               <dt>{(t as any)("trackCase.info.describe")}</dt>
               <dd>
-                {caseData?.detention_circumstances ||
-                  t("common.noDescription")}
+                {caseData?.detention_circumstances || t("common.noDescription")}
               </dd>
             </div>
           </dl>
@@ -167,7 +174,10 @@ export default function DisappearanceInfo({
           </div>
           <div className="case-info__row">
             <dt>{(t as any)("trackCase.info.relationship")}</dt>
-            <dd>{caseData?.client_relationship_display || t("common.notAvailable")}</dd>
+            <dd>
+              {caseData?.client_relationship_display ||
+                t("common.notAvailable")}
+            </dd>
           </div>
         </dl>
       </div>
@@ -182,8 +192,8 @@ export default function DisappearanceInfo({
               <li key={document.id} className="case-overview__file">
                 <span className="case-overview__file-left">
                   <IconFileText size={18} />{" "}
-                  {document.document_type_display.toLowerCase() === "other" 
-                    ? document.file_name 
+                  {document.document_type_display.toLowerCase() === "other"
+                    ? document.file_name
                     : `${document.document_type_display}${document.file_extension}`}{" "}
                   ({document.file_size_mb}MB)
                 </span>
@@ -243,7 +253,11 @@ export default function DisappearanceInfo({
                     <img
                       src={imageUrl}
                       alt="signature"
-                      style={{ width: "100%", height: "auto", maxWidth: "600px" }}
+                      style={{
+                        width: "100%",
+                        height: "auto",
+                        maxWidth: "600px",
+                      }}
                     />
                   );
                 }

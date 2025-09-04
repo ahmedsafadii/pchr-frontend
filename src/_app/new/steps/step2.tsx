@@ -45,26 +45,45 @@ export default function Step2({
   useEffect(() => {
     if (externalErrors.length > 0) {
       const newErrors: Record<string, string> = {};
-      
-      externalErrors.forEach(errorMsg => {
+
+      externalErrors.forEach((errorMsg) => {
         // Map error messages to field names based on content
         const lowerMsg = errorMsg.toLowerCase();
-        if (lowerMsg.includes('detention date') || lowerMsg.includes('detention_date') || lowerMsg.includes('disappearance date')) {
+        if (
+          lowerMsg.includes("detention date") ||
+          lowerMsg.includes("detention_date") ||
+          lowerMsg.includes("disappearance date")
+        ) {
           newErrors.disappearanceDate = errorMsg;
-        } else if (lowerMsg.includes('detention city') || lowerMsg.includes('detention_city')) {
-          newErrors.city = errorMsg;
-        } else if (lowerMsg.includes('detention governorate') || lowerMsg.includes('detention_governorate')) {
+        } else if (
+          lowerMsg.includes("detention locality") ||
+          lowerMsg.includes("detention_locality")
+        ) {
+          newErrors.locality = errorMsg;
+        } else if (
+          lowerMsg.includes("detention governorate") ||
+          lowerMsg.includes("detention_governorate")
+        ) {
           newErrors.governorate = errorMsg;
-        } else if (lowerMsg.includes('detention district') || lowerMsg.includes('detention_district')) {
+        } else if (
+          lowerMsg.includes("detention district") ||
+          lowerMsg.includes("detention_district")
+        ) {
           newErrors.district = errorMsg;
-        } else if (lowerMsg.includes('circumstances') || lowerMsg.includes('detention_circumstances')) {
+        } else if (
+          lowerMsg.includes("circumstances") ||
+          lowerMsg.includes("detention_circumstances")
+        ) {
           newErrors.circumstances = errorMsg;
-        } else if (lowerMsg.includes('status') || lowerMsg.includes('disappearance_status')) {
+        } else if (
+          lowerMsg.includes("status") ||
+          lowerMsg.includes("disappearance_status")
+        ) {
           newErrors.disappearanceStatus = errorMsg;
         }
       });
-      
-      setErrors(prev => ({ ...prev, ...newErrors }));
+
+      setErrors((prev) => ({ ...prev, ...newErrors }));
     }
   }, [externalErrors]);
 
@@ -99,10 +118,13 @@ export default function Step2({
     if (!formData.detention_location || !formData.detention_location.trim())
       newErrors.location = t("newCase.step2.errors.locationRequired");
 
-    if (!formData.detention_city || !formData.detention_city.trim())
-      newErrors.city = t("newCase.step2.errors.cityRequired");
+    if (!formData.detention_locality || !formData.detention_locality.trim())
+      newErrors.locality = t("newCase.step2.errors.localityRequired");
 
-    if (!formData.detention_governorate || !formData.detention_governorate.trim())
+    if (
+      !formData.detention_governorate ||
+      !formData.detention_governorate.trim()
+    )
       newErrors.governorate = t("newCase.step2.errors.governorateRequired");
 
     if (!formData.detention_district || !formData.detention_district.trim())
@@ -145,7 +167,11 @@ export default function Step2({
               </label>
               <div className="steps__input-wrapper">
                 <LocalizedDatePicker
-                  selected={formData.detention_date ? new Date(formData.detention_date) : null}
+                  selected={
+                    formData.detention_date
+                      ? new Date(formData.detention_date)
+                      : null
+                  }
                   onChange={(date: Date | null) => {
                     const formattedDate = date
                       ? date.toISOString().split("T")[0]
@@ -179,8 +205,12 @@ export default function Step2({
                 labelKey="name"
                 valueKey="id"
                 value={formData.disappearance_status}
-                onChange={(value) => handleInputChange("disappearance_status", value)}
-                placeholder={`${t("newCase.common.choose")} ${t("newCase.step2.disappearanceStatus")}`}
+                onChange={(value) =>
+                  handleInputChange("disappearance_status", value)
+                }
+                placeholder={`${t("newCase.common.choose")} ${t(
+                  "newCase.step2.disappearanceStatus"
+                )}`}
                 isDisabled={isConstantsLoading || !constants}
                 instanceId="step2-disappearance-status-select"
                 fullWidth
@@ -198,24 +228,30 @@ export default function Step2({
             <GazaAddressSelector
               location={formData.detention_location}
               governorate={formData.detention_governorate}
-              city={formData.detention_city}
+              locality={formData.detention_locality}
               district={formData.detention_district}
-              onLocationChange={(value) => handleInputChange("detention_location", value)}
+              onLocationChange={(value) =>
+                handleInputChange("detention_location", value)
+              }
               onGovernorateChange={(value) =>
                 handleInputChange("detention_governorate", value)
               }
-              onCityChange={(value) => handleInputChange("detention_city", value)}
-              onDistrictChange={(value) => handleInputChange("detention_district", value)}
+              onLocalityChange={(value) =>
+                handleInputChange("detention_locality", value)
+              }
+              onDistrictChange={(value) =>
+                handleInputChange("detention_district", value)
+              }
               errors={{
                 location: errors.location,
                 governorate: errors.governorate,
-                city: errors.city,
+                locality: errors.locality,
                 district: errors.district,
               }}
               required={{
                 location: true,
                 governorate: true,
-                city: true,
+                locality: true,
                 district: true,
               }}
               idPrefix="step2-location"
@@ -245,7 +281,11 @@ export default function Step2({
               {t("newCase.step2.circumstancesLabel")}
             </label>
             <textarea
-              className={`steps__textarea ${formData.detention_circumstances.length > 500 ? 'steps__input--error' : ''}`}
+              className={`steps__textarea ${
+                formData.detention_circumstances.length > 500
+                  ? "steps__input--error"
+                  : ""
+              }`}
               placeholder={t("newCase.step2.circumstancesPlaceholder")}
               value={formData.detention_circumstances}
               onChange={(e) => {
@@ -258,9 +298,17 @@ export default function Step2({
               maxLength={500}
             />
             {formData.detention_circumstances.length > 500 && (
-              <span className="steps__error">{t("newCase.step2.errors.circumstancesMax500")}</span>
+              <span className="steps__error">
+                {t("newCase.step2.errors.circumstancesMax500")}
+              </span>
             )}
-            <div className={`steps__character-count ${formData.detention_circumstances.length > 500 ? 'steps__character-count--error' : ''}`}>
+            <div
+              className={`steps__character-count ${
+                formData.detention_circumstances.length > 500
+                  ? "steps__character-count--error"
+                  : ""
+              }`}
+            >
               {formData.detention_circumstances.length}/500
             </div>
           </div>

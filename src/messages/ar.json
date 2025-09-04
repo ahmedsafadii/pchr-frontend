@@ -101,7 +101,7 @@
         "healthStatusRequired": "الحالة الصحية مطلوبة",
         "maritalStatusRequired": "الحالة الاجتماعية مطلوبة",
         "locationRequired": "الموقع مطلوب",
-        "cityRequired": "المدينة مطلوبة",
+        "localityRequired": "المنطقة مطلوبة",
         "governorateRequired": "المحافظة مطلوبة",
         "districtRequired": "المنطقة مطلوب",
         "age18": "يجب أن يكون عمر المعتقل 18 سنة أو أكثر."
@@ -127,7 +127,7 @@
       "errors": {
         "disappearanceDateRequired": "مطلوب تاريخ الإعتقال / الإختفاء",
         "locationRequired": "الموقع مطلوب",
-        "cityRequired": "المدينة مطلوبة",
+        "localityRequired": "المنطقة مطلوبة",
         "governorateRequired": "المحافظة مطلوبة",
         "districtRequired": "المنطقة مطلوبة",
         "circumstancesMax500": "الحد الأقصى 500 حرف مسموح."
@@ -245,7 +245,7 @@
       "title": "العنوان",
       "location": "الموقع ( عنوان محل الإقامة الدائم ) ",
       "governorate": "المحافظة",
-      "city": "المدينة",
+      "locality": "المنطقة",
       "district": "المنطقة",
       "streetName": "اسم الشارع",
       "streetNamePlaceholder": "اسم الشارع"

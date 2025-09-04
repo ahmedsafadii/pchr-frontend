@@ -1,6 +1,5 @@
 "use client";
 
-
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-globe-gen";
 import { useRouter } from "next/navigation";
@@ -27,7 +26,7 @@ interface LocationData {
 
 interface DistrictData extends LocationData {
   value: string;
-  city: LocationData;
+  locality: LocationData;
 }
 
 export interface CaseDetailsData {
@@ -39,14 +38,14 @@ export interface CaseDetailsData {
   detainee_health_status_display: string;
   detainee_job_display: string;
   detainee_marital_status_display: string;
-  detainee_city: LocationData;
+  detainee_locality: LocationData;
   detainee_governorate: LocationData;
   detainee_district: DistrictData;
   detainee_street: string;
   detention_date: string;
   detention_circumstances: string;
   disappearance_status_display: string;
-  detention_city: LocationData;
+  detention_locality: LocationData;
   detention_governorate: LocationData;
   detention_district: DistrictData;
   detention_street: string;
@@ -106,7 +105,7 @@ export interface CaseMessageData {
   sender: string | null;
   recipient: string | null;
   content: string;
-  message_type: 'notification' | 'system' | 'lawyer' | 'client';
+  message_type: "notification" | "system" | "lawyer" | "client";
   message_type_display: string;
   is_read: boolean;
   is_archived: boolean;
@@ -158,7 +157,9 @@ export default function CaseDetailsPage() {
   const [authorized, setAuthorized] = useState(false);
   const [activeTab, setActiveTab] = useState<"overview" | "info">("overview");
   const [caseData, setCaseData] = useState<CaseDetailsData | null>(null);
-  const [documentsData, setDocumentsData] = useState<CaseDocumentsData | null>(null);
+  const [documentsData, setDocumentsData] = useState<CaseDocumentsData | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [trackAccessToken, setTrackAccessToken] = useState<string>("");
@@ -168,12 +169,12 @@ export default function CaseDetailsPage() {
       try {
         const token = localStorage.getItem("track_access_token");
         const tokenExpires = localStorage.getItem("track_token_expires");
-        
+
         if (!token || !tokenExpires) {
           router.replace(`/${locale}/track`);
           return;
         }
-        
+
         // Check if token is expired
         const expiryTime = parseInt(tokenExpires);
         if (Date.now() >= expiryTime) {
@@ -185,43 +186,42 @@ export default function CaseDetailsPage() {
           router.replace(`/${locale}/track`);
           return;
         }
-        
+
         setAuthorized(true);
         setLoading(true);
         setError(null);
-        
+
         try {
           // Set the token
           setTrackAccessToken(token);
-          
+
           // Fetch case details and documents in parallel
           const [caseResponse, documentsResponse] = await Promise.all([
             getCaseDetails(token, locale),
-            getCaseDocuments(token, locale)
+            getCaseDocuments(token, locale),
           ]);
-          
-          if (caseResponse.status === 'success') {
+
+          if (caseResponse.status === "success") {
             setCaseData(caseResponse.data);
           } else {
             setError(t("track.errors.failedToLoadCase").toString());
           }
-          
-          if (documentsResponse.status === 'success') {
-            console.log('Documents response:', documentsResponse);
+
+          if (documentsResponse.status === "success") {
+            console.log("Documents response:", documentsResponse);
             // Transform ApiResponse to CaseDocumentsData
             const documentsData: CaseDocumentsData = {
               status: documentsResponse.status,
               data: documentsResponse.data || [],
-              message: documentsResponse.message || ''
+              message: documentsResponse.message || "",
             };
             setDocumentsData(documentsData);
           } else {
-            console.log('Documents fetch failed:', documentsResponse);
+            console.log("Documents fetch failed:", documentsResponse);
           }
-          
         } catch (apiError: any) {
-          console.error('Failed to fetch case data:', apiError);
-          
+          console.error("Failed to fetch case data:", apiError);
+
           // Handle different error scenarios
           if (apiError.status === 401) {
             // Token invalid, clear storage and redirect
@@ -237,12 +237,11 @@ export default function CaseDetailsPage() {
         } finally {
           setLoading(false);
         }
-        
       } catch {
         router.replace(`/${locale}/track`);
       }
     };
-    
+
     fetchCaseData();
   }, [router, locale, t]);
 
@@ -256,7 +255,7 @@ export default function CaseDetailsPage() {
             <Logo />
           </div>
           <div className="track__header-controls">
-            <button 
+            <button
               onClick={() => {
                 // Clear authentication data and redirect to track page
                 localStorage.removeItem("track_access_token");
@@ -280,32 +279,36 @@ export default function CaseDetailsPage() {
                 <p>{t("track.loading")}</p>
               </div>
             )}
-            
+
             {error && (
               <div className="track__error">
                 <p>{error}</p>
-                <button 
-                  onClick={() => window.location.reload()} 
+                <button
+                  onClick={() => window.location.reload()}
                   className="track__retry-button"
                 >
                   {t("track.retry")}
                 </button>
               </div>
             )}
-            
+
             {!loading && !error && caseData && (
               <div className="tabs">
                 <div className="tabs__list" role="tablist">
                   <button
                     role="tab"
-                    className={`tabs__tab ${activeTab === "overview" ? "tabs__tab--active" : ""}`}
+                    className={`tabs__tab ${
+                      activeTab === "overview" ? "tabs__tab--active" : ""
+                    }`}
                     onClick={() => setActiveTab("overview")}
                   >
                     {(t as any)("tabs.overview")}
                   </button>
                   <button
                     role="tab"
-                    className={`tabs__tab ${activeTab === "info" ? "tabs__tab--active" : ""}`}
+                    className={`tabs__tab ${
+                      activeTab === "info" ? "tabs__tab--active" : ""
+                    }`}
                     onClick={() => setActiveTab("info")}
                   >
                     {(t as any)("tabs.info")}
@@ -314,13 +317,16 @@ export default function CaseDetailsPage() {
 
                 <div className="tabs__content">
                   {activeTab === "overview" ? (
-                    <Overview 
-                      caseData={caseData} 
+                    <Overview
+                      caseData={caseData}
                       documentsData={documentsData}
                       caseTrackingToken={trackAccessToken}
                     />
                   ) : (
-                    <DisappearanceInfo caseData={caseData} documentsData={documentsData} />
+                    <DisappearanceInfo
+                      caseData={caseData}
+                      documentsData={documentsData}
+                    />
                   )}
                 </div>
               </div>
@@ -331,5 +337,3 @@ export default function CaseDetailsPage() {
     </div>
   );
 }
-
-

@@ -31,7 +31,7 @@ export interface CaseData {
     detainee_health_status: string;
     detainee_marital_status: string;
     detainee_location: string;
-    detainee_city: string;
+    detainee_locality: string;
     detainee_governorate: string;
     detainee_district: string;
     detainee_street: string;
@@ -42,7 +42,7 @@ export interface CaseData {
     detention_date: string;
     disappearance_status: string;
     detention_location: string;
-    detention_city: string;
+    detention_locality: string;
     detention_governorate: string;
     detention_district: string;
     detention_street: string;
@@ -140,7 +140,7 @@ const initialCaseData: CaseData = {
     detainee_health_status: "",
     detainee_marital_status: "",
     detainee_location: "gaza_strip",
-    detainee_city: "",
+    detainee_locality: "",
     detainee_governorate: "",
     detainee_district: "",
     detainee_street: "",
@@ -149,7 +149,7 @@ const initialCaseData: CaseData = {
     detention_date: "",
     detention_location: "gaza_strip",
     disappearance_status: "",
-    detention_city: "",
+    detention_locality: "",
     detention_governorate: "",
     detention_district: "",
     detention_street: "",
@@ -366,7 +366,7 @@ export default function NewCasePage({ locale = "ar" }) {
         detaineeInfo?.detainee_health_status?.trim() !== "" &&
         detaineeInfo?.detainee_marital_status?.trim() !== "" &&
         detaineeInfo?.detainee_location?.trim() !== "" &&
-        detaineeInfo?.detainee_city?.trim() !== "" &&
+        detaineeInfo?.detainee_locality?.trim() !== "" &&
         detaineeInfo?.detainee_governorate?.trim() !== "" &&
         detaineeInfo?.detainee_district?.trim() !== "";
       return isValid;
@@ -378,7 +378,7 @@ export default function NewCasePage({ locale = "ar" }) {
       const isValid =
         detentionInfo?.detention_date?.trim() !== "" &&
         detentionInfo?.detention_location?.trim() !== "" &&
-        detentionInfo?.detention_city?.trim() !== "" &&
+        detentionInfo?.detention_locality?.trim() !== "" &&
         detentionInfo?.detention_governorate?.trim() !== "" &&
         detentionInfo?.detention_district?.trim() !== "";
       return isValid;

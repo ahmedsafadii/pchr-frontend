@@ -7,8 +7,16 @@ import { IconInfoCircle } from "@tabler/icons-react";
 import { CaseData } from "../page";
 import CustomSelect from "../../components/CustomSelect";
 import GazaAddressSelector from "../../components/GazaAddressSelector";
-import { validatePalestinianId, getPalestinianIdErrorMessage, getPalestinianIdTooltip } from "../../utils/validation";
-import { defaultTooltipProps, createTooltipProps, tooltipIconClasses } from "../../utils/tooltip";
+import {
+  validatePalestinianId,
+  getPalestinianIdErrorMessage,
+  getPalestinianIdTooltip,
+} from "../../utils/validation";
+import {
+  defaultTooltipProps,
+  createTooltipProps,
+  tooltipIconClasses,
+} from "../../utils/tooltip";
 import { useConstantsStore } from "../../store/constants.store";
 import { useTranslations } from "next-globe-gen";
 
@@ -49,37 +57,64 @@ export default function Step1({
   useEffect(() => {
     if (externalErrors.length > 0) {
       const newErrors: Record<string, string> = {};
-      
-      externalErrors.forEach(errorMsg => {
+
+      externalErrors.forEach((errorMsg) => {
         // Map error messages to field names based on content
         const lowerMsg = errorMsg.toLowerCase();
-        if (lowerMsg.includes('detainee name') || lowerMsg.includes('detainee_name')) {
+        if (
+          lowerMsg.includes("detainee name") ||
+          lowerMsg.includes("detainee_name")
+        ) {
           newErrors.fullName = errorMsg;
-        } else if (lowerMsg.includes('detainee id') || lowerMsg.includes('detainee_id')) {
+        } else if (
+          lowerMsg.includes("detainee id") ||
+          lowerMsg.includes("detainee_id")
+        ) {
           newErrors.idNumber = errorMsg;
         } else if (
           // Handle backend messages that reference the detainee implicitly
-          lowerMsg.includes('case already exists for this detainee') ||
-          lowerMsg.includes('this detainee')
+          lowerMsg.includes("case already exists for this detainee") ||
+          lowerMsg.includes("this detainee")
         ) {
           newErrors.idNumber = errorMsg;
-        } else if (lowerMsg.includes('date of birth') || lowerMsg.includes('detainee_date_of_birth')) {
+        } else if (
+          lowerMsg.includes("date of birth") ||
+          lowerMsg.includes("detainee_date_of_birth")
+        ) {
           newErrors.dateOfBirth = errorMsg;
-        } else if (lowerMsg.includes('health') || lowerMsg.includes('detainee_health_status')) {
+        } else if (
+          lowerMsg.includes("health") ||
+          lowerMsg.includes("detainee_health_status")
+        ) {
           newErrors.healthStatus = errorMsg;
-        } else if (lowerMsg.includes('marital') || lowerMsg.includes('detainee_marital_status')) {
+        } else if (
+          lowerMsg.includes("marital") ||
+          lowerMsg.includes("detainee_marital_status")
+        ) {
           newErrors.maritalStatus = errorMsg;
-        } else if (lowerMsg.includes('city') || lowerMsg.includes('detainee_city')) {
-          newErrors.city = errorMsg;
-        } else if (lowerMsg.includes('governorate') || lowerMsg.includes('detainee_governorate')) {
+        } else if (
+          lowerMsg.includes("locality") ||
+          lowerMsg.includes("detainee_locality")
+        ) {
+          newErrors.locality = errorMsg;
+        } else if (
+          lowerMsg.includes("governorate") ||
+          lowerMsg.includes("detainee_governorate")
+        ) {
           newErrors.governorate = errorMsg;
-        } else if (lowerMsg.includes('district') || lowerMsg.includes('detainee_district')) {
+        } else if (
+          lowerMsg.includes("district") ||
+          lowerMsg.includes("detainee_district")
+        ) {
           newErrors.district = errorMsg;
-        } else if (lowerMsg.includes('job') || lowerMsg.includes('detainee_job')) {
+        } else if (
+          lowerMsg.includes("job") ||
+          lowerMsg.includes("detainee_job")
+        ) {
           newErrors.job = errorMsg;
         }
       });
-      
+
       // If we received errors for this step but none matched a specific field,
       // default to showing the first message under ID number since most backend
       // validations for this step are about identification.
@@ -87,7 +122,7 @@ export default function Step1({
         newErrors.idNumber = externalErrors[0];
       }
 
-      setErrors(prev => ({ ...prev, ...newErrors }));
+      setErrors((prev) => ({ ...prev, ...newErrors }));
     }
   }, [externalErrors]);
 
@@ -114,24 +149,34 @@ export default function Step1({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.detainee_name.trim()) newErrors.fullName = t("newCase.step1.errors.fullNameRequired");
+    if (!formData.detainee_name.trim())
+      newErrors.fullName = t("newCase.step1.errors.fullNameRequired");
 
-    if (!formData.detainee_id.trim()) newErrors.idNumber = t("newCase.step1.errors.idNumberRequired");
-    else if (!validatePalestinianId(formData.detainee_id)) newErrors.idNumber = getPalestinianIdErrorMessage(locale);
+    if (!formData.detainee_id.trim())
+      newErrors.idNumber = t("newCase.step1.errors.idNumberRequired");
+    else if (!validatePalestinianId(formData.detainee_id))
+      newErrors.idNumber = getPalestinianIdErrorMessage(locale);
 
-    if (!formData.detainee_date_of_birth.trim()) newErrors.dateOfBirth = t("newCase.step1.errors.dateOfBirthRequired");
+    if (!formData.detainee_date_of_birth.trim())
+      newErrors.dateOfBirth = t("newCase.step1.errors.dateOfBirthRequired");
 
-    if (!formData.detainee_health_status.trim()) newErrors.healthStatus = t("newCase.step1.errors.healthStatusRequired");
+    if (!formData.detainee_health_status.trim())
+      newErrors.healthStatus = t("newCase.step1.errors.healthStatusRequired");
 
-    if (!formData.detainee_marital_status.trim()) newErrors.maritalStatus = t("newCase.step1.errors.maritalStatusRequired");
+    if (!formData.detainee_marital_status.trim())
+      newErrors.maritalStatus = t("newCase.step1.errors.maritalStatusRequired");
 
-    if (!formData.detainee_location.trim()) newErrors.location = t("newCase.step1.errors.locationRequired");
+    if (!formData.detainee_location.trim())
+      newErrors.location = t("newCase.step1.errors.locationRequired");
 
-    if (!formData.detainee_city.trim()) newErrors.city = t("newCase.step1.errors.cityRequired");
+    if (!formData.detainee_locality.trim())
+      newErrors.locality = t("newCase.step1.errors.localityRequired");
 
-    if (!formData.detainee_governorate.trim()) newErrors.governorate = t("newCase.step1.errors.governorateRequired");
+    if (!formData.detainee_governorate.trim())
+      newErrors.governorate = t("newCase.step1.errors.governorateRequired");
 
-    if (!formData.detainee_district.trim()) newErrors.district = t("newCase.step1.errors.districtRequired");
+    if (!formData.detainee_district.trim())
+      newErrors.district = t("newCase.step1.errors.districtRequired");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -145,28 +190,39 @@ export default function Step1({
     }
   };
 
-  const healthStatusOptions = useMemo(() => (constants?.data?.health_statuses as any[]) || [], [constants]);
-  const maritalStatusOptions = useMemo(() => (constants?.data?.marital_statuses as any[]) || [], [constants]);
-  const jobOptions = useMemo(() => (constants?.data?.jobs as any[]) || [], [constants]);
+  const healthStatusOptions = useMemo(
+    () => (constants?.data?.health_statuses as any[]) || [],
+    [constants]
+  );
+  const maritalStatusOptions = useMemo(
+    () => (constants?.data?.marital_statuses as any[]) || [],
+    [constants]
+  );
+  const jobOptions = useMemo(
+    () => (constants?.data?.jobs as any[]) || [],
+    [constants]
+  );
 
   // Check if the person is under 18
   const isUnder18 = useMemo(() => {
     if (!formData.detainee_date_of_birth) return false;
     const dob = new Date(formData.detainee_date_of_birth);
     const now = new Date();
-    const eighteenYearsAgo = new Date(now.getFullYear() - 18, now.getMonth(), now.getDate());
+    const eighteenYearsAgo = new Date(
+      now.getFullYear() - 18,
+      now.getMonth(),
+      now.getDate()
+    );
     return dob > eighteenYearsAgo;
   }, [formData.detainee_date_of_birth]);
-
-
 
   return (
     <div className="steps">
       <header className="steps__header">
-        <span className="steps__step-number">{t("newCase.step1.stepNumber")}</span>
-        <h2 className="steps__title">
-          {t("newCase.step1.title")}
-        </h2>
+        <span className="steps__step-number">
+          {t("newCase.step1.stepNumber")}
+        </span>
+        <h2 className="steps__title">{t("newCase.step1.title")}</h2>
       </header>
 
       <form className="steps__form" onSubmit={(e) => e.preventDefault()}>
@@ -175,7 +231,7 @@ export default function Step1({
           <div className="steps__form-groups">
             <div className="steps__form-group">
               <label className="steps__label">
-                {t("newCase.step1.fullName")} {" "}
+                {t("newCase.step1.fullName")}{" "}
                 <span className="steps__required">*</span>
               </label>
               <input
@@ -185,7 +241,9 @@ export default function Step1({
                 }`}
                 placeholder={t("newCase.step1.fullNamePlaceholder")}
                 value={formData.detainee_name}
-                onChange={(e) => handleInputChange("detainee_name", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("detainee_name", e.target.value)
+                }
               />
               {errors.fullName && (
                 <span className="steps__error">{errors.fullName}</span>
@@ -194,12 +252,15 @@ export default function Step1({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {t("newCase.step1.idNumber")} {" "}
+                {t("newCase.step1.idNumber")}{" "}
                 <span className="steps__required">*</span>
-                <IconInfoCircle 
-                  size={16} 
+                <IconInfoCircle
+                  size={16}
                   className={tooltipIconClasses}
-                  {...createTooltipProps("id-number-tooltip", getPalestinianIdTooltip(locale))}
+                  {...createTooltipProps(
+                    "id-number-tooltip",
+                    getPalestinianIdTooltip(locale)
+                  )}
                 />
               </label>
               <input
@@ -209,27 +270,28 @@ export default function Step1({
                 }`}
                 placeholder={t("newCase.step1.idNumberPlaceholder")}
                 value={formData.detainee_id}
-                onChange={(e) => handleInputChange("detainee_id", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("detainee_id", e.target.value)
+                }
                 maxLength={9}
               />
               {errors.idNumber && (
                 <span className="steps__error">{errors.idNumber}</span>
               )}
-              <Tooltip 
-                id="id-number-tooltip"
-                {...defaultTooltipProps}
-              />
+              <Tooltip id="id-number-tooltip" {...defaultTooltipProps} />
             </div>
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {t("newCase.step1.dateOfBirth")} {" "}
+                {t("newCase.step1.dateOfBirth")}{" "}
                 <span className="steps__required">*</span>
               </label>
               <div className="steps__input-wrapper">
                 <LocalizedDatePicker
                   selected={
-                    formData.detainee_date_of_birth ? new Date(formData.detainee_date_of_birth) : null
+                    formData.detainee_date_of_birth
+                      ? new Date(formData.detainee_date_of_birth)
+                      : null
                   }
                   onChange={(date: Date | null) => {
                     const formattedDate = date
@@ -263,7 +325,9 @@ export default function Step1({
                 valueKey="id"
                 value={formData.detainee_job}
                 onChange={(value) => handleInputChange("detainee_job", value)}
-                placeholder={`${t("newCase.common.choose")} ${t("newCase.step1.job")}`}
+                placeholder={`${t("newCase.common.choose")} ${t(
+                  "newCase.step1.job"
+                )}`}
                 isDisabled={isConstantsLoading || !constants}
                 instanceId="step1-job-select"
                 fullWidth
@@ -272,21 +336,25 @@ export default function Step1({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {t("newCase.step1.healthStatus")} {" "}
+                {t("newCase.step1.healthStatus")}{" "}
                 <span className="steps__required">*</span>
               </label>
-                <CustomSelect
-                  options={healthStatusOptions}
-                  labelKey="name"
-                  valueKey="id"
-                  value={formData.detainee_health_status}
-                  onChange={(value) => handleInputChange("detainee_health_status", value)}
-                  placeholder={`${t("newCase.common.choose")} ${t("newCase.step1.healthStatus")}`}
-                  isError={!!errors.healthStatus}
-                  isDisabled={isConstantsLoading || !constants}
-                  instanceId="step1-health-status-select"
-                  fullWidth
-                />
+              <CustomSelect
+                options={healthStatusOptions}
+                labelKey="name"
+                valueKey="id"
+                value={formData.detainee_health_status}
+                onChange={(value) =>
+                  handleInputChange("detainee_health_status", value)
+                }
+                placeholder={`${t("newCase.common.choose")} ${t(
+                  "newCase.step1.healthStatus"
+                )}`}
+                isError={!!errors.healthStatus}
+                isDisabled={isConstantsLoading || !constants}
+                instanceId="step1-health-status-select"
+                fullWidth
+              />
               {errors.healthStatus && (
                 <span className="steps__error">{errors.healthStatus}</span>
               )}
@@ -294,7 +362,7 @@ export default function Step1({
 
             <div className="steps__form-group">
               <label className="steps__label">
-                {t("newCase.step1.maritalStatus")} {" "}
+                {t("newCase.step1.maritalStatus")}{" "}
                 <span className="steps__required">*</span>
               </label>
               <CustomSelect
@@ -302,8 +370,12 @@ export default function Step1({
                 labelKey="name"
                 valueKey="id"
                 value={formData.detainee_marital_status}
-                onChange={(value) => handleInputChange("detainee_marital_status", value)}
-                placeholder={`${t("newCase.common.choose")} ${t("newCase.step1.maritalStatus")}`}
+                onChange={(value) =>
+                  handleInputChange("detainee_marital_status", value)
+                }
+                placeholder={`${t("newCase.common.choose")} ${t(
+                  "newCase.step1.maritalStatus"
+                )}`}
                 isError={!!errors.maritalStatus}
                 isDisabled={isConstantsLoading || !constants}
                 instanceId="step1-marital-status-select"
@@ -318,29 +390,35 @@ export default function Step1({
 
         {/* Address Section */}
         <section className="steps__section">
-          <h3 className="steps__section-title">
-            {t("newCase.address.title")}
-          </h3>
+          <h3 className="steps__section-title">{t("newCase.address.title")}</h3>
           <div className="steps__form-groups">
             <GazaAddressSelector
               location={formData.detainee_location}
               governorate={formData.detainee_governorate}
-              city={formData.detainee_city}
+              locality={formData.detainee_locality}
               district={formData.detainee_district}
-              onLocationChange={(value) => handleInputChange("detainee_location", value)}
-              onGovernorateChange={(value) => handleInputChange("detainee_governorate", value)}
-              onCityChange={(value) => handleInputChange("detainee_city", value)}
-              onDistrictChange={(value) => handleInputChange("detainee_district", value)}
+              onLocationChange={(value) =>
+                handleInputChange("detainee_location", value)
+              }
+              onGovernorateChange={(value) =>
+                handleInputChange("detainee_governorate", value)
+              }
+              onLocalityChange={(value) =>
+                handleInputChange("detainee_locality", value)
+              }
+              onDistrictChange={(value) =>
+                handleInputChange("detainee_district", value)
+              }
               errors={{
                 location: errors.location,
                 governorate: errors.governorate,
-                city: errors.city,
+                locality: errors.locality,
                 district: errors.district,
               }}
               required={{
                 location: true,
                 governorate: true,
-                city: true,
+                locality: true,
                 district: true,
               }}
               idPrefix="step1-address"
