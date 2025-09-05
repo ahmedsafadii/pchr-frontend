@@ -26,6 +26,7 @@ export async function generateMetadata(
   const currentUrl = config.url ? `${baseUrl}${config.url}` : baseUrl;
 
   return {
+    metadataBase: new URL(baseUrl),
     title: {
       template: `%s | ${t("common.organizationName")}`,
       default: title,

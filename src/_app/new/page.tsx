@@ -355,7 +355,7 @@ export default function NewCasePage({ locale = "ar" }) {
     if (stepsToRevert.length > 0) {
       setCompletedSteps(prev => prev.filter(step => !stepsToRevert.includes(step)));
     }
-  }, [caseData, completedSteps, isDataLoaded]);
+  }, [caseData, completedSteps, isDataLoaded, canGoToNext]);
 
   // Save data to localStorage whenever it changes (but only after data is loaded)
   useEffect(() => {
@@ -408,7 +408,7 @@ export default function NewCasePage({ locale = "ar" }) {
     // clear field maps when implemented
   };
 
-  const canGoToNext = (stepNumber: number): boolean => {
+  const canGoToNext = useCallback((stepNumber: number): boolean => {
     // For step 1, check if all required fields are filled
     if (stepNumber === 1) {
       const detaineeInfo = caseData.detaineeInfo;
@@ -497,7 +497,7 @@ export default function NewCasePage({ locale = "ar" }) {
 
     // For other steps, check if step is completed
     return completedSteps.includes(stepNumber);
-  };
+  }, [caseData, completedSteps]);
 
   const goToNext = () => {
     if (canGoToNext(currentStep) && currentStep < steps.length) {
