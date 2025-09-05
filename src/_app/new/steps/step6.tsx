@@ -83,7 +83,10 @@ export default function Step6({
     // Reset states - this will reset validation too
     setHasDrawn(false);
     setSignatureError(null);
-    setShowTypeInput(false);
+    // Don't reset showTypeInput in writing mode - let user continue typing
+    if (signatureMode === 'drawing') {
+      setShowTypeInput(false);
+    }
     setTypedName("");
 
     // Also clear any uploaded signature data
@@ -104,9 +107,15 @@ export default function Step6({
   };
 
   const switchSignatureMode = (mode: 'drawing' | 'writing') => {
-    // Always reset canvas when switching modes
-    clearSignature();
+    // Clear canvas when switching modes but don't reset other states
+    if (signatureRef.current) {
+      signatureRef.current.clear();
+    }
+    setHasDrawn(false);
     setSignatureMode(mode);
+    
+    // Clear typed name when switching modes to keep input in sync with canvas
+    setTypedName("");
     
     // If switching to writing mode, show input immediately
     if (mode === 'writing') {
