@@ -52,9 +52,11 @@ export interface CaseDetailsData {
   detention_street: string;
   client_name: string;
   client_phone: string;
+  client_whatsapp: string;
   client_id: string;
   client_relationship_display: string;
   status_display: string;
+  status: string;
   is_urgent: boolean;
   authorized_another_party: boolean;
   previous_delegation: boolean;

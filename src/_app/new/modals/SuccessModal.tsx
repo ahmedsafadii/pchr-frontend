@@ -4,6 +4,7 @@ import BlockingModal from "./BlockingModal";
 import { useTranslations, useLocale } from "next-globe-gen";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface SuccessModalProps {
   isOpen: boolean;
@@ -25,6 +26,15 @@ export default function SuccessModal({
     onTrack(); // Call the original callback (for any cleanup)
     router.push(`/${locale}/track`); // Navigate to track page with locale prefix
   };
+
+  const handleCopyClick = async () => {
+    try {
+      await navigator.clipboard.writeText(caseRef);
+      toast.success(t("newCase.submitModals.success.copied").toString());
+    } catch {
+      toast.error(t("newCase.submitModals.success.copyFailed").toString());
+    }
+  };
   return (
     <BlockingModal isOpen={isOpen}>
       <div className="success">
@@ -39,7 +49,7 @@ export default function SuccessModal({
           <strong>{caseRef}</strong>
           <button
             className="success__copy"
-            onClick={() => navigator.clipboard.writeText(caseRef)}
+            onClick={handleCopyClick}
           >
             {t("newCase.submitModals.success.copy")}
           </button>
@@ -82,6 +92,7 @@ export default function SuccessModal({
         .success__copy {
           background: transparent;
           text-decoration: underline;
+          cursor: pointer;
         }
         .success__cta {
           background: var(--color-primary, #da9305);

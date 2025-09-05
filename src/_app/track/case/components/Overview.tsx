@@ -247,7 +247,7 @@ export default function Overview({
             <span
               className={`case-overview__badge ${
                 caseData?.status_display
-                  ? `case__status--${caseData.status_display
+                  ? `case__status--${caseData.status
                       .toLowerCase()
                       .replace(/\s+/g, "-")}`
                   : ""
