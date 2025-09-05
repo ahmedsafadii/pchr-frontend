@@ -447,6 +447,35 @@
         "from": "من",
         "results": "نتيجة",
         "prev": "السابق"
+      },
+      "expandedContent": {
+        "sections": {
+          "detaineeInformation": "معلومات المعتقل",
+          "clientInformation": "معلومات العميل",
+          "caseInformation": "معلومات القضية"
+        },
+        "fields": {
+          "fullName": "الاسم الكامل",
+          "idNumber": "رقم الهوية",
+          "dateOfBirth": "تاريخ الميلاد",
+          "job": "الوظيفة",
+          "healthStatus": "الحالة الصحية",
+          "address": "العنوان",
+          "phoneNumber": "رقم الهاتف",
+          "whatsappNumber": "رقم الواتساب",
+          "relationship": "العلاقة",
+          "detentionDate": "تاريخ الاعتقال",
+          "circumstances": "الظروف",
+          "caseNumber": "رقم القضية",
+          "status": "الحالة",
+          "urgent": "عاجل",
+          "created": "تاريخ الإنشاء",
+          "lastUpdated": "آخر تحديث"
+        },
+        "values": {
+          "yes": "نعم",
+          "no": "لا"
+        }
       }
     },
     "caseDetails": {
@@ -492,6 +521,7 @@
         "fullName": "إسم مُقدم البلاغ رباعي",
         "idNumber": "رقم الهوية",
         "phoneNumber": "رقم الهاتف",
+        "whatsappNumber": "رقم الواتساب",
         "relationship": "صلة القرابة"
       },
       "documentsUpload": {
@@ -535,6 +565,8 @@
         "detaineeName": "اسم المعتقل",
         "clientName": "اسم العميل",
         "prisonName": "اسم السجن",
+        "caseNumber": "رقم القضية",
+        "visitType": "نوع الزيارة",
         "status": "الحالة",
         "actions": "الإجراءات"
       },
@@ -723,6 +755,7 @@
     }
   },
   "common": {
+    "detainee": "المعتقل",
     "yes": "نعم",
     "no": "لا",
     "noDocuments": "لا توجد مستندات متاحة",
@@ -736,6 +769,8 @@
     "thisWeek": "هذا الأسبوع",
     "thisMonth": "هذا الشهر",
     "next3Months": "الأشهر الثلاثة القادمة",
+    "send": "إرسال",
+    "sending": "جاري الإرسال...",
     "next": "التالي",
     "prev": "السابق",
     "notFound": "غير موجود",

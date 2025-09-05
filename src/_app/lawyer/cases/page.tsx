@@ -30,6 +30,7 @@ interface Case {
   detainee_date_of_birth: string;
   client_name: string;
   client_phone: string;
+  client_whatsapp: string;
   client_relationship: string;
   status: string;
   status_display: string;
@@ -516,11 +517,11 @@ function LawyerCasesInner() {
                           >
                             <div className="lawyer__expanded-content">
                               <div className="lawyer__expanded-section">
-                                <h4>Detainee Information</h4>
+                                <h4>{t("lawyer.cases.expandedContent.sections.detaineeInformation")}</h4>
                                 <div className="lawyer__expanded-grid">
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Full Name:
+                                      {t("lawyer.cases.expandedContent.fields.fullName")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {caseItem.detainee_name}
@@ -528,7 +529,7 @@ function LawyerCasesInner() {
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      ID Number:
+                                      {t("lawyer.cases.expandedContent.fields.idNumber")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {caseItem.detainee_id}
@@ -536,7 +537,7 @@ function LawyerCasesInner() {
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Date of Birth:
+                                      {t("lawyer.cases.expandedContent.fields.dateOfBirth")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {formatDateWithLocale(
@@ -547,7 +548,7 @@ function LawyerCasesInner() {
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Job:
+                                      {t("lawyer.cases.expandedContent.fields.job")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {caseItem.detainee_job}
@@ -555,7 +556,7 @@ function LawyerCasesInner() {
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Health Status:
+                                      {t("lawyer.cases.expandedContent.fields.healthStatus")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {caseItem.detainee_health_status}
@@ -563,28 +564,20 @@ function LawyerCasesInner() {
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Locality:
+                                      {t("lawyer.cases.expandedContent.fields.address")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
-                                      {caseItem.detainee_locality}
-                                    </span>
-                                  </div>
-                                  <div className="lawyer__expanded-item">
-                                    <span className="lawyer__expanded-label">
-                                      Governorate:
-                                    </span>
-                                    <span className="lawyer__expanded-value">
-                                      {caseItem.detainee_governorate}
+                                      {caseItem.detainee_locality}, {caseItem.detainee_governorate}
                                     </span>
                                   </div>
                                 </div>
                               </div>
                               <div className="lawyer__expanded-section">
-                                <h4>Client Information</h4>
+                                <h4>{t("lawyer.cases.expandedContent.sections.clientInformation")}</h4>
                                 <div className="lawyer__expanded-grid">
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Full Name:
+                                      {t("lawyer.cases.expandedContent.fields.fullName")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {caseItem.client_name}
@@ -592,15 +585,15 @@ function LawyerCasesInner() {
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Phone Number:
+                                      {t("lawyer.cases.expandedContent.fields.phoneNumber")}:
                                     </span>
-                                    <span className="lawyer__expanded-value">
+                                    <span className="lawyer__expanded-value isNumber">
                                       {caseItem.client_phone}
                                     </span>
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Relationship:
+                                      {t("lawyer.cases.expandedContent.fields.relationship")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {caseItem.client_relationship}
@@ -609,35 +602,11 @@ function LawyerCasesInner() {
                                 </div>
                               </div>
                               <div className="lawyer__expanded-section">
-                                <h4>Detention Information</h4>
+                                <h4>{t("lawyer.cases.expandedContent.sections.caseInformation")}</h4>
                                 <div className="lawyer__expanded-grid">
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Detention Date:
-                                    </span>
-                                    <span className="lawyer__expanded-value">
-                                      {formatDateWithLocale(
-                                        caseItem.detention_date,
-                                        locale
-                                      )}
-                                    </span>
-                                  </div>
-                                  <div className="lawyer__expanded-item lawyer__expanded-item--full">
-                                    <span className="lawyer__expanded-label">
-                                      Circumstances:
-                                    </span>
-                                    <span className="lawyer__expanded-value">
-                                      {caseItem.detention_circumstances}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="lawyer__expanded-section">
-                                <h4>Case Information</h4>
-                                <div className="lawyer__expanded-grid">
-                                  <div className="lawyer__expanded-item">
-                                    <span className="lawyer__expanded-label">
-                                      Case Number:
+                                      {t("lawyer.cases.expandedContent.fields.caseNumber")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {caseItem.case_number}
@@ -645,7 +614,7 @@ function LawyerCasesInner() {
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Status:
+                                      {t("lawyer.cases.expandedContent.fields.status")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {getCaseStatusTranslation(
@@ -656,15 +625,26 @@ function LawyerCasesInner() {
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Urgent:
+                                      {t("lawyer.cases.expandedContent.fields.urgent")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
-                                      {caseItem.is_urgent ? "Yes" : "No"}
+                                      {caseItem.is_urgent ? t("lawyer.cases.expandedContent.values.yes") : t("lawyer.cases.expandedContent.values.no")}
                                     </span>
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Created:
+                                      {t("lawyer.cases.expandedContent.fields.detentionDate")}:
+                                    </span>
+                                    <span className="lawyer__expanded-value">
+                                      {formatDateWithLocale(
+                                        caseItem.detention_date,
+                                        locale
+                                      )}
+                                    </span>
+                                  </div>
+                                  <div className="lawyer__expanded-item">
+                                    <span className="lawyer__expanded-label">
+                                      {t("lawyer.cases.expandedContent.fields.created")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {formatDateWithLocale(
@@ -675,7 +655,7 @@ function LawyerCasesInner() {
                                   </div>
                                   <div className="lawyer__expanded-item">
                                     <span className="lawyer__expanded-label">
-                                      Last Updated:
+                                      {t("lawyer.cases.expandedContent.fields.lastUpdated")}:
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {formatDateWithLocale(

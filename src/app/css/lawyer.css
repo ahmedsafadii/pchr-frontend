@@ -521,9 +521,9 @@
 
 .lawyer__case-item {
   display: flex;
-  align-items: center;
+  align-items: self-start;
   gap: 16px;
-  padding: 16px;
+  padding: 16px 0;
   border: 1px solid var(--neutral-200);
   border-radius: 12px;
   background: var(--white);
@@ -605,7 +605,7 @@
 }
 
 .lawyer__case-detail:first-child {
-  min-width: 200px;
+  min-width: 120px;
 }
 
 .lawyer__case-detail-label {
@@ -1662,12 +1662,6 @@ html[lang="ar"] .lawyer__table-header th {
     white-space: nowrap;
   }
 
-  /* Mobile urgent badge styling */
-  .lawyer__case-urgent-badge {
-    align-self: flex-end;
-    margin-top: 4px;
-  }
-
   /* Mobile visit date wrapper */
   .lawyer__visit-date-wrapper,
   .lawyer__visit-date-time {
@@ -2168,6 +2162,26 @@ html[lang="ar"] .lawyer__table-header th {
 .lawyer__info-value {
   font-size: 14px;
   color: var(--neutral-900);
+}
+
+.lawyer__whatsapp-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #25D366;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.lawyer__whatsapp-link:hover {
+  color: #128C7E;
+  text-decoration: underline;
+}
+
+.lawyer__whatsapp-icon {
+  color: #25D366;
+  flex-shrink: 0;
 }
 
 .lawyer__info-description {
@@ -4044,12 +4058,6 @@ html[lang="ar"] .lawyer__expand-button {
 /* Mobile status badge styling */
 .lawyer__status {
   align-self: flex-start;
-  margin-top: 4px;
-}
-
-/* Mobile urgent badge styling */
-.lawyer__case-urgent-badge {
-  align-self: flex-end;
   margin-top: 4px;
 }
 

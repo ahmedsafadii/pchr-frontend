@@ -381,7 +381,7 @@ export default function LawyerHeader({
           }`}
         >
           <IconHomeSpark size={20} />
-          <span>{(t as any)("lawyer.navigation.mobile.overview")}</span>
+          <span>{t("lawyer.navigation.mobile.overview")}</span>
         </Link>
         <Link
           href={`/${locale}/lawyer/cases`}
@@ -390,7 +390,7 @@ export default function LawyerHeader({
           }`}
         >
           <IconBriefcase size={20} />
-          <span>{(t as any)("lawyer.navigation.mobile.allCases")}</span>
+          <span>{t("lawyer.navigation.mobile.allCases")}</span>
         </Link>
         <Link
           href={`/${locale}/lawyer/profile`}
@@ -399,7 +399,7 @@ export default function LawyerHeader({
           }`}
         >
           <IconUser size={20} />
-          <span>{(t as any)("lawyer.navigation.mobile.profile")}</span>
+          <span>{t("lawyer.navigation.mobile.profile")}</span>
         </Link>
         <Link
           href={`/${locale}/lawyer/visits`}
@@ -408,7 +408,7 @@ export default function LawyerHeader({
           }`}
         >
           <IconCalendarEvent size={20} />
-          <span>{(t as any)("lawyer.navigation.mobile.visits")}</span>
+          <span>{t("lawyer.navigation.mobile.visits")}</span>
         </Link>
       </nav>
     </>

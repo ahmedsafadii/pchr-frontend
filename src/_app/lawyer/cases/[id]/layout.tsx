@@ -16,28 +16,7 @@ import { useEffect, useState, useCallback } from "react";
 import { getLawyerCaseDetails } from "../../../utils/apiWithAuth";
 import { useLawyerAuth } from "../../../hooks/useLawyerAuth";
 import { formatDateWithLocale } from "../../../utils/dateUtils";
-
-interface CaseData {
-  id: string;
-  case_number: string;
-  detainee_name: string;
-  detainee_id: string;
-  detainee_date_of_birth: string;
-  client_name: string;
-  client_phone: string;
-  client_relationship: string;
-  status: string;
-  status_display: string;
-  is_urgent: boolean;
-  detention_date: string;
-  detention_circumstances: string;
-  created: string;
-  updated: string;
-  detainee_job: string;
-  detainee_health_status: string;
-  detainee_locality: string;
-  detainee_governorate: string;
-}
+import { CaseData } from "../../../../types/case";
 
 interface LawyerCaseLayoutProps {
   children: React.ReactNode;

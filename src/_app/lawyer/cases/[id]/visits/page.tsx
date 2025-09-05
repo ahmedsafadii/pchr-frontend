@@ -406,7 +406,7 @@ function LawyerCaseVisitsInner() {
     return (
       <div className="lawyer__loading">
         <div className="lawyer__loading-spinner"></div>
-        <p>{(t as any)("common.loading")}</p>
+        <p>{t("common.loading")}</p>
       </div>
     );
   }
@@ -415,13 +415,13 @@ function LawyerCaseVisitsInner() {
     return (
       <div className="lawyer__error">
         <IconAlertCircle size={48} className="lawyer__error-icon" />
-        <h2>{(t as any)("common.error")}</h2>
+        <h2>{t("common.error")}</h2>
         <p>{error}</p>
         <button
           onClick={fetchVisits}
           className="lawyer__btn lawyer__btn--primary"
         >
-          {(t as any)("common.retry")}
+          {t("common.retry")}
         </button>
       </div>
     );
@@ -486,7 +486,7 @@ function LawyerCaseVisitsInner() {
               <th style={{ width: "50px" }}></th>
               <th>{t("lawyer.visits.table.visitDate")}</th>
               <th>{t("lawyer.visits.table.prisonName")}</th>
-              <th>{(t as any)("lawyer.visits.table.visitType")}</th>
+              <th>{t("lawyer.visits.table.visitType")}</th>
               <th>{t("lawyer.visits.table.status")}</th>
               <th style={{ width: "60px" }}>
                 {t("lawyer.visits.table.actions")}

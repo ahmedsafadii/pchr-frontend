@@ -254,7 +254,7 @@ export default function RequestVisitModal({
 
           <div className="modal-field">
             <label className="modal-label">
-              {(t as any)("lawyer.visits.table.visitType")}*
+              {t("lawyer.visits.table.visitType")}*
             </label>
             <div
               className={
@@ -272,9 +272,7 @@ export default function RequestVisitModal({
                     }));
                   }
                 }}
-                placeholder={`${(t as any)("newCase.common.choose")} ${(
-                  t as any
-                )("lawyer.visits.table.visitType")}`}
+                placeholder={`${t("newCase.common.choose")} ${t("lawyer.visits.table.visitType")}`}
                 options={visitTypes}
                 labelKey="name"
                 valueKey="value"

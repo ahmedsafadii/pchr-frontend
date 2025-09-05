@@ -1,50 +1,14 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-globe-gen";
-import { IconAlertTriangle } from "@tabler/icons-react";
+import { IconAlertTriangle, IconBrandWhatsapp } from "@tabler/icons-react";
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getLawyerCaseDetails } from "../../../utils/apiWithAuth";
 import { useLawyerAuth } from "../../../hooks/useLawyerAuth";
 import UpdateCaseModal from "../../../components/modals/UpdateCaseModal";
 import { formatDateWithLocale } from "../../../utils/dateUtils";
-
-interface CaseData {
-  id: string;
-  case_number: string;
-  detainee_name: string;
-  detainee_id: string;
-  detainee_date_of_birth: string;
-  client_name: string;
-  client_id?: string;
-  client_phone: string;
-  client_relationship: string;
-  status: string;
-  status_display: string;
-  is_urgent: boolean;
-  detention_date: string;
-  detention_circumstances: string;
-  created: string;
-  updated: string;
-  detainee_job: string;
-  detainee_health_status: string;
-  detainee_street?: string;
-  detainee_district?: { name?: string } | null;
-  detainee_locality?: string | { name?: string } | null;
-  detainee_governorate?: string | { name?: string } | null;
-  detainee_marital_status_display?: string;
-  detainee_gender_display?: string;
-  // Disappearance-specific fields (optional to be resilient to API variations)
-  disappearance_status?: string;
-  disappearance_status_display?: string;
-  detention_street?: string;
-  detention_district?: { name?: string } | null;
-  detention_locality?: { name?: string } | null;
-  detention_governorate?: { name?: string } | null;
-  detainee_marital_status: string | null;
-  detention_full_address?: string;
-  detainee_full_address?: string;
-}
+import { CaseData } from "../../../../types/case";
 
 export default function LawyerCaseDetailsPage() {
   const t = useTranslations();
@@ -58,6 +22,14 @@ export default function LawyerCaseDetailsPage() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const caseId = params.id as string;
+
+  // Helper function to format WhatsApp number for wa.me URL
+  const formatWhatsAppNumber = (whatsappNumber: string): string => {
+    // Remove all non-digit characters except +
+    const cleaned = whatsappNumber.replace(/[^\d+]/g, '');
+    // Remove the + if present
+    return cleaned.replace(/^\+/, '');
+  };
 
   const fetchCaseDetails = useCallback(async () => {
     try {
@@ -371,7 +343,28 @@ export default function LawyerCaseDetailsPage() {
             <div className="lawyer__info-label">
               {t("lawyer.caseDetails.clientInfo.phoneNumber")}
             </div>
-            <div className="lawyer__info-value">{caseData.client_phone}</div>
+            <div className="lawyer__info-value isNumber">{caseData.client_phone}</div>
+          </div>
+          <div className="lawyer__info-item">
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.clientInfo.whatsappNumber")}
+            </div>
+            <div className="lawyer__info-value isNumber">
+              {caseData.client_whatsapp ? (
+                <a
+                  href={`https://wa.me/${formatWhatsAppNumber(caseData.client_whatsapp)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="lawyer__whatsapp-link"
+                  title={t("lawyer.caseDetails.clientInfo.whatsappNumber")}
+                >
+                  <IconBrandWhatsapp size={20} className="lawyer__whatsapp-icon" />
+                  {caseData.client_whatsapp}
+                </a>
+              ) : (
+                "-"
+              )}
+            </div>
           </div>
           <div className="lawyer__info-item">
             <div className="lawyer__info-label">

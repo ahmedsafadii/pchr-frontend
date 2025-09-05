@@ -305,7 +305,7 @@ export default function CaseDetailsPage() {
                     }`}
                     onClick={() => setActiveTab("overview")}
                   >
-                    {(t as any)("tabs.overview")}
+                    {t("tabs.overview")}
                   </button>
                   <button
                     role="tab"
@@ -314,7 +314,7 @@ export default function CaseDetailsPage() {
                     }`}
                     onClick={() => setActiveTab("info")}
                   >
-                    {(t as any)("tabs.info")}
+                    {t("tabs.info")}
                   </button>
                 </div>
 

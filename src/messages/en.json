@@ -449,6 +449,35 @@
         "from": "from",
         "results": "results",
         "prev": "Prev"
+      },
+      "expandedContent": {
+        "sections": {
+          "detaineeInformation": "Detainee Information",
+          "clientInformation": "Client Information",
+          "caseInformation": "Case Information"
+        },
+        "fields": {
+          "fullName": "Full Name",
+          "idNumber": "ID Number",
+          "dateOfBirth": "Date of Birth",
+          "job": "Job",
+          "healthStatus": "Health Status",
+          "address": "Address",
+          "phoneNumber": "Phone Number",
+          "whatsappNumber": "WhatsApp Number",
+          "relationship": "Relationship",
+          "detentionDate": "Detention Date",
+          "circumstances": "Circumstances",
+          "caseNumber": "Case Number",
+          "status": "Status",
+          "urgent": "Urgent",
+          "created": "Created",
+          "lastUpdated": "Last Updated"
+        },
+        "values": {
+          "yes": "Yes",
+          "no": "No"
+        }
       }
     },
     "caseDetails": {
@@ -494,6 +523,7 @@
         "fullName": "Full Name",
         "idNumber": "ID Number",
         "phoneNumber": "Phone Number",
+        "whatsappNumber": "WhatsApp Number",
         "relationship": "Relationship"
       },
       "documentsUpload": {
@@ -537,6 +567,8 @@
         "detaineeName": "Detainee Name",
         "clientName": "Client Name",
         "prisonName": "Prison Name",
+        "caseNumber": "Case Number",
+        "visitType": "Visit Type",
         "status": "Status",
         "actions": "Actions"
       },
@@ -585,15 +617,6 @@
         "court_visit": "Court Visit",
         "client_meeting": "Client Meeting",
         "document_review": "Document Review"
-      },
-      "table": {
-        "visitDate": "Visit Date",
-        "detaineeName": "Detainee Name",
-        "caseNumber": "Case Number",
-        "prisonName": "Prison Name",
-        "visitType": "Visit Type",
-        "status": "Status",
-        "actions": "Actions"
       },
       "expanded": {
         "caseNumber": "Case Number",
@@ -734,6 +757,7 @@
     }
   },
   "common": {
+    "detainee": "Detainee",
     "yes": "Yes",
     "no": "No",
     "noDocuments": "No documents available",
@@ -747,6 +771,8 @@
     "thisWeek": "This Week",
     "thisMonth": "This Month",
     "next3Months": "Next 3 Months",
+    "send": "Send",
+    "sending": "Sending...",
     "next": "Next",
     "prev": "Prev",
     "notFound": "Not Found",

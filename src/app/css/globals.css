@@ -181,3 +181,13 @@ input::placeholder {
 html[lang="ar"] .react-datepicker__day-name {
   font-size: 10px;
 }
+
+.isNumber {
+  text-align: left;
+  direction: ltr;
+}
+
+html[lang="ar"] .isNumber {
+  text-align: right;
+  direction: ltr;
+}

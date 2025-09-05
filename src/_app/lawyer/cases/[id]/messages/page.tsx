@@ -20,63 +20,8 @@ import {
 } from "@/_app/services/api";
 import { LawyerAuth } from "@/_app/utils/auth";
 import { formatDateWithLocale } from "../../../../utils/dateUtils";
-
-interface LawyerMessageData {
-  id: string;
-  case_info: {
-    id: string;
-    case_number: string;
-    detainee_name: string;
-    client_name: string;
-    client_phone: string;
-    status: string;
-    status_display: string;
-    assigned_lawyer_name: string;
-    created: string;
-  };
-  sender: {
-    id: string;
-    email: string;
-    full_name: string;
-    role: string;
-  } | null;
-  recipient: {
-    id: string;
-    email: string;
-    full_name: string;
-    role: string;
-  } | null;
-  content: string;
-  message_type: "notification" | "system" | "lawyer" | "client";
-  message_type_display: string;
-  is_read: boolean;
-  is_archived: boolean;
-  attachments: Array<{
-    id: string;
-    file_name: string;
-    file_url: string;
-    file_size: number;
-    file_size_formatted: string;
-    document_type: string;
-    created: string;
-  }>;
-  has_attachments: boolean;
-  created: string;
-  updated: string;
-  read_at: string | null;
-  read_by: string | null;
-  case_timeline: {
-    case_number: string;
-    detainee_name: string;
-    client_name: string;
-    status: string;
-    assigned_lawyer: string;
-    created_date: string;
-    visits_count: number;
-    documents_count: number;
-    messages_count: number;
-  };
-}
+import { getLawyerCaseDetails } from "../../../../utils/apiWithAuth";
+import { CaseData, LawyerMessageData } from "../../../../../types/case";
 
 export default function LawyerCaseMessagesPage() {
   const t = useTranslations();
@@ -92,6 +37,7 @@ export default function LawyerCaseMessagesPage() {
   >([]);
   const [uploading, setUploading] = useState(false);
   const [sending, setSending] = useState(false);
+  const [caseData, setCaseData] = useState<CaseData | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const loadingRef = useRef(false);
@@ -100,6 +46,43 @@ export default function LawyerCaseMessagesPage() {
 
   // Get case ID from URL params
   const caseId = params?.id as string;
+
+  // Fetch case details
+  const fetchCaseDetails = useCallback(async () => {
+    if (!caseId) return;
+
+    try {
+      const response = await getLawyerCaseDetails(caseId, locale);
+
+      if (response.status === "success") {
+        // Check different possible data structures
+        if (response.data?.cases && response.data.cases.length > 0) {
+          // If it's an array of cases, find the one matching the caseId
+          const caseItem = response.data.cases.find(
+            (caseItem: any) => caseItem.id === caseId
+          );
+          if (caseItem) {
+            setCaseData(caseItem);
+          }
+        } else if (response.data?.id === caseId) {
+          // If it's a single case object
+          setCaseData(response.data);
+        } else if (response.data && typeof response.data === "object") {
+          // If data is directly the case object
+          setCaseData(response.data);
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching case details:", err);
+    }
+  }, [caseId, locale]);
+
+  // Load case details on component mount
+  useEffect(() => {
+    if (caseId) {
+      fetchCaseDetails();
+    }
+  }, [caseId, fetchCaseDetails]);
 
   // Scroll to bottom whenever messages change
   useEffect(() => {
@@ -287,19 +270,23 @@ export default function LawyerCaseMessagesPage() {
 
   return (
     <div className="lawyer__messages">
-      {/* Header - Client Avatar */}
+      {/* Header - Detainee Avatar */}
       <div className="lawyer__messages-header">
         <div className="lawyer__messages-avatar">
-          {messages.length > 0 && messages[0].case_info.client_name
-            ? messages[0].case_info.client_name.substring(0, 2).toUpperCase()
-            : "CL"}
+          {caseData?.detainee_name
+            ? caseData.detainee_name.substring(0, 2).toUpperCase()
+            : messages.length > 0 && messages[0].case_info.detainee_name
+            ? messages[0].case_info.detainee_name.substring(0, 2).toUpperCase()
+            : "DT"}
         </div>
         <div className="lawyer__messages-info">
-          <div className="lawyer__messages-role">Client</div>
+          <div className="lawyer__messages-role">{t("common.detainee")}</div>
           <h1 className="lawyer__messages-name">
-            {messages.length > 0 && messages[0].case_info.client_name
-              ? messages[0].case_info.client_name
-              : "Client"}
+            {caseData?.detainee_name
+              ? caseData.detainee_name
+              : messages.length > 0 && messages[0].case_info.detainee_name
+              ? messages[0].case_info.detainee_name
+              : t("common.detainee")}
           </h1>
         </div>
       </div>
@@ -504,7 +491,7 @@ export default function LawyerCaseMessagesPage() {
               sending || (message.trim() === "" && uploadedFiles.length === 0)
             }
           >
-            {sending ? "Sending..." : "Send"}
+            {sending ? t("common.sending") : t("common.send")}
           </button>
         </div>
       </div>
