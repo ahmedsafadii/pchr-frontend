@@ -1,8 +1,7 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const cookieStore = await cookies();
-  const locale = cookieStore.get("NEXT_LOCALE")?.value || "ar";
-  redirect(`/${locale}`);
+  // Always redirect to Arabic as the default locale
+  // The middleware will handle locale detection and cookies
+  redirect("/ar");
 } 
