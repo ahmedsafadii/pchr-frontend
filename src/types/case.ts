@@ -24,6 +24,7 @@ export interface CaseData {
   detainee_governorate?: string | { name?: string } | null;
   detainee_marital_status_display?: string;
   detainee_gender_display?: string;
+  detainee_gender?: string;
   // Disappearance-specific fields (optional to be resilient to API variations)
   disappearance_status?: string;
   disappearance_status_display?: string;

@@ -261,7 +261,7 @@ export default function LawyerCaseDetailsPage() {
               {t("lawyer.caseDetails.detaineeInfo.gender")}
             </div>
             <div className="lawyer__info-value">
-              {caseData.detainee_gender_display || "-"}
+              {caseData.detainee_gender || "-"}
             </div>
           </div>
           {/* Location */}
