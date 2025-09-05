@@ -336,78 +336,6 @@ export default function NewCasePage({ locale = "ar" }) {
     setIsDataLoaded(true);
   }, [setIsDataLoaded]);
 
-  // Check if completed steps should be reverted to pending
-  useEffect(() => {
-    if (!isDataLoaded) {
-      return;
-    }
-
-    const stepsToRevert: number[] = [];
-    
-    // Check each completed step to see if it should be reverted
-    completedSteps.forEach(stepNumber => {
-      if (stepNumber === 5 && !canGoToNext(5)) {
-        stepsToRevert.push(stepNumber);
-      }
-    });
-
-    // Remove reverted steps from completedSteps
-    if (stepsToRevert.length > 0) {
-      setCompletedSteps(prev => prev.filter(step => !stepsToRevert.includes(step)));
-    }
-  }, [caseData, completedSteps, isDataLoaded, canGoToNext]);
-
-  // Save data to localStorage whenever it changes (but only after data is loaded)
-  useEffect(() => {
-    // Don't save until data is loaded to prevent overwriting loaded data
-    if (!isDataLoaded) {
-      return;
-    }
-
-    try {
-      localStorage.setItem(NEW_CASE_KEYS.data, JSON.stringify(caseData));
-      localStorage.setItem(NEW_CASE_KEYS.step, currentStep.toString());
-      localStorage.setItem(
-        NEW_CASE_KEYS.completed,
-        JSON.stringify(completedSteps)
-      );
-      localStorage.setItem(
-        NEW_CASE_KEYS.version,
-        String(NEW_CASE_STATE_VERSION)
-      );
-    } catch {
-      // Ignore localStorage errors
-    }
-  }, [caseData, currentStep, completedSteps, isDataLoaded]);
-
-  const updateCaseData = useCallback((section: keyof CaseData, data: any) => {
-    setCaseData((previous) => {
-      const nextSection = { ...(previous as any)[section], ...data };
-      const hasChanged = !shallowEqual((previous as any)[section], nextSection);
-      if (!hasChanged) {
-        return previous; // prevent re-render loop when nothing actually changed
-      }
-      return {
-        ...previous,
-        [section]: nextSection,
-      } as CaseData;
-    });
-  }, []);
-
-  const markStepCompleted = (stepNumber: number) => {
-    if (!completedSteps.includes(stepNumber)) {
-      setCompletedSteps((prev) => [...prev, stepNumber]);
-    }
-    // Clear error highlight and summaries for this step
-    setErrorSteps((prev) => prev.filter((s) => s !== stepNumber));
-    setErrorSummaries((prev) => {
-      const next = { ...prev };
-      delete next[stepNumber];
-      return next;
-    });
-    // clear field maps when implemented
-  };
-
   const canGoToNext = useCallback((stepNumber: number): boolean => {
     // For step 1, check if all required fields are filled
     if (stepNumber === 1) {
@@ -498,6 +426,78 @@ export default function NewCasePage({ locale = "ar" }) {
     // For other steps, check if step is completed
     return completedSteps.includes(stepNumber);
   }, [caseData, completedSteps]);
+
+  // Check if completed steps should be reverted to pending
+  useEffect(() => {
+    if (!isDataLoaded) {
+      return;
+    }
+
+    const stepsToRevert: number[] = [];
+    
+    // Check each completed step to see if it should be reverted
+    completedSteps.forEach(stepNumber => {
+      if (stepNumber === 5 && !canGoToNext(5)) {
+        stepsToRevert.push(stepNumber);
+      }
+    });
+
+    // Remove reverted steps from completedSteps
+    if (stepsToRevert.length > 0) {
+      setCompletedSteps(prev => prev.filter(step => !stepsToRevert.includes(step)));
+    }
+  }, [caseData, completedSteps, isDataLoaded, canGoToNext]);
+
+  // Save data to localStorage whenever it changes (but only after data is loaded)
+  useEffect(() => {
+    // Don't save until data is loaded to prevent overwriting loaded data
+    if (!isDataLoaded) {
+      return;
+    }
+
+    try {
+      localStorage.setItem(NEW_CASE_KEYS.data, JSON.stringify(caseData));
+      localStorage.setItem(NEW_CASE_KEYS.step, currentStep.toString());
+      localStorage.setItem(
+        NEW_CASE_KEYS.completed,
+        JSON.stringify(completedSteps)
+      );
+      localStorage.setItem(
+        NEW_CASE_KEYS.version,
+        String(NEW_CASE_STATE_VERSION)
+      );
+    } catch {
+      // Ignore localStorage errors
+    }
+  }, [caseData, currentStep, completedSteps, isDataLoaded]);
+
+  const updateCaseData = useCallback((section: keyof CaseData, data: any) => {
+    setCaseData((previous) => {
+      const nextSection = { ...(previous as any)[section], ...data };
+      const hasChanged = !shallowEqual((previous as any)[section], nextSection);
+      if (!hasChanged) {
+        return previous; // prevent re-render loop when nothing actually changed
+      }
+      return {
+        ...previous,
+        [section]: nextSection,
+      } as CaseData;
+    });
+  }, []);
+
+  const markStepCompleted = (stepNumber: number) => {
+    if (!completedSteps.includes(stepNumber)) {
+      setCompletedSteps((prev) => [...prev, stepNumber]);
+    }
+    // Clear error highlight and summaries for this step
+    setErrorSteps((prev) => prev.filter((s) => s !== stepNumber));
+    setErrorSummaries((prev) => {
+      const next = { ...prev };
+      delete next[stepNumber];
+      return next;
+    });
+    // clear field maps when implemented
+  };
 
   const goToNext = () => {
     if (canGoToNext(currentStep) && currentStep < steps.length) {
