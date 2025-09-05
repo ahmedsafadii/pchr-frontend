@@ -17,6 +17,7 @@ interface Step5Props {
   currentStep: number;
   totalSteps: number;
   locale?: string;
+  completedSteps?: number[];
 }
 
 interface UploadedFile {
@@ -36,8 +37,9 @@ export default function Step5({
   onNext,
   onPrevious,
   currentStep,
+  completedSteps = [],
 }: Step5Props) {
-  const t = useTranslations();
+  const t = useTranslations() as any;
   const [detaineeIdFiles, setDetaineeIdFiles] = useState<UploadedFile[]>([]);
   const [clientIdFiles, setClientIdFiles] = useState<UploadedFile[]>([]);
   const [additionalFiles, setAdditionalFiles] = useState<UploadedFile[]>([]);
@@ -222,6 +224,12 @@ export default function Step5({
       updateDocuments(detaineeIdFiles, clientIdFiles, additionalFiles);
     }
 
+    // Auto-complete step 5 when client ID is uploaded
+    const hasClientId = nextClientId !== null;
+    if (hasClientId && !completedSteps.includes(5)) {
+      onComplete(5);
+    }
+
     // Update display metadata for uploaded files
     const detaineeUploaded = detaineeIdFiles.find(
       (f) => f.status === "uploaded"
@@ -231,48 +239,59 @@ export default function Step5({
       (f) => f.status === "uploaded"
     );
 
-    if (detaineeUploaded || clientUploaded || additionalUploaded.length > 0) {
-      const newDisplayMeta: any = {
-        ...(data.documents?.display_meta || {}),
+    // Always update display metadata to ensure it reflects current state
+    const newDisplayMeta: any = {
+      ...(data.documents?.display_meta || {}),
+    };
+
+    // Update detainee metadata
+    if (detaineeUploaded) {
+      newDisplayMeta.detainee_id = {
+        id: detaineeUploaded.id,
+        name: detaineeUploaded.name,
+        size: detaineeUploaded.size,
+        type: detaineeUploaded.type,
+        status: detaineeUploaded.status || "uploaded",
       };
+    } else if (detaineeIdFiles.length === 0) {
+      // Remove detainee metadata if no files
+      delete newDisplayMeta.detainee_id;
+    }
 
-      if (detaineeUploaded) {
-        newDisplayMeta.detainee_id = {
-          id: detaineeUploaded.id,
-          name: detaineeUploaded.name,
-          size: detaineeUploaded.size,
-          type: detaineeUploaded.type,
-          status: detaineeUploaded.status || "uploaded",
-        };
-      }
+    // Update client metadata
+    if (clientUploaded) {
+      newDisplayMeta.client_id = {
+        id: clientUploaded.id,
+        name: clientUploaded.name,
+        size: clientUploaded.size,
+        type: clientUploaded.type,
+        status: clientUploaded.status || "uploaded",
+      };
+    } else if (clientIdFiles.length === 0) {
+      // Remove client metadata if no files
+      delete newDisplayMeta.client_id;
+    }
 
-      if (clientUploaded) {
-        newDisplayMeta.client_id = {
-          id: clientUploaded.id,
-          name: clientUploaded.name,
-          size: clientUploaded.size,
-          type: clientUploaded.type,
-          status: clientUploaded.status || "uploaded",
-        };
-      }
+    // Update additional metadata
+    if (additionalUploaded.length > 0) {
+      newDisplayMeta.additional = additionalUploaded.map((f) => ({
+        id: f.id,
+        name: f.name,
+        size: f.size,
+        type: f.type,
+        status: f.status || "uploaded",
+      }));
+    } else if (additionalFiles.length === 0) {
+      // Remove additional metadata if no files
+      delete newDisplayMeta.additional;
+    }
 
-      if (additionalUploaded.length > 0) {
-        newDisplayMeta.additional = additionalUploaded.map((f) => ({
-          id: f.id,
-          name: f.name,
-          size: f.size,
-          type: f.type,
-          status: f.status || "uploaded",
-        }));
-      }
-
-      const prevDisplay = data.documents?.display_meta || {};
-      const changed = JSON.stringify(prevDisplay) !== JSON.stringify(newDisplayMeta);
-      if (changed) {
-        updateData("documents", {
-          display_meta: newDisplayMeta,
-        });
-      }
+    const prevDisplay = data.documents?.display_meta || {};
+    const changed = JSON.stringify(prevDisplay) !== JSON.stringify(newDisplayMeta);
+    if (changed) {
+      updateData("documents", {
+        display_meta: newDisplayMeta,
+      });
     }
   }, [
     detaineeIdFiles,
@@ -281,18 +300,66 @@ export default function Step5({
     data.documents,
     updateData,
     updateDocuments,
+    completedSteps,
+    onComplete,
   ]);
 
   const removeDetaineeIdFile = (fileId: string) => {
-    setDetaineeIdFiles((prev) => prev.filter((file) => file.id !== fileId));
+    setDetaineeIdFiles((prev) => {
+      const filtered = prev.filter((file) => file.id !== fileId);
+      // Clear the detainee document ID if we're removing the last file
+      if (filtered.length === 0) {
+        // Clear display metadata for detainee
+        const newDisplayMeta = { ...(data.documents?.display_meta || {}) };
+        delete newDisplayMeta.detainee_id;
+        updateData("documents", {
+          detainee_document_id: null,
+          display_meta: newDisplayMeta,
+        });
+      }
+      return filtered;
+    });
   };
 
   const removeClientIdFile = (fileId: string) => {
-    setClientIdFiles((prev) => prev.filter((file) => file.id !== fileId));
+    setClientIdFiles((prev) => {
+      const filtered = prev.filter((file) => file.id !== fileId);
+      // Clear the client document ID if we're removing the last file
+      if (filtered.length === 0) {
+        // Clear display metadata for client
+        const newDisplayMeta = { ...(data.documents?.display_meta || {}) };
+        delete newDisplayMeta.client_id;
+        updateData("documents", {
+          client_document_id: null,
+          display_meta: newDisplayMeta,
+        });
+      }
+      return filtered;
+    });
   };
 
   const removeAdditionalFile = (fileId: string) => {
-    setAdditionalFiles((prev) => prev.filter((file) => file.id !== fileId));
+    setAdditionalFiles((prev) => {
+      const filtered = prev.filter((file) => file.id !== fileId);
+      // Update additional document IDs to remove the deleted file
+      const remainingIds = getUploadedIds(filtered);
+      // Update display metadata for additional files
+      const newDisplayMeta = { ...(data.documents?.display_meta || {}) };
+      newDisplayMeta.additional = filtered
+        .filter((f) => f.status === "uploaded")
+        .map((f) => ({
+          id: f.id,
+          name: f.name,
+          size: f.size,
+          type: f.type,
+          status: f.status || "uploaded",
+        }));
+      updateData("documents", {
+        additional_document_ids: remainingIds,
+        display_meta: newDisplayMeta,
+      });
+      return filtered;
+    });
   };
 
   // File size formatting handled in Uploader

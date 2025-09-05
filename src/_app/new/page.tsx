@@ -8,6 +8,8 @@ import {
   IconMessage,
   IconCheck,
   IconExclamationMark,
+  IconClock,
+  IconScale,
 } from "@tabler/icons-react";
 import Logo from "../components/Logo";
 import Step1 from "./steps/step1";
@@ -499,6 +501,9 @@ export default function NewCasePage({ locale = "ar" }) {
       } else if (stepNumber === currentStep + 1 && canGoToNext(currentStep)) {
         // Allow going to next step if current step can proceed
         setCurrentStep(stepNumber);
+      } else if (stepNumber === 6 && (completedSteps.includes(5) || canGoToNext(5))) {
+        // Special case: Allow going to step 6 (final step) when step 5 is completed or valid
+        setCurrentStep(stepNumber);
       }
     }
   };
@@ -522,11 +527,12 @@ export default function NewCasePage({ locale = "ar" }) {
     if (completedSteps.includes(stepNumber)) {
       return "completed";
     }
-    if (stepNumber < currentStep) {
+    if (stepNumber < currentStep && !completedSteps.includes(stepNumber)) {
       return "error"; // Previous step not completed
     }
     return "pending";
   };
+
 
   const CurrentStepComponent = steps[currentStep - 1].component;
 
@@ -597,8 +603,10 @@ export default function NewCasePage({ locale = "ar" }) {
                           )} ${
                             getStepStatus(step.id) === "completed" ||
                             getStepStatus(step.id) === "error" ||
+                            getStepStatus(step.id) === "current" ||
                             (step.id === currentStep + 1 &&
-                              canGoToNext(currentStep))
+                              canGoToNext(currentStep)) ||
+                            (step.id === 6 && (completedSteps.includes(5) || canGoToNext(5)))
                               ? "new-case__step-circle--clickable"
                               : ""
                           }`}
@@ -607,9 +615,16 @@ export default function NewCasePage({ locale = "ar" }) {
                               goToStep(step.id);
                             } else if (getStepStatus(step.id) === "error") {
                               goToStep(step.id);
+                            } else if (getStepStatus(step.id) === "current") {
+                              goToStep(step.id);
                             } else if (
                               step.id === currentStep + 1 &&
                               canGoToNext(currentStep)
+                            ) {
+                              goToStep(step.id);
+                            } else if (
+                              step.id === 6 && 
+                              (completedSteps.includes(5) || canGoToNext(5))
                             ) {
                               goToStep(step.id);
                             }
@@ -618,32 +633,40 @@ export default function NewCasePage({ locale = "ar" }) {
                             cursor:
                               getStepStatus(step.id) === "completed" ||
                               getStepStatus(step.id) === "error" ||
+                              getStepStatus(step.id) === "current" ||
                               (step.id === currentStep + 1 &&
-                                canGoToNext(currentStep))
+                                canGoToNext(currentStep)) ||
+                              (step.id === 6 && (completedSteps.includes(5) || canGoToNext(5)))
                                 ? "pointer"
                                 : "default",
                           }}
                           role={
                             getStepStatus(step.id) === "completed" ||
                             getStepStatus(step.id) === "error" ||
+                            getStepStatus(step.id) === "current" ||
                             (step.id === currentStep + 1 &&
-                              canGoToNext(currentStep))
+                              canGoToNext(currentStep)) ||
+                            (step.id === 6 && (completedSteps.includes(5) || canGoToNext(5)))
                               ? "button"
                               : undefined
                           }
                           tabIndex={
                             getStepStatus(step.id) === "completed" ||
                             getStepStatus(step.id) === "error" ||
+                            getStepStatus(step.id) === "current" ||
                             (step.id === currentStep + 1 &&
-                              canGoToNext(currentStep))
+                              canGoToNext(currentStep)) ||
+                            (step.id === 6 && (completedSteps.includes(5) || canGoToNext(5)))
                               ? 0
                               : undefined
                           }
                           aria-label={
                             getStepStatus(step.id) === "completed" ||
                             getStepStatus(step.id) === "error" ||
+                            getStepStatus(step.id) === "current" ||
                             (step.id === currentStep + 1 &&
-                              canGoToNext(currentStep))
+                              canGoToNext(currentStep)) ||
+                            (step.id === 6 && (completedSteps.includes(5) || canGoToNext(5)))
                               ? `Go to step ${step.id}: ${step.title}`
                               : undefined
                           }
@@ -651,8 +674,10 @@ export default function NewCasePage({ locale = "ar" }) {
                             if (
                               (getStepStatus(step.id) === "completed" ||
                                 getStepStatus(step.id) === "error" ||
+                                getStepStatus(step.id) === "current" ||
                                 (step.id === currentStep + 1 &&
-                                  canGoToNext(currentStep))) &&
+                                  canGoToNext(currentStep)) ||
+                                (step.id === 6 && (completedSteps.includes(5) || canGoToNext(5)))) &&
                               (e.key === "Enter" || e.key === " ")
                             ) {
                               e.preventDefault();
@@ -669,7 +694,12 @@ export default function NewCasePage({ locale = "ar" }) {
                           {getStepStatus(step.id) === "current" && (
                             <StepIcon size={18} />
                           )}
-                          {getStepStatus(step.id) === "pending" && step.id}
+                          {getStepStatus(step.id) === "pending" && step.id === 6 && (
+                            <IconScale size={18} />
+                          )}
+                          {getStepStatus(step.id) === "pending" && step.id !== 6 && (
+                            <IconClock size={18} />
+                          )}
                         </div>
                         {index < steps.length - 1 && (
                           <div
@@ -683,8 +713,10 @@ export default function NewCasePage({ locale = "ar" }) {
                         className={`new-case__step-content ${
                           getStepStatus(step.id) === "completed" ||
                           getStepStatus(step.id) === "error" ||
+                          getStepStatus(step.id) === "current" ||
                           (step.id === currentStep + 1 &&
-                            canGoToNext(currentStep))
+                            canGoToNext(currentStep)) ||
+                          (step.id === 6 && (completedSteps.includes(5) || canGoToNext(5)))
                             ? "new-case__step-content--clickable"
                             : ""
                         }`}
@@ -693,9 +725,16 @@ export default function NewCasePage({ locale = "ar" }) {
                             goToStep(step.id);
                           } else if (getStepStatus(step.id) === "error") {
                             goToStep(step.id);
+                          } else if (getStepStatus(step.id) === "current") {
+                            goToStep(step.id);
                           } else if (
                             step.id === currentStep + 1 &&
                             canGoToNext(currentStep)
+                          ) {
+                            goToStep(step.id);
+                          } else if (
+                            step.id === 6 && 
+                            (completedSteps.includes(5) || canGoToNext(5))
                           ) {
                             goToStep(step.id);
                           }
@@ -704,32 +743,40 @@ export default function NewCasePage({ locale = "ar" }) {
                           cursor:
                             getStepStatus(step.id) === "completed" ||
                             getStepStatus(step.id) === "error" ||
+                            getStepStatus(step.id) === "current" ||
                             (step.id === currentStep + 1 &&
-                              canGoToNext(currentStep))
+                              canGoToNext(currentStep)) ||
+                            (step.id === 6 && (completedSteps.includes(5) || canGoToNext(5)))
                               ? "pointer"
                               : "default",
                         }}
                         role={
                           getStepStatus(step.id) === "completed" ||
                           getStepStatus(step.id) === "error" ||
+                          getStepStatus(step.id) === "current" ||
                           (step.id === currentStep + 1 &&
-                            canGoToNext(currentStep))
+                            canGoToNext(currentStep)) ||
+                          (step.id === 6 && (completedSteps.includes(5) || canGoToNext(5)))
                             ? "button"
                             : undefined
                         }
                         tabIndex={
                           getStepStatus(step.id) === "completed" ||
                           getStepStatus(step.id) === "error" ||
+                          getStepStatus(step.id) === "current" ||
                           (step.id === currentStep + 1 &&
-                            canGoToNext(currentStep))
+                            canGoToNext(currentStep)) ||
+                          (step.id === 6 && (completedSteps.includes(5) || canGoToNext(5)))
                             ? 0
                             : undefined
                         }
                         aria-label={
                           getStepStatus(step.id) === "completed" ||
                           getStepStatus(step.id) === "error" ||
+                          getStepStatus(step.id) === "current" ||
                           (step.id === currentStep + 1 &&
-                            canGoToNext(currentStep))
+                            canGoToNext(currentStep)) ||
+                          (step.id === 6 && (completedSteps.includes(5) || canGoToNext(5)))
                             ? `Go to step ${step.id}: ${step.title}`
                             : undefined
                         }
@@ -737,8 +784,10 @@ export default function NewCasePage({ locale = "ar" }) {
                           if (
                             (getStepStatus(step.id) === "completed" ||
                               getStepStatus(step.id) === "error" ||
+                              getStepStatus(step.id) === "current" ||
                               (step.id === currentStep + 1 &&
-                                canGoToNext(currentStep))) &&
+                                canGoToNext(currentStep)) ||
+                              (step.id === 6 && (completedSteps.includes(5) || canGoToNext(5)))) &&
                             (e.key === "Enter" || e.key === " ")
                           ) {
                             e.preventDefault();
@@ -772,6 +821,7 @@ export default function NewCasePage({ locale = "ar" }) {
                 currentStep={currentStep}
                 totalSteps={steps.length}
                 locale={locale}
+                completedSteps={completedSteps}
                 onResetAll={resetAll}
                 externalErrors={errorSummaries[currentStep] || []}
                 onValidationErrors={(payload: {
