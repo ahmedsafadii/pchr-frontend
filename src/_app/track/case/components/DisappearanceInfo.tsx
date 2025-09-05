@@ -36,7 +36,7 @@ export default function DisappearanceInfo({
               <div
                 className={`case-overview__badge case-overview__badge--sm ${
                   caseData?.status_display
-                    ? `case__status--${caseData.status_display
+                    ? `case__status--${caseData.status
                         .toLowerCase()
                         .replace(/\s+/g, "-")}`
                     : ""
@@ -177,7 +177,11 @@ export default function DisappearanceInfo({
           </div>
           <div className="case-info__row">
             <dt>{(t as any)("trackCase.info.phone")}</dt>
-            <dd>{caseData?.client_phone || t("common.notAvailable")}</dd>
+            <dd style={{ direction: "ltr", textAlign: "right" }}>{caseData?.client_phone || t("common.notAvailable")}</dd>
+          </div>
+          <div className="case-info__row">
+            <dt>{(t as any)("trackCase.info.whatsapp")}</dt>
+            <dd style={{ direction: "ltr", textAlign: "right" }}>{caseData?.client_whatsapp || t("common.notAvailable")}</dd>
           </div>
           <div className="case-info__row">
             <dt>{(t as any)("trackCase.info.relationship")}</dt>

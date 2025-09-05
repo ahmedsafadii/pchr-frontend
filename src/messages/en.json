@@ -112,6 +112,7 @@
       "describe": "Describe Disappearance",
       "client": "Client info",
       "phone": "Phone Number",
+      "whatsapp": "WhatsApp Number",
       "relationship": "Relationship",
       "documents": "Documents upload",
       "signature": "Your Signature",
@@ -301,6 +302,8 @@
         "title": "Your case has been successfully submitted.",
         "caseRef": "Case Reference #:",
         "copy": "Copy",
+        "copied": "Case reference copied successfully",
+        "copyFailed": "Failed to copy case reference",
         "cta": "Track your application"
       },
       "error": {
