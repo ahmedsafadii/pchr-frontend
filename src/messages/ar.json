@@ -242,11 +242,11 @@
       }
     },
     "address": {
-      "title": "العنوان",
-      "location": "الموقع ( عنوان محل الإقامة الدائم ) ",
+      "title": "الموقع ( عنوان محل الإقامة الدائم )",
+      "location": "الاقليم",
       "governorate": "المحافظة",
-      "locality": "المنطقة",
-      "district": "المنطقة",
+      "locality": "البلدية",
+      "district": "الحي",
       "streetName": "اسم الشارع",
       "streetNamePlaceholder": "اسم الشارع"
     },

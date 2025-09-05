@@ -128,7 +128,9 @@ function clearPersistedCaseState() {
     localStorage.removeItem(NEW_CASE_KEYS.step);
     localStorage.removeItem(NEW_CASE_KEYS.completed);
     localStorage.removeItem(NEW_CASE_KEYS.version);
-  } catch {}
+  } catch {
+    // Ignore localStorage errors
+  }
 }
 
 const initialCaseData: CaseData = {
@@ -191,6 +193,7 @@ export default function NewCasePage({ locale = "ar" }) {
   const [errorSummaries, setErrorSummaries] = useState<
     Record<number, string[]>
   >({});
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   // reserved for future per-field highlighting if needed
   // const [errorFieldMaps, setErrorFieldMaps] = useState<Record<number, Record<string, string>>>({});
   const t = useTranslations();
@@ -258,7 +261,11 @@ export default function NewCasePage({ locale = "ar" }) {
   useEffect(() => {
     try {
       const savedVersion = localStorage.getItem(NEW_CASE_KEYS.version);
-      if (String(savedVersion) !== String(NEW_CASE_STATE_VERSION)) {
+      // Only clear data if version is explicitly different and not null/undefined
+      if (
+        savedVersion !== null &&
+        savedVersion !== String(NEW_CASE_STATE_VERSION)
+      ) {
         clearPersistedCaseState();
         return;
       }
@@ -287,6 +294,16 @@ export default function NewCasePage({ locale = "ar" }) {
         }
       }
 
+      // Ensure version is always saved to prevent future version mismatches
+      try {
+        localStorage.setItem(
+          NEW_CASE_KEYS.version,
+          String(NEW_CASE_STATE_VERSION)
+        );
+      } catch {
+        // Ignore localStorage errors
+      }
+
       if (savedStep) {
         const n = parseInt(savedStep);
         const clamped = isNaN(n) ? 1 : Math.min(Math.max(n, 1), 6);
@@ -309,10 +326,18 @@ export default function NewCasePage({ locale = "ar" }) {
     } catch {
       clearPersistedCaseState();
     }
-  }, []);
 
-  // Save data to localStorage whenever it changes
+    // Mark data as loaded after attempting to load from localStorage
+    setIsDataLoaded(true);
+  }, [setIsDataLoaded]);
+
+  // Save data to localStorage whenever it changes (but only after data is loaded)
   useEffect(() => {
+    // Don't save until data is loaded to prevent overwriting loaded data
+    if (!isDataLoaded) {
+      return;
+    }
+
     try {
       localStorage.setItem(NEW_CASE_KEYS.data, JSON.stringify(caseData));
       localStorage.setItem(NEW_CASE_KEYS.step, currentStep.toString());
@@ -324,8 +349,10 @@ export default function NewCasePage({ locale = "ar" }) {
         NEW_CASE_KEYS.version,
         String(NEW_CASE_STATE_VERSION)
       );
-    } catch {}
-  }, [caseData, currentStep, completedSteps]);
+    } catch {
+      // Ignore localStorage errors
+    }
+  }, [caseData, currentStep, completedSteps, isDataLoaded]);
 
   const updateCaseData = useCallback((section: keyof CaseData, data: any) => {
     setCaseData((previous) => {
@@ -472,6 +499,17 @@ export default function NewCasePage({ locale = "ar" }) {
   };
 
   const CurrentStepComponent = steps[currentStep - 1].component;
+
+  // Show loading state while data is being loaded
+  if (!isDataLoaded) {
+    return (
+      <div className="new-case" dir={locale === "ar" ? "rtl" : "ltr"}>
+        <div className="new-case__container">
+          <div style={{ padding: "2rem", textAlign: "center" }}>Loading...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="new-case" dir={locale === "ar" ? "rtl" : "ltr"}>

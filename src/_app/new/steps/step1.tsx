@@ -49,6 +49,7 @@ export default function Step1({
   const { constants, isLoading: isConstantsLoading } = useConstantsStore();
   const t = useTranslations();
 
+
   useEffect(() => {
     setFormData(data.detaineeInfo);
   }, [data.detaineeInfo]);
@@ -216,6 +217,7 @@ export default function Step1({
     return dob > eighteenYearsAgo;
   }, [formData.detainee_date_of_birth]);
 
+
   return (
     <div className="steps">
       <header className="steps__header">
@@ -240,7 +242,7 @@ export default function Step1({
                   errors.fullName ? "steps__input--error" : ""
                 }`}
                 placeholder={t("newCase.step1.fullNamePlaceholder")}
-                value={formData.detainee_name}
+                value={formData.detainee_name || ""}
                 onChange={(e) =>
                   handleInputChange("detainee_name", e.target.value)
                 }
