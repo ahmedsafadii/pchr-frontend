@@ -223,6 +223,9 @@
       "typePlaceholder": "اكتب اسمك هنا",
       "submit": "إرسال",
       "signatureSaved": "تم حفظ التوقيع",
+      "drawingMode": "الرسم",
+      "writingMode": "الكتابة",
+      "writingModeHint": "اضغط على زر 'كتابة' لكتابة اسمك",
       "alerts": {
         "submitted": "تم إرسال التقرير بنجاح!",
         "missingSignature": "يرجى الموافقة على الشروط وتوقيع المستند"

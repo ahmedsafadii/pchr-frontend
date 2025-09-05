@@ -53,6 +53,7 @@ export default function Step6({
   const [signatureError, setSignatureError] = useState<string | null>(null);
   const [showTypeInput, setShowTypeInput] = useState(false);
   const [typedName, setTypedName] = useState("");
+  const [signatureMode, setSignatureMode] = useState<'drawing' | 'writing'>('drawing');
   const signatureDocType = "signature";
 
   // Hydrate signature state if already uploaded
@@ -99,6 +100,19 @@ export default function Step6({
         ...data.documents,
         display_meta: newDisplayMeta,
       });
+    }
+  };
+
+  const switchSignatureMode = (mode: 'drawing' | 'writing') => {
+    // Always reset canvas when switching modes
+    clearSignature();
+    setSignatureMode(mode);
+    
+    // If switching to writing mode, show input immediately
+    if (mode === 'writing') {
+      setShowTypeInput(true);
+    } else {
+      setShowTypeInput(false);
     }
   };
 
@@ -157,18 +171,12 @@ export default function Step6({
   };
 
   const handleTypeButtonClick = () => {
-    if (showTypeInput) {
-      // Cancel mode - hide input and clear typed name
-      setShowTypeInput(false);
-      setTypedName("");
-      // Clear the canvas
-      if (signatureRef.current) {
-        signatureRef.current.clear();
-        setHasDrawn(false);
-      }
-    } else {
-      // Type mode - show input
+    if (signatureMode === 'writing') {
+      // Show input in writing mode
       setShowTypeInput(true);
+    } else {
+      // Switch to writing mode
+      switchSignatureMode('writing');
     }
   };
 
@@ -562,20 +570,43 @@ export default function Step6({
           ) : (
             <>
               <div className="steps__signature-controls">
-                <button
-                  type="button"
-                  className="steps__signature-button"
-                  onClick={clearSignature}
-                >
-                  {t("newCase.step6.clear")}
-                </button>
-                <button
-                  type="button"
-                  className="steps__signature-button"
-                  onClick={handleTypeButtonClick}
-                >
-                  {showTypeInput ? t("newCase.step6.cancel") : t("newCase.step6.type")}
-                </button>
+                <div className="steps__signature-actions">
+                  <button
+                    type="button"
+                    className={`steps__signature-mode-button ${signatureMode === 'drawing' ? 'steps__signature-mode-button--active' : ''}`}
+                    onClick={() => switchSignatureMode('drawing')}
+                  >
+                    {t("newCase.step6.drawingMode")}
+                  </button>
+                  <button
+                    type="button"
+                    className={`steps__signature-mode-button ${signatureMode === 'writing' ? 'steps__signature-mode-button--active' : ''}`}
+                    onClick={() => switchSignatureMode('writing')}
+                  >
+                    {t("newCase.step6.writingMode")}
+                  </button>
+                  <button
+                    type="button"
+                    className="steps__signature-button"
+                    onClick={clearSignature}
+                  >
+                    {t("newCase.step6.clear")}
+                  </button>
+                  {signatureMode === 'writing' && !showTypeInput && (
+                    <button
+                      type="button"
+                      className="steps__signature-button"
+                      onClick={handleTypeButtonClick}
+                    >
+                      {t("newCase.step6.type")}
+                    </button>
+                  )}
+                </div>
+                {signatureMode === 'writing' && !showTypeInput && (
+                  <div className="steps__signature-hint">
+                    {t("newCase.step6.writingModeHint")}
+                  </div>
+                )}
               </div>
               {showTypeInput && (
                 <div className="steps__type-input-container">
@@ -604,6 +635,7 @@ export default function Step6({
                       borderRadius: "4px",
                       width: "100%",
                       height: "200px",
+                      cursor: signatureMode === 'drawing' ? 'crosshair' : 'not-allowed',
                     },
                   }}
                   // Smoothing and quality options for iPad-like drawing
@@ -616,12 +648,18 @@ export default function Step6({
                   penColor="#000000" // Pen color
                   backgroundColor="rgba(255,255,255,0)" // Transparent background
                   onBegin={() => {
-                    setHasDrawn(true);
+                    // Only allow drawing in drawing mode
+                    if (signatureMode === 'drawing') {
+                      setHasDrawn(true);
+                    }
                   }}
                   onEnd={() => {
                     // Signature drawing ended
                   }}
                 />
+                {signatureMode === 'writing' && (
+                  <div className="steps__signature-mode-overlay"></div>
+                )}
               </div>
             </>
           )}

@@ -605,8 +605,53 @@
 
 .steps__signature-controls {
   display: flex;
+  flex-direction: column;
   gap: 10px;
   margin-bottom: 15px;
+}
+
+.steps__signature-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.steps__signature-mode-button {
+  padding: 8px 16px;
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: #666;
+  white-space: nowrap;
+}
+
+.steps__signature-mode-button:hover {
+  background: #e9ecef;
+  border-color: #d2691e;
+  color: #333;
+}
+
+.steps__signature-mode-button--active {
+  background: var(--primary-900);
+  border-color: var(--primary-900);
+  color: white;
+}
+
+.steps__signature-mode-button--active:hover {
+  background: var(--primary-800);
+  border-color: var(--primary-800);
+  color: white;
+}
+
+.steps__signature-hint {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+  margin-top: 5px;
 }
 
 .steps__type-input-container {
@@ -655,6 +700,7 @@ html[lang="ar"] .steps__signature-button {
   border-radius: 8px;
   overflow: hidden;
   background: white;
+  position: relative;
 }
 
 .steps__signature-canvas {
@@ -662,6 +708,17 @@ html[lang="ar"] .steps__signature-button {
   height: 150px;
   cursor: crosshair;
   background: white;
+}
+
+.steps__signature-mode-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  pointer-events: auto;
+  z-index: 10;
 }
 
 .steps__button--submit {
