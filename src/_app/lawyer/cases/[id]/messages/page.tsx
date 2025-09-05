@@ -348,7 +348,7 @@ export default function LawyerCaseMessagesPage() {
 
                 {/* Message Date */}
                 <div className="lawyer__message-date">
-                  {formatDateWithLocale(msg.created, locale)}
+                  {formatDateWithLocale(msg.created)}
                 </div>
               </div>
 

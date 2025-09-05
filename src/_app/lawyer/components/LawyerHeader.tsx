@@ -298,7 +298,7 @@ export default function LawyerHeader({
                               {notification.case.case_number} - {notification.case.detainee_name}
                             </div>
                             <div className="lawyer__notification-date">
-                              {formatDateWithLocale(notification.created, locale)}
+                              {formatDateWithLocale(notification.created)}
                             </div>
                           </div>
                           {!notification.is_read && (

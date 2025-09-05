@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations, useLocale } from "next-globe-gen";
+import { useTranslations } from "next-globe-gen";
 import { IconAlertTriangle, IconBrandWhatsapp } from "@tabler/icons-react";
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -15,7 +15,6 @@ export default function LawyerCaseDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const { isAuthenticated, isLoading } = useLawyerAuth();
-  const locale = useLocale();
   const [caseData, setCaseData] = useState<CaseData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +33,7 @@ export default function LawyerCaseDetailsPage() {
   const fetchCaseDetails = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await getLawyerCaseDetails(caseId, "en");
+      const response = await getLawyerCaseDetails(caseId, "ar");
 
       console.log("API Response:", response); // Debug log
 
@@ -185,7 +184,7 @@ export default function LawyerCaseDetailsPage() {
               {t("lawyer.caseDetails.caseInfo.created")}
             </div>
             <div className="lawyer__info-value">
-              {formatDateWithLocale(caseData.created, locale)}
+              {formatDateWithLocale(caseData.created)}
             </div>
           </div>
           <div className="lawyer__info-item">
@@ -193,7 +192,7 @@ export default function LawyerCaseDetailsPage() {
               {t("lawyer.caseDetails.caseInfo.updated")}
             </div>
             <div className="lawyer__info-value">
-              {formatDateWithLocale(caseData.updated, locale)}
+              {formatDateWithLocale(caseData.updated)}
             </div>
           </div>
         </div>
@@ -218,7 +217,7 @@ export default function LawyerCaseDetailsPage() {
               {t("lawyer.caseDetails.detaineeInfo.dateOfBirth")}
             </div>
             <div className="lawyer__info-value">
-              {formatDateWithLocale(caseData.detainee_date_of_birth, locale)}
+              {formatDateWithLocale(caseData.detainee_date_of_birth)}
             </div>
           </div>
           {/* ID Number */}
@@ -287,7 +286,7 @@ export default function LawyerCaseDetailsPage() {
               {t("lawyer.caseDetails.detentionInfo.detentionDate")}
             </div>
             <div className="lawyer__info-value">
-              {formatDateWithLocale(caseData.detention_date, locale)}
+              {formatDateWithLocale(caseData.detention_date)}
             </div>
           </div>
           <div className="lawyer__info-item">

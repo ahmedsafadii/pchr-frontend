@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations, useLocale } from "next-globe-gen";
+import { useTranslations } from "next-globe-gen";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import {
@@ -35,7 +35,6 @@ export default function Overview({
 }: OverviewProps) {
   const t = useTranslations();
   const tt = t as any;
-  const locale = useLocale();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<CaseMessageData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -237,7 +236,7 @@ export default function Overview({
           <div className="case-overview__card">
             <div className="case-overview__date">
               {caseData?.created
-                ? formatDateWithLocale(caseData.created, locale).toUpperCase()
+                ? formatDateWithLocale(caseData.created).toUpperCase()
                 : tt("common.loading")}
             </div>
             <h1 className="case-overview__main-title">
@@ -270,7 +269,7 @@ export default function Overview({
                     </dt>
                     <dd className="case-overview__dd">
                       {caseData?.detention_date
-                        ? formatDateWithLocale(caseData.detention_date, locale)
+                        ? formatDateWithLocale(caseData.detention_date)
                         : tt("common.notAvailable")}
                     </dd>
                   </div>
@@ -426,7 +425,7 @@ export default function Overview({
                         </span>
                       )}
                       <span className="chat__message-date">
-                        {formatDateWithLocale(msg.created, locale)}
+                        {formatDateWithLocale(msg.created)}
                       </span>
                     </div>
 

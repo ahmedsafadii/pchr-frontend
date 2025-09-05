@@ -156,7 +156,7 @@ function LawyerCaseLayoutInner({ children }: LawyerCaseLayoutProps) {
               </h1>
               <p className="lawyer__case-last-update">
                 {t("lawyer.caseDetails.lastUpdate")}:{" "}
-                {formatDateWithLocale(caseData.updated, locale)}
+                {formatDateWithLocale(caseData.updated)}
               </p>
             </div>
 

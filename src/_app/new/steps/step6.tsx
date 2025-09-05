@@ -51,6 +51,8 @@ export default function Step6({
 
   const [hasDrawn, setHasDrawn] = useState(false);
   const [signatureError, setSignatureError] = useState<string | null>(null);
+  const [showTypeInput, setShowTypeInput] = useState(false);
+  const [typedName, setTypedName] = useState("");
   const signatureDocType = "signature";
 
   // Hydrate signature state if already uploaded
@@ -80,6 +82,8 @@ export default function Step6({
     // Reset states - this will reset validation too
     setHasDrawn(false);
     setSignatureError(null);
+    setShowTypeInput(false);
+    setTypedName("");
 
     // Also clear any uploaded signature data
     updateData("consent", {
@@ -95,6 +99,94 @@ export default function Step6({
         ...data.documents,
         display_meta: newDisplayMeta,
       });
+    }
+  };
+
+  const drawTextOnCanvas = (text: string) => {
+    if (!signatureRef.current || !text.trim()) return;
+    
+    // Clear the canvas first
+    signatureRef.current.clear();
+    
+    // Get the signature canvas
+    const signatureCanvas = signatureRef.current.getCanvas();
+    
+    // Get the display dimensions (what the user sees)
+    const displayWidth = signatureCanvas.offsetWidth;
+    const displayHeight = signatureCanvas.offsetHeight;
+    
+    // Create a temporary canvas with display dimensions
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
+    if (!tempCtx) return;
+    
+    // Set temporary canvas size to match display dimensions
+    tempCanvas.width = displayWidth;
+    tempCanvas.height = displayHeight;
+    
+    // Set up the text styling
+    const fontSize = 50; // Large font size
+    const fontFamily = "Rubik, Arial, sans-serif"; // Rubik font
+    tempCtx.font = `${fontSize}px ${fontFamily}`;
+    
+    // Debug: Log font info
+    console.log("Font size:", fontSize);
+    console.log("Font family:", fontFamily);
+    console.log("Actual font:", tempCtx.font);
+    console.log("Canvas dimensions:", { width: displayWidth, height: displayHeight });
+    
+    tempCtx.fillStyle = "#000000";
+    tempCtx.textAlign = "center";
+    tempCtx.textBaseline = "middle";
+    
+    // Calculate center position using display dimensions
+    const centerX = displayWidth / 2;
+    const centerY = displayHeight / 2;
+    
+    // Draw text on temporary canvas
+    tempCtx.fillText(text, centerX, centerY);
+    
+    // Convert temporary canvas to data URL
+    const dataURL = tempCanvas.toDataURL();
+    
+    // Load the data URL into the signature canvas
+    signatureRef.current.fromDataURL(dataURL);
+    
+    // Mark as drawn for validation
+    setHasDrawn(true);
+  };
+
+  const handleTypeButtonClick = () => {
+    if (showTypeInput) {
+      // Cancel mode - hide input and clear typed name
+      setShowTypeInput(false);
+      setTypedName("");
+      // Clear the canvas
+      if (signatureRef.current) {
+        signatureRef.current.clear();
+        setHasDrawn(false);
+      }
+    } else {
+      // Type mode - show input
+      setShowTypeInput(true);
+    }
+  };
+
+  const handleTypeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTypedName(value);
+    
+    // Draw text in real-time as user types
+    if (value.trim()) {
+      setTimeout(() => {
+        drawTextOnCanvas(value.trim());
+      }, 50);
+    } else {
+      // Clear canvas if input is empty
+      if (signatureRef.current) {
+        signatureRef.current.clear();
+        setHasDrawn(false);
+      }
     }
   };
 
@@ -477,7 +569,26 @@ export default function Step6({
                 >
                   {t("newCase.step6.clear")}
                 </button>
+                <button
+                  type="button"
+                  className="steps__signature-button"
+                  onClick={handleTypeButtonClick}
+                >
+                  {showTypeInput ? t("newCase.step6.cancel") : t("newCase.step6.type")}
+                </button>
               </div>
+              {showTypeInput && (
+                <div className="steps__type-input-container">
+                  <input
+                    type="text"
+                    className="steps__type-input"
+                    placeholder={t("newCase.step6.typePlaceholder")}
+                    value={typedName}
+                    onChange={handleTypeInputChange}
+                    autoFocus
+                  />
+                </div>
+              )}
               {signatureError && (
                 <p className="steps__error" style={{ marginTop: 8 }}>
                   {signatureError}

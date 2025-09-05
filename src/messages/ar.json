@@ -218,6 +218,9 @@
       "signatureTitle": "توقيعك",
       "upload": "رفع",
       "clear": "مسح",
+      "type": "كتابة",
+      "cancel": "إلغاء",
+      "typePlaceholder": "اكتب اسمك هنا",
       "submit": "إرسال",
       "signatureSaved": "تم حفظ التوقيع",
       "alerts": {

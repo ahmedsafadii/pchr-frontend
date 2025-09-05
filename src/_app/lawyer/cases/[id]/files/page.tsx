@@ -30,7 +30,7 @@ export default function LawyerCaseFilesPage() {
         }
 
         const caseId = params.id as string;
-        const response = await getLawyerCaseDocuments(token, caseId, "en");
+        const response = await getLawyerCaseDocuments(token, caseId, "ar");
         
         if (response.status === "success") {
           setCaseData(response.data);
@@ -70,7 +70,7 @@ export default function LawyerCaseFilesPage() {
           }
 
           const caseId = params.id as string;
-          const response = await getLawyerCaseDocuments(token, caseId, "en");
+          const response = await getLawyerCaseDocuments(token, caseId, "ar");
           
           if (response.status === "success") {
             setCaseData(response.data);

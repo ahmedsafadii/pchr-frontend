@@ -7,13 +7,13 @@ type RequestOptions = {
   method?: HttpMethod;
   headers?: Record<string, string>;
   body?: unknown;
-  lang?: string; // language code, e.g., 'en' | 'ar'
+  lang?: string; // language code, e.g., 'ar'
   cache?: RequestCache;
   next?: any;
 };
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = "GET", headers = {}, body, lang = "en", cache, next } = options;
+  const { method = "GET", headers = {}, body, lang = "ar", cache, next } = options;
   const url = `${API_BASE_URL}${path}`;
 
   const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
@@ -160,7 +160,7 @@ export async function updateCaseStatus(
   status: string, 
   notes: string, 
   token: string,
-  lang: string = "en"
+  lang: string = "ar"
 ) {
   return api.put<ApiResponse>(`/lawyer/cases/${caseId}/status/`, {
     status,

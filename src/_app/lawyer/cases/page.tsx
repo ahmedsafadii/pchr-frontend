@@ -496,7 +496,7 @@ function LawyerCasesInner() {
                         </td>
                         <td className="lawyer__table-cell">
                           <span className="lawyer__creation-date">
-                            {formatDateWithLocale(caseItem.created, locale)}
+                            {formatDateWithLocale(caseItem.created)}
                           </span>
                         </td>
                         <td className="lawyer__table-cell">
@@ -541,8 +541,7 @@ function LawyerCasesInner() {
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {formatDateWithLocale(
-                                        caseItem.detainee_date_of_birth,
-                                        locale
+                                        caseItem.detainee_date_of_birth
                                       )}
                                     </span>
                                   </div>
@@ -637,8 +636,7 @@ function LawyerCasesInner() {
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {formatDateWithLocale(
-                                        caseItem.detention_date,
-                                        locale
+                                        caseItem.detention_date
                                       )}
                                     </span>
                                   </div>
@@ -648,8 +646,7 @@ function LawyerCasesInner() {
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {formatDateWithLocale(
-                                        caseItem.created,
-                                        locale
+                                        caseItem.created
                                       )}
                                     </span>
                                   </div>
@@ -659,8 +656,7 @@ function LawyerCasesInner() {
                                     </span>
                                     <span className="lawyer__expanded-value">
                                       {formatDateWithLocale(
-                                        caseItem.updated,
-                                        locale
+                                        caseItem.updated
                                       )}
                                     </span>
                                   </div>

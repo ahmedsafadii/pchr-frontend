@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Husrev Hatti Osmanlica';
+  src: url('/fonts/husrev-hatti-osmanlica.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --container-max-width: 1200px;
   --container-padding: 16px;

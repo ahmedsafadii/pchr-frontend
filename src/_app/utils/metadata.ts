@@ -20,7 +20,7 @@ export async function generateMetadata(
 
   const title = config.title || defaultTitle;
   const description = config.description || defaultDescription;
-  const locale = config.locale || "en";
+  const locale = config.locale || "ar";
 
   const baseUrl = "https://pchr.ps";
   const currentUrl = config.url ? `${baseUrl}${config.url}` : baseUrl;
@@ -80,7 +80,6 @@ export async function generateMetadata(
     alternates: {
       canonical: currentUrl,
       languages: {
-        en: `${baseUrl}/en`,
         ar: `${baseUrl}/ar`,
       },
     },

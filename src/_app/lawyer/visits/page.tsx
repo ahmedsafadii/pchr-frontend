@@ -382,7 +382,7 @@ function LawyerVisitsInner() {
   const formatTime = (timeString: string | null) => {
     if (!timeString) return "—";
     return new Date(`2000-01-01T${timeString}`).toLocaleTimeString(
-      locale === "ar" ? "ar-SA" : "en-US",
+      "ar-SA",
       {
         hour: "2-digit",
         minute: "2-digit",
@@ -542,7 +542,7 @@ function LawyerVisitsInner() {
                         <td className="lawyer__table-cell" data-label="Visit Date">
                           <div className="lawyer__visit-date-wrapper">
                             <span className="lawyer__visit-date">
-                              {formatDateWithLocale(visit.visit_date, locale)}
+                              {formatDateWithLocale(visit.visit_date)}
                             </span>
                             {visit.visit_time && (
                               <span className="lawyer__visit-time">

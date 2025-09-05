@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Head from "./components/Head";
-import { IBM_Plex_Sans_Arabic } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Amiri, Rubik } from "next/font/google";
 import { useLocale } from "next-globe-gen";
 import { ReactNode } from "react";
 import "@/app/css/globals.css";
@@ -11,6 +11,20 @@ const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   weight: ["100", "200", "300", "400", "500", "600", "700"],
   subsets: ["latin", "arabic", "cyrillic-ext", "latin-ext"],
   variable: "--font-ibm-plex-sans-arabic",
+  display: "swap",
+});
+
+const amiri = Amiri({
+  weight: ["400", "700"],
+  subsets: ["arabic", "latin"],
+  variable: "--font-amiri",
+  display: "swap",
+});
+
+const rubik = Rubik({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["arabic", "latin"],
+  variable: "--font-rubik",
   display: "swap",
 });
 
@@ -30,7 +44,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang={locale}>
       <Head />
-      <body className={`${ibmPlexSansArabic.variable} antialiased`}>
+      <body className={`${ibmPlexSansArabic.variable} ${amiri.variable} ${rubik.variable} antialiased`}>
         {/* <div className="overlay">
           <img src="/img/screenshot.png" alt="PCHR" />
         </div> */}

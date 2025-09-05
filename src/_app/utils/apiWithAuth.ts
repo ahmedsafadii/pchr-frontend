@@ -106,7 +106,7 @@ class AuthenticatedApi {
 
     try {
       // Attempt to refresh the token
-      const refreshSuccess = await LawyerAuth.refreshToken(options.lang || 'en');
+      const refreshSuccess = await LawyerAuth.refreshToken(options.lang || 'ar');
       
       if (refreshSuccess) {
         // Token refreshed successfully, process queue and retry original request
@@ -154,12 +154,12 @@ class AuthenticatedApi {
 export const apiWithAuth = new AuthenticatedApi();
 
 // Convenience functions for lawyer-specific API calls with authentication
-export async function getLawyerCases(lang: string = 'en') {
+export async function getLawyerCases(lang: string = 'ar') {
   return apiWithAuth.get<ApiResponse>('/lawyer/cases/', { lang });
 }
 
 export async function getLawyerVisits(
-  lang: string = 'en', 
+  lang: string = 'ar', 
   caseId?: string, 
   params?: {
     page?: number;
@@ -197,11 +197,11 @@ export async function getLawyerVisits(
   return apiWithAuth.get<ApiResponse>(path, { lang });
 }
 
-export async function getLawyerCaseDetails(caseId: string, lang: string = 'en') {
+export async function getLawyerCaseDetails(caseId: string, lang: string = 'ar') {
   return apiWithAuth.get<ApiResponse>(`/lawyer/cases/${caseId}/`, { lang });
 }
 
-export async function getLawyerDashboard(lang: string = 'en') {
+export async function getLawyerDashboard(lang: string = 'ar') {
   return apiWithAuth.get<ApiResponse>('/lawyer/dashboard/', { lang });
 }
 
@@ -213,13 +213,13 @@ export async function requestCaseVisit(
     visit_date: string; // yyyy-mm-dd
     visit_type: string; // e.g., 'legal' | 'follow_up' etc.
   },
-  lang: string = 'en'
+  lang: string = 'ar'
 ) {
   return apiWithAuth.post<ApiResponse>(`/lawyer/cases/${caseId}/visits/request/`, payload, { lang });
 }
 
 export async function getLawyerNotifications(
-  lang: string = 'en',
+  lang: string = 'ar',
   params?: {
     page?: number;
     page_size?: number;
@@ -255,7 +255,7 @@ export async function getLawyerNotifications(
 
 export async function markNotificationAsRead(
   notificationId: string,
-  lang: string = 'en'
+  lang: string = 'ar'
 ) {
   const payload = {
     is_read: true,
@@ -266,7 +266,7 @@ export async function markNotificationAsRead(
 }
 
 export async function markAllNotificationsAsRead(
-  lang: string = 'en'
+  lang: string = 'ar'
 ) {
   const payload = {
     is_read: true,

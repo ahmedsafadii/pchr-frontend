@@ -609,6 +609,27 @@
   margin-bottom: 15px;
 }
 
+.steps__type-input-container {
+  margin-bottom: 15px;
+}
+
+.steps__type-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  transition: border-color 0.3s;
+}
+
+.steps__type-input:focus {
+  outline: none;
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 2px rgba(185, 90, 26, 0.1);
+}
+
+
 .steps__signature-button {
   padding: 8px 16px;
   background: #f8f9fa;

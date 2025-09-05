@@ -1,7 +1,7 @@
 import type { Config } from "next-globe-gen";
 
 const config: Config = {
-  locales: ["en", "ar"],
+  locales: ["ar"],
   defaultLocale: "ar",
 };
 

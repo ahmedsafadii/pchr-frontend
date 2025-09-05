@@ -137,7 +137,7 @@ function LawyerCaseVisitsInner() {
       };
 
       console.log("Fetching visits with params:", params);
-      const response = await getLawyerVisits("en", caseId, params);
+      const response = await getLawyerVisits("ar", caseId, params);
 
       if (response.status === "success" && response.data) {
         setVisits(response.data.visits || []);
@@ -393,7 +393,7 @@ function LawyerCaseVisitsInner() {
   const formatTime = (timeString: string | null) => {
     if (!timeString) return "—";
     return new Date(`2000-01-01T${timeString}`).toLocaleTimeString(
-      locale === "ar" ? "ar-SA" : "en-US",
+      "ar-SA",
       {
         hour: "2-digit",
         minute: "2-digit",
@@ -515,7 +515,7 @@ function LawyerCaseVisitsInner() {
                   <td className="lawyer__table-cell" data-label="Visit Date">
                     <div className="lawyer__visit-date-time">
                       <span className="lawyer__visit-date">
-                        {formatDateWithLocale(visit.visit_date, locale)}
+                        {formatDateWithLocale(visit.visit_date)}
                       </span>
                       {visit.visit_time && (
                         <span className="lawyer__visit-time">
@@ -660,7 +660,7 @@ function LawyerCaseVisitsInner() {
                                 {t("lawyer.visits.expanded.created")}:
                               </span>
                               <span className="lawyer__expanded-value">
-                                {formatDateWithLocale(visit.created, locale)}
+                                {formatDateWithLocale(visit.created)}
                               </span>
                             </div>
                             <div className="lawyer__expanded-item">
@@ -668,7 +668,7 @@ function LawyerCaseVisitsInner() {
                                 {t("lawyer.visits.expanded.updated")}:
                               </span>
                               <span className="lawyer__expanded-value">
-                                {formatDateWithLocale(visit.updated, locale)}
+                                {formatDateWithLocale(visit.updated)}
                               </span>
                             </div>
                           </div>

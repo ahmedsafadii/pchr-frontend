@@ -328,7 +328,7 @@ function LawyerDashboardInner() {
                             {t("lawyer.cases.columns.creationDate")}
                           </span>
                           <span className="lawyer__case-detail-value">
-                            {formatDateWithLocale(caseItem.created, locale)}
+                            {formatDateWithLocale(caseItem.created)}
                           </span>
                         </div>
                       </div>

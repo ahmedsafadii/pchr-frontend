@@ -33,7 +33,7 @@ export const validatePalestinianId = (idNumber: string): boolean => {
 
 /**
  * Gets the appropriate error message for invalid Palestinian ID
- * @param locale - The current locale (en/ar)
+ * @param locale - The current locale (ar)
  * @returns string - The error message
  */
 export const getPalestinianIdErrorMessage = (locale: string): string => {
@@ -44,7 +44,7 @@ export const getPalestinianIdErrorMessage = (locale: string): string => {
 
 /**
  * Gets the tooltip message for Palestinian ID format
- * @param locale - The current locale (en/ar)
+ * @param locale - The current locale (ar)
  * @returns string - The tooltip message
  */
 export const getPalestinianIdTooltip = (locale: string): string => {
@@ -83,7 +83,7 @@ export const validatePalestinianPhone = (phoneNumber: string): boolean => {
 
 /**
  * Gets the appropriate error message for invalid Palestinian phone
- * @param locale - The current locale (en/ar)
+ * @param locale - The current locale (ar)
  * @returns string - The error message
  */
 export const getPalestinianPhoneErrorMessage = (locale: string): string => {
@@ -94,7 +94,7 @@ export const getPalestinianPhoneErrorMessage = (locale: string): string => {
 
 /**
  * Gets the tooltip message for Palestinian phone format
- * @param locale - The current locale (en/ar)
+ * @param locale - The current locale (ar)
  * @returns string - The tooltip message
  */
 export const getPalestinianPhoneTooltip = (locale: string): string => {
@@ -128,7 +128,7 @@ export const validatePalestinianWhatsApp = (whatsappNumber: string): boolean => 
 
 /**
  * Gets the appropriate error message for invalid Palestinian WhatsApp
- * @param locale - The current locale (en/ar)
+ * @param locale - The current locale (ar)
  * @returns string - The error message
  */
 export const getPalestinianWhatsAppErrorMessage = (locale: string): string => {
@@ -139,7 +139,7 @@ export const getPalestinianWhatsAppErrorMessage = (locale: string): string => {
 
 /**
  * Gets the tooltip message for Palestinian WhatsApp format
- * @param locale - The current locale (en/ar)
+ * @param locale - The current locale (ar)
  * @returns string - The tooltip message
  */
 export const getPalestinianWhatsAppTooltip = (locale: string): string => {

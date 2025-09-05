@@ -12,7 +12,7 @@ Formats a date to the specified format:
 
 **Parameters:**
 - `date`: Date to format (Date object or date string)
-- `locale`: Locale to use for formatting ('en' or 'ar')
+- `locale`: Locale to use for formatting ('ar')
 
 **Returns:** Formatted date string
 
@@ -21,7 +21,6 @@ Formats a date to the specified format:
 import { formatDate } from '../utils/dateUtils';
 
 const date = new Date('2025-01-15');
-const englishDate = formatDate(date, 'en'); // "15 Jan 2025"
 const arabicDate = formatDate(date, 'ar'); // "15 يناير 2025"
 ```
 
@@ -69,7 +68,7 @@ import { formatDate } from '../utils/dateUtils';
 
 // Format current date
 const today = new Date();
-const formattedToday = formatDate(today, 'en'); // "15 Dec 2024"
+const formattedToday = formatDate(today, 'ar'); // "15 ديسمبر 2024"
 
 // Format from string
 const dateString = '2025-03-20';
@@ -97,7 +96,7 @@ function VisitCard({ visitDate }) {
 import { formatDate } from '../utils/dateUtils';
 
 try {
-  const formattedDate = formatDate('invalid-date', 'en');
+  const formattedDate = formatDate('invalid-date', 'ar');
 } catch (error) {
   console.error('Invalid date provided:', error.message);
   // Handle invalid date gracefully

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations, useLocale } from "next-globe-gen";
+import { useTranslations } from "next-globe-gen";
 import { IconFileText, IconDownload } from "@tabler/icons-react";
 import { formatDateWithLocale } from "../../../utils/dateUtils";
 
@@ -16,7 +16,6 @@ export default function DisappearanceInfo({
   documentsData,
 }: DisappearanceInfoProps) {
   const t = useTranslations();
-  const locale = useLocale();
   return (
     <div className="case-info">
       <h2 className="case-info__title">{t("trackCase.info.title")}</h2>
@@ -64,8 +63,7 @@ export default function DisappearanceInfo({
               <dd>
                 {caseData?.detainee_date_of_birth
                   ? formatDateWithLocale(
-                      caseData.detainee_date_of_birth,
-                      locale
+                      caseData.detainee_date_of_birth
                     )
                   : t("common.notAvailable")}
               </dd>
@@ -127,7 +125,7 @@ export default function DisappearanceInfo({
               <dt>{t("trackCase.info.disappearanceDate")}</dt>
               <dd>
                 {caseData?.detention_date
-                  ? formatDateWithLocale(caseData.detention_date, locale)
+                  ? formatDateWithLocale(caseData.detention_date)
                   : t("common.notAvailable")}
               </dd>
             </div>

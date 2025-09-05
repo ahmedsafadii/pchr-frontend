@@ -90,7 +90,7 @@ export class LawyerAuth {
   /**
    * Logout with API call to invalidate tokens on server
    */
-  static async logout(lang: string = 'en'): Promise<void> {
+  static async logout(lang: string = 'ar'): Promise<void> {
     const refreshToken = this.getRefreshToken();
     
     // Clear local tokens first
@@ -129,7 +129,7 @@ export class LawyerAuth {
   /**
    * Refresh the access token using the refresh token
    */
-  static async refreshToken(lang: string = 'en'): Promise<boolean> {
+  static async refreshToken(lang: string = 'ar'): Promise<boolean> {
     const refreshToken = this.getRefreshToken();
     
     if (!refreshToken) {
