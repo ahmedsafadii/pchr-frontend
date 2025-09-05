@@ -718,13 +718,10 @@ export default function NewCasePage({ locale = "ar" }) {
                           {getStepStatus(step.id) === "current" && (
                             <StepIcon size={18} />
                           )}
-                          {getStepStatus(step.id) === "pending" && step.id === currentStep && (
-                            <StepIcon size={18} />
-                          )}
-                          {getStepStatus(step.id) === "pending" && step.id !== currentStep && step.id === 6 && (completedSteps.includes(5) || canGoToNext(5)) && (
+                          {getStepStatus(step.id) === "pending" && step.id === 6 && (completedSteps.includes(5) || canGoToNext(5)) && (
                             <IconScale size={18} />
                           )}
-                          {getStepStatus(step.id) === "pending" && step.id !== currentStep && !(step.id === 6 && (completedSteps.includes(5) || canGoToNext(5))) && (
+                          {getStepStatus(step.id) === "pending" && !(step.id === 6 && (completedSteps.includes(5) || canGoToNext(5))) && (
                             step.id
                           )}
                         </div>
