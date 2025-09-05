@@ -95,6 +95,13 @@ export default function DisappearanceInfo({
               </dd>
             </div>
             <div className="case-info__row">
+              <dt>{(t as any)("trackCase.info.gender")}</dt>
+              <dd>
+                {caseData?.detainee_gender_display ||
+                  t("common.notAvailable")}
+              </dd>
+            </div>
+            <div className="case-info__row">
               <dt>{(t as any)("trackCase.info.location")}</dt>
               <dd>
                 {caseData

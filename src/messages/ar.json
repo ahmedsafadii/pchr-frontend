@@ -94,12 +94,14 @@
       "jobPlaceholder": "مثل: عامل",
       "healthStatus": "الحالة الصحية",
       "maritalStatus": "الحالة الاجتماعية",
+      "gender": "الجنس",
       "errors": {
         "fullNameRequired": "مطلوب إسم المعتقل / المختفي رباعي",
         "idNumberRequired": "رقم الهوية مطلوب",
         "dateOfBirthRequired": "تاريخ الميلاد مطلوب",
         "healthStatusRequired": "الحالة الصحية مطلوبة",
         "maritalStatusRequired": "الحالة الاجتماعية مطلوبة",
+        "genderRequired": "الجنس مطلوب",
         "locationRequired": "الموقع مطلوب",
         "localityRequired": "المنطقة مطلوبة",
         "governorateRequired": "المحافظة مطلوبة",
@@ -299,6 +301,7 @@
       "id": "رقم الهوية",
       "health": "الحالة الصحية",
       "marital": "الحالة الاجتماعية",
+      "gender": "الجنس",
       "location": "الموقع",
       "street": "الشارع",
       "detention": "تفاصيل الإعتقال / الإختفاء",
@@ -468,6 +471,7 @@
         "healthyStatus": "الحالة الصحية",
         "job": "المهنة",
         "maritalStatus": "الحالة الاجتماعية",
+        "gender": "الجنس",
         "location": "الموقع"
       },
       "detentionInfo": {

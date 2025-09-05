@@ -64,10 +64,28 @@ export default function Step4({
   }, [externalErrors]);
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    const updatedFormData = {
+    let updatedFormData = {
       ...formData,
       [field]: value,
     };
+    
+    // Reset dependent fields when parent field changes
+    if (field === 'authorized_another_party' && value === false) {
+      // Reset previous_delegation and delegation_date when authorized_another_party is false
+      updatedFormData = {
+        ...updatedFormData,
+        previous_delegation: false,
+        delegation_date: null,
+      };
+    }
+    
+    if (field === 'previous_delegation' && value === false) {
+      // Reset delegation_date when previous_delegation is false
+      updatedFormData = {
+        ...updatedFormData,
+        delegation_date: null,
+      };
+    }
     
     setFormData(updatedFormData);
     
@@ -94,6 +112,16 @@ export default function Step4({
     // Only require previous_delegation if authorized_another_party is true
     if (formData.authorized_another_party && typeof formData.previous_delegation !== 'boolean') {
       newErrors.previousDelegation = t("newCase.step4.errors.required");
+    }
+
+    // Require organisation_name if authorized_another_party is true
+    if (formData.authorized_another_party && (!formData.organisation_name || formData.organisation_name.trim() === '')) {
+      newErrors.organisationName = t("newCase.step4.errors.required");
+    }
+
+    // Require delegation_date if previous_delegation is true
+    if (formData.previous_delegation && (!formData.delegation_date || formData.delegation_date.trim() === '')) {
+      newErrors.delegationDate = t("newCase.step4.errors.required");
     }
 
     setErrors(newErrors);
@@ -152,14 +180,20 @@ export default function Step4({
                 <div className="steps__form-group">
                   <label className="steps__label">
                     {t("newCase.step4.organisationName")}
+                    {formData.authorized_another_party && (
+                      <span className="steps__required"> *</span>
+                    )}
                   </label>
                   <input
                     type="text"
-                    className="steps__input"
+                    className={`steps__input ${errors.organisationName ? 'steps__input--error' : ''}`}
                     placeholder={t("newCase.step4.organisationNamePlaceholder")}
                     value={formData.organisation_name}
                     onChange={(e) => handleInputChange("organisation_name", e.target.value)}
                   />
+                  {errors.organisationName && (
+                    <span className="steps__error">{errors.organisationName}</span>
+                  )}
                 </div>
 
                 <div className="steps__form-group">
@@ -186,6 +220,7 @@ export default function Step4({
                   <div className="steps__form-group">
                     <label className="steps__label">
                       {t("newCase.step4.date")}
+                      <span className="steps__required"> *</span>
                     </label>
                     <div className="steps__input-wrapper">
                       <LocalizedDatePicker
@@ -206,9 +241,12 @@ export default function Step4({
                         showYearDropdown
                         scrollableYearDropdown
                         yearDropdownItemNumber={100}
-                        className="steps__input"
+                        className={`steps__input ${errors.delegationDate ? 'steps__input--error' : ''}`}
                       />
                     </div>
+                    {errors.delegationDate && (
+                      <span className="steps__error">{errors.delegationDate}</span>
+                    )}
                   </div>
                 )}
               </>

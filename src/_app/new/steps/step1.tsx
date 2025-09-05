@@ -113,6 +113,11 @@ export default function Step1({
           lowerMsg.includes("detainee_job")
         ) {
           newErrors.job = errorMsg;
+        } else if (
+          lowerMsg.includes("gender") ||
+          lowerMsg.includes("detainee_gender")
+        ) {
+          newErrors.gender = errorMsg;
         }
       });
 
@@ -167,6 +172,9 @@ export default function Step1({
     if (!formData.detainee_marital_status.trim())
       newErrors.maritalStatus = t("newCase.step1.errors.maritalStatusRequired");
 
+    if (!formData.detainee_gender.trim())
+      newErrors.gender = t("newCase.step1.errors.genderRequired");
+
     if (!formData.detainee_location.trim())
       newErrors.location = t("newCase.step1.errors.locationRequired");
 
@@ -201,6 +209,10 @@ export default function Step1({
   );
   const jobOptions = useMemo(
     () => (constants?.data?.jobs as any[]) || [],
+    [constants]
+  );
+  const genderOptions = useMemo(
+    () => (constants?.data?.genders as any[]) || [],
     [constants]
   );
 
@@ -335,7 +347,10 @@ export default function Step1({
                 fullWidth
               />
             </div>
+          </div>
 
+          {/* Three-column row for health status, marital status, and gender */}
+          <div className="steps__form-row steps__form-row--three-col">
             <div className="steps__form-group">
               <label className="steps__label">
                 {t("newCase.step1.healthStatus")}{" "}
@@ -385,6 +400,32 @@ export default function Step1({
               />
               {errors.maritalStatus && (
                 <span className="steps__error">{errors.maritalStatus}</span>
+              )}
+            </div>
+
+            <div className="steps__form-group">
+              <label className="steps__label">
+                {t("newCase.step1.gender")}{" "}
+                <span className="steps__required">*</span>
+              </label>
+              <CustomSelect
+                options={genderOptions}
+                labelKey="name"
+                valueKey="id"
+                value={formData.detainee_gender}
+                onChange={(value) =>
+                  handleInputChange("detainee_gender", value)
+                }
+                placeholder={`${t("newCase.common.choose")} ${t(
+                  "newCase.step1.gender"
+                )}`}
+                isError={!!errors.gender}
+                isDisabled={isConstantsLoading || !constants}
+                instanceId="step1-gender-select"
+                fullWidth
+              />
+              {errors.gender && (
+                <span className="steps__error">{errors.gender}</span>
               )}
             </div>
           </div>

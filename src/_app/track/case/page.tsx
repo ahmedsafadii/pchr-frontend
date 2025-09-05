@@ -38,6 +38,7 @@ export interface CaseDetailsData {
   detainee_health_status_display: string;
   detainee_job_display: string;
   detainee_marital_status_display: string;
+  detainee_gender_display: string;
   detainee_locality: LocationData;
   detainee_governorate: LocationData;
   detainee_district: DistrictData;

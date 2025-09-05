@@ -103,6 +103,7 @@
       "id": "ID Number",
       "health": "Healthy Status",
       "marital": "Marital Status",
+      "gender": "Gender",
       "location": "Location",
       "street": "Street",
       "detention": "Detention/Disappearance Info",
@@ -155,12 +156,14 @@
       "jobPlaceholder": "Like: Worker",
       "healthStatus": "Health Status",
       "maritalStatus": "Marital Status",
+      "gender": "Gender",
       "errors": {
         "fullNameRequired": "Full name is required",
         "idNumberRequired": "ID number is required",
         "dateOfBirthRequired": "Date of birth is required",
         "healthStatusRequired": "Health status is required",
         "maritalStatusRequired": "Marital status is required",
+        "genderRequired": "Gender is required",
         "locationRequired": "Location is required",
         "localityRequired": "Locality is required",
         "governorateRequired": "Governorate is required",
@@ -470,6 +473,7 @@
         "healthyStatus": "Health Status",
         "job": "Job",
         "maritalStatus": "Marital Status",
+        "gender": "Gender",
         "location": "Location"
       },
       "detentionInfo": {

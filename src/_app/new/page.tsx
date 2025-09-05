@@ -30,6 +30,7 @@ export interface CaseData {
     detainee_job: string; // store job id
     detainee_health_status: string;
     detainee_marital_status: string;
+    detainee_gender: string;
     detainee_location: string;
     detainee_locality: string;
     detainee_governorate: string;
@@ -141,6 +142,7 @@ const initialCaseData: CaseData = {
     detainee_job: "",
     detainee_health_status: "",
     detainee_marital_status: "",
+    detainee_gender: "",
     detainee_location: "gaza_strip",
     detainee_locality: "",
     detainee_governorate: "",
@@ -382,7 +384,7 @@ export default function NewCasePage({ locale = "ar" }) {
     // clear field maps when implemented
   };
 
-  const canGoToNext = (stepNumber: number) => {
+  const canGoToNext = (stepNumber: number): boolean => {
     // For step 1, check if all required fields are filled
     if (stepNumber === 1) {
       const detaineeInfo = caseData.detaineeInfo;
@@ -392,6 +394,7 @@ export default function NewCasePage({ locale = "ar" }) {
         detaineeInfo?.detainee_date_of_birth?.trim() !== "" &&
         detaineeInfo?.detainee_health_status?.trim() !== "" &&
         detaineeInfo?.detainee_marital_status?.trim() !== "" &&
+        detaineeInfo?.detainee_gender?.trim() !== "" &&
         detaineeInfo?.detainee_location?.trim() !== "" &&
         detaineeInfo?.detainee_locality?.trim() !== "" &&
         detaineeInfo?.detainee_governorate?.trim() !== "" &&
@@ -425,10 +428,33 @@ export default function NewCasePage({ locale = "ar" }) {
     // For step 4, check if all required fields are filled
     if (stepNumber === 4) {
       const delegationInfo = caseData.delegationInfo;
-      const isValid =
-        typeof delegationInfo?.authorized_another_party === "boolean" &&
-        typeof delegationInfo?.previous_delegation === "boolean";
-      return isValid;
+      
+      // Always require authorized_another_party to be answered
+      if (typeof delegationInfo?.authorized_another_party !== "boolean") {
+        return false;
+      }
+      
+      // If authorized_another_party is true, check additional requirements
+      if (delegationInfo.authorized_another_party) {
+        // Require organisation_name
+        if (!delegationInfo.organisation_name || delegationInfo.organisation_name.trim() === '') {
+          return false;
+        }
+        
+        // Require previous_delegation to be answered
+        if (typeof delegationInfo.previous_delegation !== "boolean") {
+          return false;
+        }
+        
+        // If previous_delegation is true, require delegation_date
+        if (delegationInfo.previous_delegation) {
+          if (!delegationInfo.delegation_date || delegationInfo.delegation_date.trim() === '') {
+            return false;
+          }
+        }
+      }
+      
+      return true;
     }
 
     // For step 5, require detainee and client ID documents to be uploaded

@@ -33,6 +33,7 @@ interface CaseData {
   detainee_locality?: string | { name?: string } | null;
   detainee_governorate?: string | { name?: string } | null;
   detainee_marital_status_display?: string;
+  detainee_gender_display?: string;
   // Disappearance-specific fields (optional to be resilient to API variations)
   disappearance_status?: string;
   disappearance_status_display?: string;
@@ -280,6 +281,15 @@ export default function LawyerCaseDetailsPage() {
             </div>
             <div className="lawyer__info-value">
               {caseData.detainee_marital_status || "-"}
+            </div>
+          </div>
+          {/* Gender */}
+          <div className="lawyer__info-item">
+            <div className="lawyer__info-label">
+              {t("lawyer.caseDetails.detaineeInfo.gender")}
+            </div>
+            <div className="lawyer__info-value">
+              {caseData.detainee_gender_display || "-"}
             </div>
           </div>
           {/* Location */}
