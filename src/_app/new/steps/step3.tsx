@@ -12,6 +12,9 @@ import {
   validatePalestinianId,
   getPalestinianIdErrorMessage,
   getPalestinianIdTooltip,
+  validatePalestinianWhatsApp,
+  getPalestinianWhatsAppErrorMessage,
+  getPalestinianWhatsAppTooltip,
 } from "../../utils/validation";
 import { defaultTooltipProps, createTooltipProps, tooltipIconClasses } from "../../utils/tooltip";
 import { useTranslations } from "next-globe-gen";
@@ -65,6 +68,8 @@ export default function Step3({
           newErrors.client_name = errorMsg;
         } else if (lowerMsg.includes('phone') || lowerMsg.includes('client_phone')) {
           newErrors.client_phone = errorMsg;
+        } else if (lowerMsg.includes('whatsapp') || lowerMsg.includes('client_whatsapp')) {
+          newErrors.client_whatsapp = errorMsg;
         } else if (lowerMsg.includes('relationship') || lowerMsg.includes('client_relationship')) {
           newErrors.client_relationship = errorMsg;
         }
@@ -104,6 +109,9 @@ export default function Step3({
 
     if (!formData.client_phone.trim()) newErrors.client_phone = t("newCase.step3.errors.client_phone_required");
     else if (!validatePalestinianPhone(formData.client_phone)) newErrors.client_phone = getPalestinianPhoneErrorMessage(locale);
+
+    if (!formData.client_whatsapp.trim()) newErrors.client_whatsapp = t("newCase.step3.errors.client_whatsapp_required");
+    else if (!validatePalestinianWhatsApp(formData.client_whatsapp)) newErrors.client_whatsapp = getPalestinianWhatsAppErrorMessage(locale);
 
     if (!formData.client_relationship.trim()) newErrors.client_relationship = t("newCase.step3.errors.client_relationship_required");
 
@@ -203,6 +211,35 @@ export default function Step3({
               )}
               <Tooltip 
                 id="phone-number-tooltip"
+                {...defaultTooltipProps}
+              />
+            </div>
+
+            <div className="steps__form-group">
+              <label className="steps__label">
+                {t("newCase.step3.whatsappNumber")} {" "}
+                <span className="steps__required">*</span>
+                <IconInfoCircle 
+                  size={16} 
+                  className={tooltipIconClasses}
+                  {...createTooltipProps("whatsapp-number-tooltip", getPalestinianWhatsAppTooltip(locale))}
+                />
+              </label>
+              <div className="steps__input-wrapper">
+                <input
+                  type="tel"
+                  className={`steps__input ${errors.client_whatsapp ? "steps__input--error" : ""}`}
+                  placeholder={t("newCase.step3.whatsappNumberPlaceholder")}
+                  value={formData.client_whatsapp}
+                  onChange={(e) => handleInputChange("client_whatsapp", e.target.value)}
+                  maxLength={15}
+                />
+              </div>
+              {errors.client_whatsapp && (
+                <span className="steps__error">{errors.client_whatsapp}</span>
+              )}
+              <Tooltip 
+                id="whatsapp-number-tooltip"
                 {...defaultTooltipProps}
               />
             </div>

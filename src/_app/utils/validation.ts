@@ -102,3 +102,48 @@ export const getPalestinianPhoneTooltip = (locale: string): string => {
     ? "رقم الهاتف الفلسطيني يجب أن يبدأ بـ 059 أو 056 (مثال: 0591234567)"
     : "Palestinian phone number must start with 059 or 056 (example: 0591234567)";
 };
+
+/**
+ * Palestinian WhatsApp Number Format:
+ * - Must start with +970 or +972
+ * - Followed by 59 or 56
+ * - Followed by exactly 7 digits
+ * - Total: +97059XXXXXXX / +97056XXXXXXX / +97259XXXXXXX / +97256XXXXXXX
+ */
+
+export const PALESTINIAN_WHATSAPP_REGEX = /^\+970(59|56)[0-9]{7}$|^\+972(59|56)[0-9]{7}$/;
+
+/**
+ * Validates Palestinian WhatsApp number format
+ * @param whatsappNumber - The WhatsApp number to validate
+ * @returns boolean - true if valid format
+ */
+export const validatePalestinianWhatsApp = (whatsappNumber: string): boolean => {
+  // Remove any spaces, dashes, or other formatting
+  const cleanWhatsApp = whatsappNumber.replace(/[\s\-\(\)]/g, '');
+  
+  // Check if it matches the Palestinian WhatsApp pattern
+  return PALESTINIAN_WHATSAPP_REGEX.test(cleanWhatsApp);
+};
+
+/**
+ * Gets the appropriate error message for invalid Palestinian WhatsApp
+ * @param locale - The current locale (en/ar)
+ * @returns string - The error message
+ */
+export const getPalestinianWhatsAppErrorMessage = (locale: string): string => {
+  return locale === "ar" 
+    ? "رقم الواتساب يجب أن يبدأ بـ +970 أو +972 متبوعاً بـ 59 أو 56 و7 أرقام"
+    : "WhatsApp number must start with +970 or +972 followed by 59 or 56 and 7 digits";
+};
+
+/**
+ * Gets the tooltip message for Palestinian WhatsApp format
+ * @param locale - The current locale (en/ar)
+ * @returns string - The tooltip message
+ */
+export const getPalestinianWhatsAppTooltip = (locale: string): string => {
+  return locale === "ar"
+    ? "رقم الواتساب الفلسطيني يجب أن يبدأ بـ +970 أو +972 متبوعاً بـ 59 أو 56 (مثال: +970591234567)"
+    : "Palestinian WhatsApp number must start with +970 or +972 followed by 59 or 56 (example: +970591234567)";
+};

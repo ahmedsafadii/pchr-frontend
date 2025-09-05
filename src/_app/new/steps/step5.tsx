@@ -17,7 +17,6 @@ interface Step5Props {
   currentStep: number;
   totalSteps: number;
   locale?: string;
-  externalErrors?: string[];
 }
 
 interface UploadedFile {
@@ -37,7 +36,6 @@ export default function Step5({
   onNext,
   onPrevious,
   currentStep,
-  externalErrors = [],
 }: Step5Props) {
   const t = useTranslations();
   const [detaineeIdFiles, setDetaineeIdFiles] = useState<UploadedFile[]>([]);
@@ -285,17 +283,6 @@ export default function Step5({
     updateDocuments,
   ]);
 
-  // Handle external errors from API validation
-  const [documentErrors, setDocumentErrors] = useState<string[]>([]);
-  
-  useEffect(() => {
-    if (externalErrors.length > 0) {
-      setDocumentErrors(externalErrors);
-    }
-  }, [externalErrors]);
-
-  // Drop handlers moved into Uploader
-
   const removeDetaineeIdFile = (fileId: string) => {
     setDetaineeIdFiles((prev) => prev.filter((file) => file.id !== fileId));
   };
@@ -311,13 +298,12 @@ export default function Step5({
   // File size formatting handled in Uploader
 
   const validateForm = () => {
-    // Require at least one uploaded (status==='uploaded') file for detainee and client IDs
-    const detaineeUploadedIds = getUploadedIds(detaineeIdFiles);
+    // Require at least one uploaded (status==='uploaded') file for client ID only
+    // Detainee ID is now optional
     const clientUploadedIds = getUploadedIds(clientIdFiles);
-    const hasDetaineeId = detaineeUploadedIds.length > 0;
     const hasClientId = clientUploadedIds.length > 0;
 
-    return hasDetaineeId && hasClientId;
+    return hasClientId;
   };
 
   const handleNext = () => {
@@ -362,34 +348,6 @@ export default function Step5({
       </header>
 
       <form className="steps__form" onSubmit={(e) => e.preventDefault()}>
-        {documentErrors.length > 0 && (
-          <div className="steps__section">
-            {documentErrors.map((error, idx) => (
-              <div key={idx} className="steps__error" style={{ marginBottom: '10px' }}>
-                {error}
-              </div>
-            ))}
-          </div>
-        )}
-        {/* Detainee ID Section */}
-        <section className="steps__section">
-          <h3 className="steps__section-title">
-            {t("newCase.step5.detaineeIdTitle")}{" "}
-            <span className="steps__required">*</span>
-          </h3>
-
-          <Uploader
-            documentTypeId={detaineeIdType}
-            multiple={false}
-            files={detaineeIdFiles as any}
-            setFiles={setDetaineeIdFiles}
-            onRemove={removeDetaineeIdFile}
-            dropzoneText={t("newCase.step5.dropzone.text")}
-            dropzoneHint={t("newCase.step5.dropzone.hint")}
-            instanceId="detainee-id"
-          />
-        </section>
-
         {/* Client ID Section */}
         <section className="steps__section">
           <h3 className="steps__section-title">
@@ -406,6 +364,24 @@ export default function Step5({
             dropzoneText={t("newCase.step5.dropzone.text")}
             dropzoneHint={t("newCase.step5.dropzone.hint")}
             instanceId="client-id"
+          />
+        </section>
+
+        {/* Detainee ID Section */}
+        <section className="steps__section">
+          <h3 className="steps__section-title">
+            {t("newCase.step5.detaineeIdTitle")}
+          </h3>
+
+          <Uploader
+            documentTypeId={detaineeIdType}
+            multiple={false}
+            files={detaineeIdFiles as any}
+            setFiles={setDetaineeIdFiles}
+            onRemove={removeDetaineeIdFile}
+            dropzoneText={t("newCase.step5.dropzone.text")}
+            dropzoneHint={t("newCase.step5.dropzone.hint")}
+            instanceId="detainee-id"
           />
         </section>
 

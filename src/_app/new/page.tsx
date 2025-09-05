@@ -55,6 +55,7 @@ export interface CaseData {
     client_name: string;
     client_id: string;
     client_phone: string;
+    client_whatsapp: string;
     client_relationship: string;
   };
 
@@ -163,6 +164,7 @@ const initialCaseData: CaseData = {
     client_name: "",
     client_id: "",
     client_phone: "",
+    client_whatsapp: "",
     client_relationship: "",
   },
   documents: {
@@ -421,6 +423,7 @@ export default function NewCasePage({ locale = "ar" }) {
         clientInfo?.client_name?.trim() !== "" &&
         clientInfo?.client_id?.trim() !== "" &&
         clientInfo?.client_phone?.trim() !== "" &&
+        clientInfo?.client_whatsapp?.trim() !== "" &&
         clientInfo?.client_relationship?.trim() !== "";
       return isValid;
     }
@@ -457,18 +460,16 @@ export default function NewCasePage({ locale = "ar" }) {
       return true;
     }
 
-    // For step 5, require detainee and client ID documents to be uploaded
+    // For step 5, require only client ID document to be uploaded
+    // Detainee ID is now optional
     if (stepNumber === 5) {
       const documents = caseData.documents;
       // Check both document IDs and metadata for uploaded files
-      const hasDetaineeId =
-        !!documents?.detainee_document_id ||
-        !!documents?.display_meta?.detainee_id?.id;
       const hasClientId =
         !!documents?.client_document_id ||
         !!documents?.display_meta?.client_id?.id;
 
-      return hasDetaineeId && hasClientId;
+      return hasClientId;
     }
 
     // For other steps, check if step is completed
@@ -488,9 +489,11 @@ export default function NewCasePage({ locale = "ar" }) {
   };
 
   const goToStep = (stepNumber: number) => {
-    // Allow navigation to completed steps, current step, or the next step after a completed step
+    // Allow navigation to completed steps, error steps, current step, or the next step after a completed step
     if (stepNumber >= 1 && stepNumber <= steps.length) {
-      if (completedSteps.includes(stepNumber) || stepNumber === currentStep) {
+      if (completedSteps.includes(stepNumber) || 
+          errorSteps.includes(stepNumber) || 
+          stepNumber === currentStep) {
         setCurrentStep(stepNumber);
       } else if (stepNumber === currentStep + 1 && canGoToNext(currentStep)) {
         // Allow going to next step if current step can proceed
@@ -592,6 +595,7 @@ export default function NewCasePage({ locale = "ar" }) {
                             step.id
                           )} ${
                             getStepStatus(step.id) === "completed" ||
+                            getStepStatus(step.id) === "error" ||
                             (step.id === currentStep + 1 &&
                               canGoToNext(currentStep))
                               ? "new-case__step-circle--clickable"
@@ -599,6 +603,8 @@ export default function NewCasePage({ locale = "ar" }) {
                           }`}
                           onClick={() => {
                             if (getStepStatus(step.id) === "completed") {
+                              goToStep(step.id);
+                            } else if (getStepStatus(step.id) === "error") {
                               goToStep(step.id);
                             } else if (
                               step.id === currentStep + 1 &&
@@ -610,6 +616,7 @@ export default function NewCasePage({ locale = "ar" }) {
                           style={{
                             cursor:
                               getStepStatus(step.id) === "completed" ||
+                              getStepStatus(step.id) === "error" ||
                               (step.id === currentStep + 1 &&
                                 canGoToNext(currentStep))
                                 ? "pointer"
@@ -617,6 +624,7 @@ export default function NewCasePage({ locale = "ar" }) {
                           }}
                           role={
                             getStepStatus(step.id) === "completed" ||
+                            getStepStatus(step.id) === "error" ||
                             (step.id === currentStep + 1 &&
                               canGoToNext(currentStep))
                               ? "button"
@@ -624,6 +632,7 @@ export default function NewCasePage({ locale = "ar" }) {
                           }
                           tabIndex={
                             getStepStatus(step.id) === "completed" ||
+                            getStepStatus(step.id) === "error" ||
                             (step.id === currentStep + 1 &&
                               canGoToNext(currentStep))
                               ? 0
@@ -631,6 +640,7 @@ export default function NewCasePage({ locale = "ar" }) {
                           }
                           aria-label={
                             getStepStatus(step.id) === "completed" ||
+                            getStepStatus(step.id) === "error" ||
                             (step.id === currentStep + 1 &&
                               canGoToNext(currentStep))
                               ? `Go to step ${step.id}: ${step.title}`
@@ -639,6 +649,7 @@ export default function NewCasePage({ locale = "ar" }) {
                           onKeyDown={(e) => {
                             if (
                               (getStepStatus(step.id) === "completed" ||
+                                getStepStatus(step.id) === "error" ||
                                 (step.id === currentStep + 1 &&
                                   canGoToNext(currentStep))) &&
                               (e.key === "Enter" || e.key === " ")
@@ -670,6 +681,7 @@ export default function NewCasePage({ locale = "ar" }) {
                       <div
                         className={`new-case__step-content ${
                           getStepStatus(step.id) === "completed" ||
+                          getStepStatus(step.id) === "error" ||
                           (step.id === currentStep + 1 &&
                             canGoToNext(currentStep))
                             ? "new-case__step-content--clickable"
@@ -677,6 +689,8 @@ export default function NewCasePage({ locale = "ar" }) {
                         }`}
                         onClick={() => {
                           if (getStepStatus(step.id) === "completed") {
+                            goToStep(step.id);
+                          } else if (getStepStatus(step.id) === "error") {
                             goToStep(step.id);
                           } else if (
                             step.id === currentStep + 1 &&
@@ -688,6 +702,7 @@ export default function NewCasePage({ locale = "ar" }) {
                         style={{
                           cursor:
                             getStepStatus(step.id) === "completed" ||
+                            getStepStatus(step.id) === "error" ||
                             (step.id === currentStep + 1 &&
                               canGoToNext(currentStep))
                               ? "pointer"
@@ -695,6 +710,7 @@ export default function NewCasePage({ locale = "ar" }) {
                         }}
                         role={
                           getStepStatus(step.id) === "completed" ||
+                          getStepStatus(step.id) === "error" ||
                           (step.id === currentStep + 1 &&
                             canGoToNext(currentStep))
                             ? "button"
@@ -702,6 +718,7 @@ export default function NewCasePage({ locale = "ar" }) {
                         }
                         tabIndex={
                           getStepStatus(step.id) === "completed" ||
+                          getStepStatus(step.id) === "error" ||
                           (step.id === currentStep + 1 &&
                             canGoToNext(currentStep))
                             ? 0
@@ -709,6 +726,7 @@ export default function NewCasePage({ locale = "ar" }) {
                         }
                         aria-label={
                           getStepStatus(step.id) === "completed" ||
+                          getStepStatus(step.id) === "error" ||
                           (step.id === currentStep + 1 &&
                             canGoToNext(currentStep))
                             ? `Go to step ${step.id}: ${step.title}`
@@ -717,6 +735,7 @@ export default function NewCasePage({ locale = "ar" }) {
                         onKeyDown={(e) => {
                           if (
                             (getStepStatus(step.id) === "completed" ||
+                              getStepStatus(step.id) === "error" ||
                               (step.id === currentStep + 1 &&
                                 canGoToNext(currentStep))) &&
                             (e.key === "Enter" || e.key === " ")

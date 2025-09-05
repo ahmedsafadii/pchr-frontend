@@ -208,11 +208,14 @@
       "idNumberPlaceholder": "Ex: 123456789",
       "phoneNumber": "Phone Number",
       "phoneNumberPlaceholder": "0591234567",
+      "whatsappNumber": "WhatsApp Number",
+      "whatsappNumberPlaceholder": "+970591234567",
       "relationship": "Relationship",
       "errors": {
         "client_name_required": "Full name is required",
         "client_id_required": "ID number is required",
         "client_phone_required": "Phone number is required",
+        "client_whatsapp_required": "WhatsApp number is required",
         "client_relationship_required": "Relationship is required"
       }
     },

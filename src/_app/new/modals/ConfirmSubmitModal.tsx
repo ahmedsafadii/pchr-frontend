@@ -23,16 +23,16 @@ export default function ConfirmSubmitModal({
         </h3>
         <div className="confirm__actions">
           <button
-            className="confirm__btn confirm__btn--secondary"
-            onClick={onCancel}
-          >
-            {t("newCase.submitModals.confirm.no")}
-          </button>
-          <button
             className="confirm__btn confirm__btn--primary"
             onClick={onConfirm}
           >
             {t("newCase.submitModals.confirm.yes")}
+          </button>
+          <button
+            className="confirm__btn confirm__btn--secondary"
+            onClick={onCancel}
+          >
+            {t("newCase.submitModals.confirm.no")}
           </button>
         </div>
       </div>

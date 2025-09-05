@@ -568,7 +568,7 @@
 }
 
 .steps__legal-document {
-  margin-bottom: 20px;
+  margin-bottom: 0px;
 }
 
 .steps__legal-textarea {
@@ -578,7 +578,6 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 14px;
-  font-family: "Courier New", monospace;
   background: #f8f9fa;
   resize: vertical;
   margin-bottom: 10px;
@@ -600,7 +599,7 @@
 }
 
 .steps__download-button:hover {
-  background: #b85a1a;
+  color: #b85a1a;
 }
 
 .steps__signature-controls {
@@ -618,6 +617,11 @@
   cursor: pointer;
   transition: all 0.3s;
   margin-right: 8px;
+}
+
+html[lang="ar"] .steps__signature-button {
+  margin-right: 0;
+  margin-left: 8px;
 }
 
 .steps__signature-button:hover {

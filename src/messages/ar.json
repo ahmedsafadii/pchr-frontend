@@ -145,11 +145,14 @@
       "idNumberPlaceholder": "مثال: 123456789",
       "phoneNumber": "رقم الهاتف",
       "phoneNumberPlaceholder": "0591234567",
+      "whatsappNumber": "رقم الواتساب",
+      "whatsappNumberPlaceholder": "+970591234567",
       "relationship": "صلة القرابة",
       "errors": {
         "client_name_required": "مطلوب إسم مُقدم البلاغ رباعي",
         "client_id_required": "رقم الهوية مطلوب",
         "client_phone_required": "رقم الهاتف مطلوب",
+        "client_whatsapp_required": "رقم الواتساب مطلوب",
         "client_relationship_required": "صلة القرابة مطلوبة"
       }
     },

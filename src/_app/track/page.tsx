@@ -67,11 +67,10 @@ function TrackInner() {
         setStep("verify");
         setResendAt(Date.now() + 60_000); // Still use 60s for resend button
       } catch (error: any) {
-        console.error("Tracking request error:", error);
 
         // Handle API error response
-        if (error.payload?.error?.code === "CASE_NOT_FOUND") {
-          toast.error(t("track.errors.caseNotFound").toString());
+        if (error.payload?.error?.message) {
+          toast.error(error.payload?.error?.message);
         } else {
           toast.error(t("track.errors.general").toString());
         }
@@ -131,13 +130,8 @@ function TrackInner() {
           toast.error(t("track.errors.verificationFailed").toString());
         }
       } catch (error: any) {
-        console.error("Verification error:", error);
-
-        // Handle different error types
-        if (error.payload?.error?.code === "INVALID_VERIFICATION_CODE") {
-          toast.error(t("track.errors.invalidCode").toString());
-        } else if (error.payload?.error?.code === "VERIFICATION_CODE_EXPIRED") {
-          toast.error(t("track.errors.expiredCode").toString());
+        if (error.payload?.error?.message) {
+          toast.error(error.payload?.error?.message);
         } else {
           toast.error(t("track.errors.general").toString());
         }
@@ -357,11 +351,8 @@ function TrackInner() {
                         setResendAt(Date.now() + 60_000);
                         toast.success(t("track.resend").toString() + " ✓");
                       } catch (error: any) {
-                        console.error("Resend error:", error);
-                        if (error.payload?.error?.code === "CASE_NOT_FOUND") {
-                          toast.error(
-                            t("track.errors.caseNotFound").toString()
-                          );
+                        if (error.payload?.error?.message) {
+                          toast.error(error.payload?.error?.message);
                         } else {
                           toast.error(t("track.errors.general").toString());
                         }
