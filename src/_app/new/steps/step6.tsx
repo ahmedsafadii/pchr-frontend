@@ -265,6 +265,7 @@ export default function Step6({
             "client_name",
             "client_id",
             "client_phone",
+            "client_whatsapp",
             "client_relationship",
           ]);
           const step4 = new Set([

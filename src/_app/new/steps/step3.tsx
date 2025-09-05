@@ -50,6 +50,7 @@ export default function Step3({
   const t = useTranslations();
   const { constants, isLoading: isConstantsLoading } = useConstantsStore();
 
+
   useEffect(() => {
     setFormData(data.clientInfo);
   }, [data.clientInfo]);
@@ -62,15 +63,22 @@ export default function Step3({
       externalErrors.forEach(errorMsg => {
         // Map error messages to field names based on content
         const lowerMsg = errorMsg.toLowerCase();
-        if (lowerMsg.includes('client id') || lowerMsg.includes('client_id')) {
+        
+        // Check for Arabic keywords as well as English
+        if (lowerMsg.includes('client id') || lowerMsg.includes('client_id') || 
+            lowerMsg.includes('هوية العميل') || lowerMsg.includes('رقم هوية العميل')) {
           newErrors.client_id = errorMsg;
-        } else if (lowerMsg.includes('client name') || lowerMsg.includes('client_name')) {
+        } else if (lowerMsg.includes('client name') || lowerMsg.includes('client_name') ||
+                   lowerMsg.includes('اسم العميل') || lowerMsg.includes('العميل')) {
           newErrors.client_name = errorMsg;
-        } else if (lowerMsg.includes('phone') || lowerMsg.includes('client_phone')) {
+        } else if (lowerMsg.includes('phone') || lowerMsg.includes('client_phone') ||
+                   lowerMsg.includes('هاتف') || lowerMsg.includes('رقم الهاتف')) {
           newErrors.client_phone = errorMsg;
-        } else if (lowerMsg.includes('whatsapp') || lowerMsg.includes('client_whatsapp')) {
+        } else if (lowerMsg.includes('whatsapp') || lowerMsg.includes('client_whatsapp') ||
+                   lowerMsg.includes('واتساب') || lowerMsg.includes('رقم الواتساب')) {
           newErrors.client_whatsapp = errorMsg;
-        } else if (lowerMsg.includes('relationship') || lowerMsg.includes('client_relationship')) {
+        } else if (lowerMsg.includes('relationship') || lowerMsg.includes('client_relationship') ||
+                   lowerMsg.includes('صلة') || lowerMsg.includes('القرابة')) {
           newErrors.client_relationship = errorMsg;
         }
       });
@@ -97,6 +105,16 @@ export default function Step3({
         [field]: "",
       }));
     }
+
+    // Real-time validation for client ID
+    if (field === "client_id" && value.trim() && data.detaineeInfo.detainee_id) {
+      if (value === data.detaineeInfo.detainee_id) {
+        setErrors(prev => ({
+          ...prev,
+          client_id: "يجب أن يكون رقم هوية العميل مختلفاً عن رقم هوية المعتقل."
+        }));
+      }
+    }
   };
 
   const validateForm = () => {
@@ -106,6 +124,9 @@ export default function Step3({
 
     if (!formData.client_id.trim()) newErrors.client_id = t("newCase.step3.errors.client_id_required");
     else if (!validatePalestinianId(formData.client_id)) newErrors.client_id = getPalestinianIdErrorMessage(locale);
+    else if (formData.client_id === data.detaineeInfo.detainee_id) {
+      newErrors.client_id = "يجب أن يكون رقم هوية العميل مختلفاً عن رقم هوية المعتقل.";
+    }
 
     if (!formData.client_phone.trim()) newErrors.client_phone = t("newCase.step3.errors.client_phone_required");
     else if (!validatePalestinianPhone(formData.client_phone)) newErrors.client_phone = getPalestinianPhoneErrorMessage(locale);
@@ -115,7 +136,8 @@ export default function Step3({
 
     if (!formData.client_relationship.trim()) newErrors.client_relationship = t("newCase.step3.errors.client_relationship_required");
 
-    setErrors(newErrors);
+    // Merge with existing errors (preserve external errors)
+    setErrors(prev => ({ ...prev, ...newErrors }));
     return Object.keys(newErrors).length === 0;
   };
 
@@ -269,6 +291,7 @@ export default function Step3({
 
           </div>
         </section>
+
 
         {/* Navigation */}
         <div className="steps__navigation">

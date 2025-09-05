@@ -150,6 +150,16 @@ export default function Step1({
         [field]: "",
       }));
     }
+
+    // Real-time validation for detainee ID
+    if (field === "detainee_id" && value.trim() && data.clientInfo.client_id) {
+      if (value === data.clientInfo.client_id) {
+        setErrors(prev => ({
+          ...prev,
+          idNumber: "يجب أن يكون رقم هوية المعتقل مختلفاً عن رقم هوية العميل."
+        }));
+      }
+    }
   };
 
   const validateForm = () => {
@@ -162,6 +172,9 @@ export default function Step1({
       newErrors.idNumber = t("newCase.step1.errors.idNumberRequired");
     else if (!validatePalestinianId(formData.detainee_id))
       newErrors.idNumber = getPalestinianIdErrorMessage(locale);
+    else if (formData.detainee_id === data.clientInfo.client_id) {
+      newErrors.idNumber = "يجب أن يكون رقم هوية المعتقل مختلفاً عن رقم هوية العميل.";
+    }
 
     if (!formData.detainee_date_of_birth.trim())
       newErrors.dateOfBirth = t("newCase.step1.errors.dateOfBirthRequired");
