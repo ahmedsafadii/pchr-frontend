@@ -8,7 +8,6 @@ import {
   IconMessage,
   IconCheck,
   IconExclamationMark,
-  IconClock,
   IconScale,
 } from "@tabler/icons-react";
 import Logo from "../components/Logo";
@@ -337,6 +336,27 @@ export default function NewCasePage({ locale = "ar" }) {
     setIsDataLoaded(true);
   }, [setIsDataLoaded]);
 
+  // Check if completed steps should be reverted to pending
+  useEffect(() => {
+    if (!isDataLoaded) {
+      return;
+    }
+
+    const stepsToRevert: number[] = [];
+    
+    // Check each completed step to see if it should be reverted
+    completedSteps.forEach(stepNumber => {
+      if (stepNumber === 5 && !canGoToNext(5)) {
+        stepsToRevert.push(stepNumber);
+      }
+    });
+
+    // Remove reverted steps from completedSteps
+    if (stepsToRevert.length > 0) {
+      setCompletedSteps(prev => prev.filter(step => !stepsToRevert.includes(step)));
+    }
+  }, [caseData, completedSteps, isDataLoaded]);
+
   // Save data to localStorage whenever it changes (but only after data is loaded)
   useEffect(() => {
     // Don't save until data is loaded to prevent overwriting loaded data
@@ -525,6 +545,10 @@ export default function NewCasePage({ locale = "ar" }) {
       return "current";
     }
     if (completedSteps.includes(stepNumber)) {
+      // Check if a completed step should be reverted to pending
+      if (stepNumber === 5 && !canGoToNext(5)) {
+        return "pending";
+      }
       return "completed";
     }
     if (stepNumber < currentStep && !completedSteps.includes(stepNumber)) {
@@ -694,11 +718,14 @@ export default function NewCasePage({ locale = "ar" }) {
                           {getStepStatus(step.id) === "current" && (
                             <StepIcon size={18} />
                           )}
-                          {getStepStatus(step.id) === "pending" && step.id === 6 && (
+                          {getStepStatus(step.id) === "pending" && step.id === currentStep && (
+                            <StepIcon size={18} />
+                          )}
+                          {getStepStatus(step.id) === "pending" && step.id !== currentStep && step.id === 6 && (
                             <IconScale size={18} />
                           )}
-                          {getStepStatus(step.id) === "pending" && step.id !== 6 && (
-                            <IconClock size={18} />
+                          {getStepStatus(step.id) === "pending" && step.id !== currentStep && step.id !== 6 && (
+                            step.id
                           )}
                         </div>
                         {index < steps.length - 1 && (
