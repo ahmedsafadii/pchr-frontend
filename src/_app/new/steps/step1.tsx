@@ -200,6 +200,9 @@ export default function Step1({
     if (!formData.detainee_district.trim())
       newErrors.district = t("newCase.step1.errors.districtRequired");
 
+    if (!formData.detainee_job.trim())
+      newErrors.job = t("newCase.step1.errors.jobRequired");
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -345,7 +348,10 @@ export default function Step1({
             </div>
 
             <div className="steps__form-group">
-              <label className="steps__label">{t("newCase.step1.job")}</label>
+              <label className="steps__label">
+                {t("newCase.step1.job")}{" "}
+                <span className="steps__required">*</span>
+              </label>
               <CustomSelect
                 options={jobOptions}
                 labelKey="name"
@@ -355,10 +361,14 @@ export default function Step1({
                 placeholder={`${t("newCase.common.choose")} ${t(
                   "newCase.step1.job"
                 )}`}
+                isError={!!errors.job}
                 isDisabled={isConstantsLoading || !constants}
                 instanceId="step1-job-select"
                 fullWidth
               />
+              {errors.job && (
+                <span className="steps__error">{errors.job}</span>
+              )}
             </div>
           </div>
 

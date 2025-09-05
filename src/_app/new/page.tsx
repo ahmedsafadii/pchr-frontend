@@ -394,6 +394,7 @@ export default function NewCasePage({ locale = "ar" }) {
         detaineeInfo?.detainee_name?.trim() !== "" &&
         detaineeInfo?.detainee_id?.trim() !== "" &&
         detaineeInfo?.detainee_date_of_birth?.trim() !== "" &&
+        detaineeInfo?.detainee_job?.trim() !== "" &&
         detaineeInfo?.detainee_health_status?.trim() !== "" &&
         detaineeInfo?.detainee_marital_status?.trim() !== "" &&
         detaineeInfo?.detainee_gender?.trim() !== "" &&

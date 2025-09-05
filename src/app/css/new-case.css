@@ -353,6 +353,7 @@
 
 .steps__form-row--three-col {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 20px;
 }
 
 /* Responsive: Stack on mobile */

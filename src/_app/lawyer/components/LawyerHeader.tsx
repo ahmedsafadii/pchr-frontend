@@ -195,7 +195,7 @@ export default function LawyerHeader({
     <>
       <header className="lawyer__header">
         <div className="lawyer__logo">
-          <Logo />
+          <Logo href={`/${locale}/lawyer`} />
         </div>
         <div className="lawyer__header-left lawyer__header-left--desktop">
           <nav className="lawyer__nav">

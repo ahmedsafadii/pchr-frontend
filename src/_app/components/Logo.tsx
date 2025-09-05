@@ -9,19 +9,22 @@ interface LogoProps {
   height?: number;
   className?: string;
   alt?: string;
+  href?: string;
 }
 
 export default function Logo({ 
   width = 218, 
   height = 93, 
   className = '',
-  alt = 'PCHR Logo'
+  alt = 'PCHR Logo',
+  href
 }: LogoProps) {
   const locale = useLocale();
   const logoSrc = locale === 'ar' ? '/img/logo_ar.svg' : '/img/logo_en.svg';
+  const logoHref = href || `/${locale}`;
   
   return (
-    <Link href={`/${locale}`} className="logo-link">
+    <Link href={logoHref} className="logo-link">
       <Image
         src={logoSrc}
         alt={alt}

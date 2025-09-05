@@ -106,6 +106,7 @@
         "localityRequired": "المنطقة مطلوبة",
         "governorateRequired": "المحافظة مطلوبة",
         "districtRequired": "المنطقة مطلوب",
+        "jobRequired": "المهنة مطلوبة",
         "age18": "يجب أن يكون عمر المعتقل 18 سنة أو أكثر."
       }
     },
