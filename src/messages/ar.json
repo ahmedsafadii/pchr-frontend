@@ -579,6 +579,7 @@
       },
       "statusOptions": {
         "todo": "قيد الطلب",
+        "awaiting_confirmation": "في انتظار التأكيد",
         "in_progress": "قيد التنفيذ",
         "completed": "مكتمل",
         "cancelled": "ملغي",
@@ -668,9 +669,16 @@
       },
       "visitApprove": {
         "title": "موافقة على الزيارة",
+        "approvedDateField": "تاريخ الموافقة على الزيارة",
+        "approvedDatePlaceholder": "اختر تاريخ الموافقة",
         "notesField": "ملاحظات الموافقة",
         "notesPlaceholder": "أدخل ملاحظات الموافقة وأي معلومات إضافية...",
-        "approve": "موافقة على الزيارة"
+        "approve": "موافقة على الزيارة",
+        "success": "تمت الموافقة على الزيارة بنجاح",
+        "errors": {
+          "dateRequired": "تاريخ الموافقة مطلوب",
+          "notesRequired": "ملاحظات الموافقة مطلوبة"
+        }
       }
     },
     "messages": {

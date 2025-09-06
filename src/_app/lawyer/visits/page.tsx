@@ -93,6 +93,7 @@ function LawyerVisitsInner() {
 
   const statusOptions = [
     { value: "todo", label: t("lawyer.visits.statusOptions.todo") },
+    { value: "awaiting_confirmation", label: t("lawyer.visits.statusOptions.awaiting_confirmation") },
     {
       value: "in_progress",
       label: t("lawyer.visits.statusOptions.in_progress"),
@@ -207,39 +208,24 @@ function LawyerVisitsInner() {
     setOpenDropdown(null);
   };
 
-  const handleApproveSubmit = async (notes: string) => {
-    try {
-      const token = LawyerAuth.getAccessToken();
-      if (!token) {
-        throw new Error("No authentication token");
-      }
-      
-      if (!selectedVisitId) {
-        throw new Error("No visit selected");
-      }
+  const handleApproveSubmit = async (notes: string, visit_approved_date: string) => {
+    const token = LawyerAuth.getAccessToken();
+    if (!token) {
+      throw new Error("No authentication token");
+    }
+    
+    if (!selectedVisitId) {
+      throw new Error("No visit selected");
+    }
 
-      const response = await approveVisit(token, selectedVisitId, notes, locale);
-      
-      if (response.status === "success") {
-        // Refresh visits after successful submission
-        fetchVisits();
-        setShowApproveModal(false);
-      } else {
-        throw new Error(response.message || t("messages.errors.failedToApproveVisit"));
-      }
-    } catch (error: any) {
-      console.error('Error approving visit:', error);
-      
-      // Extract error message from API response
-              let errorMessage = t("messages.errors.failedToApproveVisit");
-      if (error?.error?.message) {
-        errorMessage = error.error.message;
-      } else if (error?.message) {
-        errorMessage = error.message;
-      }
-      
-      // Show error toast
-      toast.error(errorMessage);
+    const response = await approveVisit(token, selectedVisitId, notes, locale, visit_approved_date);
+    
+    if (response.status === "success") {
+      // Refresh visits after successful submission
+      fetchVisits();
+      setShowApproveModal(false);
+    } else {
+      throw new Error(response.message || t("messages.errors.failedToApproveVisit"));
     }
   };
 
@@ -585,7 +571,7 @@ function LawyerVisitsInner() {
                         </td>
                         <td className="lawyer__table-cell" data-label="Actions">
                           <div className="lawyer__visit-actions">
-                            {visit.status !== "done" && (
+                            {!["done", "completed", "rejected", "cancelled"].includes(visit.status) && (
                               <div className="lawyer__dropdown-container">
                                 <button
                                   className="lawyer__dropdown-trigger"
@@ -602,7 +588,7 @@ function LawyerVisitsInner() {
                                     data-dropdown={visit.id}
                                     className="lawyer__dropdown-menu"
                                   >
-                                    {visit.status === "todo" && (
+                                    {visit.status === "awaiting_confirmation" && (
                                       <>
                                         <button
                                           className="lawyer__dropdown-item"
@@ -626,7 +612,7 @@ function LawyerVisitsInner() {
                                         </button>
                                       </>
                                     )}
-                                    {visit.status === "in_progress" && (
+                                    {visit.status === "approved" && (
                                       <button
                                         className="lawyer__dropdown-item"
                                         onClick={(e) => {
@@ -637,11 +623,6 @@ function LawyerVisitsInner() {
                                         <IconFileText size={16} />
                                         {t("lawyer.visits.actions.outcome")}
                                       </button>
-                                    )}
-                                    {visit.status === "rejected" && (
-                                      <div className="lawyer__dropdown-item lawyer__dropdown-item--disabled">
-                                        {t("lawyer.visits.actions.rejected")}
-                                      </div>
                                     )}
                                   </div>
                                 )}

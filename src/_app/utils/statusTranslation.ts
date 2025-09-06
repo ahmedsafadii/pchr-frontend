@@ -19,6 +19,7 @@ export const getCaseStatusTranslation = (status: string, t: any) => {
 export const getVisitStatusTranslation = (status: string, t: any) => {
   const statusOptions = [
     { value: "todo", label: t("lawyer.visits.statusOptions.todo") },
+    { value: "awaiting_confirmation", label: t("lawyer.visits.statusOptions.awaiting_confirmation") },
     { value: "in_progress", label: t("lawyer.visits.statusOptions.in_progress") },
     { value: "completed", label: t("lawyer.visits.statusOptions.completed") },
     { value: "cancelled", label: t("lawyer.visits.statusOptions.cancelled") },

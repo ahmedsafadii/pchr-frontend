@@ -395,11 +395,15 @@ export async function approveVisit(
   token: string,
   visitId: string,
   notes: string,
-  lang: string
+  lang: string,
+  visit_approved_date?: string
 ) {
-  return api.patch<ApiResponse>(`/lawyer/visits/${visitId}/approve/`, {
-    notes
-  }, {
+  const payload: { notes: string; visit_approved_date?: string } = { notes };
+  if (visit_approved_date) {
+    payload.visit_approved_date = visit_approved_date;
+  }
+  
+  return api.patch<ApiResponse>(`/lawyer/visits/${visitId}/approve/`, payload, {
     headers: {
       Authorization: `Bearer ${token}`
     },

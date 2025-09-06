@@ -87,6 +87,7 @@ function LawyerCaseVisitsInner() {
   // Filter options
   const statusOptions = [
     { value: "todo", label: t("lawyer.visits.statusOptions.todo") },
+    { value: "awaiting_confirmation", label: t("lawyer.visits.statusOptions.awaiting_confirmation") },
     {
       value: "in_progress",
       label: t("lawyer.visits.statusOptions.in_progress"),
@@ -321,34 +322,30 @@ function LawyerCaseVisitsInner() {
     }
   };
 
-  const handleApproveSubmit = async (notes: string) => {
-    try {
-      const token = LawyerAuth.getAccessToken();
-      if (!token) {
-        throw new Error("No authentication token");
-      }
+  const handleApproveSubmit = async (notes: string, visit_approved_date: string) => {
+    const token = LawyerAuth.getAccessToken();
+    if (!token) {
+      throw new Error("No authentication token");
+    }
 
-      if (!selectedVisitId) {
-        throw new Error("No visit selected");
-      }
+    if (!selectedVisitId) {
+      throw new Error("No visit selected");
+    }
 
-      const response = await approveVisit(
-        token,
-        selectedVisitId,
-        notes,
-        locale
-      );
+    const response = await approveVisit(
+      token,
+      selectedVisitId,
+      notes,
+      locale,
+      visit_approved_date
+    );
 
-      if (response.status === "success") {
-        // Refresh visits after successful submission
-        fetchVisits();
-        setShowApproveModal(false);
-      } else {
-        throw new Error(response.message || t("messages.errors.failedToApproveVisit"));
-      }
-    } catch (error) {
-      console.error("Error approving visit:", error);
-      // TODO: Show error toast to user
+    if (response.status === "success") {
+      // Refresh visits after successful submission
+      fetchVisits();
+      setShowApproveModal(false);
+    } else {
+      throw new Error(response.message || t("messages.errors.failedToApproveVisit"));
     }
   };
 
@@ -545,7 +542,8 @@ function LawyerCaseVisitsInner() {
                   </td>
                   <td className="lawyer__table-cell" data-label="Actions">
                     <div className="lawyer__visit-actions">
-                      <div className="lawyer__dropdown-container">
+                      {!["done", "completed", "rejected", "cancelled"].includes(visit.status) && (
+                        <div className="lawyer__dropdown-container">
                         <button
                           className="lawyer__dropdown-trigger"
                           onClick={(e) => {
@@ -561,7 +559,7 @@ function LawyerCaseVisitsInner() {
                             data-dropdown={visit.id}
                             className="lawyer__dropdown-menu"
                           >
-                            {visit.status === "todo" && (
+                            {visit.status === "awaiting_confirmation" && (
                               <>
                                 <button
                                   className="lawyer__dropdown-item"
@@ -585,7 +583,7 @@ function LawyerCaseVisitsInner() {
                                 </button>
                               </>
                             )}
-                            {visit.status === "in_progress" && (
+                            {visit.status === "approved" && (
                               <button
                                 className="lawyer__dropdown-item"
                                 onClick={(e) => {
@@ -597,17 +595,10 @@ function LawyerCaseVisitsInner() {
                                 {t("lawyer.visits.actions.outcome")}
                               </button>
                             )}
-                            {(visit.status === "rejected" ||
-                              visit.status === "done") && (
-                              <div className="lawyer__dropdown-item lawyer__dropdown-item--disabled">
-                                {visit.status === "rejected"
-                                  ? t("lawyer.visits.actions.rejected")
-                                  : t("lawyer.visits.actions.completed")}
-                              </div>
-                            )}
                           </div>
                         )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   </td>
                 </tr>

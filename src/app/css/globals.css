@@ -118,11 +118,12 @@ body {
 }
 
 .case__status--todo,
+.case__status--awaiting_confirmation,
 .case__status--pending {
   background: #fff7ed;
   color: #b45309;
 }
-
+.case__status--approved,
 .case__status--in-progress,
 .case__status--in_progress,
 .case__status--progress {
