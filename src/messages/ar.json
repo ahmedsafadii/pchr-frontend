@@ -582,6 +582,7 @@
         "awaiting_confirmation": "في انتظار التأكيد",
         "in_progress": "قيد التنفيذ",
         "completed": "مكتمل",
+        "complete": "مكتمل",
         "cancelled": "ملغي",
         "done": "مكتملة",
         "pending": "قيد الانتظار",
@@ -591,9 +592,11 @@
       "actions": {
         "approve": "موافقة",
         "reject": "رفض",
+        "cancel": "إلغاء الزيارة",
         "approved": "موافق عليها",
         "rejected": "مرفوض",
-        "outcome": "النتيجة",
+        "cancelled": "ملغي",
+        "outcome": "تقييم النتيجة",
         "completed": "مكتمل"
       },
       "pagination": {
@@ -643,7 +646,7 @@
         "titleField": "العنوان",
         "titlePlaceholder": "أدخل عنوان الزيارة",
         "prisonName": "اسم السجن",
-        "choosePrison": "اختر النوع",
+        "choosePrison": "اختر السجن",
         "visitDate": "تاريخ الزيارة",
         "chooseDate": "اختر التاريخ",
         "send": "إرسال",
@@ -679,6 +682,13 @@
           "dateRequired": "تاريخ الموافقة مطلوب",
           "notesRequired": "ملاحظات الموافقة مطلوبة"
         }
+      },
+      "visitCancel": {
+        "title": "إلغاء الزيارة",
+        "cancelReasonField": "اذكر سبب قيام ادارة السجن بالغاء الزيارة",
+        "cancelReasonPlaceholder": "أدخل سبب إلغاء الزيارة...",
+        "cancel": "إلغاء الزيارة",
+        "success": "تم إلغاء الزيارة بنجاح"
       }
     },
     "messages": {
@@ -808,20 +818,21 @@
       "fileUploaded": "تم تحميل الملف بنجاح!",
       "messageSent": "تم إرسال الرسالة بنجاح!"
     },
-    "errors": {
-      "failedToLoadMessages": "فشل في تحميل الرسائل. يرجى المحاولة مرة أخرى.",
-      "failedToUploadFile": "فشل في تحميل الملف. يرجى المحاولة مرة أخرى.",
-      "failedToSendMessage": "فشل في إرسال الرسالة. يرجى المحاولة مرة أخرى.",
-      "failedToFetchCases": "فشل في جلب القضايا",
-      "failedToFetchCaseDocuments": "فشل في جلب مستندات القضية",
-      "failedToFetchVisits": "فشل في جلب الزيارات",
-      "failedToCompleteVisit": "فشل في إكمال الزيارة",
-      "failedToRejectVisit": "فشل في رفض الزيارة",
-      "failedToApproveVisit": "فشل في الموافقة على الزيارة",
-      "failedToUpdateCaseStatus": "فشل في تحديث حالة القضية",
-      "failedToUploadSignature": "فشل في تحميل التوقيع",
-      "unknownError": "خطأ غير معروف"
-    }
+      "errors": {
+        "failedToLoadMessages": "فشل في تحميل الرسائل. يرجى المحاولة مرة أخرى.",
+        "failedToUploadFile": "فشل في تحميل الملف. يرجى المحاولة مرة أخرى.",
+        "failedToSendMessage": "فشل في إرسال الرسالة. يرجى المحاولة مرة أخرى.",
+        "failedToFetchCases": "فشل في جلب القضايا",
+        "failedToFetchCaseDocuments": "فشل في جلب مستندات القضية",
+        "failedToFetchVisits": "فشل في جلب الزيارات",
+        "failedToCompleteVisit": "فشل في إكمال الزيارة",
+        "failedToRejectVisit": "فشل في رفض الزيارة",
+        "failedToApproveVisit": "فشل في الموافقة على الزيارة",
+        "failedToCancelVisit": "فشل في إلغاء الزيارة",
+        "failedToUpdateCaseStatus": "فشل في تحديث حالة القضية",
+        "failedToUploadSignature": "فشل في تحميل التوقيع",
+        "unknownError": "خطأ غير معروف"
+      }
   },
   "legalDocument": {
     "title": "الوكالة القانونية",

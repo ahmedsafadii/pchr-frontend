@@ -3028,6 +3028,16 @@ html[lang="ar"] .lawyer__dropdown-menu {
   margin-bottom: 8px;
 }
 
+.modal-label--required {
+  color: var(--neutral-700);
+}
+
+.modal-label--required::after {
+  content: " *";
+  color: var(--danger-500);
+  font-weight: 600;
+}
+
 .modal-input {
   width: 100%;
   padding: 12px 16px;

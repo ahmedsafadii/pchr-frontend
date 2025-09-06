@@ -173,8 +173,8 @@ export default function UploadFilesModal({
           )}
 
           <div className="modal__field">
-            <label className="modal__label">
-              {t("lawyer.files.uploadModal.fileName")} *
+            <label className="modal__label modal-label--required">
+              {t("lawyer.files.uploadModal.fileName")}
             </label>
             <input
               type="text"
@@ -188,8 +188,8 @@ export default function UploadFilesModal({
           </div>
 
           <div className="modal__field">
-            <label className="modal__label">
-              {t("lawyer.files.uploadModal.documentType")} *
+            <label className="modal__label modal-label--required">
+              {t("lawyer.files.uploadModal.documentType")}
             </label>
             <select
               className="modal__select"
@@ -208,8 +208,8 @@ export default function UploadFilesModal({
           </div>
 
           <div className="modal__field">
-            <label className="modal__label">
-              {t("lawyer.files.uploadModal.description")} *
+            <label className="modal__label modal-label--required">
+              {t("lawyer.files.uploadModal.description")}
             </label>
             <input
               type="text"
@@ -223,8 +223,8 @@ export default function UploadFilesModal({
           </div>
 
           <div className="modal__field">
-            <label className="modal__label">
-              {t("lawyer.files.uploadModal.accessLevel")} *
+            <label className="modal__label modal-label--required">
+              {t("lawyer.files.uploadModal.accessLevel")}
             </label>
             <select
               className="modal__select"
@@ -243,8 +243,8 @@ export default function UploadFilesModal({
           </div>
 
           <div className="modal__field">
-            <label className="modal__label">
-              {t("lawyer.files.uploadModal.uploadFile")} *
+            <label className="modal__label modal-label--required">
+              {t("lawyer.files.uploadModal.uploadFile")}
             </label>
             <div
               className="modal__dropzone"

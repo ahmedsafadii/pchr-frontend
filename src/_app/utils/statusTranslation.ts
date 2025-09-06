@@ -22,8 +22,11 @@ export const getVisitStatusTranslation = (status: string, t: any) => {
     { value: "awaiting_confirmation", label: t("lawyer.visits.statusOptions.awaiting_confirmation") },
     { value: "in_progress", label: t("lawyer.visits.statusOptions.in_progress") },
     { value: "completed", label: t("lawyer.visits.statusOptions.completed") },
+    { value: "complete", label: t("lawyer.visits.statusOptions.complete") },
     { value: "cancelled", label: t("lawyer.visits.statusOptions.cancelled") },
     { value: "done", label: t("lawyer.visits.statusOptions.done") },
+    { value: "pending", label: t("lawyer.visits.statusOptions.pending") },
+    { value: "approved", label: t("lawyer.visits.statusOptions.approved") },
     { value: "rejected", label: t("lawyer.visits.statusOptions.rejected") },
   ];
 

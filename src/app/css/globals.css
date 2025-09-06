@@ -130,7 +130,7 @@ body {
   background: #dbeafe;
   color: #1d4ed8;
 }
-
+.case__status--complete,
 .case__status--completed {
   background: #dcfce7;
   color: #166534;
@@ -142,8 +142,7 @@ body {
 }
 .case__status--rejected,
 .case__status--awaiting_documents,
-.case__status--awaiting-documents,
-.case__status--cancelled {
+.case__status--awaiting-documents {
   background: #fef2f2;
   color: #dc2626;
 }
@@ -157,7 +156,7 @@ body {
   background: #ecfdf5;
   color: #059669;
 }
-
+.case__status--cancelled,
 .case__status--deceased {
   background: #f9fafb;
   color: #374151;

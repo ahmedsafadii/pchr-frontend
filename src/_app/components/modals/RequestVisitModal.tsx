@@ -213,8 +213,8 @@ export default function RequestVisitModal({
           </div>
 
           <div className="modal-field">
-            <label className="modal-label">
-              {t("lawyer.modals.requestVisit.prisonName")}*
+            <label className="modal-label modal-label--required">
+              {t("lawyer.modals.requestVisit.prisonName")}
             </label>
             <div
               className={
@@ -253,8 +253,8 @@ export default function RequestVisitModal({
           </div>
 
           <div className="modal-field">
-            <label className="modal-label">
-              {t("lawyer.visits.table.visitType")}*
+            <label className="modal-label modal-label--required">
+              {t("lawyer.visits.table.visitType")}
             </label>
             <div
               className={

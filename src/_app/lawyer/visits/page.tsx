@@ -19,13 +19,14 @@ import {
   IconDots,
   IconFileText,
 } from "@tabler/icons-react";
-import { getLawyerVisits, approveVisit, rejectVisit, completeVisit } from "../../services/api";
+import { getLawyerVisits, approveVisit, rejectVisit, completeVisit, cancelVisit } from "../../services/api";
 import { LawyerAuth } from "../../utils/auth";
 import React from "react";
 import toast from "react-hot-toast";
 import VisitApproveModal from "../../components/modals/VisitApproveModal";
 import VisitOutcomeModal from "../../components/modals/VisitOutcomeModal";
 import VisitRejectionModal from "../../components/modals/VisitRejectionModal";
+import VisitCancelModal from "../../components/modals/VisitCancelModal";
 import { formatDateWithLocale } from "../../utils/dateUtils";
 import { getVisitStatusTranslation } from "../../utils/statusTranslation";
 
@@ -89,19 +90,15 @@ function LawyerVisitsInner() {
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showOutcomeModal, setShowOutcomeModal] = useState(false);
   const [showRejectionModal, setShowRejectionModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedVisitId, setSelectedVisitId] = useState<string | null>(null);
 
   const statusOptions = [
-    { value: "todo", label: t("lawyer.visits.statusOptions.todo") },
-    { value: "awaiting_confirmation", label: t("lawyer.visits.statusOptions.awaiting_confirmation") },
-    {
-      value: "in_progress",
-      label: t("lawyer.visits.statusOptions.in_progress"),
-    },
+    { value: "rejected", label: t("lawyer.visits.statusOptions.rejected") },
     { value: "completed", label: t("lawyer.visits.statusOptions.completed") },
     { value: "cancelled", label: t("lawyer.visits.statusOptions.cancelled") },
-    { value: "done", label: t("lawyer.visits.statusOptions.done") },
-    { value: "rejected", label: t("lawyer.visits.statusOptions.rejected") },
+    { value: "awaiting_confirmation", label: t("lawyer.visits.statusOptions.awaiting_confirmation") },
+    { value: "approved", label: t("lawyer.visits.statusOptions.approved") },
   ];
 
   const daysOptions = [
@@ -202,6 +199,12 @@ function LawyerVisitsInner() {
     setOpenDropdown(null);
   };
 
+  const handleCancel = (visitId: string) => {
+    setSelectedVisitId(visitId);
+    setShowCancelModal(true);
+    setOpenDropdown(null);
+  };
+
   const handleOutcome = (visitId: string) => {
     setSelectedVisitId(visitId);
     setShowOutcomeModal(true);
@@ -253,7 +256,44 @@ function LawyerVisitsInner() {
       console.error('Error rejecting visit:', error);
       
       // Extract error message from API response
-              let errorMessage = t("messages.errors.failedToRejectVisit");
+      let errorMessage = t("messages.errors.failedToRejectVisit");
+      if (error?.error?.message) {
+        errorMessage = error.error.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      // Show error toast
+      toast.error(errorMessage);
+    }
+  };
+
+  const handleCancelSubmit = async (reason: string) => {
+    try {
+      const token = LawyerAuth.getAccessToken();
+      if (!token) {
+        throw new Error("No authentication token");
+      }
+      
+      if (!selectedVisitId) {
+        throw new Error("No visit selected");
+      }
+
+      const response = await cancelVisit(token, selectedVisitId, reason, locale);
+      
+      if (response.status === "success") {
+        // Refresh visits after successful submission
+        fetchVisits();
+        setShowCancelModal(false);
+        toast.success(t("lawyer.modals.visitCancel.success"));
+      } else {
+        throw new Error(response.message || t("messages.errors.failedToCancelVisit"));
+      }
+    } catch (error: any) {
+      console.error('Error cancelling visit:', error);
+      
+      // Extract error message from API response
+      let errorMessage = t("messages.errors.failedToCancelVisit");
       if (error?.error?.message) {
         errorMessage = error.error.message;
       } else if (error?.message) {
@@ -571,7 +611,7 @@ function LawyerVisitsInner() {
                         </td>
                         <td className="lawyer__table-cell" data-label="Actions">
                           <div className="lawyer__visit-actions">
-                            {!["done", "completed", "rejected", "cancelled"].includes(visit.status) && (
+                            {!["done", "complete", "rejected", "cancelled"].includes(visit.status) && (
                               <div className="lawyer__dropdown-container">
                                 <button
                                   className="lawyer__dropdown-trigger"
@@ -613,16 +653,28 @@ function LawyerVisitsInner() {
                                       </>
                                     )}
                                     {visit.status === "approved" && (
-                                      <button
-                                        className="lawyer__dropdown-item"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleOutcome(visit.id);
-                                        }}
-                                      >
-                                        <IconFileText size={16} />
-                                        {t("lawyer.visits.actions.outcome")}
-                                      </button>
+                                      <>
+                                        <button
+                                          className="lawyer__dropdown-item"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleOutcome(visit.id);
+                                          }}
+                                        >
+                                          <IconFileText size={16} />
+                                          {t("lawyer.visits.actions.outcome")}
+                                        </button>
+                                        <button
+                                          className="lawyer__dropdown-item"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleCancel(visit.id);
+                                          }}
+                                        >
+                                          <IconX size={16} />
+                                          {t("lawyer.visits.actions.cancel")}
+                                        </button>
+                                      </>
                                     )}
                                   </div>
                                 )}
@@ -762,6 +814,13 @@ function LawyerVisitsInner() {
             isOpen={showRejectionModal}
             onClose={() => setShowRejectionModal(false)}
             onSubmit={handleRejectionSubmit}
+            visitId={selectedVisitId || undefined}
+          />
+          
+          <VisitCancelModal
+            isOpen={showCancelModal}
+            onClose={() => setShowCancelModal(false)}
+            onSubmit={handleCancelSubmit}
             visitId={selectedVisitId || undefined}
           />
         </main>

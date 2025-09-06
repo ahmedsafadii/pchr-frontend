@@ -427,6 +427,22 @@ export async function rejectVisit(
   });
 }
 
+export async function cancelVisit(
+  token: string,
+  visitId: string,
+  reason: string,
+  lang: string
+) {
+  return api.post<ApiResponse>(`/lawyer/visits/${visitId}/cancel/`, {
+    cancellation_reason: reason
+  }, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    lang
+  });
+}
+
 export async function completeVisit(
   token: string,
   visitId: string,

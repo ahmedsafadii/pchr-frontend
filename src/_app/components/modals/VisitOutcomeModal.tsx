@@ -43,7 +43,7 @@ export default function VisitOutcomeModal({ isOpen, onClose, onSubmit }: VisitOu
 
         <form className="modal-form" onSubmit={handleSubmit}>
           <div className="modal-field">
-            <label className="modal-label">
+            <label className="modal-label modal-label--required">
               {t("lawyer.modals.visitOutcome.outcomesField")}
             </label>
             <textarea

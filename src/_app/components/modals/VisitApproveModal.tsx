@@ -93,8 +93,8 @@ export default function VisitApproveModal({
 
         <form className="modal-form" onSubmit={handleSubmit}>
           <div className="modal-field">
-            <label className="modal-label">
-              {t("lawyer.modals.visitApprove.approvedDateField")} *
+            <label className="modal-label modal-label--required">
+              {t("lawyer.modals.visitApprove.approvedDateField")}
             </label>
             <div className="modal-date-picker-wrapper">
               <LocalizedDatePicker
@@ -105,7 +105,7 @@ export default function VisitApproveModal({
                   "lawyer.modals.visitApprove.approvedDatePlaceholder"
                 )?.toString()}
                 className={`modal-input ${errors.date ? 'modal-input--error' : ''}`}
-                isClearable
+                required
                 showYearDropdown
                 showMonthDropdown
                 dropdownMode="select"
@@ -119,8 +119,8 @@ export default function VisitApproveModal({
           </div>
 
           <div className="modal-field">
-            <label className="modal-label">
-              {t("lawyer.modals.visitApprove.notesField")} *
+            <label className="modal-label modal-label--required">
+              {t("lawyer.modals.visitApprove.notesField")}
             </label>
             <textarea
               className={`modal-textarea ${errors.notes ? 'modal-textarea--error' : ''}`}

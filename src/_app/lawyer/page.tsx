@@ -93,7 +93,6 @@ function LawyerDashboardInner() {
         const response = await getLawyerDashboard(locale);
         
         if (response.status === 'success') {
-          console.log('Dashboard data received:', response.data);
           setDashboardData(response.data);
         } else {
           setError(response.message || t("lawyer.dashboard.error.general"));
