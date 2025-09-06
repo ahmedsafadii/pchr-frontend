@@ -12,9 +12,14 @@ const nextConfig: NextConfig = {
   },
   // Ensure proper handling of redirects in production
   trailingSlash: false,
-  // Enable experimental features for better i18n support
+  // Enable static export for better production performance
+  output: 'standalone',
+  // Move serverComponentsExternalPackages to the correct location
+  serverExternalPackages: [],
+  // Ensure proper handling of dynamic routes
   experimental: {
-    serverComponentsExternalPackages: [],
+    // Enable static optimization for better performance
+    optimizePackageImports: ['next-globe-gen'],
   },
 };
 

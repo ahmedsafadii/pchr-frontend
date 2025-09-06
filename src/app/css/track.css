@@ -5,6 +5,12 @@
   min-height: 100vh;
 }
 
+/* Loading spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .track__container {
   max-width: var(--container-max-width);
   margin: 0 auto;

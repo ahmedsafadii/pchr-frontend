@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-globe-gen";
 import Logo from "../components/Logo";
 import LanguageSwitcher from "../components/LanguageSwitcher";
+import ClientOnly from "../components/ClientOnly";
+import ErrorBoundary from "../components/ErrorBoundary";
 import "@/app/css/track.css";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
@@ -167,5 +169,43 @@ function LawyerLoginInner() {
 }
 
 export default function LawyerLoginPage() { 
-  return <LawyerLoginInner />; 
+  return (
+    <ErrorBoundary>
+      <ClientOnly fallback={
+        <div className="track">
+          <div className="track__container">
+            <header className="track__header">
+              <div className="track__logo">
+                <Logo />
+              </div>
+              <div className="track__header-controls">
+                <LanguageSwitcher />
+              </div>
+            </header>
+            <main className="track__main">
+              <section className="track__card" aria-labelledby="lawyer-login-title">
+                <h1 id="lawyer-login-title" className="track__title">
+                  تسجيل دخول المحامي
+                </h1>
+                <div style={{ textAlign: 'center', padding: '2rem' }}>
+                  <div style={{ 
+                    width: '40px', 
+                    height: '40px', 
+                    border: '4px solid #f3f3f3',
+                    borderTop: '4px solid #3498db',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite',
+                    margin: '0 auto 1rem'
+                  }}></div>
+                  <p>جاري التحميل...</p>
+                </div>
+              </section>
+            </main>
+          </div>
+        </div>
+      }>
+        <LawyerLoginInner />
+      </ClientOnly>
+    </ErrorBoundary>
+  ); 
 }
