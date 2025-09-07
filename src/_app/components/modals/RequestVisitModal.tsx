@@ -101,11 +101,19 @@ export default function RequestVisitModal({
       return;
     }
 
+    // Format date in local timezone to avoid day shift
+    const formatLocalDate = (date: Date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     const payload = {
       title: formData.title,
       prison_id: formData.prison_id,
       visit_type: formData.visit_type,
-      visit_date: formData.visitDate!.toISOString().split("T")[0],
+      visit_date: formatLocalDate(formData.visitDate!),
     };
 
     setIsSubmitting(true);

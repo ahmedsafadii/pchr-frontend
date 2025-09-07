@@ -260,6 +260,38 @@
               "location": ""
           }
       ],
+      "visit_statuses": [
+          {
+              "key": "pending",
+              "value": "pending",
+              "display": "قيد الانتظار"
+          },
+          {
+              "key": "awaiting_confirmation",
+              "value": "awaiting_confirmation",
+              "display": "في انتظار التأكيد"
+          },
+          {
+              "key": "approved",
+              "value": "approved",
+              "display": "موافق عليه"
+          },
+          {
+              "key": "completed",
+              "value": "completed",
+              "display": "مكتمل"
+          },
+          {
+              "key": "rejected",
+              "value": "rejected",
+              "display": "مرفوض"
+          },
+          {
+              "key": "cancelled",
+              "value": "cancelled",
+              "display": "ملغي"
+          }
+      ],
       "visit_types": [
           {
               "id": "cc450df7-548a-44bb-ba31-6485ad8e4de0",

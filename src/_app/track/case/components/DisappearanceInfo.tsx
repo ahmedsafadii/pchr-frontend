@@ -137,7 +137,7 @@ export default function DisappearanceInfo({
               </dd>
             </div>
             <div className="case-info__row">
-              <dt>{t("trackCase.info.location")}</dt>
+              <dt>{t("trackCase.info.detention_location")}</dt>
               <dd>
                 {caseData
                   ? `${caseData?.detention_street || ""}, ${

@@ -28,7 +28,8 @@ import VisitOutcomeModal from "../../components/modals/VisitOutcomeModal";
 import VisitRejectionModal from "../../components/modals/VisitRejectionModal";
 import VisitCancelModal from "../../components/modals/VisitCancelModal";
 import { formatDateWithLocale } from "../../utils/dateUtils";
-import { getVisitStatusTranslation } from "../../utils/statusTranslation";
+import { useConstantsStore } from "../../store/constants.store";
+import { useMemo } from "react";
 
 interface Visit {
   id: string;
@@ -68,6 +69,12 @@ function LawyerVisitsInner() {
   const t = useTranslations();
   const locale = useLocale();
   const searchParams = useSearchParams();
+  const { constants, loadConstants } = useConstantsStore();
+
+  // Load constants on mount
+  useEffect(() => {
+    loadConstants(locale);
+  }, [locale, loadConstants]);
 
   // State
   const [visits, setVisits] = useState<Visit[]>([]);
@@ -96,20 +103,24 @@ function LawyerVisitsInner() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedVisitId, setSelectedVisitId] = useState<string | null>(null);
 
-  const statusOptions = [
-    { value: "rejected", label: t("lawyer.visits.statusOptions.rejected") },
-    { value: "completed", label: t("lawyer.visits.statusOptions.completed") },
-    { value: "cancelled", label: t("lawyer.visits.statusOptions.cancelled") },
-    { value: "awaiting_confirmation", label: t("lawyer.visits.statusOptions.awaiting_confirmation") },
-    { value: "approved", label: t("lawyer.visits.statusOptions.approved") },
-  ];
+  // Get status options from constants
+  const statusOptions = useMemo(() => {
+    if (!constants?.data?.visit_statuses) {
+      return [];
+    }
+    
+    return constants.data.visit_statuses.map((status: any) => ({
+      value: status.value,
+      label: status.display,
+    }));
+  }, [constants]);
 
-  const daysOptions = [
+  const daysOptions = useMemo(() => [
     { value: 1, label: t("lawyer.visits.filters.daysFilter.today") },
     { value: 7, label: t("lawyer.visits.filters.daysFilter.thisWeek") },
     { value: 30, label: t("lawyer.visits.filters.daysFilter.thisMonth") },
     { value: 90, label: t("lawyer.visits.filters.daysFilter.next3Months") },
-  ];
+  ], [t]);
 
   // Fetch visits from API
   const fetchVisits = useCallback(async () => {
@@ -599,7 +610,7 @@ function LawyerVisitsInner() {
                               visit.status
                             )}`}
                           >
-                            {getVisitStatusTranslation(visit.status, t)}
+                            {visit.status_display}
                           </span>
                         </td>
                         <td className="lawyer__table-cell" data-label="Actions">
