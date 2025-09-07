@@ -37,6 +37,7 @@ interface Visit {
   case_number: string;
   detainee_name: string;
   visit_date: string;
+  visit_approved_date: string | null;
   visit_time: string | null;
   visit_type: string;
   status: string;
@@ -46,6 +47,8 @@ interface Visit {
   prison_id: string;
   duration_minutes: number | null;
   notes: string;
+  outcome: string | null;
+  rejection_reason: string | null;
   created: string;
   updated: string;
 }
@@ -75,7 +78,7 @@ function LawyerVisitsInner() {
   // Filter states
   const [statusFilter, setStatusFilter] = useState("");
   const [urgentOnly, setUrgentOnly] = useState(false);
-  const [daysFilter, setDaysFilter] = useState(7); // Default to 7 days
+  const [daysFilter, setDaysFilter] = useState(""); // Default to no selection
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
 
@@ -122,7 +125,7 @@ function LawyerVisitsInner() {
       const response = await getLawyerVisits(
         token,
         {
-          days: daysFilter,
+          ...(daysFilter && daysFilter !== "" && { days: parseInt(daysFilter) }),
           status: statusFilter && statusFilter.trim() !== "" ? statusFilter : undefined,
           page: currentPage,
           page_size: pageSize,
@@ -150,7 +153,7 @@ function LawyerVisitsInner() {
   useEffect(() => {
     const status = searchParams.get("status") || "";
     const urgent = searchParams.get("urgent_only") === "true";
-    const days = parseInt(searchParams.get("days") || "7");
+    const days = searchParams.get("days") || "";
     const page = parseInt(searchParams.get("page") || "1");
 
     setStatusFilter(status);
@@ -181,7 +184,7 @@ function LawyerVisitsInner() {
     setCurrentPage(1);
   };
 
-  const handleDaysChange = (value: number) => {
+  const handleDaysChange = (value: string) => {
     if (!isFilterParamsReady || loading) return;
     setDaysFilter(value);
     setCurrentPage(1);
@@ -387,35 +390,32 @@ function LawyerVisitsInner() {
   const getStatusClass = (status: string) => {
     switch (status.toLowerCase()) {
       case "todo":
-        return "lawyer__status--pending";
+        return "case__status--pending";
+      case "awaiting_confirmation":
+        return "case__status--awaiting";
+      case "approved":
+        return "case__status--approved";
       case "in_progress":
-        return "lawyer__status--progress";
+        return "case__status--progress";
       case "completed":
-        return "lawyer__status--completed";
+        return "case__status--completed";
+      case "complete":
+        return "case__status--completed";
       case "done":
-        return "lawyer__status--done";
+        return "case__status--done";
       case "rejected":
-        return "lawyer__status--rejected";
+        return "case__status--rejected";
       case "cancelled":
-        return "lawyer__status--cancelled";
+        return "case__status--cancelled";
+      case "pending":
+        return "case__status--pending";
       default:
-        return "lawyer__status--default";
+        return "case__status--default";
     }
   };
 
 
 
-  const formatTime = (timeString: string | null) => {
-    if (!timeString) return "—";
-    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString(
-      "ar-SA",
-      {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      }
-    );
-  };
 
   return (
     <div className="lawyer">
@@ -436,17 +436,17 @@ function LawyerVisitsInner() {
           <div className="lawyer__cases-filters">
             <div className="lawyer__filter">
               <CustomSelect
-                value={String(daysFilter)}
-                onChange={(value) => handleDaysChange(Number(value))}
+                value={daysFilter}
+                onChange={(value) => handleDaysChange(value)}
                 placeholder={
-                  t("lawyer.visits.filters.daysFilter.label")?.toString() ||
-                  "Time Period"
+                  t("lawyer.visits.filters.daysFilter.placeholder")?.toString() ||
+                  "Choose Period"
                 }
                 options={daysOptions.map((option) => ({
                   value: String(option.value),
                   label: option.label,
                 }))}
-                includeNullOption={false}
+                includeNullOption={true}
                 isSearchable={false}
                 instanceId="visits-days-filter"
               />
@@ -503,9 +503,9 @@ function LawyerVisitsInner() {
                 <tr>
                   <th className="lawyer__table-expand-header"></th>
                   <th>{t("lawyer.visits.table.visitDate")}</th>
+                  <th>{t("lawyer.visits.table.visitApprovedDate")}</th>
                   <th>{t("lawyer.visits.table.detaineeName")}</th>
                   <th>{t("lawyer.visits.table.prisonName")}</th>
-                  <th style={{ width: "180px" }}>{t("lawyer.visits.table.visitType")}</th>
                   <th style={{ width: "80px" }}>{t("lawyer.visits.table.status")}</th>
                   <th style={{ width: "80px" }}>
                     {t("lawyer.visits.table.actions")}
@@ -570,11 +570,6 @@ function LawyerVisitsInner() {
                             <span className="lawyer__visit-date">
                               {formatDateWithLocale(visit.visit_date)}
                             </span>
-                            {visit.visit_time && (
-                              <span className="lawyer__visit-time">
-                                {formatTime(visit.visit_time)}
-                              </span>
-                            )}
                             {visit.is_urgent && (
                               <span className="lawyer__case-urgent-badge">
                                 <IconAlertCircle size={16} stroke={1.5} />
@@ -582,6 +577,11 @@ function LawyerVisitsInner() {
                               </span>
                             )}
                           </div>
+                        </td>
+                        <td className="lawyer__table-cell" data-label="Visit Approved Date">
+                          <span className="lawyer__visit-approved-date">
+                            {visit.visit_approved_date ? formatDateWithLocale(visit.visit_approved_date) : "TBD"}
+                          </span>
                         </td>
                         <td className="lawyer__table-cell" data-label="Detainee">
                           <span className="lawyer__detainee-name">
@@ -591,13 +591,6 @@ function LawyerVisitsInner() {
                         <td className="lawyer__table-cell" data-label="Prison">
                           <span className="lawyer__prison-name">
                             {visit.prison_name}
-                          </span>
-                        </td>
-                        <td className="lawyer__table-cell" data-label="Type">
-                          <span className="lawyer__visit-type">
-                            {t(
-                              `lawyer.visits.visitTypes.${visit.visit_type}` as any
-                            ) || visit.visit_type}
                           </span>
                         </td>
                         <td className="lawyer__table-cell" data-label="Status">
@@ -686,7 +679,7 @@ function LawyerVisitsInner() {
                       {isRowExpanded(visit.id) && (
                         <tr className="lawyer__table-expanded-row">
                           <td
-                            colSpan={7}
+                            colSpan={6}
                             className="lawyer__table-expanded-cell"
                           >
                             <div className="lawyer__expanded-content">
@@ -729,21 +722,43 @@ function LawyerVisitsInner() {
                                       ) || visit.visit_type}
                                     </span>
                                   </div>
-                                  <div className="lawyer__expanded-item">
-                                    <span className="lawyer__expanded-label">
-                                      {t("lawyer.visits.expanded.urgent")}:
-                                    </span>
-                                    <span className="lawyer__expanded-value">
-                                      {visit.is_urgent ? "Yes" : "No"}
-                                    </span>
-                                  </div>
-                                  {visit.notes && (
+                                  {visit.status === "approved" && visit.notes && (
                                     <div className="lawyer__expanded-item lawyer__expanded-item--full">
                                       <span className="lawyer__expanded-label">
                                         {t("lawyer.visits.expanded.notes")}:
                                       </span>
                                       <span className="lawyer__expanded-value">
                                         {visit.notes}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {visit.status === "complete" && visit.outcome && (
+                                    <div className="lawyer__expanded-item lawyer__expanded-item--full">
+                                      <span className="lawyer__expanded-label">
+                                        {t("lawyer.visits.expanded.outcome")?.toString()}:
+                                      </span>
+                                      <span className="lawyer__expanded-value">
+                                        {visit.outcome}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {visit.status === "rejected" && visit.rejection_reason && (
+                                    <div className="lawyer__expanded-item lawyer__expanded-item--full">
+                                      <span className="lawyer__expanded-label">
+                                        {t("lawyer.visits.expanded.rejectionReason")?.toString()}:
+                                      </span>
+                                      <span className="lawyer__expanded-value">
+                                        {visit.rejection_reason}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {visit.status === "cancelled" && visit.notes && (
+                                    <div className="lawyer__expanded-item lawyer__expanded-item--full">
+                                      <span className="lawyer__expanded-label">
+                                        {t("lawyer.visits.expanded.cancellationReason")?.toString()}:
+                                      </span>
+                                      <span className="lawyer__expanded-value">
+                                        {visit.notes.split('\n').pop()}
                                       </span>
                                     </div>
                                   )}

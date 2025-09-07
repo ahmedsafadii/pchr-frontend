@@ -4,20 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { useLocale, useTranslations } from "next-globe-gen";
-
-// Interface for upcoming visit data
-interface UpcomingVisit {
-  id: string;
-  title: string;
-  case_number: string;
-  detainee_name: string;
-  visit_date: string;
-  visit_time: string | null;
-  visit_type: string;
-  status: string;
-  is_urgent: boolean;
-  prison_name: string;
-}
+import { UpcomingVisit } from "../../../types/case";
 
 interface VisitsCalendarProps {
   onCaseClick?: (caseId: string) => void;
@@ -35,7 +22,6 @@ export default function VisitsCalendar({ onCaseClick, upcomingVisits = [] }: Vis
 
   // Debug: Log the visits data
   useEffect(() => {
-    console.log('VisitsCalendar received visits:', upcomingVisits);
   }, [upcomingVisits]);
 
   // Get visits for a specific date
@@ -46,13 +32,7 @@ export default function VisitsCalendar({ onCaseClick, upcomingVisits = [] }: Vis
     const day = String(date.getDate()).padStart(2, '0');
     const dateString = `${year}-${month}-${day}`;
     
-    const visitsForDate = upcomingVisits.filter(visit => visit.visit_date === dateString);
-    
-    // Debug: Log date filtering
-    console.log(`Checking date ${dateString} against visits:`, upcomingVisits.map(v => v.visit_date));
-    if (visitsForDate.length > 0) {
-      console.log(`Found ${visitsForDate.length} visits for ${dateString}:`, visitsForDate);
-    }
+    const visitsForDate = upcomingVisits.filter(visit => visit.visit_approved_date === dateString);
     
     return visitsForDate;
   };
@@ -150,11 +130,9 @@ export default function VisitsCalendar({ onCaseClick, upcomingVisits = [] }: Vis
             date.toLocaleDateString(locale, { weekday: 'narrow' }).toUpperCase()
           }
           onClickDay={(clickedDate, event) => {
-            console.log('Calendar day clicked:', clickedDate);
             setDate(clickedDate);
             // Check if clicked date has visits
             const visits = getVisitsForDate(clickedDate);
-            console.log('Visits found for clicked date:', visits);
             if (visits.length > 0) {
               // Get the position of the clicked tile
               const target = event.target as HTMLElement;
@@ -181,7 +159,6 @@ export default function VisitsCalendar({ onCaseClick, upcomingVisits = [] }: Vis
               const localDateString = `${year}-${month}-${day}`;
               setHoveredDate(localDateString);
               setShowTooltip(true);
-              console.log('Tooltip should show:', { hoveredDate: localDateString, showTooltip: true });
             }
           }}
           onActiveStartDateChange={({ activeStartDate }) => {
@@ -213,7 +190,7 @@ export default function VisitsCalendar({ onCaseClick, upcomingVisits = [] }: Vis
               <div 
                 key={visit.id} 
                 className="lawyer__calendar-tooltip-item"
-                onClick={() => handleCaseClick(visit.case_number)}
+                onClick={() => handleCaseClick(visit.case_id)}
               >
                 <div className="lawyer__calendar-tooltip-case">
                   {visit.case_number}: {visit.detainee_name}
@@ -223,7 +200,6 @@ export default function VisitsCalendar({ onCaseClick, upcomingVisits = [] }: Vis
                 </div>
                 <div className="lawyer__calendar-tooltip-details">
                   <div>{visit.prison_name}</div>
-                  <div>{visit.visit_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
                   {visit.visit_time && <div>{visit.visit_time}</div>}
                 </div>
                 <div className="lawyer__calendar-tooltip-action">
@@ -234,18 +210,6 @@ export default function VisitsCalendar({ onCaseClick, upcomingVisits = [] }: Vis
           </div>
         </div>
       )}
-
-      {/* Legend */}
-      {/* <div className="lawyer__calendar-legend">
-        <div className="lawyer__calendar-legend-item">
-          <div className="lawyer__calendar-legend-dot lawyer__calendar-legend-dot--today"></div>
-          <span>Today</span>
-        </div>
-        <div className="lawyer__calendar-legend-item">
-          <div className="lawyer__calendar-legend-dot lawyer__calendar-legend-dot--visit"></div>
-          <span>Visit Day</span>
-        </div>
-      </div> */}
     </div>
   );
 }

@@ -199,3 +199,10 @@ html[lang="ar"] .isNumber {
   text-align: right;
   direction: ltr;
 }
+
+.react-calendar {
+  width: 100%;
+  border: none !important;
+  font-family: inherit !important;
+  background: transparent !important;
+}

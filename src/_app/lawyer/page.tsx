@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import "@/app/css/lawyer.css";
 import LawyerProtectedLayout from "../components/LawyerProtectedLayout";
+import { UpcomingVisit } from "../../types/case";
 import {
   IconHourglassLow,
   IconProgressBolt,
@@ -36,18 +37,6 @@ interface VisitStatistics {
   pending: number;
 }
 
-interface UpcomingVisit {
-  id: string;
-  title: string;
-  case_number: string;
-  detainee_name: string;
-  visit_date: string;
-  visit_time: string | null;
-  visit_type: string;
-  status: string;
-  is_urgent: boolean;
-  prison_name: string;
-}
 
 interface LatestCase {
   id: string;
@@ -110,7 +99,7 @@ function LawyerDashboardInner() {
 
   // Handle case click from calendar
   const handleCaseClick = (caseId: string) => {
-    router.push(`/${locale}/lawyer/cases/${caseId}`);
+    router.push(`/${locale}/lawyer/cases/${caseId}/visits`);
   };
 
   if (loading) {

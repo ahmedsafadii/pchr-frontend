@@ -133,3 +133,18 @@ export interface Visit {
   created_by: string;
   updated_by: string;
 }
+
+export interface UpcomingVisit {
+  id: string;
+  case_id: string;
+  title: string;
+  case_number: string;
+  detainee_name: string;
+  visit_date: string;
+  visit_approved_date: string | null;
+  visit_time: string | null;
+  visit_type: string;
+  status: string;
+  is_urgent: boolean;
+  prison_name: string;
+}

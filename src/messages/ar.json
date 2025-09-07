@@ -568,7 +568,8 @@
       "pending": "قيد الانتظار",
       "rejected": "مرفوض",
       "table": {
-        "visitDate": "تاريخ الزيارة",
+        "visitDate": "تاريخ الطلب",
+        "visitApprovedDate": "تاريخ الزيارة",
         "detaineeName": "اسم المعتقل",
         "clientName": "اسم العميل",
         "prisonName": "اسم السجن",
@@ -614,6 +615,7 @@
         "selectStatus": "اختر الحالة",
         "daysFilter": {
           "label": "الفترة الزمنية",
+          "placeholder": "جميع الفترات",
           "today": "اليوم",
           "thisWeek": "هذا الأسبوع (7 أيام)",
           "thisMonth": "هذا الشهر (30 يوماً)",
@@ -636,6 +638,9 @@
         "duration": "المدة",
         "title": "العنوان",
         "notes": "ملاحظات",
+        "outcome": "النتيجة",
+        "rejectionReason": "سبب الرفض",
+        "cancellationReason": "سبب الإلغاء",
         "created": "تم الإنشاء",
         "updated": "تم التحديث"
       }

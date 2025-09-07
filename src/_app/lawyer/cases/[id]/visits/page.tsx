@@ -44,6 +44,7 @@ interface Visit {
   case_number: string;
   detainee_name: string;
   visit_date: string;
+  visit_approved_date: string | null;
   visit_time: string | null;
   visit_type: string;
   status: string;
@@ -53,6 +54,8 @@ interface Visit {
   prison_id: string;
   duration_minutes: number | null;
   notes: string;
+  outcome: string | null;
+  rejection_reason: string | null;
   created: string;
   updated: string;
 }
@@ -84,7 +87,7 @@ function LawyerCaseVisitsInner() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [statusFilter, setStatusFilter] = useState("");
-  const [daysFilter, setDaysFilter] = useState(7); // Default to 7 days
+  const [daysFilter, setDaysFilter] = useState(""); // Default to no selection
 
   // Filter options
   const statusOptions = [
@@ -131,7 +134,7 @@ function LawyerCaseVisitsInner() {
       const params = {
         page: currentPage,
         page_size: pageSize,
-        days: daysFilter,
+        ...(daysFilter && daysFilter !== "" && { days: parseInt(daysFilter) }),
         status: statusFilter && statusFilter.trim() !== "" ? statusFilter : undefined,
       };
 
@@ -168,7 +171,7 @@ function LawyerCaseVisitsInner() {
     setCurrentPage(1);
   };
 
-  const handleDaysChange = (value: number) => {
+  const handleDaysChange = (value: string) => {
     if (!isFilterParamsReady) return;
     console.log("Days filter changed to:", value);
     console.log("Previous daysFilter was:", daysFilter);
@@ -427,19 +430,6 @@ function LawyerCaseVisitsInner() {
   const isRowExpanded = (visitId: string) => expandedRows.has(visitId);
 
 
-
-  const formatTime = (timeString: string | null) => {
-    if (!timeString) return "—";
-    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString(
-      "ar-SA",
-      {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      }
-    );
-  };
-
   if (isLoading) {
     return (
       <div className="lawyer__loading">
@@ -484,17 +474,17 @@ function LawyerCaseVisitsInner() {
       <div className="lawyer__cases-filters">
         <div className="lawyer__filter">
           <CustomSelect
-            value={daysFilter.toString()}
-            onChange={(value) => handleDaysChange(Number(value))}
+            value={daysFilter}
+            onChange={(value) => handleDaysChange(value)}
             placeholder={
-              t("lawyer.visits.filters.daysFilter.label")?.toString() ||
-              "Time Period"
+              t("lawyer.visits.filters.daysFilter.placeholder")?.toString() ||
+              "Choose Period"
             }
             options={daysOptions.map((option) => ({
               value: option.value.toString(),
               label: option.label,
             }))}
-            includeNullOption={false}
+            includeNullOption={true}
             isSearchable={false}
             instanceId="case-visits-days-filter"
           />
@@ -523,8 +513,8 @@ function LawyerCaseVisitsInner() {
             <tr>
               <th style={{ width: "50px" }}></th>
               <th>{t("lawyer.visits.table.visitDate")}</th>
+              <th>{t("lawyer.visits.table.visitApprovedDate")}</th>
               <th>{t("lawyer.visits.table.prisonName")}</th>
-              <th>{t("lawyer.visits.table.visitType")}</th>
               <th>{t("lawyer.visits.table.status")}</th>
               <th style={{ width: "60px" }}>
                 {t("lawyer.visits.table.actions")}
@@ -555,23 +545,16 @@ function LawyerCaseVisitsInner() {
                       <span className="lawyer__visit-date">
                         {formatDateWithLocale(visit.visit_date)}
                       </span>
-                      {visit.visit_time && (
-                        <span className="lawyer__visit-time">
-                          {formatTime(visit.visit_time)}
-                        </span>
-                      )}
                     </div>
+                  </td>
+                  <td className="lawyer__table-cell" data-label="Visit Approved Date">
+                    <span className="lawyer__visit-approved-date">
+                      {visit.visit_approved_date ? formatDateWithLocale(visit.visit_approved_date) : "TBD"}
+                    </span>
                   </td>
                   <td className="lawyer__table-cell" data-label="Prison">
                     <span className="lawyer__prison-name">
                       {visit.prison_name}
-                    </span>
-                  </td>
-                  <td className="lawyer__table-cell" data-label="Type">
-                    <span className="lawyer__visit-type">
-                      {(t as any)(
-                        `lawyer.visits.visitTypes.${visit.visit_type}`
-                      ) || visit.visit_type}
                     </span>
                   </td>
                   <td className="lawyer__table-cell" data-label="Status">
@@ -673,23 +656,15 @@ function LawyerCaseVisitsInner() {
                             </div>
                             <div className="lawyer__expanded-item">
                               <span className="lawyer__expanded-label">
-                                {t("lawyer.visits.expanded.duration")}:
+                                {t("lawyer.visits.expanded.visitType")}:
                               </span>
                               <span className="lawyer__expanded-value">
-                                {visit.duration_minutes
-                                  ? `${visit.duration_minutes} minutes`
-                                  : "—"}
+                                {(t as any)(
+                                  `lawyer.visits.visitTypes.${visit.visit_type}`
+                                ) || visit.visit_type}
                               </span>
                             </div>
-                            <div className="lawyer__expanded-item">
-                              <span className="lawyer__expanded-label">
-                                {t("lawyer.visits.expanded.urgent")}:
-                              </span>
-                              <span className="lawyer__expanded-value">
-                                {visit.is_urgent ? "Yes" : "No"}
-                              </span>
-                            </div>
-                            {visit.notes && (
+                            {visit.status === "approved" && visit.notes && (
                               <div className="lawyer__expanded-item lawyer__expanded-item--full">
                                 <span className="lawyer__expanded-label">
                                   {t("lawyer.visits.expanded.notes")}:
@@ -699,22 +674,36 @@ function LawyerCaseVisitsInner() {
                                 </span>
                               </div>
                             )}
-                            <div className="lawyer__expanded-item">
-                              <span className="lawyer__expanded-label">
-                                {t("lawyer.visits.expanded.created")}:
-                              </span>
-                              <span className="lawyer__expanded-value">
-                                {formatDateWithLocale(visit.created)}
-                              </span>
-                            </div>
-                            <div className="lawyer__expanded-item">
-                              <span className="lawyer__expanded-label">
-                                {t("lawyer.visits.expanded.updated")}:
-                              </span>
-                              <span className="lawyer__expanded-value">
-                                {formatDateWithLocale(visit.updated)}
-                              </span>
-                            </div>
+                            {visit.status === "complete" && visit.outcome && (
+                              <div className="lawyer__expanded-item lawyer__expanded-item--full">
+                                <span className="lawyer__expanded-label">
+                                  {t("lawyer.visits.expanded.outcome")?.toString()}:
+                                </span>
+                                <span className="lawyer__expanded-value">
+                                  {visit.outcome}
+                                </span>
+                              </div>
+                            )}
+                            {visit.status === "rejected" && visit.rejection_reason && (
+                              <div className="lawyer__expanded-item lawyer__expanded-item--full">
+                                <span className="lawyer__expanded-label">
+                                  {t("lawyer.visits.expanded.rejectionReason")?.toString()}:
+                                </span>
+                                <span className="lawyer__expanded-value">
+                                  {visit.rejection_reason}
+                                </span>
+                              </div>
+                            )}
+                            {visit.status === "cancelled" && visit.notes && (
+                              <div className="lawyer__expanded-item lawyer__expanded-item--full">
+                                <span className="lawyer__expanded-label">
+                                  {t("lawyer.visits.expanded.cancellationReason")?.toString()}:
+                                </span>
+                                <span className="lawyer__expanded-value">
+                                  {visit.notes.split('\n').pop()}
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
