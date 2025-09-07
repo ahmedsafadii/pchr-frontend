@@ -549,7 +549,7 @@ function LawyerCaseVisitsInner() {
                   </td>
                   <td className="lawyer__table-cell" data-label="Visit Approved Date">
                     <span className="lawyer__visit-approved-date">
-                      {visit.visit_approved_date ? formatDateWithLocale(visit.visit_approved_date) : "TBD"}
+                      {visit.visit_approved_date ? formatDateWithLocale(visit.visit_approved_date) : "-"}
                     </span>
                   </td>
                   <td className="lawyer__table-cell" data-label="Prison">

@@ -107,7 +107,7 @@
         "governorateRequired": "المحافظة مطلوبة",
         "districtRequired": "المنطقة مطلوب",
         "jobRequired": "المهنة مطلوبة",
-        "age18": "يجب أن يكون عمر المعتقل 18 سنة أو أكثر."
+        "age18": "يجب أن يكون عمر المعتقل / المُختفي قسراً 18 سنة أو أكثر."
       }
     },
     "step2": {
@@ -278,13 +278,13 @@
       "basicInfo": "معلومات أساسية",
       "dateOfDisappearance": "تاريخ الإعتقال / الإختفاء:",
       "details": "تفاصيل الاختفاء:",
-      "files": "الملفات",
+      "files": "المستندات المُرفقة",
       "lawyer": "المحامي",
       "updateTitle": "تحديث هام للقضية",
       "message": "رسالة",
       "messagePlaceholder": "اكتب رسالتك",
       "next": "ارسال",
-      "detainee": "المعتقل",
+      "detainee": "المعتقل / المُختفي قسراً",
       "readMore": "اقرأ المزيد",
       "status": { "underReview": "قيد المراجعة" }
     },
@@ -302,9 +302,9 @@
       "noAttachments": "لا توجد مرفقات"
     },
     "info": {
-      "title": "معلومات تقرير الاختفاء",
-      "caseInfo": "معلومات القضية",
-      "caseNumber": "رقم القضية",
+      "title": "معلومات البلاغ",
+      "caseInfo": "معلومات التبليغ",
+      "caseNumber": "رقم التبليغ",
       "status": "الحالة",
       "detainee": "البيانات الشخصية لـ المعتقل / المُختفي",
       "fullName": "إسم المعتقل / المختفي رباعي",
@@ -314,7 +314,7 @@
       "health": "الحالة الصحية",
       "marital": "الحالة الاجتماعية",
       "gender": "الجنس",
-      "location": "الموقع",
+      "location": "محل الإقامة",
       "street": "الشارع",
       "detention": "تفاصيل الإعتقال / الإختفاء",
       "disappearanceDate": "تاريخ الإعتقال / الإختفاء",
@@ -325,7 +325,7 @@
       "whatsapp": "رقم الواتساب",
       "relationship": "صلة القرابة",
       "documents": "رفع المستندات",
-      "signature": "توقيعك",
+      "signature": "توقيع الوكيل القانوني \" مُقدم البلاغ \"",
       "terms": "شروط وأحكام .PDF",
       "noDocuments": "لا توجد مستندات متاحة",
       "signaturePdfMessage": "لا يمكن عرض التوقيع هنا ولكن يمكنك تنزيله من الملفات أعلاه"
@@ -418,7 +418,7 @@
       },
       "table": {
         "caseNumber": "رقم القضية",
-        "detaineeName": "اسم المعتقل",
+        "detaineeName": "اسم المعتقل / المُختفي قسراً",
         "clientName": "اسم العميل",
         "clientPhone": "هاتف العميل",
         "status": "الحالة",
@@ -428,7 +428,7 @@
       },
       "columns": {
         "caseNumber": "رقم القضية",
-        "detaineeName": "اسم المعتقل",
+        "detaineeName": "اسم المعتقل / المُختفي قسراً",
         "detaineeId": "رقم هوية المعتقل / المُختفي قسراً ",
         "creationDate": "تاريخ الإنشاء",
         "clientName": "اسم العميل",
@@ -457,7 +457,7 @@
       },
       "expandedContent": {
         "sections": {
-          "detaineeInformation": "معلومات المعتقل",
+          "detaineeInformation": "معلومات المعتقل / المُختفي قسراً",
           "clientInformation": "معلومات العميل",
           "caseInformation": "معلومات القضية"
         },
@@ -471,7 +471,7 @@
           "phoneNumber": "رقم الهاتف",
           "whatsappNumber": "رقم الواتساب",
           "relationship": "العلاقة",
-          "detentionDate": "تاريخ الاعتقال",
+          "detentionDate": "تاريخ الإعتقال / الإختفاء",
           "circumstances": "الظروف",
           "caseNumber": "رقم القضية",
           "status": "الحالة",
@@ -518,7 +518,7 @@
       },
       "detentionInfo": {
         "title": "تفاصيل الإعتقال / الإختفاء",
-        "detentionDate": "تاريخ الاعتقال",
+        "detentionDate": "تاريخ الإعتقال / الإختفاء",
         "status": "الحالة",
         "circumstances": "ظروف الاعتقال",
         "location": "الموقع"
@@ -570,7 +570,7 @@
       "table": {
         "visitDate": "تاريخ الطلب",
         "visitApprovedDate": "تاريخ الزيارة",
-        "detaineeName": "اسم المعتقل",
+        "detaineeName": "اسم المعتقل / المُختفي قسراً",
         "clientName": "اسم العميل",
         "prisonName": "اسم السجن",
         "caseNumber": "رقم القضية",
@@ -631,7 +631,7 @@
       },
       "expanded": {
         "caseNumber": "رقم القضية",
-        "detainee": "المعتقل",
+        "detainee": "المعتقل / المُختفي قسراً",
         "prison": "السجن",
         "visitType": "نوع الزيارة",
         "urgent": "عاجل",
@@ -704,7 +704,7 @@
       "next": "التالي"
     },
     "files": {
-      "title": "الملفات",
+      "title": "المستندات المُرفقة",
       "uploadFiles": "تحميل الملفات",
       "caseFiles": "ملفات القضية",
       "uploadedFiles": "الملفات المحملة",
@@ -785,7 +785,7 @@
     }
   },
   "common": {
-    "detainee": "المعتقل",
+    "detainee": "المعتقل / المُختفي قسراً",
     "yes": "نعم",
     "no": "لا",
     "noDocuments": "لا توجد مستندات متاحة",
