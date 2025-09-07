@@ -40,7 +40,7 @@ export default function ConfirmSubmitModal({
         .confirm__title {
           font-size: 24px;
           margin: 0 auto 36px auto;
-          font-weight: 900;
+          font-weight: 700;
           max-width: 300px;
         }
         .confirm__actions {

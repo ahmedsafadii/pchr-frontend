@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Head from "./components/Head";
-import { IBM_Plex_Sans_Arabic, Amiri, Rubik } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Rubik } from "next/font/google";
 import { useLocale } from "next-globe-gen";
 import { ReactNode } from "react";
 import "@/app/css/globals.css";
@@ -8,24 +8,19 @@ import ClientProviders from "./components/ClientProviders";
 import { generateMetadata as generateDynamicMetadata } from "./utils/metadata";
 
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
-  weight: ["100", "200", "300", "400", "500", "600", "700"],
-  subsets: ["latin", "arabic", "cyrillic-ext", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  subsets: ["arabic", "latin"],
   variable: "--font-ibm-plex-sans-arabic",
   display: "swap",
-});
-
-const amiri = Amiri({
-  weight: ["400", "700"],
-  subsets: ["arabic", "latin"],
-  variable: "--font-amiri",
-  display: "swap",
+  preload: true,
 });
 
 const rubik = Rubik({
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600"],
   subsets: ["arabic", "latin"],
   variable: "--font-rubik",
   display: "swap",
+  preload: false,
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -44,7 +39,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang={locale}>
       <Head />
-      <body className={`${ibmPlexSansArabic.variable} ${amiri.variable} ${rubik.variable} antialiased`}>
+      <body className={`${ibmPlexSansArabic.variable} ${rubik.variable} antialiased`}>
         {/* <div className="overlay">
           <img src="/img/screenshot.png" alt="PCHR" />
         </div> */}

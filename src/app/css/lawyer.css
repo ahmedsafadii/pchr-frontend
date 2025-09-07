@@ -64,7 +64,7 @@
 }
 
 .lawyer__nav-link--active {
-  font-weight: 800;
+  font-weight: 700;
   box-shadow: 0 14px 10px -10px rgba(0, 0, 0, 0.1);
 }
 
@@ -219,7 +219,7 @@
 
 .lawyer__welcome-name {
   font-size: 32px;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0;
 }
 
@@ -232,7 +232,7 @@
 .lawyer__welcome-subtitle {
   font-size: 48px;
   color: var(--white);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 /* Stats Cards */
@@ -308,7 +308,7 @@
 
 .lawyer__stat-number {
   font-size: 42px;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0 0 4px 0;
   color: var(--neutral-900);
 }
@@ -1339,7 +1339,7 @@ html[lang="ar"] .react-calendar__navigation button svg {
 
 .lawyer__cases-title {
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0;
 }
 
@@ -2107,7 +2107,7 @@ html[lang="ar"] .lawyer__table-header th {
 
 .lawyer__case-details-title {
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0;
 }
 
@@ -2227,7 +2227,7 @@ html[lang="ar"] .lawyer__table-header th {
 
 .lawyer__visits-title {
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0;
 }
 
@@ -2552,7 +2552,7 @@ html[lang="ar"] .lawyer__table-header th {
 
 .lawyer__files-title {
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0;
 }
 

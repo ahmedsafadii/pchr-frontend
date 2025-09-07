@@ -79,7 +79,7 @@
 .landing__title {
   flex: 1;
   font-size: 1.5rem;
-  font-weight: 800;
+  font-weight: 700;
   margin-bottom: 0.5rem;
 }
 @media (min-width: 768px) {
@@ -130,7 +130,7 @@
 
 .landing__card-title {
   font-size: 2rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--white);
   margin-bottom: 1rem;
   max-width: 380px;

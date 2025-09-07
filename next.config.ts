@@ -20,6 +20,8 @@ const nextConfig: NextConfig = {
   experimental: {
     // Enable static optimization for better performance
     optimizePackageImports: ['next-globe-gen'],
+    // Reduce font preloading
+    optimizeCss: true,
   },
   // Add production optimizations
   compress: true,

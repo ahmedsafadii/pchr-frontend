@@ -80,7 +80,7 @@ export default function SuccessModal({
         .success__title {
           font-size: 24px;
           margin: 0 auto 8px auto;
-          font-weight: 900;
+          font-weight: 700;
         }
         .success__ref {
           display: flex;

@@ -80,9 +80,6 @@ export default function RequestVisitModal({
 
     // Client-side validation
     const validationErrors: FieldErrors = {};
-    if (!formData.title.trim()) {
-      validationErrors.title = [t("lawyer.modals.requestVisit.errors.title")];
-    }
     if (!formData.prison_id) {
       validationErrors.prison_id = [
         t("lawyer.modals.requestVisit.errors.prison"),
@@ -205,7 +202,6 @@ export default function RequestVisitModal({
               placeholder={t(
                 "lawyer.modals.requestVisit.titlePlaceholder"
               )?.toString()}
-              required
             />
             {hasFieldError("title") && (
               <div className="modal-field-error">{getFieldError("title")}</div>
@@ -290,7 +286,7 @@ export default function RequestVisitModal({
           </div>
 
           <div className="modal-field">
-            <label className="modal-label">
+            <label className="modal-label modal-label--required">
               {t("lawyer.modals.requestVisit.visitDate")}
             </label>
             <div className="modal-date-picker-wrapper">
@@ -313,7 +309,6 @@ export default function RequestVisitModal({
                 className={`modal-date-input ${
                   hasFieldError("visit_date") ? "modal-date-input--error" : ""
                 }`}
-                minDate={new Date()}
                 showYearDropdown
                 scrollableYearDropdown
                 yearDropdownItemNumber={10}

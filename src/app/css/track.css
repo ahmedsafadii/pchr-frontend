@@ -59,7 +59,7 @@
 
 .track__title {
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0 0 24px 0;
 }
 
@@ -275,7 +275,7 @@
 }
 .case-overview__main-title {
   font-size: 28px;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0 0 16px 0;
   line-height: 1.2;
   color: var(--primary-800);
