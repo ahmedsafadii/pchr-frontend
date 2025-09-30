@@ -36,12 +36,13 @@ export default function Home() {
           <Logo />
         </div>
         <nav className="landing__actions" aria-label="Main actions">
-          <Link
+          {/* Lawyer login hidden */}
+          {/* <Link
             href={`${currentLocale}/lawyer-login`}
             className="landing__action-btn"
           >
             {t("landing.header.lawyerLogin")}
-          </Link>
+          </Link> */}
           <LanguageSwitcher />
         </nav>
       </header>

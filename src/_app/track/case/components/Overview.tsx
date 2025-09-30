@@ -601,6 +601,13 @@ export default function Overview({
                 <span className="chat__counter">{`${message.length}/500`}</span>
               </div>
               <div className="chat__actions">
+                {/* Message clarification for clients */}
+                <div className="chat__clarification">
+                  <div className="chat__clarification-icon">ℹ️</div>
+                  <p className="chat__clarification-text">
+                    {tt("trackCase.overview.messageClarification")}
+                  </p>
+                </div>
                 <button
                   className="chat__btn"
                   type="submit"

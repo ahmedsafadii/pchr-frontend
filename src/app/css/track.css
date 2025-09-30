@@ -614,6 +614,33 @@
   width: 100%;
 }
 
+/* Message clarification styles */
+.chat__clarification {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-left: 4px solid #000000;
+}
+
+.chat__clarification-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.chat__clarification-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #495057;
+  font-weight: 500;
+}
+
 /* Additional chat styles for messages */
 .chat__load-more {
   text-align: center;

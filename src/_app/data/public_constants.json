@@ -264,7 +264,7 @@
           {
               "key": "pending",
               "value": "pending",
-              "display": "قيد الانتظار"
+              "display": "قيد المتابعة"
           },
           {
               "key": "awaiting_confirmation",

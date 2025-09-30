@@ -257,9 +257,9 @@
     },
     "address": {
       "title": "الموقع ( عنوان محل الإقامة الدائم )",
-      "location": "الاقليم",
+      "location": "المنطقة",
       "governorate": "المحافظة",
-      "locality": "البلدية",
+      "locality": "المدينة/البلدة",
       "district": "الحي",
       "streetName": "اسم الشارع",
       "streetNamePlaceholder": "اسم الشارع"
@@ -284,6 +284,7 @@
       "message": "رسالة",
       "messagePlaceholder": "اكتب رسالتك",
       "next": "ارسال",
+      "messageClarification": "ملاحظة مهمة: يمكنك إرسال رسالة واحدة فقط بعد رد المحامي. تأكد من أن رسالتك شاملة وتتضمن جميع التفاصيل والمعلومات المطلوبة.",
       "detainee": "المعتقل / المُختفي قسراً",
       "readMore": "اقرأ المزيد",
       "status": { "underReview": "قيد المراجعة" }
@@ -437,7 +438,7 @@
         "status": "الحالة"
       },
       "statusOptions": {
-        "pending": "قيد الانتظار",
+        "pending": "قيد المتابعة",
         "inProgress": "قيد التنفيذ",
         "completed": "مكتمل",
         "underReview": "قيد المراجعة",
@@ -566,7 +567,7 @@
       "visitOutcome": "نتيجة الزيارة",
       "outcome": "النتيجة",
       "rejectionReason": "سبب الرفض",
-      "pending": "قيد الانتظار",
+      "pending": "قيد المتابعة",
       "rejected": "مرفوض",
       "table": {
         "visitDate": "تاريخ الطلب",
@@ -587,7 +588,7 @@
         "complete": "مكتمل",
         "cancelled": "ملغي",
         "done": "مكتملة",
-        "pending": "قيد الانتظار",
+        "pending": "قيد المتابعة",
         "approved": "موافق عليها",
         "rejected": "مرفوض"
       },

@@ -58,16 +58,6 @@ export default function GazaAddressSelector({
     );
   }, [constants]);
 
-  // Set default to Gaza Strip if no location is selected
-  useEffect(() => {
-    if (!location && locations.length > 0) {
-      const gazaStrip = locations.find((loc) => loc.value === "gaza_strip");
-      if (gazaStrip && onLocationChange) {
-        onLocationChange(gazaStrip.value);
-      }
-    }
-  }, [location, locations, onLocationChange]);
-
   // Get governorates from the specified location
   const selectedLocation =
     constants?.data?.locations?.[
@@ -94,6 +84,16 @@ export default function GazaAddressSelector({
     () => (selectedLocality?.districts as any[]) || [],
     [selectedLocality]
   );
+
+  // Set default to Gaza Strip if no location is selected
+  useEffect(() => {
+    if (!location && locations.length > 0) {
+      const gazaStrip = locations.find((loc) => loc.value === "gaza_strip");
+      if (gazaStrip && onLocationChange) {
+        onLocationChange(gazaStrip.value);
+      }
+    }
+  }, [location, locations, onLocationChange]);
 
   // Track if component has been initialized to prevent resetting on first load
   const isInitializedRef = useRef(false);
