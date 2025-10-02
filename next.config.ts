@@ -11,10 +11,19 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "www.morebusiness.com" },
-      { protocol: "https", hostname: "pchr-legal-documents-dev.s3.amazonaws.com" },
-      // Add production S3 bucket if different
+      // Scaleway S3 buckets
+      { protocol: "https", hostname: "s3.fr-par.scw.cloud" },
+      // Development buckets
+      ...(isDevelopment ? [
+        { protocol: "https" as const, hostname: "s3.fr-par.scw.cloud", pathname: "/pchr-public-files-dev/**" },
+        { protocol: "https" as const, hostname: "s3.fr-par.scw.cloud", pathname: "/pchr-legal-documents-dev/**" },
+        { protocol: "https" as const, hostname: "s3.fr-par.scw.cloud", pathname: "/pchr-temp-files-dev/**" },
+      ] : []),
+      // Production buckets
       ...(isProduction ? [
-        { protocol: "https", hostname: "pchr-legal-documents.s3.amazonaws.com" },
+        { protocol: "https" as const, hostname: "s3.fr-par.scw.cloud", pathname: "/pchr-public-files-prod/**" },
+        { protocol: "https" as const, hostname: "s3.fr-par.scw.cloud", pathname: "/pchr-legal-documents-prod/**" },
+        { protocol: "https" as const, hostname: "s3.fr-par.scw.cloud", pathname: "/pchr-temp-files-prod/**" },
       ] : []),
     ],
   },
