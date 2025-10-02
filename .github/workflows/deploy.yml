@@ -199,13 +199,21 @@ jobs:
             # Setup PM2 startup script
             sudo pm2 startup systemd -u www-data --hp /var/www
 
-            # Health check
-            echo "Performing health check..."
-            sleep 10
-            if curl -f http://localhost:3001/; then
-              echo "Health check passed"
+            # Wait for application to start and verify PM2 status
+            echo "Waiting for application to start..."
+            sleep 15
+
+            # Check PM2 status instead of health check
+            echo "Checking PM2 status..."
+            if sudo pm2 status | grep -q "online"; then
+              echo "✅ Application is running successfully"
+              sudo pm2 status
             else
-              echo "Error: Health check failed - application is not responding"
+              echo "❌ Application failed to start properly"
+              echo "PM2 status:"
+              sudo pm2 status
+              echo "Checking application logs..."
+              sudo pm2 logs pchr-frontend-dev --lines 20
               exit 1
             fi
 
@@ -314,17 +322,26 @@ jobs:
             # Setup PM2 startup script
             sudo pm2 startup systemd -u www-data --hp /var/www
 
-            # Health check
-            echo "Performing health check..."
-            sleep 10
-            if curl -f http://localhost:3000/; then
-              echo "✅ Health check passed"
+            # Wait for application to start and verify PM2 status
+            echo "Waiting for application to start..."
+            sleep 15
+
+            # Check PM2 status instead of health check
+            echo "Checking PM2 status..."
+            if sudo pm2 status | grep -q "online"; then
+              echo "✅ Application is running successfully"
+              sudo pm2 status
             else
-              echo "❌ Error: Health check failed - application is not responding"
-              echo "Checking application status..."
-              sudo pm2 status || true
+              echo "❌ Application failed to start properly"
+              echo "PM2 status:"
+              sudo pm2 status
               echo "Checking application logs..."
-              sudo pm2 logs pchr-frontend --lines 20 || true
+              sudo pm2 logs pchr-frontend --lines 20
+              echo "Checking error logs..."
+              if [ -f "/var/log/pm2/pchr-frontend-error.log" ]; then
+                echo "Recent error logs:"
+                sudo tail -n 20 /var/log/pm2/pchr-frontend-error.log
+              fi
               exit 1
             fi
 

@@ -68,7 +68,7 @@ The project uses GitHub Actions for automated deployment:
 
 3. **Set up SSL Certificates** (Production only):
    ```bash
-   sudo certbot --nginx -d pchr.org -d www.pchr.org
+   sudo certbot --nginx -d portal.pchrgaza.org -d www.portal.pchrgaza.org
    ```
 
 ### Development Deployment
@@ -110,16 +110,16 @@ The project uses GitHub Actions for automated deployment:
 ### Development Environment
 
 - **Port**: 3001
-- **Domain**: dev.pchr.org or localhost
-- **API URL**: http://localhost:8000
+- **Domain**: portal-dev.pchrgaza.org or localhost
+- **API URL**: https://api-portal-dev.pchrgaza.org
 - **Debug Mode**: Enabled
 - **Log Level**: Debug
 
 ### Production Environment
 
 - **Port**: 3000
-- **Domain**: pchr.org
-- **API URL**: https://api.pchr.org
+- **Domain**: portal.pchrgaza.org
+- **API URL**: https://api-portal.pchrgaza.org
 - **Debug Mode**: Disabled
 - **Log Level**: Error
 

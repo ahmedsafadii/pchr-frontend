@@ -4,12 +4,12 @@ module.exports = {
   NEXT_PUBLIC_APP_ENV: 'production',
 
   // API Configuration
-  NEXT_PUBLIC_API_URL: 'https://api.pchr.org',
-  NEXT_PUBLIC_API_BASE_URL: 'https://api.pchr.org/api',
+  NEXT_PUBLIC_API_URL: 'https://api-portal.pchrgaza.org',
+  NEXT_PUBLIC_API_BASE_URL: 'https://api-portal.pchrgaza.org/api',
 
   // Application URLs
-  NEXT_PUBLIC_APP_URL: 'https://pchr.org',
-  NEXT_PUBLIC_DOMAIN: 'pchr.org',
+  NEXT_PUBLIC_APP_URL: 'https://portal.pchrgaza.org',
+  NEXT_PUBLIC_DOMAIN: 'pchrgaza.org',
 
   // Authentication
   NEXT_PUBLIC_AUTH_SECRET: 'production-secret-key-from-secrets',
@@ -30,6 +30,6 @@ module.exports = {
   NEXT_PUBLIC_CACHE_TTL: '3600',
 
   // Security
-  NEXT_PUBLIC_CSP_REPORT_URI: 'https://pchr.org/api/csp-report',
+  NEXT_PUBLIC_CSP_REPORT_URI: 'https://portal.pchrgaza.org/api/csp-report',
   NEXT_PUBLIC_HSTS_MAX_AGE: '31536000',
 };

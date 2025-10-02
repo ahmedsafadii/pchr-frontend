@@ -18,8 +18,10 @@ module.exports = {
         NODE_ENV: "development",
         PORT: 3001,
         NEXT_PUBLIC_APP_ENV: "development",
-        NEXT_PUBLIC_API_URL: "http://localhost:8000",
-        NEXT_PUBLIC_APP_URL: "http://localhost:3001",
+        NEXT_PUBLIC_API_URL: "https://api-portal-dev.pchrgaza.org",
+        NEXT_PUBLIC_API_BASE_URL: "https://api-portal-dev.pchrgaza.org/api",
+        NEXT_PUBLIC_APP_URL: "https://portal-dev.pchrgaza.org",
+        NEXT_PUBLIC_DOMAIN: "pchrgaza.org",
         NEXT_PUBLIC_ENABLE_DEBUG: "true",
         NEXT_PUBLIC_LOG_LEVEL: "debug",
       },
@@ -27,12 +29,15 @@ module.exports = {
       out_file: "/var/log/pm2/pchr-frontend-dev-out.log",
       log_file: "/var/log/pm2/pchr-frontend-dev-combined.log",
       time: true,
+      merge_logs: true, // Merge stdout and stderr
+      log_date_format: "YYYY-MM-DD HH:mm:ss Z", // Better timestamp format
       restart_delay: 1000,
       min_uptime: "10s",
       max_restarts: 10,
       kill_timeout: 5000,
-      wait_ready: true,
-      listen_timeout: 10000,
+      // Enhanced error handling
+      exp_backoff_restart_delay: 100, // Exponential backoff for restarts
+      // Removed wait_ready and listen_timeout as Next.js doesn't emit ready signal
     },
   ],
 };
