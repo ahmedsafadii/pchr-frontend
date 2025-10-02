@@ -1,0 +1,651 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to deploy"
+        required: true
+        default: "development"
+        type: choice
+        options:
+          - development
+          - production
+
+env:
+  PYTHON_VERSION: "3.13"
+
+jobs:
+  # Code Quality and Linting
+  lint:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements/testing.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements/testing.txt
+
+      - name: Run flake8 linting
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Run black code formatting check
+        run: |
+          black --check --diff .
+
+      - name: Run isort import sorting check
+        run: |
+          isort --check-only --diff .
+
+      - name: Run Django system checks
+        env:
+          DJANGO_ENVIRONMENT: ci
+        run: |
+          python manage.py check --deploy
+
+      - name: Check for missing migrations
+        env:
+          DJANGO_ENVIRONMENT: ci
+        run: |
+          python manage.py makemigrations --check --dry-run
+
+  # Build Application
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: [lint]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements/testing.txt
+
+      - name: Create build artifact
+        run: |
+          # Wait a moment to ensure all file operations are complete
+          sleep 2
+
+          # Create build artifact with retry mechanism
+          for i in {1..3}; do
+            if tar -czf pchr-backend-${{ github.sha }}.tar.gz \
+              --exclude='.git' \
+              --exclude='venv' \
+              --exclude='__pycache__' \
+              --exclude='*.pyc' \
+              --exclude='.pytest_cache' \
+              --exclude='.coverage' \
+              --exclude='htmlcov' \
+              --exclude='.mypy_cache' \
+              --exclude='.tox' \
+              --exclude='.env' \
+              --exclude='logs' \
+              --exclude='media' \
+              --exclude='staticfiles' \
+              .; then
+              echo "Build artifact created successfully"
+              break
+            else
+              echo "Attempt $i failed, retrying..."
+              sleep 2
+            fi
+          done
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pchr-backend-${{ github.sha }}
+          path: pchr-backend-${{ github.sha }}.tar.gz
+          retention-days: 7
+
+  # Deploy to Development (develop branch)
+  deploy-development:
+    name: Deploy to Development
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/develop' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'development')
+    environment: development
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pchr-backend-${{ github.sha }}
+
+      - name: Upload artifact to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEVELOPMENT_HOST }}
+          username: ${{ secrets.DEVELOPMENT_USER }}
+          key: ${{ secrets.DEVELOPMENT_SSH_KEY }}
+          source: "pchr-backend-${{ github.sha }}.tar.gz"
+          target: "/tmp/"
+
+      - name: Deploy to development server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEVELOPMENT_HOST }}
+          username: ${{ secrets.DEVELOPMENT_USER }}
+          key: ${{ secrets.DEVELOPMENT_SSH_KEY }}
+          script: |
+            set -e  # Exit on any error
+
+            # Check if we can run sudo without password
+            if sudo -n true 2>/dev/null; then
+              echo "Sudo access confirmed"
+            else
+              echo "Error: Sudo access required but not configured for passwordless execution"
+              echo "Please configure sudo access for the deployment user"
+              exit 1
+            fi
+
+            # Create deployment directory
+            sudo mkdir -p /var/www/pchr-backend-dev
+            cd /var/www/pchr-backend-dev
+
+            # Backup current deployment
+            if [ -d "current" ]; then
+              sudo mv current backup-$(date +%Y%m%d-%H%M%S)
+            fi
+
+            # Create new deployment directory
+            sudo mkdir -p releases/${{ github.sha }}
+            cd releases/${{ github.sha }}
+
+            # Copy artifact from temp directory
+            echo "Copying build artifact from temp directory..."
+            sudo cp /tmp/pchr-backend-${{ github.sha }}.tar.gz .
+
+            # Extract new version from downloaded artifact
+            echo "Extracting build artifact..."
+            echo "Current directory contents:"
+            ls -la
+
+            # Extract the tar.gz file
+            echo "Extracting tar.gz file..."
+            sudo tar -xzf pchr-backend-${{ github.sha }}.tar.gz
+
+            # Create logs directory and file immediately after extraction (Django needs it during startup)
+            echo "Creating logs directory and file..."
+            sudo mkdir -p logs
+            sudo touch logs/django.log
+            sudo chown -R www-data:www-data logs
+
+            # Also ensure global log directory exists and has correct permissions for development
+            sudo mkdir -p /var/log/pchr
+            sudo chown -R www-data:www-data /var/log/pchr
+            sudo chmod -R 755 /var/log/pchr
+            sudo touch /var/log/pchr/django.log
+            sudo chown www-data:www-data /var/log/pchr/django.log
+            sudo chmod 644 /var/log/pchr/django.log
+
+            # Verify environment variables are set
+            echo "Verifying server environment configuration..."
+            if ! grep -q "DJANGO_SECRET_KEY" /etc/environment; then
+              echo "Error: DJANGO_SECRET_KEY not found in /etc/environment"
+              echo "Please configure /etc/environment on your server first"
+              exit 1
+            fi
+
+            if ! grep -q "ALLOWED_HOSTS" /etc/environment; then
+              echo "Error: ALLOWED_HOSTS not found in /etc/environment"
+              echo "Please configure /etc/environment on your server first"
+              exit 1
+            fi
+
+            echo "Server environment configuration verified"
+
+            # Set up virtual environment
+            echo "Setting up virtual environment..."
+            sudo python3.13 -m venv venv
+            sudo ./venv/bin/pip install --upgrade pip
+            sudo ./venv/bin/pip install --no-cache-dir --disable-pip-version-check -r requirements/development.txt
+
+            # Set correct permissions
+            sudo chown -R www-data:www-data /var/www/pchr-backend-dev
+            sudo chmod -R 755 /var/www/pchr-backend-dev
+
+            # Create symlink to current
+            cd /var/www/pchr-backend-dev
+            sudo ln -sfn releases/${{ github.sha }} current
+
+            # Run migrations and collect static files
+            cd current
+
+            echo "Running database migrations..."
+            # Source environment variables from /etc/environment/ for www-data user
+            if ! sudo -u www-data bash -c 'source /etc/environment 2>/dev/null || true; DJANGO_ENVIRONMENT=development DJANGO_LOG_DIR=/var/log/pchr ./venv/bin/python manage.py migrate --settings=config.settings.development'; then
+              echo "Error: Database migration failed"
+              exit 1
+            fi
+
+            # Compile locale messages for Arabic
+            echo "Compiling locale messages..."
+            # Source environment variables from /etc/environment/ for www-data user
+            if ! sudo -u www-data bash -c 'source /etc/environment 2>/dev/null || true; DJANGO_ENVIRONMENT=development DJANGO_LOG_DIR=/var/log/pchr ./venv/bin/python manage.py compilemessages -l ar -i venv --settings=config.settings.development'; then
+              echo "Warning: Locale compilation failed, but continuing deployment"
+            else
+              echo "Locale messages compiled successfully"
+            fi
+
+            # Test S3 configuration before collecting static files
+            echo "Testing S3 configuration for static files..."
+            # Source environment variables from /etc/environment/ for www-data user
+            if ! sudo -u www-data bash -c 'source /etc/environment 2>/dev/null || true; DJANGO_ENVIRONMENT=development DJANGO_LOG_DIR=/var/log/pchr ./venv/bin/python manage.py test_collectstatic_s3 --verbosity=2 --dry-run --settings=config.settings.development'; then
+              echo "Warning: S3 configuration test failed, falling back to local static files"
+              echo "Check AWS credentials and S3 bucket configuration"
+            fi
+
+            echo "Collecting static files..."
+            # Source environment variables from /etc/environment/ for www-data user
+            if ! sudo -u www-data bash -c 'source /etc/environment 2>/dev/null || true; DJANGO_ENVIRONMENT=development DJANGO_LOG_DIR=/var/log/pchr ./venv/bin/python manage.py collectstatic --noinput --verbosity=2 --settings=config.settings.development'; then
+              echo "Error: Static file collection failed"
+              # Show detailed error information
+              echo "Checking Django settings..."
+              sudo -u www-data DJANGO_ENVIRONMENT=development DJANGO_LOG_DIR=/var/log/pchr ./venv/bin/python -c "
+              import os
+              os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.development')
+              import django
+              django.setup()
+              from django.conf import settings
+              print(f'STATICFILES_STORAGE: {getattr(settings, \"STATICFILES_STORAGE\", \"Not set\")}')
+              print(f'STATIC_URL: {getattr(settings, \"STATIC_URL\", \"Not set\")}')
+              print(f'AWS_PUBLIC_STORAGE_BUCKET_NAME: {getattr(settings, \"AWS_PUBLIC_STORAGE_BUCKET_NAME\", \"Not set\")}')
+              print(f'USE_S3_STORAGE: {getattr(settings, \"USE_S3_STORAGE\", \"Not set\")}')
+              "
+              exit 1
+            fi
+
+            # Fix static files permissions for nginx (only if using local storage)
+            if [ -d "staticfiles/" ]; then
+              echo "Setting static files permissions..."
+              sudo chmod -R 755 staticfiles/
+              sudo chown -R www-data:www-data staticfiles/
+            else
+              echo "Skipping static files permissions (using S3 storage)"
+            fi
+
+            # Note: Systemd services should be configured manually or through other deployment methods
+
+            # Reload systemd daemon to pick up new environment
+            sudo systemctl daemon-reload
+
+            # Restart services
+            echo "Restarting services..."
+            if ! sudo systemctl reload nginx; then
+              echo "Error: nginx reload failed"
+              exit 1
+            fi
+
+            # Stop, then start services to ensure clean restart with new environment
+            sudo systemctl stop pchr-backend-dev pchr-celery-dev pchr-celery-beat-dev 2>/dev/null || true
+            sleep 2
+
+            # Start services in order
+            if ! sudo systemctl start pchr-backend-dev; then
+              echo "Error: pchr-backend-dev start failed"
+              sudo journalctl -u pchr-backend-dev --lines=20
+              exit 1
+            fi
+
+            if ! sudo systemctl start pchr-celery-dev; then
+              echo "Error: pchr-celery-dev start failed"
+              sudo journalctl -u pchr-celery-dev --lines=20
+              exit 1
+            fi
+
+            if ! sudo systemctl start pchr-celery-beat-dev; then
+              echo "Error: pchr-celery-beat-dev start failed"
+              sudo journalctl -u pchr-celery-beat-dev --lines=20
+              exit 1
+            fi
+
+            # Health check
+            echo "Performing health check..."
+            sleep 10
+            if curl -f http://localhost:8001/health/; then
+              echo "Health check passed"
+            else
+              echo "Error: Health check failed - application is not responding"
+              exit 1
+            fi
+
+            # Clean up temp file
+            sudo rm -f /tmp/pchr-backend-${{ github.sha }}.tar.gz
+
+            echo "Development deployment completed successfully!"
+
+  # Deploy to Production (main branch)
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
+    environment: production
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pchr-backend-${{ github.sha }}
+
+      - name: Upload artifact to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "pchr-backend-${{ github.sha }}.tar.gz"
+          target: "/tmp/"
+
+      - name: Deploy to production server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            set -e  # Exit on any error
+
+            # Check if we can run sudo without password
+            if sudo -n true 2>/dev/null; then
+              echo "Sudo access confirmed"
+            else
+              echo "Error: Sudo access required but not configured for passwordless execution"
+              echo "Please configure sudo access for the deployment user"
+              exit 1
+            fi
+
+            # Create deployment directory
+            sudo mkdir -p /var/www/pchr-backend
+            cd /var/www/pchr-backend
+
+            # Backup current deployment
+            if [ -d "current" ]; then
+              sudo mv current backup-$(date +%Y%m%d-%H%M%S)
+            fi
+
+            # Create new deployment directory
+            sudo mkdir -p releases/${{ github.sha }}
+            cd releases/${{ github.sha }}
+
+            # Copy artifact from temp directory
+            echo "Copying build artifact from temp directory..."
+            sudo cp /tmp/pchr-backend-${{ github.sha }}.tar.gz .
+
+            # Extract new version from downloaded artifact
+            echo "Extracting build artifact..."
+            echo "Current directory contents:"
+            ls -la
+
+            # Extract the tar.gz file
+            echo "Extracting tar.gz file..."
+            sudo tar -xzf pchr-backend-${{ github.sha }}.tar.gz
+
+            # Create logs directory and file immediately after extraction (Django needs it during startup)
+            echo "Creating logs directory and file..."
+            sudo mkdir -p logs
+            sudo touch logs/django.log
+            sudo chown -R www-data:www-data logs
+
+            # Also ensure global log directory exists and has correct permissions for production
+            sudo mkdir -p /var/log/pchr
+            sudo chown -R www-data:www-data /var/log/pchr
+            sudo chmod -R 755 /var/log/pchr
+            sudo touch /var/log/pchr/django.log
+            sudo chown www-data:www-data /var/log/pchr/django.log
+            sudo chmod 644 /var/log/pchr/django.log
+
+            # Verify environment variables are set
+            echo "Verifying server environment configuration..."
+            if ! grep -q "DJANGO_SECRET_KEY" /etc/environment; then
+              echo "Error: DJANGO_SECRET_KEY not found in /etc/environment"
+              echo "Please configure /etc/environment on your server first"
+              exit 1
+            fi
+
+            if ! grep -q "ALLOWED_HOSTS" /etc/environment; then
+              echo "Error: ALLOWED_HOSTS not found in /etc/environment"
+              echo "Please configure /etc/environment on your server first"
+              exit 1
+            fi
+
+            echo "Server environment configuration verified"
+
+            # Set up virtual environment
+            echo "Setting up virtual environment..."
+            sudo python3.13 -m venv venv
+            sudo ./venv/bin/pip install --upgrade pip
+            sudo ./venv/bin/pip install --no-cache-dir --disable-pip-version-check -r requirements/production.txt
+
+            # Set correct permissions
+            sudo chown -R www-data:www-data /var/www/pchr-backend
+            sudo chmod -R 755 /var/www/pchr-backend
+
+            # Create symlink to current
+            cd /var/www/pchr-backend
+            sudo ln -sfn releases/${{ github.sha }} current
+
+            # Run migrations and collect static files
+            cd current
+
+            echo "Running database migrations..."
+            # Source environment variables from /etc/environment/ for www-data user
+            if ! sudo -u www-data bash -c 'source /etc/environment 2>/dev/null || true; DJANGO_ENVIRONMENT=production DJANGO_LOG_DIR=/var/log/pchr ./venv/bin/python manage.py migrate --settings=config.settings.production'; then
+              echo "Error: Database migration failed"
+              exit 1
+            fi
+
+            # Compile locale messages for Arabic
+            echo "Compile locale messages..."
+            # Source environment variables from /etc/environment/ for www-data user
+            if ! sudo -u www-data bash -c 'source /etc/environment 2>/dev/null || true; DJANGO_ENVIRONMENT=production DJANGO_LOG_DIR=/var/log/pchr ./venv/bin/python manage.py compilemessages -l ar -i venv --settings=config.settings.production'; then
+              echo "Warning: Locale compilation failed, but continuing deployment"
+            else
+              echo "Locale messages compiled successfully"
+            fi
+
+            # Test S3 configuration before collecting static files
+            echo "Testing S3 configuration for static files..."
+            # Source environment variables from /etc/environment/ for www-data user
+            if ! sudo -u www-data bash -c 'source /etc/environment 2>/dev/null || true; DJANGO_ENVIRONMENT=production DJANGO_LOG_DIR=/var/log/pchr ./venv/bin/python manage.py test_collectstatic_s3 --verbosity=2 --dry-run --settings=config.settings.production'; then
+              echo "Error: S3 configuration test failed"
+              echo "Please check AWS credentials and S3 bucket configuration"
+              # Show environment variables status (without exposing secrets)
+              echo "Environment variables status:"
+              echo "AWS_ACCESS_KEY_ID: $([ -n \"$AWS_ACCESS_KEY_ID\" ] && echo 'SET' || echo 'NOT SET')"
+              echo "AWS_SECRET_ACCESS_KEY: $([ -n \"$AWS_SECRET_ACCESS_KEY\" ] && echo 'SET' || echo 'NOT SET')"
+              echo "AWS_PUBLIC_STORAGE_BUCKET_NAME: $([ -n \"$AWS_PUBLIC_STORAGE_BUCKET_NAME\" ] && echo 'SET' || echo 'NOT SET')"
+              exit 1
+            fi
+
+            echo "Collecting static files to S3..."
+            # Source environment variables from /etc/environment/ for www-data user
+            if ! sudo -u www-data bash -c 'source /etc/environment 2>/dev/null || true; DJANGO_ENVIRONMENT=production DJANGO_LOG_DIR=/var/log/pchr ./venv/bin/python manage.py collectstatic --noinput --verbosity=3 --settings=config.settings.production'; then
+              echo "Error: Static file collection failed"
+              # Show detailed error information
+              echo "Checking Django settings..."
+              sudo -u www-data DJANGO_ENVIRONMENT=production DJANGO_LOG_DIR=/var/log/pchr ./venv/bin/python -c "
+              import os
+              os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.production')
+              import django
+              django.setup()
+              from django.conf import settings
+              storages_config = getattr(settings, 'STORAGES', {})
+              staticfiles_backend = storages_config.get('staticfiles', {}).get('BACKEND', 'Not set')
+              print(f'STORAGES[staticfiles][BACKEND]: {staticfiles_backend}')
+              print(f'STATIC_URL: {getattr(settings, \"STATIC_URL\", \"Not set\")}')
+              print(f'AWS_PUBLIC_STORAGE_BUCKET_NAME: {getattr(settings, \"AWS_PUBLIC_STORAGE_BUCKET_NAME\", \"Not set\")}')
+              print(f'AWS_S3_REGION_NAME: {getattr(settings, \"AWS_S3_REGION_NAME\", \"Not set\")}')
+              "
+              echo "Running S3 diagnostic command..."
+              sudo -u www-data DJANGO_ENVIRONMENT=production DJANGO_LOG_DIR=/var/log/pchr ./venv/bin/python manage.py test_collectstatic_s3 --dry-run --verbosity=2 --settings=config.settings.production || true
+              exit 1
+            fi
+
+            # Verify static files were uploaded to S3 (production only)
+            echo "Verifying static files upload to S3..."
+            if ! sudo -u www-data DJANGO_ENVIRONMENT=production DJANGO_LOG_DIR=/var/log/pchr ./venv/bin/python -c "
+            import os
+            os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.production')
+            import django
+            django.setup()
+            from django.conf import settings
+            import boto3
+            from botocore.exceptions import ClientError
+
+            try:
+                # Configure S3 client with endpoint_url for Scaleway support
+                s3_config = {
+                    'aws_access_key_id': settings.AWS_ACCESS_KEY_ID,
+                    'aws_secret_access_key': settings.AWS_SECRET_ACCESS_KEY,
+                    'region_name': settings.AWS_S3_REGION_NAME
+                }
+
+                # Add endpoint_url if using Scaleway or other S3-compatible service
+                if hasattr(settings, 'AWS_S3_ENDPOINT_URL') and settings.AWS_S3_ENDPOINT_URL:
+                    s3_config['endpoint_url'] = settings.AWS_S3_ENDPOINT_URL
+
+                s3_client = boto3.client('s3', **s3_config)
+
+                # Check for a common static file
+                response = s3_client.head_object(
+                    Bucket=settings.AWS_PUBLIC_STORAGE_BUCKET_NAME,
+                    Key='static/admin/css/base.css'
+                )
+                print('✅ Static files successfully uploaded to S3')
+                print(f'✅ Sample file size: {response[\"ContentLength\"]} bytes')
+            except ClientError as e:
+                print(f'❌ Static files not found in S3: {e}')
+                exit(1)
+            except Exception as e:
+                print(f'❌ Error verifying S3 upload: {e}')
+                exit(1)
+            "; then
+              echo "Warning: Could not verify S3 upload, but collectstatic completed"
+            fi
+
+            # Fix static files permissions for nginx (only if using local storage)
+            if [ -d "staticfiles/" ]; then
+              echo "Setting static files permissions..."
+              sudo chmod -R 755 staticfiles/
+              sudo chown -R www-data:www-data staticfiles/
+            else
+              echo "Skipping static files permissions (using S3 storage)"
+            fi
+
+            # Note: Systemd services should be configured manually or through other deployment methods
+
+            # Reload systemd daemon to pick up new environment
+            sudo systemctl daemon-reload
+
+            # Restart services
+            echo "Restarting services..."
+            if ! sudo systemctl reload nginx; then
+              echo "Error: nginx reload failed"
+              exit 1
+            fi
+
+            # Stop, then start services to ensure clean restart with new environment
+            sudo systemctl stop pchr-backend pchr-celery pchr-celery-beat 2>/dev/null || true
+            sleep 2
+
+            # Start services in order
+            if ! sudo systemctl start pchr-backend; then
+              echo "Error: pchr-backend start failed"
+              sudo journalctl -u pchr-backend --lines=20
+              exit 1
+            fi
+
+            if ! sudo systemctl start pchr-celery; then
+              echo "Error: pchr-celery start failed"
+              sudo journalctl -u pchr-celery --lines=20
+              exit 1
+            fi
+
+            if ! sudo systemctl start pchr-celery-beat; then
+              echo "Error: pchr-celery-beat start failed"
+              sudo journalctl -u pchr-celery-beat --lines=20
+              exit 1
+            fi
+
+            # Health check
+            echo "Performing health check..."
+            sleep 10
+            if curl -f http://localhost:8001/health/; then
+              echo "✅ Health check passed"
+            else
+              echo "❌ Error: Health check failed - application is not responding"
+              echo "Checking application status..."
+              sudo systemctl status pchr-gunicorn || true
+              echo "Checking application logs..."
+              sudo tail -n 50 /var/log/pchr/gunicorn.log || true
+              exit 1
+            fi
+
+            # Clean up temp file
+            sudo rm -f /tmp/pchr-backend-${{ github.sha }}.tar.gz
+
+            echo "Production deployment completed successfully!"
+
+  # Cleanup old releases (Production only)
+  cleanup:
+    name: Cleanup Old Releases
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    if: always() && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Cleanup old releases on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            set -e  # Exit on any error
+
+            # Check if we can run sudo without password
+            if sudo -n true 2>/dev/null; then
+              echo "Sudo access confirmed"
+            else
+              echo "Error: Sudo access required but not configured for passwordless execution"
+              exit 1
+            fi
+
+            cd /var/www/pchr-backend/releases
+            # Keep only the 5 most recent releases
+            ls -t | tail -n +6 | xargs -r sudo rm -rf
+
+            # Clean up old backups (keep last 3)
+            cd /var/www/pchr-backend
+            ls -t backup-* 2>/dev/null | tail -n +4 | xargs -r sudo rm -rf || true

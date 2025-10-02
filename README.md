@@ -203,9 +203,17 @@ This plan ensures a scalable, maintainable, and high-performance codebase with c
 ## Development Scripts
 
 - `npm run dev` - Start development server with Turbopack
+- `npm run dev:turbopack` - Start development server with Turbopack
 - `npm run build` - Build the application for production
+- `npm run build:dev` - Build the application for development
+- `npm run build:prod` - Build the application for production
 - `npm run start` - Start production server
+- `npm run start:dev` - Start development server
+- `npm run start:prod` - Start production server
 - `npm run lint` - Run ESLint for code quality
+- `npm run deploy:dev` - Deploy to development environment
+- `npm run deploy:prod` - Deploy to production environment
+- `npm run setup:server` - Setup server environment
 
 ## Features to Implement
 
@@ -238,9 +246,115 @@ This plan ensures a scalable, maintainable, and high-performance codebase with c
 - **Light/Dark Mode**: The platform supports both light and dark themes for better accessibility and user preference.
 - **Multi-Language Support**: The platform is available in both Arabic (AR) and English (EN), allowing users to switch languages as needed.
 
+## Environment Configuration
+
+The project supports two environments: **development** and **production**.
+
+### Environment Files
+
+- `config/environment.development.js` - Development environment configuration
+- `config/environment.production.js` - Production environment configuration
+- `config/environment.example.js` - Example configuration template
+
+### Environment Variables
+
+Key environment variables that can be configured:
+
+- `NEXT_PUBLIC_API_URL` - Backend API URL
+- `NEXT_PUBLIC_APP_URL` - Frontend application URL
+- `NEXT_PUBLIC_ENABLE_DEBUG` - Enable debug mode
+- `NEXT_PUBLIC_LOG_LEVEL` - Logging level
+- `NEXT_PUBLIC_ENABLE_ANALYTICS` - Enable analytics
+
+### Development Environment
+
+For local development, create a `.env.local` file in the root directory:
+
+```bash
+cp config/environment.example.js .env.local
+# Edit .env.local with your local configuration
+```
+
+### Production Environment
+
+For production deployment, environment variables are managed through:
+- GitHub Secrets (for CI/CD)
+- Server environment files
+- PM2 ecosystem configuration
+
+## Deployment
+
+### Automated Deployment (Recommended)
+
+The project uses GitHub Actions for automated deployment:
+
+- **Development**: Pushes to `develop` branch deploy to development environment
+- **Production**: Pushes to `main` branch deploy to production environment
+
+#### Required GitHub Secrets
+
+For development environment:
+- `DEVELOPMENT_HOST` - Development server hostname/IP
+- `DEVELOPMENT_USER` - SSH username for development server
+- `DEVELOPMENT_SSH_KEY` - SSH private key for development server
+
+For production environment:
+- `SERVER_HOST` - Production server hostname/IP
+- `SERVER_USER` - SSH username for production server
+- `SERVER_SSH_KEY` - SSH private key for production server
+
+### Manual Deployment
+
+#### Server Setup
+
+1. Run the server setup script on your server:
+```bash
+sudo bash scripts/setup-server.sh
+```
+
+2. Configure environment variables in `/etc/environment`
+
+3. Set up SSL certificates and domain configuration
+
+#### Development Deployment
+
+```bash
+# On development server
+sudo bash scripts/deploy-development.sh
+```
+
+#### Production Deployment
+
+```bash
+# On production server
+sudo bash scripts/deploy-production.sh
+```
+
+### PM2 Configuration
+
+The project uses PM2 for process management:
+
+- `ecosystem.development.config.js` - Development PM2 configuration
+- `ecosystem.production.config.js` - Production PM2 configuration
+
+### Nginx Configuration
+
+Nginx is configured to proxy requests to the Next.js application:
+
+- Development: `http://localhost:3001`
+- Production: `http://localhost:3000`
+
 ## Contributing
 
 This project is maintained by the PCHR NGO team. Please follow the established coding standards and contribute through proper channels.
+
+### Development Workflow
+
+1. Create a feature branch from `develop`
+2. Make your changes
+3. Test locally with `npm run dev`
+4. Create a pull request to `develop`
+5. After testing, merge to `main` for production deployment
 
 ## License
 

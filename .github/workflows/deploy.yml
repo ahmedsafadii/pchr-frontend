@@ -1,56 +1,367 @@
-name: Deploy Next.js to Ubuntu
+name: Deploy Frontend
 
 on:
   push:
-    branches:
-      - main
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to deploy"
+        required: true
+        default: "development"
+        type: choice
+        options:
+          - development
+          - production
+
+env:
+  NODE_VERSION: "20"
 
 jobs:
-  deploy:
-    name: Build & Deploy
+  # Code Quality and Linting
+  lint:
+    name: Code Quality & Linting
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Build Next.js
-        run: |
-          npm ci
-          npm run build
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Copy files to server
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+  # Build Application
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: [lint]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Create build artifact
+        run: |
+          # Wait a moment to ensure all file operations are complete
+          sleep 2
+
+          # Create build artifact with retry mechanism
+          for i in {1..3}; do
+            if tar -czf pchr-frontend-${{ github.sha }}.tar.gz \
+              --exclude='.git' \
+              --exclude='node_modules' \
+              --exclude='.next' \
+              --exclude='.env*' \
+              --exclude='*.log' \
+              --exclude='coverage' \
+              --exclude='.DS_Store' \
+              --exclude='*.pem' \
+              --exclude='.vercel' \
+              --exclude='*.tsbuildinfo' \
+              --exclude='next-env.d.ts' \
+              .; then
+              echo "Build artifact created successfully"
+              break
+            else
+              echo "Attempt $i failed, retrying..."
+              sleep 2
+            fi
+          done
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pchr-frontend-${{ github.sha }}
+          path: pchr-frontend-${{ github.sha }}.tar.gz
+          retention-days: 7
+
+  # Deploy to Development (develop branch)
+  deploy-development:
+    name: Deploy to Development
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/develop' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'development')
+    environment: development
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pchr-frontend-${{ github.sha }}
+
+      - name: Upload artifact to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEVELOPMENT_HOST }}
+          username: ${{ secrets.DEVELOPMENT_USER }}
+          key: ${{ secrets.DEVELOPMENT_SSH_KEY }}
+          source: "pchr-frontend-${{ github.sha }}.tar.gz"
+          target: "/tmp/"
+
+      - name: Deploy to development server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEVELOPMENT_HOST }}
+          username: ${{ secrets.DEVELOPMENT_USER }}
+          key: ${{ secrets.DEVELOPMENT_SSH_KEY }}
+          script: |
+            set -e  # Exit on any error
+
+            # Check if we can run sudo without password
+            if sudo -n true 2>/dev/null; then
+              echo "Sudo access confirmed"
+            else
+              echo "Error: Sudo access required but not configured for passwordless execution"
+              echo "Please configure sudo access for the deployment user"
+              exit 1
+            fi
+
+            # Create deployment directory
+            sudo mkdir -p /var/www/pchr-frontend-dev
+            cd /var/www/pchr-frontend-dev
+
+            # Backup current deployment
+            if [ -d "current" ]; then
+              sudo mv current backup-$(date +%Y%m%d-%H%M%S)
+            fi
+
+            # Create new deployment directory
+            sudo mkdir -p releases/${{ github.sha }}
+            cd releases/${{ github.sha }}
+
+            # Copy artifact from temp directory
+            echo "Copying build artifact from temp directory..."
+            sudo cp /tmp/pchr-frontend-${{ github.sha }}.tar.gz .
+
+            # Extract new version from downloaded artifact
+            echo "Extracting build artifact..."
+            echo "Current directory contents:"
+            ls -la
+
+            # Extract the tar.gz file
+            echo "Extracting tar.gz file..."
+            sudo tar -xzf pchr-frontend-${{ github.sha }}.tar.gz
+
+            # Set up Node.js environment
+            echo "Setting up Node.js environment..."
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+
+            # Install dependencies
+            echo "Installing dependencies..."
+            sudo npm ci --production
+
+            # Set correct permissions
+            sudo chown -R www-data:www-data /var/www/pchr-frontend-dev
+            sudo chmod -R 755 /var/www/pchr-frontend-dev
+
+            # Create symlink to current
+            cd /var/www/pchr-frontend-dev
+            sudo ln -sfn releases/${{ github.sha }} current
+
+            # Stop existing PM2 processes
+            echo "Stopping existing PM2 processes..."
+            sudo pm2 stop pchr-frontend-dev 2>/dev/null || true
+            sudo pm2 delete pchr-frontend-dev 2>/dev/null || true
+
+            # Start application with PM2
+            echo "Starting application with PM2..."
+            cd current
+            sudo pm2 start ecosystem.development.config.js --env development
+
+            # Save PM2 configuration
+            sudo pm2 save
+
+            # Setup PM2 startup script
+            sudo pm2 startup systemd -u www-data --hp /var/www
+
+            # Health check
+            echo "Performing health check..."
+            sleep 10
+            if curl -f http://localhost:3001/; then
+              echo "Health check passed"
+            else
+              echo "Error: Health check failed - application is not responding"
+              exit 1
+            fi
+
+            # Clean up temp file
+            sudo rm -f /tmp/pchr-frontend-${{ github.sha }}.tar.gz
+
+            echo "Development deployment completed successfully!"
+
+  # Deploy to Production (main branch)
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
+    environment: production
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pchr-frontend-${{ github.sha }}
+
+      - name: Upload artifact to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          source: ".next,public,package.json,package-lock.json,ecosystem.config.js,ecosystem.npm.config.js"
-          target: "/var/www/nextapp"
+          source: "pchr-frontend-${{ github.sha }}.tar.gz"
+          target: "/tmp/"
 
-      - name: Deploy and restart app
+      - name: Deploy to production server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /var/www/nextapp
-            
+            set -e  # Exit on any error
+
+            # Check if we can run sudo without password
+            if sudo -n true 2>/dev/null; then
+              echo "Sudo access confirmed"
+            else
+              echo "Error: Sudo access required but not configured for passwordless execution"
+              echo "Please configure sudo access for the deployment user"
+              exit 1
+            fi
+
+            # Create deployment directory
+            sudo mkdir -p /var/www/pchr-frontend
+            cd /var/www/pchr-frontend
+
+            # Backup current deployment
+            if [ -d "current" ]; then
+              sudo mv current backup-$(date +%Y%m%d-%H%M%S)
+            fi
+
+            # Create new deployment directory
+            sudo mkdir -p releases/${{ github.sha }}
+            cd releases/${{ github.sha }}
+
+            # Copy artifact from temp directory
+            echo "Copying build artifact from temp directory..."
+            sudo cp /tmp/pchr-frontend-${{ github.sha }}.tar.gz .
+
+            # Extract new version from downloaded artifact
+            echo "Extracting build artifact..."
+            echo "Current directory contents:"
+            ls -la
+
+            # Extract the tar.gz file
+            echo "Extracting tar.gz file..."
+            sudo tar -xzf pchr-frontend-${{ github.sha }}.tar.gz
+
+            # Set up Node.js environment
+            echo "Setting up Node.js environment..."
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+
             # Install dependencies
-            npm ci --omit=dev
-            
-            # Simple PM2 restart - will start if not running
-            pm2 startOrRestart ecosystem.config.js
-            
+            echo "Installing dependencies..."
+            sudo npm ci --production
+
+            # Set correct permissions
+            sudo chown -R www-data:www-data /var/www/pchr-frontend
+            sudo chmod -R 755 /var/www/pchr-frontend
+
+            # Create symlink to current
+            cd /var/www/pchr-frontend
+            sudo ln -sfn releases/${{ github.sha }} current
+
+            # Stop existing PM2 processes
+            echo "Stopping existing PM2 processes..."
+            sudo pm2 stop pchr-frontend 2>/dev/null || true
+            sudo pm2 delete pchr-frontend 2>/dev/null || true
+
+            # Start application with PM2
+            echo "Starting application with PM2..."
+            cd current
+            sudo pm2 start ecosystem.production.config.js --env production
+
             # Save PM2 configuration
-            pm2 save
-            
-            # Quick status check
-            pm2 list
+            sudo pm2 save
+
+            # Setup PM2 startup script
+            sudo pm2 startup systemd -u www-data --hp /var/www
+
+            # Health check
+            echo "Performing health check..."
+            sleep 10
+            if curl -f http://localhost:3000/; then
+              echo "✅ Health check passed"
+            else
+              echo "❌ Error: Health check failed - application is not responding"
+              echo "Checking application status..."
+              sudo pm2 status || true
+              echo "Checking application logs..."
+              sudo pm2 logs pchr-frontend --lines 20 || true
+              exit 1
+            fi
+
+            # Clean up temp file
+            sudo rm -f /tmp/pchr-frontend-${{ github.sha }}.tar.gz
+
+            echo "Production deployment completed successfully!"
+
+  # Cleanup old releases (Production only)
+  cleanup:
+    name: Cleanup Old Releases
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    if: always() && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Cleanup old releases on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            set -e  # Exit on any error
+
+            # Check if we can run sudo without password
+            if sudo -n true 2>/dev/null; then
+              echo "Sudo access confirmed"
+            else
+              echo "Error: Sudo access required but not configured for passwordless execution"
+              exit 1
+            fi
+
+            cd /var/www/pchr-frontend/releases
+            # Keep only the 5 most recent releases
+            ls -t | tail -n +6 | xargs -r sudo rm -rf
+
+            # Clean up old backups (keep last 3)
+            cd /var/www/pchr-frontend
+            ls -t backup-* 2>/dev/null | tail -n +4 | xargs -r sudo rm -rf || true

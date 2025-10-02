@@ -1,0 +1,38 @@
+module.exports = {
+  apps: [
+    {
+      name: "pchr-frontend-dev",
+      script: "npm",
+      args: "start",
+      cwd: "/var/www/pchr-frontend-dev/current",
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: "1G",
+      env: {
+        NODE_ENV: "development",
+        PORT: 3001,
+        NEXT_PUBLIC_APP_ENV: "development",
+      },
+      env_development: {
+        NODE_ENV: "development",
+        PORT: 3001,
+        NEXT_PUBLIC_APP_ENV: "development",
+        NEXT_PUBLIC_API_URL: "http://localhost:8000",
+        NEXT_PUBLIC_APP_URL: "http://localhost:3001",
+        NEXT_PUBLIC_ENABLE_DEBUG: "true",
+        NEXT_PUBLIC_LOG_LEVEL: "debug",
+      },
+      error_file: "/var/log/pm2/pchr-frontend-dev-error.log",
+      out_file: "/var/log/pm2/pchr-frontend-dev-out.log",
+      log_file: "/var/log/pm2/pchr-frontend-dev-combined.log",
+      time: true,
+      restart_delay: 1000,
+      min_uptime: "10s",
+      max_restarts: 10,
+      kill_timeout: 5000,
+      wait_ready: true,
+      listen_timeout: 10000,
+    },
+  ],
+};

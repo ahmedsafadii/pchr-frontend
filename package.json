@@ -6,8 +6,15 @@
     "dev": "next dev",
     "dev:turbopack": "next dev --turbopack",
     "build": "next build",
+    "build:dev": "NODE_ENV=development next build",
+    "build:prod": "NODE_ENV=production next build",
     "start": "next start",
-    "lint": "next lint"
+    "start:dev": "NODE_ENV=development next start",
+    "start:prod": "NODE_ENV=production next start",
+    "lint": "next lint",
+    "deploy:dev": "bash scripts/deploy-development.sh",
+    "deploy:prod": "bash scripts/deploy-production.sh",
+    "setup:server": "bash scripts/setup-server.sh"
   },
   "dependencies": {
     "@tabler/icons-react": "^3.34.0",
