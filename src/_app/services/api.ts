@@ -1,5 +1,5 @@
 export const API_BASE_URL: string =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api-d.pchrgaza.org/api/v1";
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api-portal-dev.pchrgaza.org/api/v1";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
