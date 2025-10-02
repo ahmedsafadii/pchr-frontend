@@ -171,8 +171,16 @@ jobs:
             curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
             sudo apt-get install -y nodejs
 
-            # Install dependencies
+            # Install all dependencies (including dev dependencies for build)
             echo "Installing dependencies..."
+            sudo npm ci
+
+            # Build the application
+            echo "Building application..."
+            sudo npm run build
+
+            # Install only production dependencies after build
+            echo "Installing production dependencies..."
             sudo npm ci --production
 
             # Set correct permissions
@@ -294,8 +302,16 @@ jobs:
             curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
             sudo apt-get install -y nodejs
 
-            # Install dependencies
+            # Install all dependencies (including dev dependencies for build)
             echo "Installing dependencies..."
+            sudo npm ci
+
+            # Build the application
+            echo "Building application..."
+            sudo npm run build
+
+            # Install only production dependencies after build
+            echo "Installing production dependencies..."
             sudo npm ci --production
 
             # Set correct permissions
