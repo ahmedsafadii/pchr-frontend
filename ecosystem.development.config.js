@@ -19,7 +19,7 @@ module.exports = {
         PORT: 3001,
         NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV || "development",
         NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || "https://api-portal-dev.pchrgaza.org",
-        NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://api-portal-dev.pchrgaza.org/api",
+        NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://api-portal-dev.pchrgaza.org/api/v1",
         NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || "https://portal-dev.pchrgaza.org",
         NEXT_PUBLIC_DOMAIN: process.env.NEXT_PUBLIC_DOMAIN || "pchrgaza.org",
         NEXT_PUBLIC_ENABLE_DEBUG: process.env.NEXT_PUBLIC_ENABLE_DEBUG || "true",
